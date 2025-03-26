@@ -1,101 +1,53 @@
 import { useEffect, useRef, useState } from "react";
 import { getMenuItemThumbnail1, getMenuItemThumbnail2, getMenuItemThumbnail3, getMenuItemThumbnail4, getMenuItemThumbnail5, getMenuItemThumbnail6 } from "../../services/ImageService";
+import { getProductsPerMenu } from "../../api/ProductAPI";
 
 export function Menu(){
-    const [categorySelector, setCategorySelect] = useState()
     const [selectedCategory, setSelectedCategory] = useState(0)
-    const [foodsPerCategory, setFoodsPerCategory] = useState([
-        {
-            category: "starters",
-            foods: [
-                {
-                    name: "CHOCOLATE FUDGECAKE",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail1()
-                },
-                {
-                    name: "MIXED SALAD",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail2()
-                },
-                {
-                    name: "BBQ CHICKEN WINGS",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail3()
-                }
-            ]
-        },
-        {
-            category: "main dishes",
-            foods: [
-                {
-                    name: "MEAT FEAST PIZZA",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail4()
-                },
-                {
-                    name: "CHICKEN TIKKA MASALA",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail2()
-                },
-                {
-                    name: "SPICY MEATBALLS",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail3()
-                }
-            ]
-        },
-        {
-            category: "deserts",
-            foods: [
-                {
-                    name: "CHOCOLATE FUDGECAKE",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail4()
-                },
-                {
-                    name: "CHICKEN TIKKA MASALA",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail2()
-                },
-                {
-                    name: "SPICY MEATBALLS",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail3()
-                }
-            ]
-        },
-        {
-            category: "drinks",
-            foods: [
-                {
-                    name: "CHOCOLATE FUDGECAKE",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail4()
-                },
-                {
-                    name: "CHICKEN TIKKA MASALA",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail2()
-                },
-                {
-                    name: "SPICY MEATBALLS",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail3()
-                }
-            ]
-        }
-    ])
+    const [slide, setSlide] = useState(0)
+    const [totalSlides, setTotalSlides] = useState(0)
+    const [foodsPerCategory, setFoodsPerCategory] = useState([])
     const tabMenuRef = useRef()
     const slickRef = useRef()
 
     useEffect(()=>{
-        if(tabMenuRef.current){
-            const tabMenuWidth = tabMenuRef.current.getBoundingClientRect().width
-            const totalSlideWidth = tabMenuWidth*foodsPerCategory.length;
-            console.log(tabMenuWidth*foodsPerCategory.length)
-        }
-    }, [])
+        const updateDimensions = () => {
+            if (!tabMenuRef.current || !slickRef.current) return;
+
+            const tabMenuWidth = tabMenuRef.current.getBoundingClientRect().width;
+            const totalSlideWidth = tabMenuWidth * foodsPerCategory.length;
+
+            slickRef.current.style.transition = "none"; // Disable transition when resizing
+            slickRef.current.style.transform = `translateX(-${selectedCategory * tabMenuWidth}px)`;
+
+            slickRef.current.style.width = `${totalSlideWidth}px`;
+            setSlide(tabMenuWidth);
+            setTotalSlides(foodsPerCategory.length);
+        };
+
+        fetchProductsPerMenu().then(() => {
+            updateDimensions();
+        });
+
+        window.addEventListener("resize", updateDimensions);
+
+        return () => {
+            window.removeEventListener("resize", updateDimensions);
+        };
+    
+    }, [totalSlides, slide])
+
+    const fetchProductsPerMenu = async ()=>{
+        const foods = await getProductsPerMenu()
+        
+        setFoodsPerCategory(foods)
+    }
+
+    const onSelectCategory = (index)=>{
+        slickRef.current.style.transition = "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)";
+        slickRef.current.style.transform = `translateX(-${index * slide}px)`;
+        setSelectedCategory(index)
+    }
 
     
 
@@ -117,27 +69,25 @@ export function Menu(){
                             <div className="slider slider-nav">
                                 {foodsPerCategory.map((category, index)=>(
                                     <div key={index} className={`tab-title-menu flex-grow-1 cursor-pointer ${selectedCategory==index?'is-active':''}`}
-                                        onClick={()=> setSelectedCategory(index)}>
+                                        onClick={()=> onSelectCategory(index)}>
                                         <h2>{category.category.toUpperCase()}</h2>
                                         <p> <i className="flaticon-canape"></i> </p>
                                     </div>
                                 ))}
                             </div>
                             <div className="slider slider-single">
-                                <div className="slick" ref={slickRef}>
+                                <div className="slick " ref={slickRef}>
                                     {foodsPerCategory.map((foods, index)=>(
-                                        <div className="row" key={index}>
+                                        <div className="row slick-slider" key={index}>
                                             {foods.foods.map((food, foodIndex)=>(
-                                                <div className="col-lg-6 col-md-6 col-sm-12 col-xs-12 " key={`${food.name}:${foodIndex}`}>
+                                                <div className="col-lg-6 col-md-12 col-sm-12 col-xs-12 " key={`${food.name}:${foodIndex}`}>
                                                     <div className="offer-item">
                                                         <img src={food.image} alt="" className="img-responsive"/>
                                                         <div>
                                                             <h3>{food.name}</h3>
-                                                            <p>
-                                                                {food.description}
-                                                            </p>
+                                                            <p>{food.description}</p>
                                                         </div>
-                                                        <span className="offer-price">$8.5</span>
+                                                        <span className="offer-price">${food.price}</span>
                                                     </div>
                                                 </div>
                                             ))}

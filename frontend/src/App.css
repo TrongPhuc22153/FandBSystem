@@ -878,10 +878,20 @@ html, body{ height: 100%; }
 .offer-item div p {
     color: #6b6b6b;
 }
+.tab-menu .slick{
+	display: flex;
+}
 
+.slick-slider {
+    display: flex;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); /* Smooth surfing effect */
+}
 
 .tab-menu .slick-prev.slick-arrow {
 	display:none;
+}
+.tab-menu .slider{
+	overflow: hidden;
 }
 .tab-menu .slider.slider-single{
 	border-top:1px solid #ccc;

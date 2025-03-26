@@ -1,43 +1,10 @@
-import { Link } from "react-router-dom";
-import { getAboutInset, getAboutMain, getCoffee, getFood, getGallery01, getGallery02, getGallery03, getGallery04, getGallery05, getGallery06, getGallery07, getGallery08, getGallery09, getGallery10, getLogo, getMenuItemThumbnail1, getMenuItemThumbnail2, getMenuItemThumbnail3, getMenuItemThumbnail4, getMenuItemThumbnail5, getMenuItemThumbnail6, getSpecialMenu1, getSpecialMenu2, getSpecialMenu3, getStaff, getStore } from "../../services/ImageService";
+import { getAboutInset, getAboutMain, getGallery01, getGallery02, getGallery03, getGallery04, getGallery05, getGallery06, getGallery07, getGallery08, getGallery09, getGallery10 } from "../../services/ImageService";
 import { Footer } from "../layouts/Footer";
 import Header from "../layouts/Header";
-import { useState } from "react";
-import { FOOD_URI } from "../../constants/WebPageURI";
 import { Menu } from "../layouts/Menu";
+import { TodaySpecialDish } from "../layouts/TodaySpecialDish";
 
 export default function HomeComponent(){
-    const [specials, setSpecials] = useState([
-        {
-            name: 'SALMON STEAK',
-            description: 'Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.',
-            image: getSpecialMenu1()
-        },
-        {
-            name: "ITALIAN PIZZA",
-            description: "Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.",
-            image: getSpecialMenu2()
-        },
-        {
-            name: "VEG. ROLL",
-            description: "Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.",
-            image: getSpecialMenu3()
-        },
-        {
-            name: 'SALMON STEAK',
-            description: 'Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.',
-            image: getSpecialMenu1()
-        },
-        {
-            name: "ITALIAN PIZZA",
-            description: "Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.",
-            image: getSpecialMenu2()
-        },
-    ])
-
-    const foodsPerPage = 3;
-    const totalPages = Math.ceil(specials.length/foodsPerPage)
-
 
 
     return(
@@ -94,142 +61,9 @@ export default function HomeComponent(){
                 </div>
             </div>
 
-            <div className="special-menu pad-top-100 parallax">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div className="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
-                                <h2 className="block-title color-white text-center"> Today's Special </h2>
-                                <h5 className="title-caption text-center"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusm incididunt ut labore et dolore magna aliqua. Ut enim ad minim venia,nostrud exercitation ullamco. </h5>
-                            </div>
-                            <div className="special-box">
-                                <div id="owl-demo">
-                                    <div className="owl-wrapper-outer">
-                                        <div className="owl-wrapper d-flex overflow-hidden">
-                                            {specials.map((food, index)=>(
-                                                <div className="item item-type-zoom" key={index}>
-                                                    <Link to={FOOD_URI(food.name)} className="item-hover">
-                                                        <div className="item-info">
-                                                            <div className="headline">
-                                                                {food.name}
-                                                                <div className="line"></div>
-                                                                <div className="dit-line">{food.description}</div>
-                                                            </div>
-                                                        </div>
-                                                    </Link>
-                                                    <div className="item-img">
-                                                        <img src={food.image} alt="sp-menu"/>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    {/* {Array.from({ length: totalPages }, (_, page)=>{
-                                        const start = page*foodsPerPage;
-                                        const end = start + foodsPerPage;
-                                        const foods = specials.slice(start, end);
-                                        return(
-                                            <div className="owl-wrapper-outer">
-                                                <div className="owl-wrapper">
-                                                    {foods.map((food, index)=>(
-                                                        <div className="item item-type-zoom col-md-4" key={index}>
-                                                            <Link to={FOOD_URI(food.name)} className="item-hover">
-                                                                <div className="item-info">
-                                                                    <div className="headline">
-                                                                        {food.name}
-                                                                        <div className="line"></div>
-                                                                        <div className="dit-line">{food.description}</div>
-                                                                    </div>
-                                                                </div>
-                                                            </Link>
-                                                            <div className="item-img">
-                                                                <img src={food.image} alt="sp-menu"/>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-
-                                            </div>
-                                        )
-                                    })} */}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <TodaySpecialDish/>
 
             <Menu/>
-
-            {/* <div id="our_team" className="team-main pad-top-100 pad-bottom-100 parallax">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div className="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
-                                <h2 className="block-title text-center">
-                                Our Team 	
-                            </h2>
-                                <p className="title-caption text-center">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. </p>
-                            </div>
-                            <div className="team-box">
-
-                                <div className="row">
-                                    <div className="col-md-4 col-sm-6">
-                                        <div className="sf-team">
-                                            <div className="thumb">
-                                                <a href="#"><img src={getStaff()} alt=""/></a>
-                                            </div>
-                                            <div className="text-col">
-                                                <h3>John Doggett</h3>
-                                                <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Aenean commodo ligula.</p>
-                                                <ul className="team-social">
-                                                    <li><a href="#"><i className="fa fa-facebook" aria-hidden="true"></i></a></li>
-                                                    <li><a href="#"><i className="fa fa-twitter" aria-hidden="true"></i></a></li>
-                                                    <li><a href="#"><i className="fa fa-linkedin" aria-hidden="true"></i></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-4 col-sm-6">
-                                        <div className="sf-team">
-                                            <div className="thumb">
-                                                <a href="#"><img src={getStaff()} alt=""/></a>
-                                            </div>
-                                            <div className="text-col">
-                                                <h3>Jeffrey Spender</h3>
-                                                <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Aenean commodo ligula.</p>
-                                                <ul className="team-social">
-                                                    <li><a href="#"><i className="fa fa-facebook" aria-hidden="true"></i></a></li>
-                                                    <li><a href="#"><i className="fa fa-twitter" aria-hidden="true"></i></a></li>
-                                                    <li><a href="#"><i className="fa fa-linkedin" aria-hidden="true"></i></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-4 col-sm-6">
-                                        <div className="sf-team">
-                                            <div className="thumb">
-                                                <a href="#"><img src={getStaff()} alt=""/></a>
-                                            </div>
-                                            <div className="text-col">
-                                                <h3>Monica Reyes</h3>
-                                                <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Aenean commodo ligula.</p>
-                                                <ul className="team-social">
-                                                    <li><a href="#"><i className="fa fa-facebook" aria-hidden="true"></i></a></li>
-                                                    <li><a href="#"><i className="fa fa-twitter" aria-hidden="true"></i></a></li>
-                                                    <li><a href="#"><i className="fa fa-linkedin" aria-hidden="true"></i></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div> */}
 
             <div id="gallery" className="gallery-main pad-top-100 pad-bottom-100">
                 <div className="container">
