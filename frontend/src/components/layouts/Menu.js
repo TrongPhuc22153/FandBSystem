@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { getMenuItemThumbnail1, getMenuItemThumbnail2, getMenuItemThumbnail3, getMenuItemThumbnail4, getMenuItemThumbnail5, getMenuItemThumbnail6 } from "../../services/ImageService";
 import { getProductsPerMenu } from "../../api/ProductAPI";
 
-export function Menu(){
+export function RecommendedMenu(){
     const [selectedCategory, setSelectedCategory] = useState(0)
     const [slide, setSlide] = useState(0)
     const [totalSlides, setTotalSlides] = useState(0)

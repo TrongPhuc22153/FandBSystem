@@ -1,6 +1,72 @@
 import { getMenuItemThumbnail1, getMenuItemThumbnail2, getMenuItemThumbnail3, getMenuItemThumbnail4, getSpecialMenu1, getSpecialMenu2, getSpecialMenu3 } from "../services/ImageService";
 
-export const getProductsPerMenu = ()=>{
+export const getProducts = ()=>{
+    const productsdata = [
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product A",
+            description: "This is a great product.",
+            price: "$10.99"
+        },
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product B",
+            description: "High quality and reliable.",
+            price: "$15.49"
+        },
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product C",
+            description: "Perfect for everyday use.",
+            price: "$8.99"
+        },
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product D",
+            description: "A must-have item.",
+            price: "$12.99"
+        },
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product E",
+            description: "Affordable and durable.",
+            price: "$9.49"
+        },
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product F",
+            description: "Stylish and functional.",
+            price: "$14.99"
+        },
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product G",
+            description: "Top-rated by customers.",
+            price: "$11.99"
+        },
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product H",
+            description: "Innovative and unique.",
+            price: "$13.49"
+        },
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product I",
+            description: "Compact and lightweight.",
+            price: "$7.99"
+        },
+        {
+            image: "https://dummyimage.com/300X400/000/fff",
+            name: "Product J",
+            description: "Best value for money.",
+            price: "$16.99"
+        }
+    ];
+    return productsdata
+}
+
+export const getProductsPerMenu = ()=> {
     return [
         {
             category: "starters",
@@ -94,7 +160,7 @@ export const getProductsPerMenu = ()=>{
                 }
             ]
         }
-    ]
+    ];
 }
 
 export const getSpecialDishes = ()=>{

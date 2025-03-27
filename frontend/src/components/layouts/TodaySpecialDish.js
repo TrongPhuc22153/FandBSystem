@@ -13,55 +13,53 @@ export function TodaySpecialDish(){
     const owlWrapperOuterRef = useRef();
 
     useEffect(()=>{
-        fetchSpecialDishes();
-
-        // const updateDimensions = () => {
-        //     if (!owlWrapperOuterRef.current || !owlWrapperRef.current) return;
-    
-        //     const totalPages = Math.ceil(specials.length/foodsPerPage)
-
-        //     const owlWrapperOuterWidth = owlWrapperOuterRef.current.getBoundingClientRect().width;
-
-        //     const totalSlideWidth = owlWrapperOuterWidth * totalPages;
-    
-        //     owlWrapperRef.current.style.transition = "none"; // Disable transition when resizing
-        //     owlWrapperRef.current.style.transform = `translateX(-${slideIndex * owlWrapperOuterWidth}px)`;
-    
-        //     owlWrapperRef.current.style.width = `${totalSlideWidth}px`;
-        //     setSlide(owlWrapperOuterWidth);
-        //     setTotalSlides(totalPages);
-        // };
-        // let slideIndex = 0;
-    
         // fetchSpecialDishes();
-        // updateDimensions();
-    
-        // const interval = setInterval(() => {
-        //     slideIndex++;
-    
-        //     if (slideIndex >= totalSlides) {
-        //         setTimeout(() => {
-        //             owlWrapperRef.current.style.transition = "none";
-        //             owlWrapperRef.current.style.transform = `translateX(0px)`;
-        //         }, 800);
-        //         slideIndex = 0;
-        //     }
-    
-        //     owlWrapperRef.current.style.transition = "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)";
-        //     owlWrapperRef.current.style.transform = `translateX(-${slideIndex * slide}px)`;
-        // }, 2000);
-    
-        // window.addEventListener("resize", updateDimensions);
-    
-        // return () => {
-        //     clearInterval(interval);
-        //     window.removeEventListener("resize", updateDimensions);
-        // };
 
-    }, [slide])
+        const updateDimensions = () => {
+            if (!owlWrapperOuterRef.current || !owlWrapperRef.current) return;
+    
+            const firstItem = owlWrapperRef.current.querySelector(".item");
+            if (!firstItem) return; // Ensure the first item exists before proceeding
+            const itemWidth = firstItem.getBoundingClientRect().width;
+            setSlide(itemWidth);
+        };
+        let slideIndex = 0;
+    
+        fetchSpecialDishes().then(() => {
+            updateDimensions();
+        });
+    
+        const interval = setInterval(() => {
+            slideIndex++;
+    
+            if (slideIndex >= specials.length - 3) {
+                setTimeout(() => {
+                    owlWrapperRef.current.style.transition = "none";
+                    owlWrapperRef.current.style.transform = `translateX(0px)`;
+                }, 800);
+                slideIndex = 0;
+            }
+    
+            owlWrapperRef.current.style.transition = "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)";
+            owlWrapperRef.current.style.transform = `translateX(-${slideIndex * slide}px)`;
+        }, 5000);
+    
+        window.addEventListener("resize", updateDimensions);
+    
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener("resize", updateDimensions);
+        };
 
-    const fetchSpecialDishes = ()=>{
-        setSpecials(getSpecialDishes())
+
+
+    }, [slide, totalSlides])
+
+    const fetchSpecialDishes = async ()=>{
+        const data = await getSpecialDishes();
+        setSpecials(data)
+        const totalPages = Math.ceil(data.length/foodsPerPage)
+        setTotalSlides(totalPages);
     }
 
     return(
@@ -78,9 +76,9 @@ export function TodaySpecialDish(){
                         <div className="special-box">
                             <div id="owl-demo">
                                 <div className="owl-wrapper-outer overflow-hidden" ref={owlWrapperOuterRef}>
-                                    <div className="owl-wrapper d-flex" ref={owlWrapperRef}>
+                                    <div className="owl-wrapper d-flex flex-row" ref={owlWrapperRef}>
                                         {specials.map((food, index)=>(
-                                            <div className="item item-type-zoom" key={index}>
+                                            <div className="item item-type-zoom col-lg-3" key={index}>
                                                 <Link to={FOOD_URI(food.name)} className="item-hover">
                                                     <div className="item-info">
                                                         <div className="headline">
