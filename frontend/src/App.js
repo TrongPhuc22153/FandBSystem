@@ -1,14 +1,28 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomeComponent from './components/pages/Home';
+import { useState } from 'react';
+import { AuthProvider } from './context/AuthProvider';
 
 function App() {
+  const [userInfo, setUserInfo] = useState({
+    info: {
+      image: undefined,
+      username: 'TrongPhuc123',
+      roles: []
+    },
+    isAuth: true
+  })
+
+
   return (
-    <Router>
-      <Routes>
-        <Route path='*' element={<HomeComponent/>}/>
-      </Routes>
-    </Router>
+    <AuthProvider value={userInfo}>
+      <Router>
+        <Routes>
+          <Route path='*' element={<HomeComponent/>}/>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

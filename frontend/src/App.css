@@ -2887,3 +2887,9 @@ textarea:focus, input:focus, select:focus, .bootstrap-select .dropdown-toggle:fo
     height:  auto;
     margin-left:  12px;
 }
+
+.user-image{
+    height: 32px;
+    width: 32px;
+    border-radius: 16px;
+}

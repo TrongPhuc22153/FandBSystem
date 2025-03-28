@@ -2,7 +2,6 @@ import { RecommendedMenu } from "../layouts/Menu";
 import { TodaySpecialDish } from "../layouts/TodaySpecialDish";
 
 import AboutUs from "../layouts/AboutUs";
-import { ReservationForm } from "../layouts/ReservationForm";
 import { Gallery } from "../layouts/Gallery";
 import Banner from "../layouts/Banner";
 
@@ -193,7 +192,7 @@ export function DefaultHomeComponent(){
                 </div>
             </div> */}
 
-            <ReservationForm/>
+            {/* <ReservationForm/> */}
         
         </>
     )

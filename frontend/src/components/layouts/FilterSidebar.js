@@ -80,7 +80,7 @@ export default function FilterSidebar() {
                                         checked={filterData.cuisines[category.name] || false}
                                         onChange={() => handleCheckboxChange('cuisines', category.name)}
                                     />
-                                    <label className="custom-control-label" htmlFor={category.name}>
+                                    <label className="custom-control-label ms-2" htmlFor={category.name}>
                                         {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
                                     </label>
                                 </div>
@@ -128,7 +128,7 @@ export default function FilterSidebar() {
                                         checked={filterData.services[service]}
                                         onChange={() => handleCheckboxChange('services', service)}
                                     />
-                                    <label className="custom-control-label" htmlFor={service}>
+                                    <label className="custom-control-label ms-2" htmlFor={service}>
                                         {service}
                                     </label>
                                 </div>

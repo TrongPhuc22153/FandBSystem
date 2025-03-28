@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { FOOD_URI } from "../../constants/WebPageURI";
 import { getSpecialDishes } from "../../api/ProductAPI";
 import { useEffect, useRef, useState } from "react";
+import config from "../../config/WebConfig";
 
 export function TodaySpecialDish(){
     const [specials, setSpecials] = useState([])
@@ -42,7 +43,7 @@ export function TodaySpecialDish(){
     
             owlWrapperRef.current.style.transition = "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)";
             owlWrapperRef.current.style.transform = `translateX(-${slideIndex * slide}px)`;
-        }, 5000);
+        }, config.TODAY_SPECIAL_SURFING_TIME);
     
         window.addEventListener("resize", updateDimensions);
     

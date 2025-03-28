@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping, faUser } from "@fortawesome/free-solid-svg-icons";
 import { 
     GALLERY_URI, 
     HOME_URI, 
@@ -9,10 +9,13 @@ import {
     RESERVATION_URI 
 } from "../../constants/WebPageURI";
 import Logo from "./Logo";
+import AuthContext from "../../context/AuthProvider";
+import { getDefaultUser } from "../../services/ImageService";
 
 export default function Header() {
     const headerRef = useRef();
     const location = useLocation();
+    const userInfo = useContext(AuthContext);
 
     useEffect(() => {
         document.addEventListener('scroll', onScroll);
@@ -71,9 +74,24 @@ export default function Header() {
                                             </li>
                                         </ul>
                                         <div className="navbar-text d-flex align-items-center">
-                                            <a className="text-white btn login-btn">
-                                                <FontAwesomeIcon icon={faUser} className="text-white" />&nbsp;Login
-                                            </a>
+                                            {userInfo.isAuth ?
+                                                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                                                    <li className={`nav-item d-flex ${isActive(HOME_URI) ? "active" : ""}`}>
+                                                        <img src={userInfo.info.image || getDefaultUser()} class="user-image" alt={userInfo.username}/>
+                                                        <span className="nav-link" to={HOME_URI}>
+                                                            {userInfo.info.username}
+                                                        </span>
+                                                    </li>
+                                                    <li className={`nav-item ${isActive(MENU_URI) ? "active" : ""}`}>
+                                                        <Link className="nav-link" to={MENU_URI}>
+                                                            <FontAwesomeIcon icon={faCartShopping} className="text-white" />&nbsp;Cart
+                                                        </Link>
+                                                    </li>
+                                                </ul>:
+                                                <a className="text-white btn login-btn">
+                                                    <FontAwesomeIcon icon={faUser} className="text-white" />&nbsp;Login
+                                                </a>
+                                            }
                                         </div>
                                     </div>
                                 </div>

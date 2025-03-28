@@ -1,3 +1,6 @@
+import { Link } from "react-router";
+import { RESERVATION_URI } from "../../constants/WebPageURI";
+
 export default function Banner(){
     return(
         <div id="banner" className="banner full-screen-mode parallax">
@@ -10,7 +13,7 @@ export default function Banner(){
                                 <h2>Accidental appearances </h2>
                                 <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diem nonummy nibh euismod</p>
                                 <div className="book-btn">
-                                    <a href="#reservation" className="table-btn hvr-underline-from-center">Book my Table</a>
+                                    <Link to={RESERVATION_URI} className="table-btn hvr-underline-from-center">Book my Table</Link>
                                 </div>
                             </div>
                         </div>

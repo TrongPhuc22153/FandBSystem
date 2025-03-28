@@ -36,6 +36,8 @@ import store from '../assets/images/store.png';
 import food from '../assets/images/food.png';
 import coffee from '../assets/images/coffee.png';
 
+import user from '../assets/images/default-user.png';
+
 export function getLogo(){
     return logo;
 }
@@ -65,6 +67,10 @@ export function getMenuItemThumbnail5(){
 export function getMenuItemThumbnail6(){
     return menuItemThumbnail6;
 } 
+// user
+export function getDefaultUser(){
+    return user;
+}
 
 // Special menu
 export function getSpecialMenu1(){
