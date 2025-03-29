@@ -86,12 +86,14 @@ export default function Header() {
                                                                 aria-haspopup="true"
                                                                 aria-expanded="false"
                                                             >
-                                                                <img
-                                                                    src={userInfo.info.image || getDefaultUser()}
-                                                                    className="user-image"
-                                                                    alt={userInfo.username}
-                                                                />
-                                                                <span className="text-white ms-2">
+                                                                <span className="image">
+                                                                    <img
+                                                                        src={userInfo.info.image || getDefaultUser()}
+                                                                        className="user-image"
+                                                                        alt={userInfo.username}
+                                                                    />
+                                                                </span>
+                                                                <span className="text-white ms-2 username">
                                                                     {userInfo.info.username}
                                                                 </span>
                                                             </button>

@@ -2764,18 +2764,25 @@ textarea:focus, input:focus, select:focus, .bootstrap-select .dropdown-toggle:fo
 }
 
 .user-image{
-    height: 2rem;
-    width: 2rem;
+    height: 100%;
+    width: 100%;
     border-radius: 1rem;
 }
 .user-btn{
     cursor: pointer;
-    display: flex;
+    display: flex !important;
     align-items: center;
     user-select: none;
 }
 .user-btn::after{
     content: none !important;
+}
+.user-btn .image{
+    background-color: white;
+    height: 2rem;
+    width: 2rem;
+    display: block;
+    border-radius: 1rem;
 }
 .notification-btn::after{
     content: none !important;
