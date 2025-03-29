@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import HomeComponent from './components/pages/Home';
+import HomeComponent from './components/pages/menu/Home';
 import { useState } from 'react';
 import { AuthProvider } from './context/AuthProvider';
 

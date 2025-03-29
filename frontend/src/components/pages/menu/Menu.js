@@ -1,13 +1,10 @@
 import { useState } from "react";
-import FilterSidebar from "../layouts/FilterSidebar";
+import FilterSidebar from "../../layouts/FilterSidebar";
 
 
 
 export default function MenuComponent() {
     const [products, setProducts] = useState([])
-
-
-
 
     return (
         <>
@@ -19,7 +16,7 @@ export default function MenuComponent() {
                 </div>
             </section>
 
-            <div className="overlay d-none"></div>
+             <div className="overlay d-none"></div>
             <div className="search-section py-5">
                 <div className="container-fluid container-xl">
                     <div className="row main-content ml-md-0">
@@ -72,6 +69,7 @@ export default function MenuComponent() {
                     
                 </div>
             </div>
+           
         </>
     );
 }

@@ -3,14 +3,17 @@ import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping, faUser } from "@fortawesome/free-solid-svg-icons";
 import { 
-    GALLERY_URI, 
+    CART_URI, 
     HOME_URI, 
+    LOGOUT_URI, 
     MENU_URI, 
-    RESERVATION_URI 
+    RESERVATION_URI,
+    USER_DASHBOARD_URI, 
 } from "../../constants/WebPageURI";
 import Logo from "./Logo";
 import AuthContext from "../../context/AuthProvider";
 import { getDefaultUser } from "../../services/ImageService";
+import NotificationDropdown from "./NotificationDropdown";
 
 export default function Header() {
     const headerRef = useRef();
@@ -45,7 +48,7 @@ export default function Header() {
                             <nav className="navbar navbar-expand-lg" id="mainNav">
                                 <div className="container-fluid">
                                     <Link className="navbar-brand js-scroll-trigger logo-header" to={HOME_URI}>
-                                        <Logo/>
+                                        <Logo />
                                     </Link>
                                     <button
                                         className="navbar-toggler"
@@ -66,32 +69,54 @@ export default function Header() {
                                             <li className={`nav-item ${isActive(MENU_URI) ? "active" : ""}`}>
                                                 <Link className="nav-link" to={MENU_URI}>Menu</Link>
                                             </li>
-                                            <li className={`nav-item ${isActive(GALLERY_URI) ? "active" : ""}`}>
-                                                <Link className="nav-link" to={GALLERY_URI}>Gallery</Link>
-                                            </li>
                                             <li className={`nav-item ${isActive(RESERVATION_URI) ? "active" : ""}`}>
                                                 <Link className="nav-link" to={RESERVATION_URI}>Reservation</Link>
                                             </li>
                                         </ul>
                                         <div className="navbar-text d-flex align-items-center">
-                                            {userInfo.isAuth ?
+                                            {userInfo.isAuth ? (
                                                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                                                    <li className={`nav-item d-flex ${isActive(HOME_URI) ? "active" : ""}`}>
-                                                        <img src={userInfo.info.image || getDefaultUser()} class="user-image" alt={userInfo.username}/>
-                                                        <span className="nav-link" to={HOME_URI}>
-                                                            {userInfo.info.username}
-                                                        </span>
+                                                    <li className={`nav-item position-relative me-2 ${isActive(HOME_URI) ? "active" : ""}`}>
+                                                        <NotificationDropdown/>
                                                     </li>
-                                                    <li className={`nav-item ${isActive(MENU_URI) ? "active" : ""}`}>
-                                                        <Link className="nav-link" to={MENU_URI}>
-                                                            <FontAwesomeIcon icon={faCartShopping} className="text-white" />&nbsp;Cart
+                                                    <li className={`nav-item mx-2 d-flex ${isActive(HOME_URI) ? "active" : ""}`}>
+                                                        <div className="btn-group">
+                                                            <button className="user-btn dropdown-toggle btn"
+                                                                data-bs-toggle="dropdown"
+                                                                aria-haspopup="true"
+                                                                aria-expanded="false"
+                                                            >
+                                                                <img
+                                                                    src={userInfo.info.image || getDefaultUser()}
+                                                                    className="user-image"
+                                                                    alt={userInfo.username}
+                                                                />
+                                                                <span className="text-white ms-2">
+                                                                    {userInfo.info.username}
+                                                                </span>
+                                                            </button>
+                                                            <div className="dropdown-menu">
+                                                                <Link className="dropdown-item" to={USER_DASHBOARD_URI}>Dashboard</Link>
+                                                                <Link className="dropdown-item" to={USER_DASHBOARD_URI}>Another action</Link>
+                                                                <Link className="dropdown-item" to={USER_DASHBOARD_URI}>Something else here</Link>
+                                                                <div className="dropdown-divider"></div>
+                                                                <a className="dropdown-item" href={LOGOUT_URI}>Logout</a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li className={`ms-2 cart-item d-flex align-items-center nav-item ${isActive(CART_URI) ? "active" : ""}`}>
+                                                        <Link className="nav-link" to={CART_URI}>
+                                                            <FontAwesomeIcon icon={faCartShopping} className="text-white" />
+                                                            &nbsp;Cart
                                                         </Link>
                                                     </li>
-                                                </ul>:
-                                                <a className="text-white btn login-btn">
-                                                    <FontAwesomeIcon icon={faUser} className="text-white" />&nbsp;Login
-                                                </a>
-                                            }
+                                                </ul>
+                                            ) : (
+                                                <button className="btn login-btn text-white">
+                                                    <FontAwesomeIcon icon={faUser} className="text-white" />
+                                                    &nbsp;Login
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
