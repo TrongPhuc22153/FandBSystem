@@ -172,7 +172,7 @@ export default function UserSidebar(){
     };
 
     return (
-        <>
+        <div id="user-navigation" className="d-flex">
             <header className="window-header">
                 <nav className="navigation">
                     <div className="navigation-top">
@@ -204,7 +204,7 @@ export default function UserSidebar(){
                 </nav>
             </header>
             
-            <div className="window-panel">
+            <div className="window-panel flex-grow-1">
                 <h2 className="section-title">
                     Site structure
                 </h2>
@@ -270,6 +270,6 @@ export default function UserSidebar(){
                     ))}
                 </ul>
             </div>
-        </>
+        </div>
     );
 }

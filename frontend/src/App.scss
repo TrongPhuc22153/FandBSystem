@@ -24,6 +24,7 @@ img {
 #user-dashboard{
     line-height: 1.5;
     overflow-y: hidden;
+    
 }
 
 .window {
@@ -141,9 +142,11 @@ img {
 }
 
 .window-main-body {
-   display: grid;
-   grid-template-columns: 4fr 1fr;
-   grid-template-rows: calc(100vh - 62px);
+   display: flex;
+   // overflow-y: scroll;
+   // display: grid;
+   // grid-template-columns: 4fr 1fr;
+   // grid-template-rows: calc(100vh - 62px);
    
 }
 
