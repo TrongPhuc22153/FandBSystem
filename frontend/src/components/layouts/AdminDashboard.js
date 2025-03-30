@@ -1,9 +1,4 @@
 import { Line, Pie, Bar } from "react-chartjs-2";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridWeekPlugin from "@fullcalendar/timegrid";
-import listPlugin from "@fullcalendar/list";
-import interactionPlugin from "@fullcalendar/interaction";
 import {
 	Chart as ChartJS,
 	CategoryScale,
@@ -15,7 +10,6 @@ import {
 	Tooltip,
 	Legend,
 } from "chart.js";
-import { useState } from "react";
 
 ChartJS.register(
 	CategoryScale,
@@ -30,10 +24,6 @@ ChartJS.register(
 
 
 export default function AdminDashboard() {
-	const [events, setEvents] = useState([
-        { title: "Meeting", start: new Date() },
-        { title: "Conference", start: new Date(new Date().setDate(new Date().getDate() + 3)) },
-    ]);
 	const data = {
 		analytics: {
 			title: "Analytics Dashboard",
@@ -95,7 +85,7 @@ export default function AdminDashboard() {
 				</h1>
 				<div className="row">
 					{data.analytics.stats.map((stat, index) => (
-						<div className="col-sm-6" key={index}>
+						<div className="col-sm-3" key={index}>
 							<div className="card">
 								<div className="card-body">
 									<div className="row">
@@ -119,7 +109,7 @@ export default function AdminDashboard() {
 					))}
 				</div>
 				<div className="row">
-					<div className="col-xl-6 col-xxl-7">
+					<div className="col-xl-7 col-xxl-7">
 						<div className="card flex-fill w-100">
 							<div className="card-header">
 								<h5 className="card-title mb-0">{data.recentMovement.title}</h5>
@@ -129,7 +119,31 @@ export default function AdminDashboard() {
 							</div>
 						</div>
 					</div>
-					<div className="col-12 col-md-6 col-xxl-3">
+					<div className="col-12 col-lg-5 col-xxl-5">
+						<div className="card flex-fill w-100">
+							<div className="card-header">
+								<h5 className="card-title mb-0">{data.monthlySales.title}</h5>
+							</div>
+							<div className="card-body d-flex w-100">
+								<Bar data={data.monthlySales.chartData} />
+							</div>
+						</div>
+					</div>
+
+					<div className="col-12 col-md-8 col-xxl-8">
+						<div className="card flex-fill w-100">
+							<div className="card-header">
+								<h5 className="card-title mb-0">{data.browserUsage.title}</h5>
+							</div>
+							<div className="card-body d-flex">
+								<div className="align-self-center w-100">
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div className="col-12 col-md-4 col-xxl-4">
 						<div className="card flex-fill w-100">
 							<div className="card-header">
 								<h5 className="card-title mb-0">{data.browserUsage.title}</h5>
@@ -138,16 +152,6 @@ export default function AdminDashboard() {
 								<div className="align-self-center w-100">
 									<Pie data={data.browserUsage.chartData} />
 								</div>
-							</div>
-						</div>
-					</div>
-					<div className="col-12 col-lg-4 col-xxl-3">
-						<div className="card flex-fill w-100">
-							<div className="card-header">
-								<h5 className="card-title mb-0">{data.monthlySales.title}</h5>
-							</div>
-							<div className="card-body d-flex w-100">
-								<Bar data={data.monthlySales.chartData} />
 							</div>
 						</div>
 					</div>
@@ -169,20 +173,8 @@ export default function AdminDashboard() {
 								<h5 className="card-title mb-0">Calendar</h5>
 							</div>
 							<div className="card-body">
-								<FullCalendar
-									plugins={[dayGridPlugin, timeGridWeekPlugin, listPlugin, interactionPlugin]}
-									initialView="dayGridMonth"
-									headerToolbar={{
-										left: "prev,next today",
-										center: "title",
-										right: "dayGridMonth,timeGridWeek,listWeek",
-									}}
-									events={events}
-									editable={true}
-									selectable={true}
-									dateClick={(info) => alert(`Date clicked: ${info.dateStr}`)}
-									height="auto" // Ensure proper height
-								/>
+
+
 							</div>
 						</div>
 					</div>

@@ -2773,6 +2773,7 @@ textarea:focus, input:focus, select:focus, .bootstrap-select .dropdown-toggle:fo
     display: flex !important;
     align-items: center;
     user-select: none;
+    border: 0 !important;
 }
 .user-btn::after{
     content: none !important;
