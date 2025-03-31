@@ -1,3 +1,5 @@
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 
 const food = {
@@ -13,44 +15,27 @@ const food = {
         "https://cdn.pixabay.com/photo/2015/07/24/18/38/model-858749_960_720.jpg",
         "https://cdn.pixabay.com/photo/2015/07/24/18/37/model-858748_960_720.jpg",
         "https://cdn.pixabay.com/photo/2015/07/24/18/39/model-858751_960_720.jpg"
-    ]
+    ],
+    available_stock: 1784,
+    number_of_orders: 5458,
+    revenue: "$8,57,014"
 };
-
-const similarProducts = [
-    {
-        title: "Lovely black dress",
-        price: 100,
-        image: "https://source.unsplash.com/gsKdPcIyeGg"
-    },
-    {
-        title: "Lovely Dress with patterns",
-        price: 85,
-        image: "https://source.unsplash.com/sg_gRhbYXhc"
-    },
-    {
-        title: "Lovely fashion dress",
-        price: 200,
-        image: "https://source.unsplash.com/gJZQcirK8aw"
-    },
-    {
-        title: "Lovely red dress",
-        price: 120,
-        image: "https://source.unsplash.com/qbB_Z2pXLEU"
-    }
-];
-
-export default function ProductComponent() {
+export default function ProductAdmin(){
     const [product, setProduct] = useState(food)
     const [quantity, setQuantity] = useState(1);
-
+    
     const handleQuantityChange = (event) => {
         const value = Math.max(0, Math.min(5, Number(event.target.value))); // Ensure value is between 0 and 5
         setQuantity(value);
     };
 
-    return (
-        <>
-            <div className="container mb-5" style={{marginTop: "8rem"}}>
+
+    return(
+        <div className="container-fluid">
+            <h1 className="h3 my-3">
+                <strong>Product Details</strong>
+            </h1>
+            <div className="mb-5">
                 <div className="row">
                     <div className="col-md-5">
                         <div className="main-img">
@@ -65,14 +50,17 @@ export default function ProductComponent() {
                         </div>
                     </div>
 
-                    <div className="col-md-7">
+                    <div className="col-md-7 d-flex flex-column justify-content-between">
                         <div className="main-description px-2">
                             <div className="category text-bold">
                                 Category: {product.category}
                             </div>
 
                             <div className="product-title text-bold my-3">
-                                {product.title}
+                                {product.title} 
+                                <button className="btn">
+                                    <FontAwesomeIcon icon={faPenToSquare}/>
+                                </button>
                             </div>
 
                             <div className="price-area my-4">
@@ -128,27 +116,27 @@ export default function ProductComponent() {
                                 <p className="font-weight-bold mb-0"><span><i className="fa-solid fa-filter"></i></span> <b>Delivery options</b></p>
                                 <p className="text-secondary">View delivery options here</p>
                             </div>
+
+                        </div>
+                        <div className="my-4">
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <h5 className="font-weight-bold mb-0">Available Stock:</h5>
+                                    <p>{product.available_stock}</p>
+                                </div>
+                                <div className="col-md-4">
+                                    <h5 className="font-weight-bold mb-0">Number of Orders:</h5>
+                                    <p>{product.number_of_orders}</p>
+                                </div>
+                                <div className="col-md-4">
+                                    <h5 className="font-weight-bold mb-0">Revenue:</h5>
+                                    <p>{product.revenue}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div className="container similar-products my-4">
-                <hr />
-                <p className="display-5">Similar Products</p>
-
-                <div className="row">
-                    {similarProducts.map((product, index) => (
-                        <div className="col-md-3" key={index}>
-                            <div className="similar-product">
-                                <img className="w-100" src={product.image} alt="Preview" />
-                                <p className="title">{product.title}</p>
-                                <p className="price">${product.price}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </>
-    );
+        </div>
+    )
 }

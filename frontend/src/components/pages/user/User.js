@@ -1,24 +1,30 @@
-import AdminDashboard from "../../layouts/AdminDashboard";
-import UserHeader from "../../layouts/UserHeader";
+import { Route, Routes } from "react-router";
 import UserSidebar from "../../layouts/UserSidebar";
+import AdminDashboard from "./admin/AdminDashboard";
+import ProductManagement from "./admin/ProductManagement";
+import ProductAdmin from "./admin/ProductAdmin";
 
 export default function UserComponent(){
     return(
         <div id="user-dashboard">
-            <div className="row">
-                <div className="col-md-3">
-                    <UserSidebar/>
+            <UserSidebar/>
+            <main className="window-main">
+                {/* <UserHeader/> */}
+                <div className="window-main-body h-100">
+                    <Routes>
+                        <Route path="*" element={<AdminDashboard/>}/>
+                        <Route path="/products" element={<ProductManagement/>} />
+                        <Route path="/product" element={<ProductAdmin/>} />
+                    </Routes>;
+                    
                 </div>
-                <div className="col-md-9">
-                    <main className="window-main">
-                        <UserHeader/>
-                        <div className="window-main-body">
-                            {/* <UserContent/> */}
-                            <AdminDashboard/>
-                        </div>
-                    </main>
+            </main>
+            {/* <div className="window">
+                <div className="col-md-3" style={{height:"100vh"}}>
                 </div>
-            </div>
+                <div className="col-md-9" style={{height:"100vh"}}>
+                </div>
+            </div> */}
         </div>
     )
 }

@@ -2,7 +2,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
 
-
+:root{
+   --sidebar-wdith: 22rem
+}
 // body {
 //    font-family:  "Inter", sans-serif;
 //    line-height: 1.5;
@@ -22,9 +24,13 @@ img {
 }
 
 #user-dashboard{
-    line-height: 1.5;
-    overflow-y: hidden;
-    
+   line-height: 1.5;
+   width: 100vw;
+   display: flex;
+   height: 100vh;
+
+
+   // overflow: hidden;
 }
 
 .window {
@@ -138,11 +144,13 @@ img {
 }
 
 .window-main {
-   
+   overflow-y: scroll;
+   height: 100%;
+   width: 100%;
 }
 
 .window-main-body {
-   display: flex;
+   width: 100%;
    // overflow-y: scroll;
    // display: grid;
    // grid-template-columns: 4fr 1fr;
@@ -351,6 +359,8 @@ img {
    padding: 2rem;
    position: relative;
    overflow-y: auto;
+   width: var(--sidebar-wdith);
+   min-width: var(--sidebar-wdith);
    
 
    &::-webkit-scrollbar {

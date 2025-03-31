@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getProductsCart } from "../../../api/CartAPI";
+import { Link } from "react-router";
+import { CHECKOUT_ORDER_URI } from "../../../constants/WebPageURI";
 
 
 
@@ -130,12 +132,12 @@ export default function CartComponent() {
                                     <h6 className="mb-1 text-right">${total.toFixed(2)}</h6>
                                 </div>
                                 <div className="d-flex justify-content-end px-4">
-                                    <button className="btn-block btn-blue">
+                                    <Link className="btn-block btn-blue" to={CHECKOUT_ORDER_URI}>
                                         <span>
                                             <span id="checkout" className="me-2">Checkout</span>
                                             <span id="check-amt">${total.toFixed(2)}</span>
                                         </span>
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

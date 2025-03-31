@@ -22,7 +22,7 @@ function App() {
       <Router>
         <Routes>
           <Route path='*' element={<HomeComponent/>}/>
-          <Route path='/user' element={<UserComponent/>}/>
+          <Route path='/user/*' element={<UserComponent/>}/>
         </Routes>
       </Router>
     </AuthProvider>

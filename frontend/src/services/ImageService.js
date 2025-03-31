@@ -38,6 +38,25 @@ import coffee from '../assets/images/coffee.png';
 
 import user from '../assets/images/default-user.png';
 
+import orderIcon from "../assets/images/dashboard-icons/order-icon.png";
+import customerIcon from "../assets/images/dashboard-icons/customer-icon.png";
+import earningIcon from '../assets/images/dashboard-icons/earning-icon.png';
+import saleIcon from "../assets/images/dashboard-icons/sales-icon.png";
+
+export function getOrderIcon(){
+    return orderIcon;
+}
+export function getCustomerIcon(){
+    return customerIcon;
+}
+export function getEarningIcon(){
+    return earningIcon;
+}
+export function getSaleIcon(){
+    return saleIcon;
+}
+
+
 export function getLogo(){
     return logo;
 }

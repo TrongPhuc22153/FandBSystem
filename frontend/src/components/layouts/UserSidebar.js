@@ -1,21 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router";
+import { HOME_URI } from "../../constants/WebPageURI";
 
 const items = [
     { 
         title: "Dashboard", 
         href: "/user/dashboard", 
         icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 9.5L12 4L21 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M19 13V19.4C19 19.7314 18.7314 20 18.4 20H5.6C5.26863 20 5 19.7314 5 19.4V13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>,
-        tree_branchs: []
-    },
-    { 
-        title: "Pages", 
-        href: "/user/pages", 
-        icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4V3.6C3 3.26863 3.26863 3 3.6 3Z" stroke="currentColor" strokeWidth="1.5" /><path d="M9.75 9.75V21" stroke="currentColor" strokeWidth="1.5" /><path d="M3 9.75H21" stroke="currentColor" strokeWidth="1.5" /></svg>, 
         tree_branchs: [
             {
                 title: "Home",
-                href: "/pages/home",
+                href: HOME_URI,
                 children: [],
                 active: false
             },
@@ -86,6 +81,12 @@ const items = [
         ]
     },
     { 
+        title: "Pages", 
+        href: "/user/pages", 
+        icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4V3.6C3 3.26863 3.26863 3 3.6 3Z" stroke="currentColor" strokeWidth="1.5" /><path d="M9.75 9.75V21" stroke="currentColor" strokeWidth="1.5" /><path d="M3 9.75H21" stroke="currentColor" strokeWidth="1.5" /></svg>, 
+        tree_branchs: []
+    },
+    { 
         title: "Media & Files", 
         href: "/user/media-files", 
         icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.6954 7.18536L11.6954 11.1854L12.3046 9.81464L3.3046 5.81464L2.6954 7.18536ZM12.75 21.5V10.5H11.25V21.5H12.75ZM12.3046 11.1854L21.3046 7.18536L20.6954 5.81464L11.6954 9.81464L12.3046 11.1854Z" fill="currentColor" /><path d="M3 17.1101V6.88992C3 6.65281 3.13964 6.43794 3.35632 6.34164L11.7563 2.6083C11.9115 2.53935 12.0885 2.53935 12.2437 2.6083L20.6437 6.34164C20.8604 6.43794 21 6.65281 21 6.88992V17.1101C21 17.3472 20.8604 17.5621 20.6437 17.6584L12.2437 21.3917C12.0885 21.4606 11.9115 21.4606 11.7563 21.3917L3.35632 17.6584C3.13964 17.5621 3 17.3472 3 17.1101Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M7.5 4.5L16.1437 8.34164C16.3604 8.43794 16.5 8.65281 16.5 8.88992V12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>,
@@ -119,7 +120,7 @@ const items = [
 export default function UserSidebar(){
 
     const [navigationItems, setNavigationItems] = useState(items)
-    const [selectedNavigationItem, setSelectedNavigationItem] = useState(1)
+    const [selectedNavigationItem, setSelectedNavigationItem] = useState(0)
     const [searchValue, setSearchValue] = useState("");
 
 
@@ -172,7 +173,7 @@ export default function UserSidebar(){
     };
 
     return (
-        <div id="user-navigation" className="d-flex">
+        <div id="user-navigation" className="d-flex h-100">
             <header className="window-header">
                 <nav className="navigation">
                     <div className="navigation-top">
@@ -222,7 +223,7 @@ export default function UserSidebar(){
                         <li key={index} className="tree-branch">
                             <div className="tree-branch-action">
                                 <Link 
-                                    to="#" 
+                                    to={branch.href}
                                     className={`tree-branch-link ${branch.active ? "active" : ''}`}
                                     onClick={() => handleLeafSelect(branch.title)}
                                 >
@@ -236,7 +237,7 @@ export default function UserSidebar(){
                                         <li key={subIndex} className="tree-branch tree-branch--sub">
                                             <div className="tree-branch-action">
                                                 <Link 
-                                                    to="#" 
+                                                    to={subBranch.href}
                                                     className={`tree-branch-link tree-branch-link--sub ${subBranch.active ? "active" : ''}`}
                                                     onClick={() => handleLeafSelect(subBranch.title)}
                                                 >
@@ -250,7 +251,7 @@ export default function UserSidebar(){
                                                         <li key={subSubIndex} className="tree-branch tree-branch--sub">
                                                             <div className="tree-branch-action">
                                                                 <Link 
-                                                                    to="#" 
+                                                                    to={subSubBranch.href}
                                                                     className={`tree-branch-link tree-branch-link--sub ${subSubBranch.active ? "active" : ''}`}
                                                                     onClick={() => handleLeafSelect(subSubBranch.title)}
                                                                 >
