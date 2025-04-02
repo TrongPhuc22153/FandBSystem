@@ -4,16 +4,16 @@ import { TodaySpecialDish } from "../../layouts/TodaySpecialDish";
 import AboutUs from "../../layouts/AboutUs";
 import Banner from "../../layouts/Banner";
 
-export function DefaultHomeComponent(){
-    return(
-        <>
-            <Banner/>
+export function DefaultHomeComponent() {
+  return (
+    <>
+      <Banner />
 
-            <AboutUs/>
+      <AboutUs />
 
-            <TodaySpecialDish/>
+      <TodaySpecialDish />
 
-            <RecommendedMenu/>
-        </>
-    )
+      <RecommendedMenu />
+    </>
+  );
 }

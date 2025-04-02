@@ -1,35 +1,44 @@
 import Logo from "./Logo";
 
-export function Footer(){
-    return(
-        <div id="footer" className="footer-main">
-            <div className="footer-news pad-top-100 pad-bottom-70 parallax">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div className="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
-                                <h2 className="ft-title color-white text-center"> Newsletter </h2>
-                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
-                            </div>
-                            <form>
-                                <input type="email" placeholder="Enter your e-mail id"/>
-                                <a href="#" className="orange-btn"><i className="fa fa-paper-plane-o" aria-hidden="true"></i></a>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+export function Footer() {
+  return (
+    <div id="footer" className="footer-main">
+      <div className="footer-news pad-top-100 pad-bottom-70 parallax">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <div
+                className="wow fadeIn"
+                data-wow-duration="1s"
+                data-wow-delay="0.1s"
+              >
+                <h2 className="ft-title color-white text-center">
+                  {" "}
+                  Newsletter{" "}
+                </h2>
+                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+              </div>
+              <form>
+                <input type="email" placeholder="Enter your e-mail id" />
+                <a href="#" className="orange-btn">
+                  <i className="fa fa-paper-plane-o" aria-hidden="true"></i>
+                </a>
+              </form>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div className="footer-box pad-top-70">
-                <div className="container">
-                    <div className="row">
-                        <div className="footer-in-main">
-                            <div className="footer-logo">
-                                <div className="text-center">
-                                    <Logo/>
-                                </div>
-                            </div>
-                            {/* <div className="row">
+      <div className="footer-box pad-top-70">
+        <div className="container">
+          <div className="row">
+            <div className="footer-in-main">
+              <div className="footer-logo">
+                <div className="text-center">
+                  <Logo />
+                </div>
+              </div>
+              {/* <div className="row">
                                 <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                     <div className="footer-box-a">
                                         <h3>About Us</h3>
@@ -111,10 +120,10 @@ export function Footer(){
                                     </div>
                                 </div>
                             </div> */}
-                        </div>
-                    </div>
-                </div>
             </div>
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  );
 }

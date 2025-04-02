@@ -22,6 +22,7 @@ export function getPurchasedOrder(){
                 image: "https://i.imgur.com/hOsIes2.png",
             },
         ],
+        subtotal: "$847.95",
         shipping: "$20.00",
         total: "$867.95", // Updated total to include shipping
     };
