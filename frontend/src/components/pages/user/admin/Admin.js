@@ -5,6 +5,7 @@ import ProductManagement from "./product/ProductManagement";
 import ProductAdmin from "./product/ProductAdmin";
 import OrderDetailsAdmin from "./order/OrderDetailsAdmin";
 import CustomersAdmin from "./customer/CustomersAdmin";
+import NotificationsAdmin from "./notification/NotificationsAdmin";
 
 export default function AdminComponent() {
   return (
@@ -15,6 +16,7 @@ export default function AdminComponent() {
       <Route path="/products" element={<ProductManagement />} />
       <Route path="/product" element={<ProductAdmin />} />
       <Route path="/customers" element={<CustomersAdmin />} />
+      <Route path="/notifications" element={<NotificationsAdmin />} />
     </Routes>
   );
 }

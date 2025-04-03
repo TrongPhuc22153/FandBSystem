@@ -43,6 +43,22 @@ import customerIcon from "../assets/images/dashboard-icons/customer-icon.png";
 import earningIcon from '../assets/images/dashboard-icons/earning-icon.png';
 import saleIcon from "../assets/images/dashboard-icons/sales-icon.png";
 
+import paypal from '../assets/images/thirdparty/paypal.png';
+import cod from '../assets/images/thirdparty/cod.png';
+import zalopay from '../assets/images/thirdparty/zalopay.png';
+
+
+export function getPayPal(){
+    return paypal;
+}
+export function getCOD(){
+    return cod;
+}
+export function getZaloPay(){
+    return zalopay;
+}
+
+
 export function getOrderIcon(){
     return orderIcon;
 }
