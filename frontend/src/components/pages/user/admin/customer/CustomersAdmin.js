@@ -9,6 +9,7 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { getDefaultUser } from "../../../../../services/ImageService";
+import { Pagination } from "../../../../layouts/Pagination";
 
 const dummyData = [
   {
@@ -169,7 +170,14 @@ export default function CustomersAdmin() {
     }
   };
 
-  const searchCustomers = () => {};
+  const searchCustomers = (e) => {
+    e.preventDefault();
+    const searchTerm = searchValue.toLowerCase();
+    const filteredCustomers = dummyData.filter((customer) =>
+      customer.contact_name.toLowerCase().includes(searchTerm)
+    );
+    setCustomers(filteredCustomers);
+  };
 
   return (
     <main className="content overflow-scroll px-5 py-3">
@@ -195,9 +203,9 @@ export default function CustomersAdmin() {
               <div className="row mb-3">
                 <div className="col-md-8"></div>
                 <div className="col-md-4">
-                  <form className="form-inline d-flex">
+                  <form className="form-inline d-flex" onSubmit={searchCustomers}>
                     <input
-                      className="form-control mr-sm-2"
+                      className="form-control mr-sm-2 me-2"
                       type="search"
                       placeholder="Search"
                       aria-label="Search"
@@ -206,7 +214,6 @@ export default function CustomersAdmin() {
                     />
                     <button
                       className="btn btn-outline-success my-2 my-sm-0"
-                      onClick={searchCustomers}
                       type="submit"
                     >
                       Search
@@ -316,37 +323,7 @@ export default function CustomersAdmin() {
                   ))}
                 </tbody>
               </table>
-              <nav className="mt-3">
-                <ul className="pagination float-end">
-                  <li className="page-item">
-                    <Link className="page-link" to="#" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                      <span className="sr-only">Previous</span>
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#">
-                      1
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#">
-                      2
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#">
-                      3
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
-                      <span className="sr-only">Next</span>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
+              <Pagination/>
             </div>
           </div>
         </div>

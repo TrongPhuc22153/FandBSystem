@@ -1,6 +1,6 @@
 import config from "../../../config/WebConfig";
 
-const SalesTable = ({salesData}) => {
+const SalesTable = ({ salesData }) => {
   return (
     <div className="card flex-fill">
       <div className="card-header">
@@ -21,7 +21,14 @@ const SalesTable = ({salesData}) => {
               <td>{sale.name}</td>
               <td className="d-none d-xl-table-cell">{sale.date}</td>
               <td>
-                <span className={`badge ${config.orderStatusClasses[sale.status]}`}>{sale.status}</span>
+                <span
+                  className={`badge ${
+                    config.order_status.classes[sale.status] ||
+                    "badge bg-secondary"
+                  }`}
+                >
+                  {sale.status}
+                </span>
               </td>
               <td>{sale.total_price}</td>
             </tr>

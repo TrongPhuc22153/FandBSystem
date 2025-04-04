@@ -1,556 +1,318 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPhone, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+
 const customerData = {
-    contact_name: "John Doe",
-    image: "https://randomuser.me/api/portraits/men/45.jpg",
-    email: "johndoe@example.com",
-    phone: "+1 (555) 123-4567",
+  contact_name: "John Doe",
+  image: "https://randomuser.me/api/portraits/men/45.jpg",
+  email: "johndoe@example.com",
+  phone: "+1 (555) 123-4567",
 };
-const messages = [
-    {
-        id: 1,
-        sender: "John Doe",
-        senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
-        message: "Hey, I just wanted to check in on our project.",
-        timestamp: "2025-04-03 09:00 AM",
-    },
-    {
-        id: 2,
-        sender: "John Doe",
-        senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
-        message: "Have you had a chance to review the latest update?",
-        timestamp: "2025-04-03 09:15 AM",
-    },
-    {
-        id: 3,
-        sender: "John Doe",
-        senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
-        message: "Let me know if you need any changes.",
-        timestamp: "2025-04-03 09:30 AM",
-    },
-    {
-        id: 4,
-        sender: "John Doe",
-        senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
-        message: "Also, do we have a deadline for this?",
-        timestamp: "2025-04-03 09:45 AM",
-    },
-    {
-        id: 5,
-        sender: "John Doe",
-        senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
-        message: "I'll be available all day if you need anything.",
-        timestamp: "2025-04-03 10:00 AM",
-    },
-];
+// const messages = [
+//   {
+//     id: 1,
+//     sender: "John Doe",
+//     senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
+//     message: "Hey, I just wanted to check in on our project.",
+//     timestamp: "2025-04-03 09:00 AM",
+//   },
+//   {
+//     id: 2,
+//     sender: "John Doe",
+//     senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
+//     message: "Have you had a chance to review the latest update?",
+//     timestamp: "2025-04-03 09:15 AM",
+//   },
+//   {
+//     id: 3,
+//     sender: "John Doe",
+//     senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
+//     message: "Let me know if you need any changes.",
+//     timestamp: "2025-04-03 09:30 AM",
+//   },
+//   {
+//     id: 4,
+//     sender: "John Doe",
+//     senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
+//     message: "Also, do we have a deadline for this?",
+//     timestamp: "2025-04-03 09:45 AM",
+//   },
+//   {
+//     id: 5,
+//     sender: "John Doe",
+//     senderImage: "https://randomuser.me/api/portraits/men/1.jpg",
+//     message: "I'll be available all day if you need anything.",
+//     timestamp: "2025-04-03 10:00 AM",
+//   },
+// ];
 const users = [
-    {
-        id: 1,
-        name: "John Doe",
-        email: "john.doe@example.com",
-        phone: "+1 123-456-7890",
-        image: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-        id: 2,
-        name: "Alice Smith",
-        email: "alice.smith@example.com",
-        phone: "+1 987-654-3210",
-        image: "https://randomuser.me/api/portraits/women/2.jpg",
-    },
-    {
-        id: 3,
-        name: "Michael Johnson",
-        email: "michael.johnson@example.com",
-        phone: "+1 555-678-9012",
-        image: "https://randomuser.me/api/portraits/men/3.jpg",
-    },
-    {
-        id: 4,
-        name: "Emma Brown",
-        email: "emma.brown@example.com",
-        phone: "+1 444-123-5678",
-        image: "https://randomuser.me/api/portraits/women/4.jpg",
-    },
-    {
-        id: 5,
-        name: "David Wilson",
-        email: "david.wilson@example.com",
-        phone: "+1 333-890-2345",
-        image: "https://randomuser.me/api/portraits/men/5.jpg",
-    },
+  {
+    id: 1,
+    name: "John Doe",
+    email: "john.doe@example.com",
+    phone: "+1 123-456-7890",
+    image: "https://randomuser.me/api/portraits/men/1.jpg",
+    isOnline: true,
+  },
+  {
+    id: 2,
+    name: "Alice Smith",
+    email: "alice.smith@example.com",
+    phone: "+1 987-654-3210",
+    image: "https://randomuser.me/api/portraits/women/2.jpg",
+    isOnline: false,
+  },
+  {
+    id: 3,
+    name: "Michael Johnson",
+    email: "michael.johnson@example.com",
+    phone: "+1 555-678-9012",
+    image: "https://randomuser.me/api/portraits/men/3.jpg",
+    isOnline: true,
+  },
+  {
+    id: 4,
+    name: "Emma Brown",
+    email: "emma.brown@example.com",
+    phone: "+1 444-123-5678",
+    image: "https://randomuser.me/api/portraits/women/4.jpg",
+    isOnline: false,
+  },
+  {
+    id: 5,
+    name: "David Wilson",
+    email: "david.wilson@example.com",
+    phone: "+1 333-890-2345",
+    image: "https://randomuser.me/api/portraits/men/5.jpg",
+    isOnline: true,
+  },
 ];
-
-
+const dummyMessages = [
+  {
+    id: 1,
+    sender: "me",
+    content: "Hey Sharon! How’s it going?",
+    time: "2:33 am",
+    avatar: "https://bootdey.com/img/Content/avatar/avatar1.png",
+    name: "You",
+  },
+  {
+    id: 2,
+    sender: "them",
+    content: "I’m doing well, just getting started on my day!",
+    time: "2:34 am",
+    avatar: "https://bootdey.com/img/Content/avatar/avatar3.png",
+    name: "Sharon Lessman",
+  },
+  {
+    id: 3,
+    sender: "me",
+    content: "Nice! Got any exciting plans?",
+    time: "2:35 am",
+    avatar: "https://bootdey.com/img/Content/avatar/avatar1.png",
+    name: "You",
+  },
+  {
+    id: 4,
+    sender: "them",
+    content: "Just working on a new project, I’ll tell you more soon!",
+    time: "2:36 am",
+    avatar: "https://bootdey.com/img/Content/avatar/avatar3.png",
+    name: "Sharon Lessman",
+  },
+];
 
 export default function NotificationsAdmin() {
+  const [filteredUsers, setFilteredUsers] = useState(users);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [customer, setCustomer] = useState({...customerData});
+  const [messages, setMessages] = useState([...dummyMessages]);
 
-
-    return (
-        <>
-            {/* <main className="content">
-                <div className="container p-0">
-
-                    <h1 className="h3 mb-3">Messages</h1>
-
-                    <div className="card">
-                        <div className="row g-0">
-                            <div className="col-12 col-lg-5 col-xl-3 border-right">
-
-                                <div className="px-4 d-none d-md-block">
-                                    <div className="d-flex align-items-center">
-                                        <div className="flex-grow-1">
-                                            <input type="text" className="form-control my-3" placeholder="Search..." />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <a href="#" className="list-group-item list-group-item-action border-0">
-                                    <div className="badge bg-success float-right">5</div>
-                                    <div className="d-flex align-items-start">
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar5.png" className="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40" />
-                                        <div className="flex-grow-1 ml-3">
-                                            Vanessa Tucker
-                                            <div className="small"><span className="fas fa-circle chat-online"></span> Online</div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" className="list-group-item list-group-item-action border-0">
-                                    <div className="badge bg-success float-right">2</div>
-                                    <div className="d-flex align-items-start">
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" className="rounded-circle mr-1" alt="William Harris" width="40" height="40" />
-                                        <div className="flex-grow-1 ml-3">
-                                            William Harris
-                                            <div className="small"><span className="fas fa-circle chat-online"></span> Online</div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" className="list-group-item list-group-item-action border-0">
-                                    <div className="d-flex align-items-start">
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                        <div className="flex-grow-1 ml-3">
-                                            Sharon Lessman
-                                            <div className="small"><span className="fas fa-circle chat-online"></span> Online</div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" className="list-group-item list-group-item-action border-0">
-                                    <div className="d-flex align-items-start">
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar4.png" className="rounded-circle mr-1" alt="Christina Mason" width="40" height="40" />
-                                        <div className="flex-grow-1 ml-3">
-                                            Christina Mason
-                                            <div className="small"><span className="fas fa-circle chat-offline"></span> Offline</div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" className="list-group-item list-group-item-action border-0">
-                                    <div className="d-flex align-items-start">
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar5.png" className="rounded-circle mr-1" alt="Fiona Green" width="40" height="40" />
-                                        <div className="flex-grow-1 ml-3">
-                                            Fiona Green
-                                            <div className="small"><span className="fas fa-circle chat-offline"></span> Offline</div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" className="list-group-item list-group-item-action border-0">
-                                    <div className="d-flex align-items-start">
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" className="rounded-circle mr-1" alt="Doris Wilder" width="40" height="40" />
-                                        <div className="flex-grow-1 ml-3">
-                                            Doris Wilder
-                                            <div className="small"><span className="fas fa-circle chat-offline"></span> Offline</div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" className="list-group-item list-group-item-action border-0">
-                                    <div className="d-flex align-items-start">
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar4.png" className="rounded-circle mr-1" alt="Haley Kennedy" width="40" height="40" />
-                                        <div className="flex-grow-1 ml-3">
-                                            Haley Kennedy
-                                            <div className="small"><span className="fas fa-circle chat-offline"></span> Offline</div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" className="list-group-item list-group-item-action border-0">
-                                    <div className="d-flex align-items-start">
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Jennifer Chang" width="40" height="40" />
-                                        <div className="flex-grow-1 ml-3">
-                                            Jennifer Chang
-                                            <div className="small"><span className="fas fa-circle chat-offline"></span> Offline</div>
-                                        </div>
-                                    </div>
-                                </a>
-
-                                <hr className="d-block d-lg-none mt-1 mb-0" />
-                            </div>
-                            <div className="col-12 col-lg-7 col-xl-9">
-                                <div className="py-2 px-4 border-bottom d-none d-lg-block">
-                                    <div className="d-flex align-items-center py-1">
-                                        <div className="position-relative">
-                                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                        </div>
-                                        <div className="flex-grow-1 pl-3">
-                                            <strong>Sharon Lessman</strong>
-                                            <div className="text-muted small"><em>Typing...</em></div>
-                                        </div>
-                                        <div>
-                                            <button className="btn btn-primary btn-lg mr-1 px-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-phone feather-lg"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
-                                            <button className="btn btn-info btn-lg mr-1 px-3 d-none d-md-inline-block"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-video feather-lg"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></button>
-                                            <button className="btn btn-light border btn-lg px-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-more-horizontal feather-lg"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="position-relative">
-                                    <div className="chat-messages p-4">
-
-                                        <div className="chat-message-right pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:33 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:34 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:35 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Cum ea graeci tractatos.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:36 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sed pulvinar, massa vitae interdum pulvinar, risus lectus porttitor magna, vitae commodo lectus mauris et velit.
-                                                Proin ultricies placerat imperdiet. Morbi varius quam ac venenatis tempus.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:37 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Cras pulvinar, sapien id vehicula aliquet, diam velit elementum orci.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:38 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:39 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:40 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Cum ea graeci tractatos.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:41 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Morbi finibus, lorem id placerat ullamcorper, nunc enim ultrices massa, id dignissim metus urna eget purus.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:42 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sed pulvinar, massa vitae interdum pulvinar, risus lectus porttitor magna, vitae commodo lectus mauris et velit.
-                                                Proin ultricies placerat imperdiet. Morbi varius quam ac venenatis tempus.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:43 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:44 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                <div className="flex-grow-0 py-3 px-4 border-top">
-                                    <div className="input-group">
-                                        <input type="text" className="form-control" placeholder="Type your message" />
-                                        <button className="btn btn-primary">Send</button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main> */}
-            <main className="content overflow-scroll px-5 py-3 h-100">
-                <h1 className="h3 my-3">
-                    <strong>Chat</strong>
-                </h1>
-                <div className="container-fluid p-0">
-                    <div className="row">
-                        <div className="col-md-3">
-                            <div className="card card-body mb-3">
-                                <h5 className="card-title">Notifications</h5>
-                                <p className="card-text">You have 0 notifications.</p>
-                            </div>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="card card-body mb-3">
-                                <div className="py-2 px-4 border-bottom d-none d-lg-block">
-                                    <div className="d-flex align-items-center py-1">
-                                        <div className="position-relative">
-                                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                        </div>
-                                        <div className="flex-grow-1 pl-3">
-                                            <strong>Sharon Lessman</strong>
-                                            <div className="text-muted small"><em>Typing...</em></div>
-                                        </div>
-                                        <div>
-                                            <button className="btn btn-primary btn-lg mr-1 px-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-phone feather-lg"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
-                                            <button className="btn btn-info btn-lg mr-1 px-3 d-none d-md-inline-block"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-video feather-lg"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></button>
-                                            <button className="btn btn-light border btn-lg px-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-more-horizontal feather-lg"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="position-relative">
-                                    <div className="chat-messages p-4">
-
-                                        <div className="chat-message-right pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:33 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:34 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:35 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Cum ea graeci tractatos.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:36 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sed pulvinar, massa vitae interdum pulvinar, risus lectus porttitor magna, vitae commodo lectus mauris et velit.
-                                                Proin ultricies placerat imperdiet. Morbi varius quam ac venenatis tempus.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:37 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Cras pulvinar, sapien id vehicula aliquet, diam velit elementum orci.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:38 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:39 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:40 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Cum ea graeci tractatos.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:41 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Morbi finibus, lorem id placerat ullamcorper, nunc enim ultrices massa, id dignissim metus urna eget purus.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:42 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sed pulvinar, massa vitae interdum pulvinar, risus lectus porttitor magna, vitae commodo lectus mauris et velit.
-                                                Proin ultricies placerat imperdiet. Morbi varius quam ac venenatis tempus.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-right mb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:43 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                                <div className="font-weight-bold mb-1">You</div>
-                                                Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                            </div>
-                                        </div>
-
-                                        <div className="chat-message-left pb-4">
-                                            <div>
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                <div className="text-muted small text-nowrap mt-2">2:44 am</div>
-                                            </div>
-                                            <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                <div className="font-weight-bold mb-1">Sharon Lessman</div>
-                                                Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                <div className="flex-grow-0 py-3 px-4 border-top">
-                                    <div className="input-group">
-                                        <input type="text" className="form-control" placeholder="Type your message" />
-                                        <button className="btn btn-primary">Send</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="card card-body mb-3">
-                                <div className="text-center mb-2">
-                                    <img style={{ borderRadius: "4rem" }} className="mx-auto mb-2" src={customerData.image} alt={customerData.contact_name} />
-                                    <p className="m-0">{customerData.contact_name}</p>
-                                </div>
-                                <hr />
-                                <div className="d-flex flex-column align-items-center">
-                                    <div className="d-flex align-items-center">
-                                        <i className="fas fa-phone-alt mr-2 me-2"></i>
-                                        <span>{customerData.phone}</span>
-                                    </div>
-                                    <div className="d-flex align-items-center">
-                                        <i className="fas fa-envelope mr-2 me-2"></i>
-                                        <span>{customerData.email}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </>
+  // Handle search form submission
+  const searchUsers = (e) => {
+    e.preventDefault();
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredUsers = users.filter((user) =>
+      user.name.toLowerCase().includes(searchTerm)
     );
+    setFilteredUsers(filteredUsers);
+  };
+
+  // Handle user selection
+  const handleSelectUser = (user) => {
+    setSelectedUser(user);
+    // You can add more logic here, e.g. navigate to chat, open modal, etc.
+  };
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  return (
+    <main className="content overflow-scroll px-5 py-3 h-100">
+      <h1 className="h3 my-3">
+        <strong>Chat</strong>
+      </h1>
+      <div className="container-fluid p-0">
+        <div className="row">
+          <div className="col-md-3 d-flex">
+            <div className="card card-body mb-3">
+              <form className="form-inline d-flex mb-3" onSubmit={searchUsers}>
+                <input
+                  className="form-control mr-sm-2 me-2"
+                  type="search"
+                  placeholder="Search"
+                  aria-label="Search"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+                <button
+                  className="btn btn-outline-success my-2 my-sm-0"
+                  type="submit"
+                >
+                  Search
+                </button>
+              </form>
+
+              <ul className="list-group list-group-flush h-100 overflow-y-scroll">
+                {filteredUsers.map((user) => (
+                  <li
+                    className={`list-group-item ${
+                      selectedUser?.id === user.id ? "active" : ""
+                    }`}
+                    key={user.id}
+                    onClick={() => handleSelectUser(user)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="d-flex align-items-start">
+                      <img
+                        src={user.image}
+                        className="rounded-circle mr-1"
+                        alt={user.name}
+                        width="40"
+                        height="40"
+                      />
+                      <div className="flex-grow-1 ml-3 ms-3">
+                        <h5 className="mb-2 p-0">{user.name}</h5>
+
+                        <div className="small">
+                          <span
+                            className={`fas fa-circle ${
+                              user.isOnline ? "text-success" : "text-secondary"
+                            }`}
+                          ></span>{" "}
+                          {user.isOnline ? "Online" : "Offline"}
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="col-md-6 d-flex">
+            <div className="card card-body mb-3">
+              <div className="py-2 px-4 border-bottom d-none d-lg-block">
+                <div className="d-flex align-items-center py-1">
+                  <div className="position-relative">
+                    <img
+                      src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                      className="rounded-circle mr-1"
+                      alt="Sharon Lessman"
+                      width="40"
+                      height="40"
+                    />
+                  </div>
+                  <div className="ms-2 flex-grow-1 pl-3">
+                    <strong>Sharon Lessman</strong>
+                    <div className="text-muted small">
+                      <em>Typing...</em>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="position-relative">
+                <div className="chat-messages p-4">
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`chat-message-${
+                        msg.sender === "me" ? "right" : "left"
+                      } pb-4`}
+                    >
+                      <div>
+                        <img
+                          src={msg.avatar}
+                          className="rounded-circle mr-1"
+                          alt={msg.name}
+                          width="40"
+                          height="40"
+                        />
+                        <div className="text-muted small text-nowrap mt-2">
+                          {msg.time}
+                        </div>
+                      </div>
+                      <div
+                        className={`flex-shrink-1 bg-light rounded py-2 px-3 ${
+                          msg.sender === "me" ? "mr-3" : "ml-3"
+                        }`}
+                      >
+                        <div className="font-weight-bold mb-1">{msg.name}</div>
+                        {msg.content}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex-grow-0 py-3 px-4 border-top">
+                <div className="d-flex align-items-center">
+                  <input
+                    type="text"
+                    className="form-control me-2"
+                    placeholder="Type your message"
+                  />
+                  <button className="btn btn-primary">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3 d-flex">
+            <div className="card card-body mb-3">
+              <div className="text-center mb-2">
+                <img
+                  style={{ borderRadius: "4rem" }}
+                  className="mx-auto mb-2"
+                  src={customer.image}
+                  alt={customer.contact_name}
+                />
+                <p className="m-0 fs-4">{customer.contact_name}</p>
+              </div>
+              <hr />
+              <div className="d-flex flex-column flex-start px-3">
+                <h5>Contact Info</h5>
+                <div className="mb-3">
+                    <p className="mb-1"><strong>
+                        <FontAwesomeIcon icon={faPhone} className="me-2" />
+                        Phone:
+                    </strong></p>
+                  <p>{customer.phone}</p>
+                </div>
+
+                <div className="mb-3">
+                    <p className="mb-1"><strong>
+                        <FontAwesomeIcon icon={faEnvelope} className="me-2" />
+                        Email:
+                    </strong></p>
+                  <p>{customer.email}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
 }

@@ -8,6 +8,7 @@ import {
   faPlus,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { Pagination } from "../../../../layouts/Pagination";
 
 const dummyFoods = [
   {
@@ -183,7 +184,14 @@ export default function ProductManagement() {
     }
   };
 
-  const searchProducts = () => {};
+  const searchProducts = (e) => {
+    e.preventDefault();
+    const filteredFoods = dummyFoods.filter((food) =>
+      food.product.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    setFoods(filteredFoods);
+    setSearchValue(""); // Clear the search input after submission
+  };
 
   return (
     <main className="content overflow-scroll px-5 py-3">
@@ -209,9 +217,9 @@ export default function ProductManagement() {
               <div className="row mb-3">
                 <div className="col-md-8"></div>
                 <div className="col-md-4">
-                  <form className="form-inline d-flex">
+                  <form className="form-inline d-flex" onSubmit={searchProducts}>
                     <input
-                      className="form-control mr-sm-2"
+                      className="form-control mr-sm-2 me-2"
                       type="search"
                       placeholder="Search"
                       aria-label="Search"
@@ -220,7 +228,6 @@ export default function ProductManagement() {
                     />
                     <button
                       className="btn btn-outline-success my-2 my-sm-0"
-                      onClick={searchProducts}
                       type="submit"
                     >
                       Search
@@ -327,37 +334,7 @@ export default function ProductManagement() {
                   ))}
                 </tbody>
               </table>
-              <nav className="mt-3">
-                <ul className="pagination float-end">
-                  <li className="page-item">
-                    <Link className="page-link" to="#" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                      <span className="sr-only">Previous</span>
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#">
-                      1
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#">
-                      2
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#">
-                      3
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
-                      <span className="sr-only">Next</span>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
+              <Pagination/>
             </div>
           </div>
         </div>

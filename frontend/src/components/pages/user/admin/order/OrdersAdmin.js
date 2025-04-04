@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { Link } from "react-router";
 import config from "../../../../../config/WebConfig";
+import { Pagination } from "../../../../layouts/Pagination";
 
 const dummyOrders = [
   {
@@ -54,6 +55,7 @@ const dummyOrders = [
 export default function OrdersAdmin() {
   const [orders, setOrders] = useState([...dummyOrders]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedOrderStatus, setSelectedOrderStatus] = useState("Total");
   const [searchValue, setSearchValue] = useState("");
   // Select Items
   const handleSelectAll = (event) => {
@@ -67,6 +69,8 @@ export default function OrdersAdmin() {
       setSelectedItems([]);
     }
   };
+
+  // Select single item
 
   const handleSelectItem = (event, orderId) => {
     const isChecked = event.target.checked;
@@ -88,7 +92,14 @@ export default function OrdersAdmin() {
   const handleViewItem = (id) => {};
 
   // Search orders
-  const searchOrder = () => {};
+  const searchOrder = (e) => {
+    e.preventDefault();
+    const searchTerm = searchValue.toLowerCase();
+    const filteredOrders = dummyOrders.filter((order) =>
+      order.id.toLowerCase().includes(searchTerm)
+    );
+    setOrders(filteredOrders);
+  };
 
   return (
     <main className="content overflow-scroll px-5 py-3">
@@ -114,13 +125,22 @@ export default function OrdersAdmin() {
                     </div>
                     <div className="col-md-6 px-3 d-flex">
                       <label
-                        for="status"
+                        htmlFor="status"
                         className="d-flex align-items-center me-3"
                       >
-                        Status
+                        Status:
                       </label>
-                      <select className="form-control" name="status">
-                        <option>Default select</option>
+                      <select
+                        className="form-control"
+                        name="status"
+                        value={selectedOrderStatus}
+                        onChange={(e) => setSelectedOrderStatus(e.target.value)}
+                      >
+                        {config.order_status.statuses.map((status, index) => (
+                          <option key={index} value={status}>
+                            {status}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </form>
@@ -201,7 +221,7 @@ export default function OrdersAdmin() {
                       <td>
                         <span
                           className={
-                            config.orderStatusClasses[order.status] ||
+                            config.order_status.classes[order.status] ||
                             "badge bg-secondary"
                           }
                         >
@@ -232,37 +252,7 @@ export default function OrdersAdmin() {
                   ))}
                 </tbody>
               </table>
-              <nav className="mt-3">
-                <ul className="pagination float-end">
-                  <li className="page-item">
-                    <Link className="page-link" to="#" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                      <span className="sr-only">Previous</span>
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#">
-                      1
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#">
-                      2
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#">
-                      3
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="#" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
-                      <span className="sr-only">Next</span>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
+              <Pagination />
             </div>
           </div>
         </div>
