@@ -5,6 +5,7 @@ export const ABOUT_US_URI = '/about'
 export const MENU_URI = "/menu";
 export const GALLERY_URI = "/gallery"
 export const RESERVATION_URI = "/reservation"
+export const FOOD_RESERVATION_URI = "/food-reservation"
 export const CONTACT_US_URI = "/contact"
 
 export const CART_URI = "/cart"
@@ -13,6 +14,9 @@ export const CHECKOUT_ORDER_URI = '/checkout'
 export const LOGIN_URI = "/login"
 export const LOGOUT_URI = '/logout'
 
+
+
+// USER
 export const USER_DASHBOARD_URI = '/user/dashboard'
 export const USER_NOTIFICATION_URI = '/user/notification'
 export const USER_ORDER_URI = '/user/order'
@@ -34,6 +38,9 @@ export const CUSTOMER_NOTIFICATIONS_URI = '/user/customer/notifications';
 export const ADMIN_DASHBOARD_URI = '/user/admin/dashboard';
 export const ADMIN_ORDER_URI = '/user/admin/order';
 export const ADMIN_ORDERS_URI = '/user/admin/orders';
+export const ADMIN_ORDER_DETAILS_URI = '/user/admin/order-details';
+
+export const ADMIN_CALENDAR_URI = '/user/admin/calendar';
 
 export const ADMIN_CUSTOMERS_URI = '/user/admin/customers';
 export const ADMIN_CUSTOMER_URI = '/user/admin/customers';

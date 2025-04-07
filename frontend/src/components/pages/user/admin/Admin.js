@@ -8,6 +8,7 @@ import CustomersAdmin from "./customer/CustomersAdmin";
 import NotificationsAdmin from "./notification/NotificationsAdmin";
 import AdminSidebar from "../../../layouts/Sidebar/AdminSidebar";
 import UserHeader from "../../../layouts/UserHeader";
+import AdminCalendarPage from "./AdminCalendar";
 
 export default function AdminPage() {
   return (
@@ -24,6 +25,7 @@ export default function AdminPage() {
             <Route path="/product" element={<ProductAdmin />} />
             <Route path="/customers" element={<CustomersAdmin />} />
             <Route path="/notifications" element={<NotificationsAdmin />} />
+            <Route path="/calendar" element={<AdminCalendarPage />} />
           </Routes>
         </div>
       </main>

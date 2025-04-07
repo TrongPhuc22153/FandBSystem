@@ -14,6 +14,7 @@ import ReservationPage from "./Reservation";
 import ProductPage from "./Product";
 import CartPage from "./Cart";
 import CheckoutOrderPage from "./Checkout";
+import FoodReservationPage from "./FoodReservationPage";
 
 export default function HomePage() {
   return (
@@ -28,6 +29,7 @@ export default function HomePage() {
         <Route path={RESERVATION_URI} element={<ReservationPage />} />
         <Route path={MENU_URI} element={<MenuPage />} />
         <Route path="/foods" element={<ProductPage />} />
+        <Route path="/food-reservation" element={<FoodReservationPage />} />
         <Route path={CART_URI} element={<CartPage />} />
         <Route path={CHECKOUT_ORDER_URI} element={<CheckoutOrderPage />} />
       </Routes>

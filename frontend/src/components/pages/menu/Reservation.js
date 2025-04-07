@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import DatePicker from "react-datepicker";
 
 export default function ReservationPage() {
   const [formData, setFormData] = useState({
@@ -7,15 +8,33 @@ export default function ReservationPage() {
     phone: "",
     noOfPersons: "",
     date: "",
-    time: "",
+    time: new Date(),
     preferredFood: "",
-    occasion: "",
+    table: "",
   });
+  const today = new Date();
+  const currentYear = today.getFullYear();
+
+  // Set max date to 3 months ahead
+  const maxDate = new Date();
+  maxDate.setMonth(maxDate.getMonth() + 3);
+
+  // Set max date to end of current year if it's sooner
+  const endOfYear = new Date(currentYear, 11, 31); // Dec 31
+  if (maxDate > endOfYear) {
+    maxDate.setTime(endOfYear.getTime());
+  }
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  const handleTimeChange = (date) => {
+    setFormData({ ...formData, time: date });
+  }
+
 
   return (
     <>
@@ -119,15 +138,16 @@ export default function ReservationPage() {
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 px-3">
                     <div className="form-box">
-                      <input
-                        type="text"
-                        name="time"
-                        id="time-picker"
-                        placeholder="Time"
-                        required="required"
-                        data-error="Time is required."
-                        value={formData.time}
-                        onChange={handleChange}
+                      <DatePicker
+                        selected={formData.time}
+                        onChange={handleTimeChange}
+                        showTimeSelect
+                        dateFormat="Pp"
+                        minDate={today}
+                        maxDate={maxDate}
+                        placeholderText="Pick a date within 3 months"
+                        wrapperClassName="w-100"
+                        className="w-100"
                       />
                     </div>
                   </div>
@@ -152,18 +172,19 @@ export default function ReservationPage() {
                   <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 px-3">
                     <div className="form-box">
                       <select
-                        name="occasion"
-                        id="occasion"
+                        name="table"
+                        id="table"
                         className="selectpicker"
-                        value={formData.occasion}
+                        value={formData.table}
                         onChange={handleChange}
                       >
                         <option value="" disabled>
-                          Occasion
+                          Table
                         </option>
-                        <option value="Wedding">Wedding</option>
-                        <option value="Birthday">Birthday</option>
-                        <option value="Anniversary">Anniversary</option>
+                        <option value="Any">Any</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
                       </select>
                     </div>
                   </div>

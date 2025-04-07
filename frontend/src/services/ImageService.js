@@ -37,6 +37,7 @@ import food from '../assets/images/food.png';
 import coffee from '../assets/images/coffee.png';
 
 import user from '../assets/images/default-user.png';
+import defaultfood from '../assets/images/default-food.png';
 
 import orderIcon from "../assets/images/dashboard-icons/order-icon.png";
 import customerIcon from "../assets/images/dashboard-icons/customer-icon.png";
@@ -72,7 +73,9 @@ export function getSaleIcon(){
     return saleIcon;
 }
 
-
+export function getDefaultFood(){
+    return defaultfood;
+}
 export function getLogo(){
     return logo;
 }

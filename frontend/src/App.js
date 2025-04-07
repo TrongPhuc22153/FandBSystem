@@ -6,6 +6,7 @@ import UserPage from "./components/pages/user/User";
 import "./App.css";
 import "./App.scss";
 import AuthenticationPage from "./components/pages/auth/Authentication";
+import "react-datepicker/dist/react-datepicker.css";
 
 function App() {
   const [userInfo, setUserInfo] = useState({

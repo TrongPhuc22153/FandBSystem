@@ -4210,3 +4210,20 @@ input[type="submit"]:hover {
 .img-account-profile {
     height: 10rem;
 }
+
+/* FOOD RESERVATION */
+.header-img {
+    max-width: 200px;
+}
+
+.menu-card {
+    transition: transform 0.2s;
+}
+
+.menu-card:hover {
+    transform: scale(1.03);
+}
+
+.selection-card {
+    background-color: #f8f9fa;
+}
