@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function ReservationComponent() {
+export default function ReservationPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",

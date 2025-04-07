@@ -19,7 +19,7 @@ const dummyData = [
     email: "john.doe@example.com",
     created_date: "2025-03-25T10:00:00Z",
     status: "Active",
-    image: "https://example.com/images/john_doe.jpg",
+    image: "https://randomuser.me/api/portraits/men/1.jpg",
   },
   {
     id: "C002",
@@ -28,7 +28,7 @@ const dummyData = [
     email: "jane.smith@example.com",
     created_date: "2025-03-28T14:30:00Z",
     status: "Deactive",
-    image: "https://example.com/images/jane_smith.jpg",
+    image: "https://randomuser.me/api/portraits/men/2.jpg",
   },
   {
     id: "C003",
@@ -37,7 +37,7 @@ const dummyData = [
     email: "robert.brown@example.com",
     created_date: "2025-03-20T09:15:00Z",
     status: "Deactive",
-    image: "https://example.com/images/robert_brown.jpg",
+    image: "https://randomuser.me/api/portraits/men/3.jpg",
   },
   {
     id: "C004",
@@ -46,7 +46,7 @@ const dummyData = [
     email: "emily.white@example.com",
     created_date: "2025-03-22T16:45:00Z",
     status: "Active",
-    image: "https://example.com/images/emily_white.jpg",
+    image: "https://randomuser.me/api/portraits/men/4.jpg",
   },
   {
     id: "C005",
@@ -55,7 +55,7 @@ const dummyData = [
     email: "michael.johnson@example.com",
     created_date: "2025-03-30T11:30:00Z",
     status: "Deactive",
-    image: "https://example.com/images/michael_johnson.jpg",
+    image: "https://randomuser.me/api/portraits/men/5.jpg",
   },
   {
     id: "C006",
@@ -64,7 +64,7 @@ const dummyData = [
     email: "sarah.connor@example.com",
     created_date: "2025-03-21T08:30:00Z",
     status: "Active",
-    image: "https://example.com/images/sarah_connor.jpg",
+    image: "https://randomuser.me/api/portraits/men/6.jpg",
   },
   {
     id: "C007",
@@ -73,7 +73,7 @@ const dummyData = [
     email: "david.miller@example.com",
     created_date: "2025-03-26T12:00:00Z",
     status: "Deactive",
-    image: "https://example.com/images/david_miller.jpg",
+    image: "https://randomuser.me/api/portraits/men/7.jpg",
   },
   {
     id: "C008",
@@ -82,7 +82,7 @@ const dummyData = [
     email: "sophia.lopez@example.com",
     created_date: "2025-03-27T14:00:00Z",
     status: "Active",
-    image: "https://example.com/images/sophia_lopez.jpg",
+    image: "https://randomuser.me/api/portraits/men/8.jpg",
   },
   {
     id: "C009",
@@ -91,7 +91,7 @@ const dummyData = [
     email: "james.wilson@example.com",
     created_date: "2025-03-23T09:45:00Z",
     status: "Deactive",
-    image: "https://example.com/images/james_wilson.jpg",
+    image: "https://randomuser.me/api/portraits/men/9.jpg",
   },
   {
     id: "C010",
@@ -100,7 +100,7 @@ const dummyData = [
     email: "olivia.martinez@example.com",
     created_date: "2025-03-24T11:15:00Z",
     status: "Active",
-    image: "https://example.com/images/olivia_martinez.jpg",
+    image: "https://randomuser.me/api/portraits/men/10.jpg",
   },
   {
     id: "C011",
@@ -109,7 +109,7 @@ const dummyData = [
     email: "daniel.anderson@example.com",
     created_date: "2025-03-29T10:30:00Z",
     status: "Deactive",
-    image: "https://example.com/images/daniel_anderson.jpg",
+    image: "https://randomuser.me/api/portraits/men/11.jpg",
   },
   {
     id: "C012",
@@ -118,7 +118,7 @@ const dummyData = [
     email: "emma.thomas@example.com",
     created_date: "2025-03-31T15:45:00Z",
     status: "Active",
-    image: "https://example.com/images/emma_thomas.jpg",
+    image: "https://randomuser.me/api/portraits/men/12.jpg",
   },
   {
     id: "C013",
@@ -127,7 +127,7 @@ const dummyData = [
     email: "william.harris@example.com",
     created_date: "2025-03-19T13:00:00Z",
     status: "Deactive",
-    image: "https://example.com/images/william_harris.jpg",
+    image: "https://randomuser.me/api/portraits/men/13.jpg",
   },
 ];
 
@@ -279,7 +279,7 @@ export default function CustomersAdmin() {
                           className="me-3"
                           src={customer.image || getDefaultUser()}
                           alt={customer.contact_name}
-                          style={{ minHeight: "40px" }}
+                          style={{ height: "50px", width: "50px", borderRadius: "50%" }}
                         />
                         <p>{customer.contact_name}</p>
                       </td>

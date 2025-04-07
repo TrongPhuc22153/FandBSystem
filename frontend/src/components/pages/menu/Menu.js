@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FilterSidebar from "../../layouts/FilterSidebar";
 
-export default function MenuComponent() {
+export default function MenuPage() {
   const [products, setProducts] = useState([]);
 
   return (

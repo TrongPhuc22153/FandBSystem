@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { HOME_URI } from "../../constants/WebPageURI";
+import {
+  ADMIN_CUSTOMERS_URI,
+  ADMIN_DASHBOARD_URI,
+  ADMIN_NOTIFICATIONS_URI,
+  ADMIN_ORDERS_URI,
+  ADMIN_PRODUCTS_URI,
+  HOME_URI,
+} from "../../../constants/WebPageURI";
+import { useLocation } from "react-router-dom";
 
 const items = [
   {
     title: "Dashboard",
-    href: "/user/dashboard",
+    href: ADMIN_DASHBOARD_URI,
     icon: (
       <svg
         width="24"
@@ -32,127 +40,35 @@ const items = [
     ),
     tree_branchs: [
       {
-        title: "Home",
+        title: "Dashboard",
+        href: ADMIN_DASHBOARD_URI,
+        children: [],
+        active: false,
+      },
+      {
+        title: "Customers",
+        href: ADMIN_CUSTOMERS_URI,
+        children: [
+        ],
+        active: false,
+      },
+      {
+        title: "Orders",
+        href: ADMIN_ORDERS_URI,
+        children: [
+        ],
+        active: false,
+      },
+      {
+        title: "Products",
+        href: ADMIN_PRODUCTS_URI,
+        children: [
+        ],
+        active: false,
+      },
+      {
+        title: "Back To Home",
         href: HOME_URI,
-        children: [],
-        active: false,
-      },
-      {
-        title: "Product",
-        href: "/pages/product",
-        children: [
-          {
-            title: "Features",
-            href: "/pages/product/features",
-            children: [
-              {
-                title: "Messaging",
-                href: "/pages/product/features/messaging",
-                children: [],
-                active: false,
-              },
-              {
-                title: "Voice & Video Calls",
-                href: "/pages/product/features/voice-video-calls",
-                children: [],
-                active: false,
-              },
-            ],
-            active: false,
-          },
-          {
-            title: "Integrations",
-            href: "/pages/product/integrations",
-            children: [
-              {
-                title: "Slack",
-                href: "/pages/product/integrations/slack",
-                children: [],
-                active: false,
-              },
-              {
-                title: "Discord",
-                href: "/pages/product/integrations/discord",
-                children: [],
-                active: false,
-              },
-              {
-                title: "Microsoft Teams",
-                href: "/pages/product/integrations/microsoft-teams",
-                children: [],
-                active: false,
-              },
-              {
-                title: "Zoom",
-                href: "/pages/product/integrations/zoom",
-                children: [],
-                active: true,
-              },
-            ],
-            active: false,
-          },
-          {
-            title: "Security",
-            href: "/pages/product/security",
-            children: [],
-            active: false,
-          },
-        ],
-        active: false,
-      },
-      {
-        title: "Pricing",
-        href: "/pages/pricing",
-        children: [],
-        active: false,
-      },
-      {
-        title: "Blog",
-        href: "/pages/blog",
-        children: [
-          {
-            title: "Newsletter",
-            href: "/pages/blog/newsletter",
-            children: [],
-            active: false,
-          },
-        ],
-        active: false,
-      },
-      {
-        title: "Company",
-        href: "/pages/company",
-        children: [
-          {
-            title: "About Us",
-            href: "/pages/company/about-us",
-            children: [],
-            active: false,
-          },
-          {
-            title: "Media & Press",
-            href: "/pages/company/media-press",
-            children: [],
-            active: false,
-          },
-          {
-            title: "Careers",
-            href: "/pages/company/careers",
-            children: [],
-            active: false,
-          },
-        ],
-        active: false,
-      },
-      {
-        title: "Contact",
-        href: "/pages/contact",
-        children: [],
-        active: false,
-      },
-      {
-        title: "404",
-        href: "/pages/404",
         children: [],
         active: false,
       },
@@ -251,7 +167,7 @@ const items = [
   },
   {
     title: "Notifications",
-    href: "/user/notifications",
+    href: ADMIN_NOTIFICATIONS_URI,
     icon: (
       <svg
         width="24"
@@ -276,7 +192,20 @@ const items = [
         />
       </svg>
     ),
-    tree_branchs: [],
+    tree_branchs: [
+      {
+        title: "Notifications",
+        href: ADMIN_NOTIFICATIONS_URI,
+        children: [],
+        active: false,
+      },
+      {
+        title: "Back To Home",
+        href: HOME_URI,
+        children: [],
+        active: false,
+      },
+    ],
   },
   {
     title: "Settings",
@@ -370,10 +299,85 @@ const items = [
     tree_branchs: [],
   },
 ];
-export default function UserSidebar() {
+export default function AdminSidebar() {
   const [navigationItems, setNavigationItems] = useState(items);
   const [selectedNavigationItem, setSelectedNavigationItem] = useState(0);
   const [searchValue, setSearchValue] = useState("");
+  const [activeBranch, setActiveBranch] = useState(null);
+  const [activeLeaf, setActiveLeaf] = useState(null);
+  const location = useLocation();
+
+  const findItemByHref = (items, href) => {
+    for (const item of items) {
+      if (item.href === href) return { item, branch: null, leaf: item };
+      if (item.tree_branchs) {
+        for (const branch of item.tree_branchs) {
+          if (branch.href === href) return { item, branch, leaf: branch };
+          if (branch.children) {
+            for (const child of branch.children) {
+              if (child.href === href) return { item, branch, leaf: child };
+            }
+          }
+        }
+      }
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    // First check localStorage
+    const storedBranch = localStorage.getItem('activeBranch');
+    const storedLeaf = localStorage.getItem('activeLeaf');
+    const storedNavItem = localStorage.getItem('selectedNavigationItem');
+
+    if (storedBranch && storedLeaf && storedNavItem) {
+      const branchTitle = JSON.parse(storedBranch).title;
+      const updatedItems = items.map((item) => {
+        if (item.tree_branchs.length > 0) {
+          return {
+            ...item,
+            tree_branchs: activateBranch(item.tree_branchs, branchTitle)
+          };
+        }
+        return item;
+      });
+      
+      setNavigationItems(updatedItems);
+      setSelectedNavigationItem(parseInt(storedNavItem));
+      setActiveBranch(JSON.parse(storedBranch));
+      setActiveLeaf(JSON.parse(storedLeaf));
+    } else {
+      // If no localStorage, match with current URL
+      const matched = findItemByHref(items, location.pathname);
+      if (matched) {
+        const { item, branch, leaf } = matched;
+        const itemIndex = items.indexOf(item);
+        
+        let updatedItems = [...items];
+        if (branch && leaf) {
+          updatedItems = updatedItems.map((navItem) => {
+            if (navItem.tree_branchs.length > 0) {
+              return {
+                ...navItem,
+                tree_branchs: activateBranch(navItem.tree_branchs, leaf.title)
+              };
+            }
+            return navItem;
+          });
+        }
+
+        setNavigationItems(updatedItems);
+        setSelectedNavigationItem(itemIndex);
+        setActiveBranch(branch);
+        setActiveLeaf(leaf);
+        
+        // Store the initial URL-based selection
+        localStorage.setItem('activeBranch', JSON.stringify(branch));
+        localStorage.setItem('activeLeaf', JSON.stringify(leaf));
+        localStorage.setItem('selectedNavigationItem', itemIndex.toString());
+      }
+    }
+  }, [location.pathname]);
 
   const activateBranch = (branches, title) => {
     return branches.map((branch) => {
@@ -411,19 +415,50 @@ export default function UserSidebar() {
       });
     };
 
+    let newActiveBranch = null;
+    let newActiveLeaf = null;
+
     const updatedItems = navigationItems.map((item) => {
       if (item.tree_branchs.length > 0) {
+        const updatedBranches = activateBranch(
+          deactivateAllBranches(item.tree_branchs),
+          leafTitle
+        );
+        
+        updatedBranches.forEach((branch) => {
+          if (branch.active) {
+            newActiveBranch = branch;
+            newActiveLeaf = branch;
+          } else if (branch.children.length > 0) {
+            branch.children.forEach((child) => {
+              if (child.active) {
+                newActiveBranch = branch;
+                newActiveLeaf = child;
+              }
+            });
+          }
+        });
+
         return {
           ...item,
-          tree_branchs: activateBranch(
-            deactivateAllBranches(item.tree_branchs),
-            leafTitle
-          ),
+          tree_branchs: updatedBranches,
         };
       }
       return item;
     });
+
     setNavigationItems(updatedItems);
+    setActiveBranch(newActiveBranch);
+    setActiveLeaf(newActiveLeaf);
+    
+    localStorage.setItem('activeBranch', JSON.stringify(newActiveBranch));
+    localStorage.setItem('activeLeaf', JSON.stringify(newActiveLeaf));
+    localStorage.setItem('selectedNavigationItem', selectedNavigationItem.toString());
+  };
+
+  const handleNavItemClick = (index) => {
+    setSelectedNavigationItem(index);
+    localStorage.setItem('selectedNavigationItem', index.toString());
   };
 
   return (
@@ -438,7 +473,7 @@ export default function UserSidebar() {
                 className={`navigation-item ${
                   selectedNavigationItem === index ? "active" : ""
                 }`}
-                onClick={() => setSelectedNavigationItem(index)}
+                onClick={() => handleNavItemClick(index)}
               >
                 {item.icon}
                 <span className="navigation-item-title">{item.title}</span>
@@ -453,7 +488,7 @@ export default function UserSidebar() {
                 className={`navigation-item ${
                   selectedNavigationItem === index + 5 ? "active" : ""
                 }`}
-                onClick={() => setSelectedNavigationItem(index + 5)}
+                onClick={() => handleNavItemClick(index + 5)}
               >
                 {item.icon}
                 <span className="navigation-item-title">{item.title}</span>

@@ -41,7 +41,7 @@ const similarProducts = [
   },
 ];
 
-export default function ProductComponent() {
+export default function ProductPage() {
   const [product, setProduct] = useState(food);
   const [quantity, setQuantity] = useState(1);
 

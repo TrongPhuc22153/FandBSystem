@@ -4,7 +4,7 @@ import { TodaySpecialDish } from "../../layouts/TodaySpecialDish";
 import AboutUs from "../../layouts/AboutUs";
 import Banner from "../../layouts/Banner";
 
-export function DefaultHomeComponent() {
+export function DefaultHomePage() {
   return (
     <>
       <Banner />

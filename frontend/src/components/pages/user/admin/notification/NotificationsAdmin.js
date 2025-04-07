@@ -88,37 +88,37 @@ const users = [
   },
 ];
 const dummyMessages = [
+  // {
+  //   id: 1,
+  //   sender: "me",
+  //   content: "Hey Sharon! How’s it going?",
+  //   time: "2:33 am",
+  //   avatar: "https://bootdey.com/img/Content/avatar/avatar1.png",
+  //   name: "You",
+  // },
   {
     id: 1,
-    sender: "me",
-    content: "Hey Sharon! How’s it going?",
-    time: "2:33 am",
-    avatar: "https://bootdey.com/img/Content/avatar/avatar1.png",
-    name: "You",
+    sender: "them",
+    content: "John Doe vừa đặt hàng thành công",
+    time: "2:34 am",
+    avatar: "https://randomuser.me/api/portraits/men/45.jpg",
+    name: "John Doe",
   },
+  // {
+  //   id: 3,
+  //   sender: "me",
+  //   content: "Nice! Got any exciting plans?",
+  //   time: "2:35 am",
+  //   avatar: "https://bootdey.com/img/Content/avatar/avatar1.png",
+  //   name: "You",
+  // },
   {
     id: 2,
     sender: "them",
-    content: "I’m doing well, just getting started on my day!",
-    time: "2:34 am",
-    avatar: "https://bootdey.com/img/Content/avatar/avatar3.png",
-    name: "Sharon Lessman",
-  },
-  {
-    id: 3,
-    sender: "me",
-    content: "Nice! Got any exciting plans?",
-    time: "2:35 am",
-    avatar: "https://bootdey.com/img/Content/avatar/avatar1.png",
-    name: "You",
-  },
-  {
-    id: 4,
-    sender: "them",
-    content: "Just working on a new project, I’ll tell you more soon!",
+    content: "Đơn hàng #ORD001 của Jonh Doe đã được giao thành công",
     time: "2:36 am",
-    avatar: "https://bootdey.com/img/Content/avatar/avatar3.png",
-    name: "Sharon Lessman",
+    avatar: "https://randomuser.me/api/portraits/men/45.jpg",
+    name: "John Doe",
   },
 ];
 
@@ -152,7 +152,7 @@ export default function NotificationsAdmin() {
   return (
     <main className="content overflow-scroll px-5 py-3 h-100">
       <h1 className="h3 my-3">
-        <strong>Chat</strong>
+        <strong>Notifications</strong>
       </h1>
       <div className="container-fluid p-0">
         <div className="row">
@@ -217,17 +217,17 @@ export default function NotificationsAdmin() {
                 <div className="d-flex align-items-center py-1">
                   <div className="position-relative">
                     <img
-                      src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                      src={customerData.image}
                       className="rounded-circle mr-1"
-                      alt="Sharon Lessman"
+                      alt={customerData.contact_name}
                       width="40"
                       height="40"
                     />
                   </div>
                   <div className="ms-2 flex-grow-1 pl-3">
-                    <strong>Sharon Lessman</strong>
+                    <strong>{customerData.contact_name}</strong>
                     <div className="text-muted small">
-                      <em>Typing...</em>
+                      {/* <em>Typing...</em> */}
                     </div>
                   </div>
                 </div>

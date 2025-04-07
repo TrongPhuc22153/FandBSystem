@@ -5,7 +5,7 @@ import { getProductsCart } from "../../../api/CartAPI";
 import { Link } from "react-router";
 import { CHECKOUT_ORDER_URI } from "../../../constants/WebPageURI";
 
-export default function CartComponent() {
+export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {

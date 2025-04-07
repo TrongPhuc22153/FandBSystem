@@ -70,27 +70,24 @@ export default function Header() {
                   >
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                       <li
-                        className={`nav-item ${
-                          isActive(HOME_URI) ? "active" : ""
-                        }`}
+                        className={`nav-item ${isActive(HOME_URI) ? "active" : ""
+                          }`}
                       >
                         <Link className="nav-link" to={HOME_URI}>
                           Home
                         </Link>
                       </li>
                       <li
-                        className={`nav-item ${
-                          isActive(MENU_URI) ? "active" : ""
-                        }`}
+                        className={`nav-item ${isActive(MENU_URI) ? "active" : ""
+                          }`}
                       >
                         <Link className="nav-link" to={MENU_URI}>
                           Menu
                         </Link>
                       </li>
                       <li
-                        className={`nav-item ${
-                          isActive(RESERVATION_URI) ? "active" : ""
-                        }`}
+                        className={`nav-item ${isActive(RESERVATION_URI) ? "active" : ""
+                          }`}
                       >
                         <Link className="nav-link" to={RESERVATION_URI}>
                           Reservation
@@ -101,16 +98,14 @@ export default function Header() {
                       {userInfo.isAuth ? (
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                           <li
-                            className={`nav-item position-relative me-2 ${
-                              isActive(HOME_URI) ? "active" : ""
-                            }`}
+                            className={`nav-item position-relative me-2 ${isActive(HOME_URI) ? "active" : ""
+                              }`}
                           >
                             <NotificationDropdown />
                           </li>
                           <li
-                            className={`nav-item mx-2 d-flex ${
-                              isActive(HOME_URI) ? "active" : ""
-                            }`}
+                            className={`nav-item mx-2 d-flex ${isActive(HOME_URI) ? "active" : ""
+                              }`}
                           >
                             <div className="btn-group">
                               <button
@@ -159,9 +154,8 @@ export default function Header() {
                             </div>
                           </li>
                           <li
-                            className={`ms-2 cart-item d-flex align-items-center nav-item ${
-                              isActive(CART_URI) ? "active" : ""
-                            }`}
+                            className={`ms-2 cart-item d-flex align-items-center nav-item ${isActive(CART_URI) ? "active" : ""
+                              }`}
                           >
                             <Link className="nav-link" to={CART_URI}>
                               <FontAwesomeIcon

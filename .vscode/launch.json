@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PhucxfoodshopApplication<phucxfoodshop>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.phucx.phucxfoodshop.PhucxfoodshopApplication",
+            "projectName": "phucxfoodshop",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -2,20 +2,20 @@ import { Route, Routes } from "react-router";
 
 import { Footer } from "../../layouts/Footer";
 import Header from "../../layouts/Header";
-import MenuComponent from "./Menu";
-import { DefaultHomeComponent } from "./DefaultHome";
+import MenuPage from "./Menu";
+import { DefaultHomePage } from "./DefaultHome";
 import {
   CART_URI,
   CHECKOUT_ORDER_URI,
   MENU_URI,
   RESERVATION_URI,
 } from "../../../constants/WebPageURI";
-import ReservationComponent from "./Reservation";
-import ProductComponent from "./Product";
-import CartComponent from "./Cart";
-import CheckoutOrderComponent from "./Checkout";
+import ReservationPage from "./Reservation";
+import ProductPage from "./Product";
+import CartPage from "./Cart";
+import CheckoutOrderPage from "./Checkout";
 
-export default function HomeComponent() {
+export default function HomePage() {
   return (
     <>
       {/* <div id="loader">
@@ -24,12 +24,12 @@ export default function HomeComponent() {
       <Header />
 
       <Routes>
-        <Route path="*" element={<DefaultHomeComponent />} />
-        <Route path={RESERVATION_URI} element={<ReservationComponent />} />
-        <Route path={MENU_URI} element={<MenuComponent />} />
-        <Route path="/foods" element={<ProductComponent />} />
-        <Route path={CART_URI} element={<CartComponent />} />
-        <Route path={CHECKOUT_ORDER_URI} element={<CheckoutOrderComponent />} />
+        <Route path="*" element={<DefaultHomePage />} />
+        <Route path={RESERVATION_URI} element={<ReservationPage />} />
+        <Route path={MENU_URI} element={<MenuPage />} />
+        <Route path="/foods" element={<ProductPage />} />
+        <Route path={CART_URI} element={<CartPage />} />
+        <Route path={CHECKOUT_ORDER_URI} element={<CheckoutOrderPage />} />
       </Routes>
 
       <Footer />

@@ -1,24 +1,17 @@
 import { Route, Routes } from "react-router";
-import UserSidebar from "../../layouts/UserSidebar";
-import AdminComponent from "./admin/Admin";
-import CustomerComponent from "./customer/Customer";
+import AdminPage from "./admin/Admin";
+import CustomerPage from "./customer/Customer";
+import { EmployeePage } from "./employee/Employee";
 
-export default function UserComponent() {
+export default function UserPage() {
   return (
     <div id="user-dashboard">
-      <UserSidebar />
-      <main className="window-main">
-        {/* <UserHeader/> */}
-        <div className="window-main-body h-100">
-          <Routes>
-            <Route path="/admin/*" element={<AdminComponent />} />
-            <Route path="/customer/*" element={<CustomerComponent />} />
-            {/* <Route path="/merchant/*" element={<MerchantComponent />} /> */}
-            {/* <Route path="/delivery/*" element={<DeliveryComponent />} /> */}
-            {/* Add other user roles here */}
-          </Routes>
-        </div>
-      </main>
+      <Routes>
+        <Route path="/admin/*" element={<AdminPage />} />
+        <Route path="/customer/*" element={<CustomerPage />} />
+        <Route path="/employee/*" element={<EmployeePage/>}/>
+        {/* Add other user roles here */}
+      </Routes>
     </div>
   );
 }

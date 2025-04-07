@@ -1,7 +1,13 @@
+import { useContext } from "react";
+import AuthContext from "../../context/AuthProvider";
+import { getDefaultUser } from "../../services/ImageService";
+
 export default function UserHeader() {
+  const userInfo = useContext(AuthContext);
+
   return (
     <div className="window-main-header">
-      <ol className="breadcrumbs">
+      {/* <ol className="breadcrumbs">
         <li className="breadcrumbs-item">
           <a href="#">
             <svg
@@ -71,15 +77,21 @@ export default function UserHeader() {
             What web designers can learn from arti...
           </a>
         </li>
-      </ol>
-      <div className="publish-actions">
-        <div className="publish-info">
+      </ol> */}
+      <div className="publish-actions ms-auto">
+        <div className="publish-info d-flex align-items-center">
+          <img style={{ width: "30px", height: "30px" }}
+            src={
+              userInfo.info.image || getDefaultUser()
+            }
+            className="user-image rounded-3 me-2"
+            alt={userInfo.username}
+          />
           <span>
-            LAST EDITED
-            <br />2 minutes ago
+            TrongPhuc123
           </span>
         </div>
-        <button className="button button--save">
+        {/* <button className="button button--save">
           <svg
             width="24"
             height="24"
@@ -104,8 +116,8 @@ export default function UserHeader() {
             />
           </svg>
           Save
-        </button>
-        <button className="button button--schedule">
+        </button> */}
+        {/* <button className="button button--schedule">
           <svg
             width="24"
             height="24"
@@ -143,8 +155,8 @@ export default function UserHeader() {
             />
           </svg>
           Schedule
-        </button>
-        <button className="button button--publish">
+        </button> */}
+        {/* <button className="button button--publish">
           <svg
             width="24"
             height="24"
@@ -166,7 +178,7 @@ export default function UserHeader() {
             />
           </svg>
           Publish
-        </button>
+        </button> */}
       </div>
     </div>
   );

@@ -1,28 +1,29 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import HomeComponent from './components/pages/menu/Home';
-import { useState } from 'react';
-import { AuthProvider } from './context/AuthProvider';
-import UserComponent from './components/pages/user/User';
-import './App.css';
-import './App.scss'
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import HomePage from "./components/pages/menu/Home";
+import { useState } from "react";
+import { AuthProvider } from "./context/AuthProvider";
+import UserPage from "./components/pages/user/User";
+import "./App.css";
+import "./App.scss";
+import AuthenticationPage from "./components/pages/auth/Authentication";
 
 function App() {
   const [userInfo, setUserInfo] = useState({
     info: {
       image: undefined,
-      username: 'TrongPhuc123',
-      roles: []
+      username: "TrongPhuc123",
+      roles: [],
     },
-    isAuth: true
-  })
-
+    isAuth: true,
+  });
 
   return (
     <AuthProvider value={userInfo}>
       <Router>
         <Routes>
-          <Route path='*' element={<HomeComponent/>}/>
-          <Route path='/user/*' element={<UserComponent/>}/>
+          <Route path="*" element={<HomePage />} />
+          <Route path="/user/*" element={<UserPage />} />
+          <Route path="/auth/*" element={<AuthenticationPage />} />
         </Routes>
       </Router>
     </AuthProvider>

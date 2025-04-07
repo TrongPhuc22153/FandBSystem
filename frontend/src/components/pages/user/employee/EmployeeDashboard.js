@@ -6,7 +6,6 @@ const userData = {
   username: "janedoe123",
   firstName: "Jane",
   lastName: "Doe",
-  contactName: "Jane Doe",
   email: "jane.doe@example.com",
   phone: "+1-555-123-4567",
   address: {
@@ -23,7 +22,7 @@ const userData = {
   roles: ["user", "editor"],
 };
 
-export default function CustomerDashboard() {
+export default function EmployeeDashboard() {
   const [user, setUser] = useState({ ...userData });
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -89,39 +88,21 @@ export default function CustomerDashboard() {
               </div>
               <div className="card-body">
                 <form onSubmit={submitForm}>
-                  <div className="row gx-3 mb-3">
-                    <div className="col-md-6">
-                      <label className="small mb-1" htmlFor="inputUsername">
+                  <div className="mb-3">
+                    <label className="small mb-1" htmlFor="inputUsername">
                       Username
-                      </label>
-                      <input
-                        required
-                        className="form-control"
-                        id="inputUsername"
-                        type="text"
-                        placeholder="Enter your username"
-                        name="username"
-                        value={user.username}
-                        onChange={handleChange}
-                        disabled={!isEditing}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="small mb-1" htmlFor="inputContactName">
-                        Contact Name
-                      </label>
-                      <input
-                        required
-                        className="form-control"
-                        id="inputContactName"
-                        type="text"
-                        placeholder="Enter your contact name"
-                        name="contactName"
-                        value={user.contactName}
-                        onChange={handleChange}
-                        disabled={!isEditing}
-                      />
-                    </div>
+                    </label>
+                    <input
+                      required
+                      className="form-control"
+                      id="inputUsername"
+                      type="text"
+                      placeholder="Enter your username"
+                      name="username"
+                      value={user.username}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                    />
                   </div>
                   <div className="row gx-3 mb-3">
                     <div className="col-md-6">

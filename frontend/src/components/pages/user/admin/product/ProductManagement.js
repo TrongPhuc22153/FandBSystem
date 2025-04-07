@@ -12,139 +12,138 @@ import { Pagination } from "../../../../layouts/Pagination";
 
 const dummyFoods = [
   {
-    id: 1, // Added id
+    id: 1,
     product: "Cheeseburger",
     category: "Fast Food",
     added_date: "2025-03-31",
     price: 5.99,
     quantity: 100,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=Cheeseburger",
+    image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add",
     action: "Edit/Delete",
   },
   {
-    id: 2, // Added id
+    id: 2,
     product: "Pepperoni Pizza",
     category: "Fast Food",
     added_date: "2025-03-30",
     price: 12.99,
     quantity: 50,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=Pepperoni+Pizza",
+    image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3",
     action: "Edit/Delete",
   },
   {
-    id: 3, // Added id
+    id: 3,
     product: "Sushi Platter",
     category: "Japanese Cuisine",
     added_date: "2025-03-29",
     price: 24.5,
     quantity: 30,
-    status: "Deactive", // Note: Might want to normalize status values (e.g., 'Inactive' or 'Deactivated')
-    image: "https://via.placeholder.com/150?text=Sushi+Platter",
+    status: "Deactive",
+    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c",
     action: "Edit/Delete",
   },
   {
-    id: 4, // Added id
+    id: 4,
     product: "Grilled Chicken Salad",
     category: "Healthy Food",
     added_date: "2025-03-28",
     price: 10.99,
     quantity: 75,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=Grilled+Chicken+Salad",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
     action: "Edit/Delete",
   },
   {
-    id: 5, // Added id
+    id: 5,
     product: "Chocolate Cake",
     category: "Desserts",
     added_date: "2025-03-27",
     price: 7.99,
     quantity: 40,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=Chocolate+Cake",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587",
     action: "Edit/Delete",
   },
   {
-    id: 6, // Added id
+    id: 6,
     product: "Spaghetti Carbonara",
     category: "Italian Cuisine",
     added_date: "2025-03-26",
     price: 14.99,
     quantity: 35,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=Spaghetti+Carbonara",
+    image: "https://images.unsplash.com/photo-1588013273468-315fd88ea034", // New valid URL
     action: "Edit/Delete",
   },
   {
-    id: 7, // Added id
+    id: 7,
     product: "Taco Platter",
     category: "Mexican Cuisine",
     added_date: "2025-03-25",
     price: 9.99,
     quantity: 60,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=Taco+Platter",
+    image: "https://images.unsplash.com/photo-1599974579688-8e2d93126063", // New valid URL
     action: "Edit/Delete",
   },
   {
-    id: 8, // Added id
+    id: 8,
     product: "Chicken Biryani",
     category: "Indian Cuisine",
     added_date: "2025-03-24",
     price: 13.5,
     quantity: 45,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=Chicken+Biryani",
+    image: "https://images.unsplash.com/photo-1631515243349-7b2ff397159d", // New valid URL
     action: "Edit/Delete",
   },
   {
-    id: 9, // Added id
+    id: 9,
     product: "French Fries",
     category: "Fast Food",
     added_date: "2025-03-23",
     price: 3.99,
     quantity: 120,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=French+Fries",
+    image: "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d",
     action: "Edit/Delete",
   },
   {
-    id: 10, // Added id
+    id: 10,
     product: "Mango Smoothie",
     category: "Beverages",
     added_date: "2025-03-22",
     price: 4.5,
     quantity: 80,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=Mango+Smoothie",
+    image: "https://images.unsplash.com/photo-1596399908039-2c38a72e19d0",
     action: "Edit/Delete",
   },
   {
-    id: 11, // Added id
+    id: 11,
     product: "Steak with Mashed Potatoes",
     category: "Grilled Dishes",
     added_date: "2025-03-21",
     price: 19.99,
     quantity: 25,
-    status: "Deactive", // Note: Might want to normalize status values
-    image: "https://via.placeholder.com/150?text=Steak+with+Mashed+Potatoes",
+    status: "Deactive",
+    image: "https://images.unsplash.com/photo-1600891964092-4316c288032e",
     action: "Edit/Delete",
   },
   {
-    id: 12, // Added id
+    id: 12,
     product: "Strawberry Cheesecake",
     category: "Desserts",
     added_date: "2025-03-20",
     price: 6.99,
     quantity: 50,
     status: "Active",
-    image: "https://via.placeholder.com/150?text=Strawberry+Cheesecake",
+    image: "https://images.unsplash.com/photo-1566417713940-fe5c2c32c65b",
     action: "Edit/Delete",
   },
 ];
-
 export default function ProductManagement() {
   const [foods, setFoods] = useState(dummyFoods);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -289,10 +288,10 @@ export default function ProductManagement() {
                       </td>
                       <td className="d-flex">
                         <img
-                          className="me-3"
+                          className="me-3 rounded"
                           src={food.image}
                           alt={food.product}
-                          style={{ minHeight: "40px" }}
+                          style={{ height: "50px" }}
                         />
                         <p>{food.product}</p>
                       </td>

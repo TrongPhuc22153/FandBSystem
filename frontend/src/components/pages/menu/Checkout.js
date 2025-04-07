@@ -9,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { getCOD, getZaloPay } from "../../../services/ImageService";
 
-export default function CheckoutOrderComponent() {
+export default function CheckoutOrderPage() {
   const [orderData, setOrderData] = useState();
   const [selectedTab, setSelectedTab] = useState(0); // Default active tab
   const [selectedPayment, setSelectedPayment] = useState("paypal");
