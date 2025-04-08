@@ -40,6 +40,9 @@ export const ADMIN_ORDER_URI = '/user/admin/order';
 export const ADMIN_ORDERS_URI = '/user/admin/orders';
 export const ADMIN_ORDER_DETAILS_URI = '/user/admin/order-details';
 
+export const ADMIN_TABLES_URI = '/user/admin/tables';
+export const ADMIN_TABLE_URI = '/user/admin/table';
+
 export const ADMIN_CALENDAR_URI = '/user/admin/calendar';
 export const ADMIN_TABLE_CALENDAR_URI = '/user/admin/table-calendar';
 

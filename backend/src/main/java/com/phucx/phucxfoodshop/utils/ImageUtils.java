@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.UserProfile;
+import com.phucx.phucxfoodshop.model.entity.UserProfile;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -7,12 +7,12 @@ import com.phucx.phucxfoodshop.exceptions.CustomerNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.EmployeeNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.ShipperNotFoundException;
-import com.phucx.phucxfoodshop.model.Invoice;
-import com.phucx.phucxfoodshop.model.InvoiceDetails;
-import com.phucx.phucxfoodshop.model.Order;
-import com.phucx.phucxfoodshop.model.OrderDetailExtended;
-import com.phucx.phucxfoodshop.model.OrderDetails;
-import com.phucx.phucxfoodshop.model.OrderWithProducts;
+import com.phucx.phucxfoodshop.model.dto.InvoiceDetails;
+import com.phucx.phucxfoodshop.model.dto.OrderDetails;
+import com.phucx.phucxfoodshop.model.dto.OrderWithProducts;
+import com.phucx.phucxfoodshop.model.entity.Invoice;
+import com.phucx.phucxfoodshop.model.entity.Order;
+import com.phucx.phucxfoodshop.model.entity.OrderDetailExtended;
 
 public interface ConvertOrderService {
     public InvoiceDetails convertInvoiceDetails(List<Invoice> invoices) throws JsonProcessingException, NotFoundException, ShipperNotFoundException, EmployeeNotFoundException;

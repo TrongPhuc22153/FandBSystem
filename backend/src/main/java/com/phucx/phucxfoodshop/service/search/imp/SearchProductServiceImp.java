@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.phucx.phucxfoodshop.model.CurrentProduct;
+import com.phucx.phucxfoodshop.model.entity.CurrentProduct;
 import com.phucx.phucxfoodshop.repository.CurrentProductRepository;
 import com.phucx.phucxfoodshop.service.image.ProductImageService;
 import com.phucx.phucxfoodshop.service.search.SearchProductService;

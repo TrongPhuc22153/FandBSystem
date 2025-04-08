@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories("com.phucx.phucxfoodshop.repository")
-@EntityScan("com.phucx.phucxfoodshop.model")
+@EntityScan("com.phucx.phucxfoodshop.model.entity")
 public class PhucxfoodshopApplication {
 
 	public static void main(String[] args) {

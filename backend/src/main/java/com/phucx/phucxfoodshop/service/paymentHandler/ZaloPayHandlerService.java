@@ -5,7 +5,7 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.PaymentNotFoundException;
-import com.phucx.phucxfoodshop.model.PaymentDTO;
+import com.phucx.phucxfoodshop.model.dto.PaymentDTO;
 
 public interface ZaloPayHandlerService {
     // create a new payment

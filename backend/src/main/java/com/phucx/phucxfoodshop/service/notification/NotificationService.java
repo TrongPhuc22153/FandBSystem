@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 
 import com.phucx.phucxfoodshop.constant.NotificationBroadCast;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.NotificationDetail;
-import com.phucx.phucxfoodshop.model.OrderNotificationDTO;
+import com.phucx.phucxfoodshop.model.dto.OrderNotificationDTO;
+import com.phucx.phucxfoodshop.model.entity.NotificationDetail;
 
 public interface NotificationService {
     

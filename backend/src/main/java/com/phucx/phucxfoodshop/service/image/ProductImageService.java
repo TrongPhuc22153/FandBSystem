@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.CurrentProduct;
-import com.phucx.phucxfoodshop.model.ExistedProduct;
-import com.phucx.phucxfoodshop.model.Product;
-import com.phucx.phucxfoodshop.model.ProductDetail;
+import com.phucx.phucxfoodshop.model.entity.CurrentProduct;
+import com.phucx.phucxfoodshop.model.entity.ExistedProduct;
+import com.phucx.phucxfoodshop.model.entity.Product;
+import com.phucx.phucxfoodshop.model.entity.ProductDetail;
 
 import jakarta.servlet.http.HttpServletRequest;
 

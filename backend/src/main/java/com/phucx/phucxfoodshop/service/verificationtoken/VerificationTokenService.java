@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.phucx.phucxfoodshop.constant.JwtType;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.VerificationToken;
+import com.phucx.phucxfoodshop.model.entity.VerificationToken;
 
 public interface VerificationTokenService {
     public void saveVerificationToken(String id, String token, String username, JwtType type, Date expiryDate);

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
-import com.phucx.phucxfoodshop.model.Payment;
+import com.phucx.phucxfoodshop.model.entity.Payment;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, String>{

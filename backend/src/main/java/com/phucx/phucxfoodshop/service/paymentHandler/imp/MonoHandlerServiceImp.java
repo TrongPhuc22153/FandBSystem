@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phucx.phucxfoodshop.constant.PaymentConstant;
 import com.phucx.phucxfoodshop.constant.PaymentStatusConstant;
 import com.phucx.phucxfoodshop.exceptions.PaymentNotFoundException;
-import com.phucx.phucxfoodshop.model.PaymentDTO;
+import com.phucx.phucxfoodshop.model.dto.PaymentDTO;
 import com.phucx.phucxfoodshop.service.currency.CurrencyService;
 import com.phucx.phucxfoodshop.service.payment.PaymentManagementService;
 import com.phucx.phucxfoodshop.service.paymentHandler.MomoHandlerService;

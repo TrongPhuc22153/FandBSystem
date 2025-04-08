@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 import com.phucx.phucxfoodshop.compositeKey.NotificationUserKey;
-import com.phucx.phucxfoodshop.model.NotificationUser;
+import com.phucx.phucxfoodshop.model.entity.NotificationUser;
 
 @Repository
 public interface NotificationUserRepository extends JpaRepository<NotificationUser, NotificationUserKey>{

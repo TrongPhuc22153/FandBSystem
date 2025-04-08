@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.phucx.phucxfoodshop.service.user.UserProfileService;
 import com.phucx.phucxfoodshop.exceptions.UserNotFoundException;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
-import com.phucx.phucxfoodshop.model.UserProfile;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.entity.UserProfile;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;

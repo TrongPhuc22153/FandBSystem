@@ -20,11 +20,11 @@ import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.UserAuthenticationException;
 import com.phucx.phucxfoodshop.exceptions.UserNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.UserPasswordException;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
-import com.phucx.phucxfoodshop.model.UserAuthentication;
-import com.phucx.phucxfoodshop.model.UserChangePasswordToken;
-import com.phucx.phucxfoodshop.model.UserInfo;
-import com.phucx.phucxfoodshop.model.UserRegisterInfo;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.UserAuthentication;
+import com.phucx.phucxfoodshop.model.dto.UserChangePasswordToken;
+import com.phucx.phucxfoodshop.model.dto.UserInfo;
+import com.phucx.phucxfoodshop.model.dto.UserRegisterInfo;
 import com.phucx.phucxfoodshop.service.email.EmailService;
 import com.phucx.phucxfoodshop.service.user.UserPasswordService;
 import com.phucx.phucxfoodshop.service.user.UserProfileService;
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController {
     private final UserProfileService userProfileService;
     private final UserSysDetailsService userService;

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
-import com.phucx.phucxfoodshop.model.ProductSizeInfo;
+import com.phucx.phucxfoodshop.model.entity.ProductSizeInfo;
 
 import java.math.BigDecimal;
 import java.util.List;

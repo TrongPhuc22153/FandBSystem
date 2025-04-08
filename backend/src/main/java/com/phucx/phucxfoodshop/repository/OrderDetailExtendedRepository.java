@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.phucx.phucxfoodshop.compositeKey.OrderDetailKey;
 import com.phucx.phucxfoodshop.constant.OrderStatus;
-import com.phucx.phucxfoodshop.model.OrderDetailExtended;
+import com.phucx.phucxfoodshop.model.entity.OrderDetailExtended;
 
 import java.util.List;
 

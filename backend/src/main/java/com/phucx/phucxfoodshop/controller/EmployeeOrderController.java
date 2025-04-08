@@ -23,9 +23,9 @@ import com.phucx.phucxfoodshop.exceptions.InvalidOrderException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.PaymentNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.ShipperNotFoundException;
-import com.phucx.phucxfoodshop.model.OrderDetails;
-import com.phucx.phucxfoodshop.model.OrderSummary;
-import com.phucx.phucxfoodshop.model.OrderWithProducts;
+import com.phucx.phucxfoodshop.model.dto.OrderDetails;
+import com.phucx.phucxfoodshop.model.dto.OrderSummary;
+import com.phucx.phucxfoodshop.model.dto.OrderWithProducts;
 import com.phucx.phucxfoodshop.service.order.EmployeeOrderService;
 import com.phucx.phucxfoodshop.service.order.OrderService;
 
@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/order/employee", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/order/employee", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EmployeeOrderController {
     private final EmployeeOrderService employeeOrderService;
     private final OrderService orderService;

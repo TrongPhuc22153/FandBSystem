@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/tables", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/tables", consumes = MediaType.APPLICATION_JSON_VALUE)
 public class TableController {
 
 

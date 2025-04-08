@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.paypal.base.rest.PayPalRESTException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.PaymentDTO;
-import com.phucx.phucxfoodshop.model.PaymentMethod;
-import com.phucx.phucxfoodshop.model.PaymentResponse;
+import com.phucx.phucxfoodshop.model.dto.PaymentDTO;
+import com.phucx.phucxfoodshop.model.dto.PaymentResponse;
+import com.phucx.phucxfoodshop.model.entity.PaymentMethod;
 import com.phucx.phucxfoodshop.service.payment.PaymentProcessorService;
 import com.phucx.phucxfoodshop.service.paymentMethod.PaymentMethodService;
 import com.phucx.phucxfoodshop.utils.ServerUrlUtils;
@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/payment", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/payment", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PaymentController {
     private final PaymentMethodService paymentMethodService;
     private final PaymentProcessorService paymentProcessorService;

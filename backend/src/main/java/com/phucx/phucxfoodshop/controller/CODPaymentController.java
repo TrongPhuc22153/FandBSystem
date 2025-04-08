@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
 import com.phucx.phucxfoodshop.service.paymentHandler.CODHandlerService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/payment/cod", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/payment/cod", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CODPaymentController {
     private final CODHandlerService codHandlerService;
 

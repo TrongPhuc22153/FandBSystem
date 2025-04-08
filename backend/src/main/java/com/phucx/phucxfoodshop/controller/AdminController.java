@@ -1,7 +1,6 @@
 package com.phucx.phucxfoodshop.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.phucx.phucxfoodshop.constant.UserSearch;
 import com.phucx.phucxfoodshop.exceptions.UserNotFoundException;
-import com.phucx.phucxfoodshop.model.CustomerAdminDetails;
-import com.phucx.phucxfoodshop.model.CustomerDetail;
-import com.phucx.phucxfoodshop.model.EmployeeAdminDetails;
-import com.phucx.phucxfoodshop.model.EmployeeDetail;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
-import com.phucx.phucxfoodshop.model.UserDetails;
-import com.phucx.phucxfoodshop.model.UserRegisterInfo;
+import com.phucx.phucxfoodshop.model.dto.CustomerAdminDetails;
+import com.phucx.phucxfoodshop.model.dto.EmployeeAdminDetails;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.UserRegisterInfo;
+import com.phucx.phucxfoodshop.model.entity.CustomerDetail;
+import com.phucx.phucxfoodshop.model.entity.EmployeeDetail;
+import com.phucx.phucxfoodshop.model.entity.UserDetails;
 import com.phucx.phucxfoodshop.service.customer.CustomerAdminService;
 import com.phucx.phucxfoodshop.service.customer.CustomerService;
 import com.phucx.phucxfoodshop.service.employee.EmployeeAdminService;
@@ -34,7 +33,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/account/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/account/admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminController {
     private final CustomerService customerService;
     private final EmployeeService employeeService;

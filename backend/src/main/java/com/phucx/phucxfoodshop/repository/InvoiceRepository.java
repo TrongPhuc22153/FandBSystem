@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
 import com.phucx.phucxfoodshop.compositeKey.OrderDetailDiscountID;
-import com.phucx.phucxfoodshop.model.Invoice;
+import com.phucx.phucxfoodshop.model.entity.Invoice;
 
 
 @Repository

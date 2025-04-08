@@ -6,9 +6,9 @@ import org.springframework.data.domain.Page;
 
 import com.phucx.phucxfoodshop.exceptions.CustomerNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.InvalidUserException;
-import com.phucx.phucxfoodshop.model.CustomerDetail;
-import com.phucx.phucxfoodshop.model.CustomerFullDetails;
-import com.phucx.phucxfoodshop.model.UserDetails;
+import com.phucx.phucxfoodshop.model.dto.CustomerFullDetails;
+import com.phucx.phucxfoodshop.model.entity.CustomerDetail;
+import com.phucx.phucxfoodshop.model.entity.UserDetails;
 
 public interface CustomerService {
     // get customer

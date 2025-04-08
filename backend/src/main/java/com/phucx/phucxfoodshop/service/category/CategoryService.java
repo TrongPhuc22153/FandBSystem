@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 import com.phucx.phucxfoodshop.exceptions.EntityExistsException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.Category;
+import com.phucx.phucxfoodshop.model.entity.Category;
 
 public interface CategoryService {
     public List<Category> getCategories();

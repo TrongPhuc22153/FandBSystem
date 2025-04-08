@@ -22,10 +22,10 @@ import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.RoleNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.ShipperNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.UserNotFoundException;
-import com.phucx.phucxfoodshop.model.EmployeeDetail;
-import com.phucx.phucxfoodshop.model.EmployeeDetails;
-import com.phucx.phucxfoodshop.model.ImageFormat;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.EmployeeDetails;
+import com.phucx.phucxfoodshop.model.dto.ImageFormat;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.entity.EmployeeDetail;
 import com.phucx.phucxfoodshop.service.employee.EmployeeService;
 import com.phucx.phucxfoodshop.service.image.EmployeeImageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/account/employee", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/account/employee", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EmployeeController {
     private final EmployeeService employeeService;
     private final EmployeeImageService employeeImageService;

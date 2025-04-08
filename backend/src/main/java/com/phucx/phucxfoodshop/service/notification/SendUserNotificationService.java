@@ -1,6 +1,6 @@
 package com.phucx.phucxfoodshop.service.notification;
 
-import com.phucx.phucxfoodshop.model.UserNotificationDTO;
+import com.phucx.phucxfoodshop.model.dto.UserNotificationDTO;
 
 public interface SendUserNotificationService {
     public void sendNotificationToCustomer(UserNotificationDTO userNotificationDTO);

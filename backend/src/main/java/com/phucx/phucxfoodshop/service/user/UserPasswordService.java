@@ -3,9 +3,9 @@ package com.phucx.phucxfoodshop.service.user;
 import com.phucx.phucxfoodshop.exceptions.InvalidTokenException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.UserPasswordException;
-import com.phucx.phucxfoodshop.model.UserChangePassword;
-import com.phucx.phucxfoodshop.model.UserChangePasswordToken;
-import com.phucx.phucxfoodshop.model.UserInfo;
+import com.phucx.phucxfoodshop.model.dto.UserChangePassword;
+import com.phucx.phucxfoodshop.model.dto.UserChangePasswordToken;
+import com.phucx.phucxfoodshop.model.dto.UserInfo;
 
 public interface UserPasswordService {
     public Boolean resetUserPasswordRandom(String userID);

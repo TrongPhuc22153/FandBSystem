@@ -9,14 +9,13 @@ import com.phucx.phucxfoodshop.constant.NotificationTitle;
 import com.phucx.phucxfoodshop.constant.NotificationTopic;
 import com.phucx.phucxfoodshop.constant.UserSearch;
 import com.phucx.phucxfoodshop.exceptions.CustomerNotFoundException;
-import com.phucx.phucxfoodshop.model.CustomerAdminDetails;
-import com.phucx.phucxfoodshop.model.CustomerAdminDetailsBuilder;
-import com.phucx.phucxfoodshop.model.CustomerDetail;
-import com.phucx.phucxfoodshop.model.User;
-import com.phucx.phucxfoodshop.model.UserDetails;
-import com.phucx.phucxfoodshop.model.UserNotificationDTO;
-import com.phucx.phucxfoodshop.model.UserVerification;
-import com.phucx.phucxfoodshop.model.VerificationInfo;
+import com.phucx.phucxfoodshop.model.dto.CustomerAdminDetails;
+import com.phucx.phucxfoodshop.model.dto.UserNotificationDTO;
+import com.phucx.phucxfoodshop.model.dto.VerificationInfo;
+import com.phucx.phucxfoodshop.model.entity.CustomerDetail;
+import com.phucx.phucxfoodshop.model.entity.User;
+import com.phucx.phucxfoodshop.model.entity.UserDetails;
+import com.phucx.phucxfoodshop.model.entity.UserVerification;
 import com.phucx.phucxfoodshop.repository.CustomerDetailRepository;
 import com.phucx.phucxfoodshop.service.customer.CustomerAdminService;
 import com.phucx.phucxfoodshop.service.image.CustomerImageService;
@@ -29,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class CustomerAdminServiceImp implements CustomerAdminService{
+public class CustomerAdminServiceImp implements CustomerAdminService {
     @Autowired
     private CustomerDetailRepository customerDetailRepository;
     @Autowired
@@ -47,19 +46,18 @@ public class CustomerAdminServiceImp implements CustomerAdminService{
     public CustomerAdminDetails updateAdminCustomerInfo(CustomerAdminDetails customer) {
         log.info("updateAdminCustomerInfo({})", customer);
         CustomerDetail fetchedCustomer = customerDetailRepository.findById(customer.getCustomerID())
-            .orElseThrow(
-                ()-> new CustomerNotFoundException("Customer " + customer.getCustomerID() + " does not found")
-            );
-            // get image
+                .orElseThrow(
+                        () -> new CustomerNotFoundException(
+                                "Customer " + customer.getCustomerID() + " does not found"));
+        // get image
         String picture = ImageUtils.getImageName(customer.getPicture());
         // update Customer's information
         Boolean status = customerDetailRepository.updateAdminCustomerInfo(
-            customer.getCustomerID(), customer.getContactName(), customer.getAddress(),
-            customer.getCity(), customer.getDistrict(), customer.getWard(),
-            customer.getPhone(), picture, customer.getEnabled()
-        );
+                customer.getCustomerID(), customer.getContactName(), customer.getAddress(),
+                customer.getCity(), customer.getDistrict(), customer.getWard(),
+                customer.getPhone(), picture, customer.getEnabled());
         // set Customer picture
-        String customerPicture = picture!=null?customerImageService.getImageUrl(picture):null;
+        String customerPicture = picture != null ? customerImageService.getImageUrl(picture) : null;
         customer.setPicture(customerPicture);
         // create a notification
         UserNotificationDTO notification = new UserNotificationDTO();
@@ -67,18 +65,19 @@ public class CustomerAdminServiceImp implements CustomerAdminService{
         notification.setTopic(NotificationTopic.Account);
         notification.setUserID(fetchedCustomer.getUserID());
         notification.setPicture(customer.getPicture());
-        if(status){
+        if (status) {
             notification.setMessage("Your information has been updated by Admin");
             notification.setStatus(NotificationStatus.SUCCESSFUL);
             notification.setReceiverID(fetchedCustomer.getUserID());
-        }else{
+        } else {
             notification.setMessage("Error: Your information can not be updated by Admin");
             notification.setStatus(NotificationStatus.ERROR);
             notification.setReceiverID(fetchedCustomer.getUserID());
         }
         // send notification
         this.sendUserNotificationService.sendCustomerNotification(notification);
-        if(!status) throw new RuntimeException("Customer " + customer.getCustomerID() + " can not be updated!");
+        if (!status)
+            throw new RuntimeException("Customer " + customer.getCustomerID() + " can not be updated!");
 
         return customer;
     }
@@ -87,50 +86,47 @@ public class CustomerAdminServiceImp implements CustomerAdminService{
     public CustomerAdminDetails getCustomerAdminDetails(String userID) {
         log.info("getCustomerAdminDetails(userID={})", userID);
         // get customer details
-        CustomerDetail customer =customerDetailRepository.findByUserID(userID).orElseThrow(
-            ()-> new CustomerNotFoundException("Customer with userId: " + userID + " does not found")
-        );
+        CustomerDetail customer = customerDetailRepository.findByUserID(userID).orElseThrow(
+                () -> new CustomerNotFoundException("Customer with userId: " + userID + " does not found"));
         // fetch user
         User fetchedUser = userService.getUserById(userID);
         // get user verification
         UserVerification userVerification = userProfileService.getUserVerification(userID);
         VerificationInfo verificationInfo = new VerificationInfo(
-            fetchedUser.getEmailVerified(),
-            userVerification.getPhoneVerification(), 
-            userVerification.getProfileVerification());
+                fetchedUser.getEmailVerified(),
+                userVerification.getPhoneVerification(),
+                userVerification.getProfileVerification());
 
-        String picture = customer.getPicture()!=null?
-            customerImageService.getImageUrl(customer.getPicture()):null;
+        String picture = customer.getPicture() != null ? customerImageService.getImageUrl(customer.getPicture()) : null;
 
-        return new CustomerAdminDetailsBuilder()
-            .withCustomerID(customer.getCustomerID())
-            .withContactName(customer.getContactName())
-            .withAddress(customer.getAddress())
-            .withCity(customer.getCity())
-            .withDistrict(customer.getDistrict())
-            .withWard(customer.getWard())
-            .withPhone(customer.getPhone())
-            .withPicture(picture)
-            .withUserID(fetchedUser.getUserID())
-            .withUsername(fetchedUser.getUsername())
-            .withFirstName(fetchedUser.getFirstName())
-            .withLastName(fetchedUser.getLastName())
-            .withEmail(fetchedUser.getEmail())
-            .withPhoneVerified(verificationInfo.getPhoneVerified())
-            .withProfileVerified(verificationInfo.getProfileVerified())
-            .withEmailVerified(fetchedUser.getEmailVerified())
-            .withEnabled(fetchedUser.getEnabled())
-            .build();
+        return CustomerAdminDetails.builder()
+                .customerID(customer.getCustomerID())
+                .contactName(customer.getContactName())
+                .address(customer.getAddress())
+                .city(customer.getCity())
+                .district(customer.getDistrict())
+                .ward(customer.getWard())
+                .phone(customer.getPhone())
+                .picture(picture)
+                .userID(fetchedUser.getUserID())
+                .username(fetchedUser.getUsername())
+                .firstName(fetchedUser.getFirstName())
+                .lastName(fetchedUser.getLastName())
+                .email(fetchedUser.getEmail())
+                .phoneVerified(verificationInfo.getPhoneVerified())
+                .profileVerified(verificationInfo.getProfileVerified())
+                .emailVerified(fetchedUser.getEmailVerified())
+                .enabled(fetchedUser.getEnabled())
+                .build();
     }
 
     @Override
     public Page<UserDetails> getByUsernameLike(String username, Integer pageNumber) {
         log.info("getByUsernameLike(username={}, pageNumber={})", username, pageNumber);
         Page<UserDetails> customers = userService
-            .getUsersByRoleAndUsernameLike(CUSTOMER, username, pageNumber);
-        customers.stream().forEach(user ->{
-            String picture = user.getPicture()!=null? 
-                customerImageService.getImageUrl(user.getPicture()):null;
+                .getUsersByRoleAndUsernameLike(CUSTOMER, username, pageNumber);
+        customers.stream().forEach(user -> {
+            String picture = user.getPicture() != null ? customerImageService.getImageUrl(user.getPicture()) : null;
             user.setPicture(picture);
         });
         return customers;
@@ -140,10 +136,9 @@ public class CustomerAdminServiceImp implements CustomerAdminService{
     public Page<UserDetails> getByFirstnameLike(String firstname, Integer pageNumber) {
         log.info("getByFirstnameLike(firstname={}, pageNumber={})", firstname, pageNumber);
         Page<UserDetails> customers = userService
-            .getUsersByRoleAndFirstNameLike(CUSTOMER, firstname, pageNumber);
-        customers.stream().forEach(user ->{
-            String picture = user.getPicture()!=null? 
-                customerImageService.getImageUrl(user.getPicture()):null;
+                .getUsersByRoleAndFirstNameLike(CUSTOMER, firstname, pageNumber);
+        customers.stream().forEach(user -> {
+            String picture = user.getPicture() != null ? customerImageService.getImageUrl(user.getPicture()) : null;
             user.setPicture(picture);
         });
         return customers;
@@ -153,10 +148,9 @@ public class CustomerAdminServiceImp implements CustomerAdminService{
     public Page<UserDetails> getByLastnameLike(String lastname, Integer pageNumber) {
         log.info("getByLastnameLike(lastname={}, pageNumber={})", lastname, pageNumber);
         Page<UserDetails> customers = userService
-            .getUsersByRoleAndLastNameLike(CUSTOMER, lastname, pageNumber);
-        customers.stream().forEach(user ->{
-            String picture = user.getPicture()!=null? 
-                customerImageService.getImageUrl(user.getPicture()):null;
+                .getUsersByRoleAndLastNameLike(CUSTOMER, lastname, pageNumber);
+        customers.stream().forEach(user -> {
+            String picture = user.getPicture() != null ? customerImageService.getImageUrl(user.getPicture()) : null;
             user.setPicture(picture);
         });
         return customers;
@@ -166,10 +160,9 @@ public class CustomerAdminServiceImp implements CustomerAdminService{
     public Page<UserDetails> getByEmailLike(String email, Integer pageNumber) {
         log.info("getByEmailLike(email={}, pageNumber={})", email, pageNumber);
         Page<UserDetails> customers = userService
-            .getUsersByRoleAndEmailLike(CUSTOMER, email, pageNumber);
-        customers.stream().forEach(user ->{
-            String picture = user.getPicture()!=null? 
-                customerImageService.getImageUrl(user.getPicture()):null;
+                .getUsersByRoleAndEmailLike(CUSTOMER, email, pageNumber);
+        customers.stream().forEach(user -> {
+            String picture = user.getPicture() != null ? customerImageService.getImageUrl(user.getPicture()) : null;
             user.setPicture(picture);
         });
         return customers;
@@ -187,10 +180,10 @@ public class CustomerAdminServiceImp implements CustomerAdminService{
                 return this.getByFirstnameLike(searchValue, pageNumber);
             case LASTNAME:
                 return this.getByLastnameLike(searchValue, pageNumber);
-        
+
             default:
                 return null;
         }
     }
-    
+
 }

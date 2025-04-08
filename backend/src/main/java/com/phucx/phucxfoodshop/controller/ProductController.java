@@ -20,13 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.phucx.phucxfoodshop.constant.WebConstant;
 import com.phucx.phucxfoodshop.exceptions.EntityExistsException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.ExistedProduct;
-import com.phucx.phucxfoodshop.model.ImageFormat;
-import com.phucx.phucxfoodshop.model.ProductDetail;
-import com.phucx.phucxfoodshop.model.ProductDetails;
-import com.phucx.phucxfoodshop.model.ProductSize;
-import com.phucx.phucxfoodshop.model.ProductSizeInfo;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.ImageFormat;
+import com.phucx.phucxfoodshop.model.dto.ProductDetails;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.entity.ExistedProduct;
+import com.phucx.phucxfoodshop.model.entity.ProductDetail;
+import com.phucx.phucxfoodshop.model.entity.ProductSize;
+import com.phucx.phucxfoodshop.model.entity.ProductSizeInfo;
 import com.phucx.phucxfoodshop.service.image.ProductImageService;
 import com.phucx.phucxfoodshop.service.product.ProductService;
 import com.phucx.phucxfoodshop.service.product.ProductSizeService;
@@ -36,7 +36,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/shop/product", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/shop/product", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductController {
     private final ProductService productService;
     private final ProductSizeService productSizeService;

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.phucx.phucxfoodshop.exceptions.ShipperNotFoundException;
-import com.phucx.phucxfoodshop.model.Shipper;
+import com.phucx.phucxfoodshop.model.entity.Shipper;
 import com.phucx.phucxfoodshop.repository.ShipperRepository;
 import com.phucx.phucxfoodshop.service.shipper.ShipperService;
 

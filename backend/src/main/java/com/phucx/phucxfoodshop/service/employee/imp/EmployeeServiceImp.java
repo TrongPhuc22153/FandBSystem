@@ -12,11 +12,10 @@ import org.springframework.stereotype.Service;
 
 import com.phucx.phucxfoodshop.exceptions.EmployeeNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.InvalidUserException;
-import com.phucx.phucxfoodshop.model.EmployeeDetail;
-import com.phucx.phucxfoodshop.model.EmployeeDetails;
-import com.phucx.phucxfoodshop.model.EmployeeDetailsBuilder;
-import com.phucx.phucxfoodshop.model.User;
-import com.phucx.phucxfoodshop.model.UserDetails;
+import com.phucx.phucxfoodshop.model.dto.EmployeeDetails;
+import com.phucx.phucxfoodshop.model.entity.EmployeeDetail;
+import com.phucx.phucxfoodshop.model.entity.User;
+import com.phucx.phucxfoodshop.model.entity.UserDetails;
 import com.phucx.phucxfoodshop.repository.EmployeeDetailRepostiory;
 import com.phucx.phucxfoodshop.service.employee.EmployeeService;
 import com.phucx.phucxfoodshop.service.image.EmployeeImageService;
@@ -28,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class EmployeeServiceImp implements EmployeeService{
+public class EmployeeServiceImp implements EmployeeService {
     @Autowired
     private EmployeeDetailRepostiory employeeDetailRepostiory;
     @Autowired
@@ -38,54 +37,59 @@ public class EmployeeServiceImp implements EmployeeService{
 
     private final String EMPLOYEE = "EMPLOYEE";
 
-	@Override
-	public EmployeeDetail updateEmployeeInfo(EmployeeDetail employee){
+    @Override
+    public EmployeeDetail updateEmployeeInfo(EmployeeDetail employee) {
         log.info("updateEmployeeInfo({})", employee.toString());
-        EmployeeDetail fetchedEmployee =employeeDetailRepostiory.findById(employee.getEmployeeID())
-            .orElseThrow(()-> new EmployeeNotFoundException("Employee " + employee.getEmployeeID() + " does not found")); 
+        EmployeeDetail fetchedEmployee = employeeDetailRepostiory.findById(employee.getEmployeeID())
+                .orElseThrow(() -> new EmployeeNotFoundException(
+                        "Employee " + employee.getEmployeeID() + " does not found"));
         String picture = ImageUtils.getImageName(employee.getPicture());
-        // update employee 
+        // update employee
         Boolean result = employeeDetailRepostiory.updateEmployeeInfo(
-            fetchedEmployee.getEmployeeID(), employee.getBirthDate(), 
-            employee.getAddress(), employee.getCity(), employee.getDistrict(),
-            employee.getWard(),  employee.getPhone(), picture); 
-        if(!result) throw new RuntimeException("Employee " + employee.getEmployeeID() + " can not be updated!");
+                fetchedEmployee.getEmployeeID(), employee.getBirthDate(),
+                employee.getAddress(), employee.getCity(), employee.getDistrict(),
+                employee.getWard(), employee.getPhone(), picture);
+        if (!result)
+            throw new RuntimeException("Employee " + employee.getEmployeeID() + " can not be updated!");
 
         employee.setPicture(picture);
         employeeImageService.setEmployeeDetailImage(employee);
         return employee;
-	}
+    }
 
     @Override
     public EmployeeDetail getEmployee(String employeeID) {
         EmployeeDetail employee = employeeDetailRepostiory.findById(employeeID)
-            .orElseThrow(()-> new EmployeeNotFoundException("Employee " + employeeID + " does not found"));
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee " + employeeID + " does not found"));
         employeeImageService.setEmployeeDetailImage(employee);
         return employee;
     }
 
-
     @Override
     public EmployeeDetail addNewEmployee(EmployeeDetail employeedDetail) throws InvalidUserException {
         log.info("addNewEmployee({})", employeedDetail);
-        if(employeedDetail.getUserID()==null)throw new InvalidUserException("UserId is missing");
+        if (employeedDetail.getUserID() == null)
+            throw new InvalidUserException("UserId is missing");
 
-        Optional<EmployeeDetail> fetchedEmployee= employeeDetailRepostiory.findByUserID(employeedDetail.getUserID());
-        if(fetchedEmployee.isPresent()) throw new EntityExistsException("User " + employeedDetail.getUserID() + " already exists");
+        Optional<EmployeeDetail> fetchedEmployee = employeeDetailRepostiory.findByUserID(employeedDetail.getUserID());
+        if (fetchedEmployee.isPresent())
+            throw new EntityExistsException("User " + employeedDetail.getUserID() + " already exists");
         // add new employee
         String profileID = UUID.randomUUID().toString();
         String employeeID = UUID.randomUUID().toString();
 
-       Boolean status = employeeDetailRepostiory.addNewEmployee(profileID, employeedDetail.getUserID(), employeeID);
-       if(!status) throw new RuntimeException("Error when creating new employee profile!");
+        Boolean status = employeeDetailRepostiory.addNewEmployee(profileID, employeedDetail.getUserID(), employeeID);
+        if (!status)
+            throw new RuntimeException("Error when creating new employee profile!");
 
-       return new EmployeeDetail(employeeID, employeedDetail.getUserID());
+        return new EmployeeDetail(employeeID, employeedDetail.getUserID());
     }
 
     @Override
     public EmployeeDetail getEmployeeByUserID(String userID) {
         EmployeeDetail fetchedEmployee = employeeDetailRepostiory.findByUserID(userID)
-            .orElseThrow(()-> new EmployeeNotFoundException("Employee with UserID: " + userID + " does not found"));
+                .orElseThrow(
+                        () -> new EmployeeNotFoundException("Employee with UserID: " + userID + " does not found"));
         return employeeImageService.setEmployeeDetailImage(fetchedEmployee);
     }
 
@@ -99,42 +103,42 @@ public class EmployeeServiceImp implements EmployeeService{
     }
 
     @Override
-    public EmployeeDetail getEmployeeDetail(String userID) throws InvalidUserException{
+    public EmployeeDetail getEmployeeDetail(String userID) throws InvalidUserException {
         log.info("getEmployeeDetail(userID={})", userID);
         Optional<EmployeeDetail> fetchedEmployeeOptional = employeeDetailRepostiory.findByUserID(userID);
-        if(fetchedEmployeeOptional.isPresent()){
+        if (fetchedEmployeeOptional.isPresent()) {
             EmployeeDetail fetchedEmployee = fetchedEmployeeOptional.get();
             employeeImageService.setEmployeeDetailImage(fetchedEmployee);
             return fetchedEmployee;
-        }else{
+        } else {
             EmployeeDetail newEmployeeDetail = this.addNewEmployee(new EmployeeDetail(userID));
             return newEmployeeDetail;
         }
     }
-    
+
     @Override
     public EmployeeDetails getEmployeeDetails(String userID) throws InvalidUserException {
         log.info("getEmployeeDetails(userID={})", userID);
         EmployeeDetail employeeDetail = this.getEmployeeDetail(userID);
         User user = userService.getUserById(userID);
-        EmployeeDetails employeeDetails  = new EmployeeDetailsBuilder()
-            .withEmployeeID(employeeDetail.getEmployeeID())
-            .withBirthDate(employeeDetail.getBirthDate())
-            .withHireDate(employeeDetail.getHireDate())
-            .withPhone(employeeDetail.getPhone())
-            .withPicture(employeeDetail.getPicture())
-            .withTitle(employeeDetail.getTitle())
-            .withAddress(employeeDetail.getAddress())
-            .withCity(employeeDetail.getCity())
-            .withDistrict(employeeDetail.getDistrict())
-            .withWard(employeeDetail.getWard())
-            .withNotes(employeeDetail.getNotes())
-            .withUserID(user.getUserID())
-            .withUsername(user.getUsername())
-            .withFirstName(user.getFirstName())
-            .withLastName(user.getLastName())
-            .withEmail(user.getEmail())
-            .build();
+        EmployeeDetails employeeDetails = EmployeeDetails.builder()
+                .employeeID(employeeDetail.getEmployeeID())
+                .birthDate(employeeDetail.getBirthDate())
+                .hireDate(employeeDetail.getHireDate())
+                .phone(employeeDetail.getPhone())
+                .picture(employeeDetail.getPicture())
+                .title(employeeDetail.getTitle())
+                .address(employeeDetail.getAddress())
+                .city(employeeDetail.getCity())
+                .district(employeeDetail.getDistrict())
+                .ward(employeeDetail.getWard())
+                .notes(employeeDetail.getNotes())
+                .userID(user.getUserID())
+                .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .build();
         return employeeDetails;
     }
 
@@ -147,14 +151,14 @@ public class EmployeeServiceImp implements EmployeeService{
     }
 
     @Override
-    public EmployeeDetail getEmployeeDetailByUsername(String username) throws InvalidUserException{
+    public EmployeeDetail getEmployeeDetailByUsername(String username) throws InvalidUserException {
         log.info("getEmployeeDetailByUsername(username={})", username);
         String userid = userService.getUser(username).getUserID();
         return this.getEmployeeDetail(userid);
     }
 
     @Override
-    public EmployeeDetails getEmployeeDetailsByUsername(String username) throws InvalidUserException{
+    public EmployeeDetails getEmployeeDetailsByUsername(String username) throws InvalidUserException {
         log.info("getEmployeeDetailsByUsername(username={})", username);
         String userid = userService.getUser(username).getUserID();
         return this.getEmployeeDetails(userid);
@@ -165,7 +169,7 @@ public class EmployeeServiceImp implements EmployeeService{
         log.info("getUsers(pageNumber={})", pageNumber);
         Page<UserDetails> users = this.userService.getUsersByRole(EMPLOYEE, pageNumber);
         users.getContent().stream().forEach(employee -> {
-            if(employee.getPicture()!=null){
+            if (employee.getPicture() != null) {
                 String imageUrl = employeeImageService.getImageUrl(employee.getPicture());
                 employee.setPicture(imageUrl);
             }

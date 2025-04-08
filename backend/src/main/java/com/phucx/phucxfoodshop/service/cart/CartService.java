@@ -9,10 +9,10 @@ import com.phucx.phucxfoodshop.exceptions.CustomerNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.EmptyCartException;
 import com.phucx.phucxfoodshop.exceptions.InvalidOrderException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.CartOrderInfo;
-import com.phucx.phucxfoodshop.model.CartProduct;
-import com.phucx.phucxfoodshop.model.CartProductsCookie;
-import com.phucx.phucxfoodshop.model.OrderWithProducts;
+import com.phucx.phucxfoodshop.model.dto.CartOrderInfo;
+import com.phucx.phucxfoodshop.model.dto.CartProduct;
+import com.phucx.phucxfoodshop.model.dto.CartProductsCookie;
+import com.phucx.phucxfoodshop.model.dto.OrderWithProducts;
 
 import jakarta.servlet.http.HttpServletResponse;
 

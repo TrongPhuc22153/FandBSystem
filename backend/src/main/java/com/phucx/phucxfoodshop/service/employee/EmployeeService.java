@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-import com.phucx.phucxfoodshop.model.EmployeeDetail;
-import com.phucx.phucxfoodshop.model.EmployeeDetails;
-import com.phucx.phucxfoodshop.model.UserDetails;
+import com.phucx.phucxfoodshop.model.dto.EmployeeDetails;
+import com.phucx.phucxfoodshop.model.entity.EmployeeDetail;
+import com.phucx.phucxfoodshop.model.entity.UserDetails;
 import com.phucx.phucxfoodshop.exceptions.InvalidUserException;
 
 public interface EmployeeService {

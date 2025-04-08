@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.phucx.phucxfoodshop.compositeKey.UserRoleID;
-import com.phucx.phucxfoodshop.model.UserDetails;
+import com.phucx.phucxfoodshop.model.entity.UserDetails;
 
 
 @Repository

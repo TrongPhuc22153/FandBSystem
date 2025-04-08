@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.phucx.phucxfoodshop.model.Discount;
+import com.phucx.phucxfoodshop.model.entity.Discount;
 
 
 

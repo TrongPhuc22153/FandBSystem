@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
-import com.phucx.phucxfoodshop.model.VerificationToken;
+import com.phucx.phucxfoodshop.model.entity.VerificationToken;
 
 @Repository
 public interface VerificationTokenRepository extends JpaRepository<VerificationToken, String> {

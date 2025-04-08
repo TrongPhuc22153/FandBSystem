@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.phucx.phucxfoodshop.exceptions.UserNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.UserPasswordException;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
-import com.phucx.phucxfoodshop.model.UserAuthentication;
-import com.phucx.phucxfoodshop.model.UserChangePassword;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.UserAuthentication;
+import com.phucx.phucxfoodshop.model.dto.UserChangePassword;
 import com.phucx.phucxfoodshop.service.phone.PhoneVerificationService;
 import com.phucx.phucxfoodshop.service.user.UserPasswordService;
 import com.phucx.phucxfoodshop.service.user.UserProfileService;
@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/account/user", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/account/user", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
     private final UserProfileService userProfileService;
     private final PhoneVerificationService phoneVerificationService;

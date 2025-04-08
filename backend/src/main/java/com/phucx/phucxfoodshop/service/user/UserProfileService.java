@@ -4,9 +4,9 @@ import org.springframework.security.core.Authentication;
 
 import com.phucx.phucxfoodshop.exceptions.CustomerNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.EmployeeNotFoundException;
-import com.phucx.phucxfoodshop.model.UserAuthentication;
-import com.phucx.phucxfoodshop.model.UserProfile;
-import com.phucx.phucxfoodshop.model.UserVerification;
+import com.phucx.phucxfoodshop.model.dto.UserAuthentication;
+import com.phucx.phucxfoodshop.model.entity.UserProfile;
+import com.phucx.phucxfoodshop.model.entity.UserVerification;
 
 public interface UserProfileService {
     public UserProfile getUserProfile(String userID);

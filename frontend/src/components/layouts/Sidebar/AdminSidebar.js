@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { href, Link } from "react-router";
 import {
   ADMIN_CALENDAR_URI,
   ADMIN_CUSTOMERS_URI,
@@ -8,6 +8,7 @@ import {
   ADMIN_ORDERS_URI,
   ADMIN_PRODUCTS_URI,
   ADMIN_TABLE_CALENDAR_URI,
+  ADMIN_TABLES_URI,
   HOME_URI,
 } from "../../../constants/WebPageURI";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -64,6 +65,12 @@ const items = [
       {
         title: "Products",
         href: ADMIN_PRODUCTS_URI,
+        children: [],
+        active: false,
+      },
+      {
+        title: "Tables",
+        href: ADMIN_TABLES_URI,
         children: [],
         active: false,
       },

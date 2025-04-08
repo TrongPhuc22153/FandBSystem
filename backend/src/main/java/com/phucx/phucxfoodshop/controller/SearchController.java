@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.phucx.phucxfoodshop.constant.WebConstant;
-import com.phucx.phucxfoodshop.model.CurrentProduct;
+import com.phucx.phucxfoodshop.model.entity.CurrentProduct;
 import com.phucx.phucxfoodshop.service.search.SearchProductService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/shop/search", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/shop/search", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SearchController {
     private final SearchProductService searchProductService;
 

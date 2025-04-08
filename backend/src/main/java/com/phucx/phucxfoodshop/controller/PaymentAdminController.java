@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.phucx.phucxfoodshop.model.PaymentPerMonth;
-import com.phucx.phucxfoodshop.model.PaymentPercentage;
-import com.phucx.phucxfoodshop.model.SellingProduct;
+import com.phucx.phucxfoodshop.model.dto.PaymentPerMonth;
+import com.phucx.phucxfoodshop.model.dto.PaymentPercentage;
+import com.phucx.phucxfoodshop.model.dto.SellingProduct;
 import com.phucx.phucxfoodshop.service.payment.PaymentService;
 import com.phucx.phucxfoodshop.service.product.ProductService;
 
@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "payment/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/payment/admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PaymentAdminController {
     private final PaymentService paymentService;
     private final ProductService productService;

@@ -3,8 +3,8 @@ package com.phucx.phucxfoodshop.service.user;
 import org.springframework.data.domain.Page;
 
 import com.phucx.phucxfoodshop.exceptions.UserNotFoundException;
-import com.phucx.phucxfoodshop.model.User;
-import com.phucx.phucxfoodshop.model.UserDetails;
+import com.phucx.phucxfoodshop.model.entity.User;
+import com.phucx.phucxfoodshop.model.entity.UserDetails;
 
 public interface UserService{
     // get user

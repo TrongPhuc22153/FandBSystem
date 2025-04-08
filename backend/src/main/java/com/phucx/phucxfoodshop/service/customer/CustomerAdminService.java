@@ -3,8 +3,8 @@ package com.phucx.phucxfoodshop.service.customer;
 import org.springframework.data.domain.Page;
 
 import com.phucx.phucxfoodshop.constant.UserSearch;
-import com.phucx.phucxfoodshop.model.CustomerAdminDetails;
-import com.phucx.phucxfoodshop.model.UserDetails;
+import com.phucx.phucxfoodshop.model.dto.CustomerAdminDetails;
+import com.phucx.phucxfoodshop.model.entity.UserDetails;
 
 public interface CustomerAdminService {
     // update employee information for admin

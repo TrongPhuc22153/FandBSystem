@@ -21,7 +21,7 @@ import com.paypal.base.rest.PayPalRESTException;
 import com.phucx.phucxfoodshop.constant.Currency;
 import com.phucx.phucxfoodshop.constant.PaymentConstant;
 import com.phucx.phucxfoodshop.constant.PaymentStatusConstant;
-import com.phucx.phucxfoodshop.model.PaymentDTO;
+import com.phucx.phucxfoodshop.model.dto.PaymentDTO;
 import com.phucx.phucxfoodshop.service.payment.PaymentManagementService;
 import com.phucx.phucxfoodshop.service.paymentHandler.PaymentHandlerService;
 import com.phucx.phucxfoodshop.service.paymentHandler.PaypalHandlerService;

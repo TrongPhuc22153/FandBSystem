@@ -6,15 +6,15 @@ import org.springframework.data.domain.Page;
 
 import com.phucx.phucxfoodshop.exceptions.EntityExistsException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.CurrentProduct;
-import com.phucx.phucxfoodshop.model.ExistedProduct;
-import com.phucx.phucxfoodshop.model.Product;
-import com.phucx.phucxfoodshop.model.ProductDetail;
-import com.phucx.phucxfoodshop.model.ProductDetails;
-import com.phucx.phucxfoodshop.model.ProductDiscountsDTO;
-import com.phucx.phucxfoodshop.model.ProductStockTableType;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
-import com.phucx.phucxfoodshop.model.SellingProduct;
+import com.phucx.phucxfoodshop.model.dto.ProductDetails;
+import com.phucx.phucxfoodshop.model.dto.ProductDiscountsDTO;
+import com.phucx.phucxfoodshop.model.dto.ProductStockTableType;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.SellingProduct;
+import com.phucx.phucxfoodshop.model.entity.CurrentProduct;
+import com.phucx.phucxfoodshop.model.entity.ExistedProduct;
+import com.phucx.phucxfoodshop.model.entity.Product;
+import com.phucx.phucxfoodshop.model.entity.ProductDetail;
 
 public interface ProductService {
     // update product's instocks

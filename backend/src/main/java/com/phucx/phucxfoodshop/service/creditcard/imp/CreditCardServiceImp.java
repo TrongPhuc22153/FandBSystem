@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.CreditCard;
-import com.phucx.phucxfoodshop.model.User;
+import com.phucx.phucxfoodshop.model.entity.CreditCard;
+import com.phucx.phucxfoodshop.model.entity.User;
 import com.phucx.phucxfoodshop.repository.CreditCardRepository;
 import com.phucx.phucxfoodshop.service.creditcard.CreditCardService;
 import com.phucx.phucxfoodshop.service.user.UserService;

@@ -4,9 +4,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.phucx.phucxfoodshop.constant.WebConstant;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.Category;
-import com.phucx.phucxfoodshop.model.CurrentProduct;
-import com.phucx.phucxfoodshop.model.ProductDetail;
+import com.phucx.phucxfoodshop.model.entity.Category;
+import com.phucx.phucxfoodshop.model.entity.CurrentProduct;
+import com.phucx.phucxfoodshop.model.entity.ProductDetail;
 import com.phucx.phucxfoodshop.service.category.CategoryService;
 import com.phucx.phucxfoodshop.service.product.ProductService;
 import com.phucx.phucxfoodshop.service.search.SearchProductService;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/shop/home", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/shop/home", produces = MediaType.APPLICATION_JSON_VALUE)
 public class HomeController {
     private final CategoryService categoryService;
     private final ProductService productService;

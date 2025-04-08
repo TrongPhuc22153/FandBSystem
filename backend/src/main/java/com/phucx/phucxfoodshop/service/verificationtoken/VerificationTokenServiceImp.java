@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.phucx.phucxfoodshop.constant.JwtType;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.VerificationToken;
+import com.phucx.phucxfoodshop.model.entity.VerificationToken;
 import com.phucx.phucxfoodshop.repository.VerificationTokenRepository;
 
 import lombok.extern.slf4j.Slf4j;

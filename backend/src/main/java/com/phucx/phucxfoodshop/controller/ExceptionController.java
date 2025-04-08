@@ -20,7 +20,7 @@ import com.phucx.phucxfoodshop.exceptions.InvalidTokenException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.UserAuthenticationException;
 import com.phucx.phucxfoodshop.exceptions.UserPasswordException;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -15,10 +15,10 @@ import com.phucx.phucxfoodshop.constant.CookieConstant;
 import com.phucx.phucxfoodshop.exceptions.EmptyCartException;
 import com.phucx.phucxfoodshop.exceptions.InvalidOrderException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.District;
-import com.phucx.phucxfoodshop.model.Province;
-import com.phucx.phucxfoodshop.model.ShippingResponse;
-import com.phucx.phucxfoodshop.model.Ward;
+import com.phucx.phucxfoodshop.model.dto.District;
+import com.phucx.phucxfoodshop.model.dto.Province;
+import com.phucx.phucxfoodshop.model.dto.ShippingResponse;
+import com.phucx.phucxfoodshop.model.dto.Ward;
 import com.phucx.phucxfoodshop.service.shipper.ShippingService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/shipping", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/shipping", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ShippingController {
     private final ShippingService shippingService;
 

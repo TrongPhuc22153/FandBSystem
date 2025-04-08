@@ -1,7 +1,7 @@
 package com.phucx.phucxfoodshop.service.paymentHandler;
 
 import com.paypal.api.payments.Payment;
-import com.phucx.phucxfoodshop.model.PaymentDTO;
+import com.phucx.phucxfoodshop.model.dto.PaymentDTO;
 
 public interface PaypalHandlerService {
     public Payment createPayment(PaymentDTO paymentDTO, String cancelUrl, String successUrl);

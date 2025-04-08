@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.phucx.phucxfoodshop.exceptions.EntityExistsException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.Category;
+import com.phucx.phucxfoodshop.model.entity.Category;
 import com.phucx.phucxfoodshop.repository.CategoryRepository;
 import com.phucx.phucxfoodshop.service.image.CategoryImageService;
 import com.phucx.phucxfoodshop.utils.ImageUtils;

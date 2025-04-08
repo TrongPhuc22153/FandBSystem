@@ -14,9 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.phucx.phucxfoodshop.exceptions.EntityExistsException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.Category;
-import com.phucx.phucxfoodshop.model.ImageFormat;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.ImageFormat;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.entity.Category;
 import com.phucx.phucxfoodshop.service.category.CategoryService;
 import com.phucx.phucxfoodshop.service.image.CategoryImageService;
 
@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/shop/category", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/shop/category", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CategoryController {
     private final CategoryService categoryService;
     private final CategoryImageService categoryImageService;

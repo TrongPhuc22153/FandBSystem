@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
-import com.phucx.phucxfoodshop.model.User;
+import com.phucx.phucxfoodshop.model.entity.User;
 
 import java.util.List;
 import java.util.Optional;

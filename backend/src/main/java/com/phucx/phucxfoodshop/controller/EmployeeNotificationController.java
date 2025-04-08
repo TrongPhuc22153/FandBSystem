@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.phucx.phucxfoodshop.constant.NotificationBroadCast;
 import com.phucx.phucxfoodshop.constant.WebConstant;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.NotificationDetail;
-import com.phucx.phucxfoodshop.model.NotificationSummary;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.NotificationSummary;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.entity.NotificationDetail;
 import com.phucx.phucxfoodshop.service.notification.MarkUserNotificationService;
 import com.phucx.phucxfoodshop.service.notification.NotificationService;
 
@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/notification/employee", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/notification/employee", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EmployeeNotificationController {
     private final NotificationService notificationService;
     private final MarkUserNotificationService markUserNotificationService;

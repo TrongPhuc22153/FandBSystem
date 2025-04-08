@@ -14,9 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.phucx.phucxfoodshop.exceptions.UserAuthenticationException;
-import com.phucx.phucxfoodshop.model.User;
-import com.phucx.phucxfoodshop.model.UserRegisterInfo;
-import com.phucx.phucxfoodshop.model.UserSysDetails;
+import com.phucx.phucxfoodshop.model.dto.UserRegisterInfo;
+import com.phucx.phucxfoodshop.model.dto.UserSysDetails;
+import com.phucx.phucxfoodshop.model.entity.User;
 import com.phucx.phucxfoodshop.repository.UserRepository;
 import com.phucx.phucxfoodshop.service.user.UserSysDetailsService;
 

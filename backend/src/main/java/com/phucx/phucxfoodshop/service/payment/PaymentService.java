@@ -6,10 +6,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.paypal.base.rest.PayPalRESTException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.PaymentNotFoundException;
-import com.phucx.phucxfoodshop.model.PaymentDTO;
-import com.phucx.phucxfoodshop.model.PaymentPerMonth;
-import com.phucx.phucxfoodshop.model.PaymentPercentage;
-import com.phucx.phucxfoodshop.model.PaymentResponse;
+import com.phucx.phucxfoodshop.model.dto.PaymentDTO;
+import com.phucx.phucxfoodshop.model.dto.PaymentPerMonth;
+import com.phucx.phucxfoodshop.model.dto.PaymentPercentage;
+import com.phucx.phucxfoodshop.model.dto.PaymentResponse;
 
 
 public interface PaymentService {

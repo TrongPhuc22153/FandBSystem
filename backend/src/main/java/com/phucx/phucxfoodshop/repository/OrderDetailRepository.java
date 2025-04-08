@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
 import com.phucx.phucxfoodshop.compositeKey.OrderDetailKey;
-import com.phucx.phucxfoodshop.model.OrderDetail;
+import com.phucx.phucxfoodshop.model.entity.OrderDetail;
 
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, OrderDetailKey>{

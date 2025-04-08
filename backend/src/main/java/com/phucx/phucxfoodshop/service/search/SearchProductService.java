@@ -1,10 +1,10 @@
 package com.phucx.phucxfoodshop.service.search;
 
-import com.phucx.phucxfoodshop.model.CurrentProduct;
-
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+
+import com.phucx.phucxfoodshop.model.entity.CurrentProduct;
 
 public interface SearchProductService {
     Page<CurrentProduct> searchCurrentProducts(String productName, int pageNumber, int pageSize);

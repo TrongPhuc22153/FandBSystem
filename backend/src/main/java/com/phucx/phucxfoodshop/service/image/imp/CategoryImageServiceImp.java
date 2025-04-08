@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.phucx.phucxfoodshop.config.FileProperties;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.Category;
+import com.phucx.phucxfoodshop.model.entity.Category;
 import com.phucx.phucxfoodshop.service.image.CategoryImageService;
 import com.phucx.phucxfoodshop.utils.ImageUtils;
 
@@ -25,7 +25,7 @@ public class CategoryImageServiceImp implements CategoryImageService{
     @Autowired
     private FileProperties fileProperties;
 
-    private final String imageUri = "/image/category";
+    private final String imageUri = "/api/v1/image/category";
 
     @Override
     public Category setCategoryImage(Category category) {

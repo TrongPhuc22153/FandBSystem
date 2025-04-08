@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/phucxfoodshop/image")
+@RequestMapping(value = "/api/v1/phucxfoodshop/image")
 public class ImageController {
     private final ProductImageService productImageService;
     private final CategoryImageService categoryImageService;

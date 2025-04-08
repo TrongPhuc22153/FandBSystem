@@ -21,17 +21,16 @@ import com.phucx.phucxfoodshop.exceptions.CustomerNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.EmptyCartException;
 import com.phucx.phucxfoodshop.exceptions.InvalidOrderException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.CartOrderInfo;
-import com.phucx.phucxfoodshop.model.CartProduct;
-import com.phucx.phucxfoodshop.model.CartProductInfo;
-import com.phucx.phucxfoodshop.model.CartProductsCookie;
-import com.phucx.phucxfoodshop.model.CurrentProduct;
-import com.phucx.phucxfoodshop.model.CustomerDetail;
-import com.phucx.phucxfoodshop.model.OrderItem;
-import com.phucx.phucxfoodshop.model.OrderItemDiscount;
-import com.phucx.phucxfoodshop.model.OrderWithProducts;
-import com.phucx.phucxfoodshop.model.OrderWithProductsBuilder;
-import com.phucx.phucxfoodshop.model.User;
+import com.phucx.phucxfoodshop.model.dto.CartOrderInfo;
+import com.phucx.phucxfoodshop.model.dto.CartProduct;
+import com.phucx.phucxfoodshop.model.dto.CartProductInfo;
+import com.phucx.phucxfoodshop.model.dto.CartProductsCookie;
+import com.phucx.phucxfoodshop.model.dto.OrderItem;
+import com.phucx.phucxfoodshop.model.dto.OrderItemDiscount;
+import com.phucx.phucxfoodshop.model.dto.OrderWithProducts;
+import com.phucx.phucxfoodshop.model.entity.CurrentProduct;
+import com.phucx.phucxfoodshop.model.entity.CustomerDetail;
+import com.phucx.phucxfoodshop.model.entity.User;
 import com.phucx.phucxfoodshop.service.customer.CustomerService;
 import com.phucx.phucxfoodshop.service.product.ProductService;
 import com.phucx.phucxfoodshop.service.user.UserService;
@@ -156,7 +155,10 @@ public class CartServiceImp implements CartService{
         // fetch products from database
         List<CurrentProduct> fetchedProducts = this.productService.getCurrentProducts(productIDs);
         // convert 
-        OrderWithProducts order = new OrderWithProductsBuilder().build();
+        OrderWithProducts order = OrderWithProducts.builder()
+            .products(new ArrayList<>())
+            .totalPrice(BigDecimal.ZERO)
+            .build();
         for (CartProduct product: products) {
             // find product
             CurrentProduct fetchedProduct = this.findCurrentProduct(fetchedProducts, product.getProductID())

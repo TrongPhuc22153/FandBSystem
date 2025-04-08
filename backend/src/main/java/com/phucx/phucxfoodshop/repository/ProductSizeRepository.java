@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
-import com.phucx.phucxfoodshop.model.ProductSize;
+import com.phucx.phucxfoodshop.model.entity.ProductSize;
 
 
 @Repository

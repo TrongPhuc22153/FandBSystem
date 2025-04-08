@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.phucx.phucxfoodshop.config.FileProperties;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.EmployeeDetail;
+import com.phucx.phucxfoodshop.model.entity.EmployeeDetail;
 import com.phucx.phucxfoodshop.service.image.EmployeeImageService;
 import com.phucx.phucxfoodshop.utils.ImageUtils;
 
@@ -26,7 +26,7 @@ public class EmployeeImageServiceImp implements EmployeeImageService{
     @Autowired
     private FileProperties fileProperties;
 
-    private final String imageUri = "/image/employee";
+    private final String imageUri = "/api/v1/image/employee";
 
     @Override
     public EmployeeDetail setEmployeeDetailImage(EmployeeDetail employee) {

@@ -16,18 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.phucx.phucxfoodshop.constant.WebConstant;
 import com.phucx.phucxfoodshop.exceptions.InvalidDiscountException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.Discount;
-import com.phucx.phucxfoodshop.model.DiscountDetail;
-import com.phucx.phucxfoodshop.model.DiscountType;
-import com.phucx.phucxfoodshop.model.DiscountWithProduct;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.DiscountWithProduct;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.entity.Discount;
+import com.phucx.phucxfoodshop.model.entity.DiscountDetail;
+import com.phucx.phucxfoodshop.model.entity.DiscountType;
 import com.phucx.phucxfoodshop.service.discount.DiscountService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/shop/discount", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/shop/discount", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DiscountController {
     private final DiscountService discountService;
      // discount

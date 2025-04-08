@@ -3,7 +3,6 @@ package com.phucx.phucxfoodshop.controller;
 import java.net.URI;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,16 +20,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/payment/momo", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/payment/momo", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MomoPaymentController {
     private final MomoHandlerService momoHandlerService;
     @Value("${phucx.payment-successful-url}")
     private String successfulUrl;
 
     @GetMapping("pay/successful")
-    public ResponseEntity<String> successful(@RequestParam("orderId") String orderId){
+    public ResponseEntity<String> successful(@RequestParam("orderId") String orderId) {
         Boolean result = momoHandlerService.paymentSuccessfully(orderId);
-        if(!result){
+        if (!result) {
             log.error("Error while saving payment: {}", orderId);
         }
         HttpHeaders headers = new HttpHeaders();

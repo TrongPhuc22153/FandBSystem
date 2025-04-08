@@ -12,6 +12,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.lang.Nullable;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -72,29 +73,29 @@ public class WebSecurityConfig {
         //     .csrfTokenRequestHandler(delegate::handle));
         // request
         http.authorizeHttpRequests(request -> request
-            .requestMatchers("/account/admin/**").hasRole("ADMIN")
-            .requestMatchers("/account/customer/**", "/notification/customer/**", "/order/customer/**").hasRole("CUSTOMER")
-            .requestMatchers("/account/employee/**", "/notification/employee/**", "/order/employee/**").hasRole("EMPLOYEE")
-            .requestMatchers("/phucxfoodshop/image/**", "/account/phoneNumber/**").permitAll()
-            .requestMatchers("/shop/home/**", "/shop/search/**").permitAll()
-            .requestMatchers("/shop/discount/**", "/shop/category/**", "/shop/product/**").hasRole("ADMIN")
-            .requestMatchers("/shop/cart/**").hasRole("CUSTOMER")
+            .requestMatchers("/api/v1/account/admin/**").hasRole("ADMIN")
+            .requestMatchers("/api/v1/account/customer/**", "/api/v1/notification/customer/**", "/api/v1/order/customer/**").hasRole("CUSTOMER")
+            .requestMatchers("/api/v1/account/employee/**", "/api/v1/notification/employee/**", "/api/v1/order/employee/**").hasRole("EMPLOYEE")
+            .requestMatchers("/api/v1/phucxfoodshop/image/**", "/api/v1/account/phoneNumber/**").permitAll()
+            .requestMatchers("/api/v1/shop/home/**", "/api/v1/shop/search/**").permitAll()
+            .requestMatchers("/api/v1/shop/discount/**", "/api/v1/shop/category/**", "/api/v1/shop/product/**").hasRole("ADMIN")
+            .requestMatchers("/api/v1/shop/cart/**").hasRole("CUSTOMER")
             .requestMatchers("/actuator/**", "/chat/**").permitAll()
             .requestMatchers("/swagger-ui/**", "/v3/**", "/document/**").permitAll()
-            .requestMatchers("/shipping/**").hasRole("CUSTOMER")
-            .requestMatchers("/payment/paypal/pay/cancel", "/payment/paypal/pay/successful").permitAll()
-            .requestMatchers("/payment/momo/pay/cancel", "/paymentmomo/pay/successful").permitAll()
-            .requestMatchers("/payment/zalopay/pay/successful", "/payment/zalopay/callback").permitAll()
-            .requestMatchers("/payment/paypal/**", "/payment/cod/**", "/payment/pay/**", "/payment/methods/**", "/payment/momo/**", "/payment/zalopay/**").hasRole("CUSTOMER")
-            .requestMatchers("/payment/invoice/**").hasRole("CUSTOMER")
-            .requestMatchers("/payment/admin/**").hasRole("ADMIN")
-            .requestMatchers("/register/**", "/test/**", "/forgot/**", "/verify/**", "/reset/**", "/verifyReset/**").permitAll()
-            .requestMatchers("/login/**").authenticated()
-            .requestMatchers("/address/store").permitAll()
-            .requestMatchers("/account/user/**", "/address/**").authenticated()
+            .requestMatchers("/api/v1/shipping/**").hasRole("CUSTOMER")
+            .requestMatchers("/api/v1/payment/paypal/pay/cancel", "/api/v1/payment/paypal/pay/successful").permitAll()
+            .requestMatchers("/api/v1/payment/momo/pay/cancel", "/api/v1/paymentmomo/pay/successful").permitAll()
+            .requestMatchers("/api/v1/payment/zalopay/pay/successful", "/api/v1/payment/zalopay/callback").permitAll()
+            .requestMatchers("/api/v1/payment/paypal/**", "/api/v1/payment/cod/**", "/api/v1/payment/pay/**", "/api/v1/payment/methods/**", "/api/v1/payment/momo/**", "/api/v1/payment/zalopay/**").hasRole("CUSTOMER")
+            .requestMatchers("/api/v1/payment/invoice/**").hasRole("CUSTOMER")
+            .requestMatchers("/api/v1/payment/admin/**").hasRole("ADMIN")
+            .requestMatchers("/api/v1/register/**", "/api/v1/test/**", "/api/v1/forgot/**", "/api/v1/verify/**", "/api/v1/reset/**", "/api/v1/verifyReset/**").permitAll()
+            .requestMatchers("/api/v1/login/**").authenticated()
+            .requestMatchers("/api/v1/address/store").permitAll()
+            .requestMatchers("/api/v1/account/user/**", "/api/v1/address/**").authenticated()
             .anyRequest().denyAll());
         // login logout
-        http.formLogin(login -> login.disable());
+        http.formLogin(AbstractHttpConfigurer::disable);
         http.httpBasic(login -> login.authenticationEntryPoint(new CustomAuthetnicationEntryPoint()));
         http.logout(logout -> logout
             .invalidateHttpSession(true)

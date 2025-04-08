@@ -6,10 +6,10 @@ import org.springframework.data.domain.Page;
 
 import com.phucx.phucxfoodshop.exceptions.InvalidDiscountException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.Discount;
-import com.phucx.phucxfoodshop.model.DiscountDetail;
-import com.phucx.phucxfoodshop.model.DiscountType;
-import com.phucx.phucxfoodshop.model.DiscountWithProduct;
+import com.phucx.phucxfoodshop.model.dto.DiscountWithProduct;
+import com.phucx.phucxfoodshop.model.entity.Discount;
+import com.phucx.phucxfoodshop.model.entity.DiscountDetail;
+import com.phucx.phucxfoodshop.model.entity.DiscountType;
 
 public interface DiscountService {
     // insert discount

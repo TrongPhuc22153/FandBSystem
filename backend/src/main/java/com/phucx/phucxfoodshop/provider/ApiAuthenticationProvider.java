@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import com.phucx.phucxfoodshop.model.UserSysDetails;
+import com.phucx.phucxfoodshop.model.dto.UserSysDetails;
 import com.phucx.phucxfoodshop.service.user.UserSysDetailsService;
 
 import lombok.extern.slf4j.Slf4j;

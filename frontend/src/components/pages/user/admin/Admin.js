@@ -10,6 +10,8 @@ import AdminSidebar from "../../../layouts/Sidebar/AdminSidebar";
 import UserHeader from "../../../layouts/UserHeader";
 import AdminCalendarPage from "./calendar/AdminCalendar";
 import AdminTableCalendar from "./calendar/AdminTableCalendar";
+import TablesAdmin from "./table/TablesAdmin";
+import TableAdmin from "./table/TableAdmin";
 
 export default function AdminPage() {
   return (
@@ -24,6 +26,8 @@ export default function AdminPage() {
             <Route path="/order" element={<OrderDetailsAdmin />} />
             <Route path="/products" element={<ProductManagement />} />
             <Route path="/product" element={<ProductAdmin />} />
+            <Route path="/tables" element={<TablesAdmin />} />
+            <Route path="/table" element={<TableAdmin />} />
             <Route path="/customers" element={<CustomersAdmin />} />
             <Route path="/notifications" element={<NotificationsAdmin />} />
             <Route path="/calendar" element={<AdminCalendarPage />} />

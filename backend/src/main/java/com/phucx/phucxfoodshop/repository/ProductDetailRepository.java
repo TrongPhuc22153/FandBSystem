@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.phucx.phucxfoodshop.model.ProductDetail;
+import com.phucx.phucxfoodshop.model.entity.ProductDetail;
 
 @Repository
 public interface ProductDetailRepository extends JpaRepository<ProductDetail, Integer>{

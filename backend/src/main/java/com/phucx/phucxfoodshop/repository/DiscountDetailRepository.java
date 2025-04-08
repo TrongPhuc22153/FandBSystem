@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
-import com.phucx.phucxfoodshop.model.DiscountDetail;
+import com.phucx.phucxfoodshop.model.entity.DiscountDetail;
 
 @Repository
 public interface DiscountDetailRepository extends JpaRepository<DiscountDetail, String>{

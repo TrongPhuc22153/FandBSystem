@@ -10,8 +10,8 @@ import com.phucx.phucxfoodshop.exceptions.InvalidOrderException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.PaymentNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.ShipperNotFoundException;
-import com.phucx.phucxfoodshop.model.OrderDetails;
-import com.phucx.phucxfoodshop.model.OrderWithProducts;
+import com.phucx.phucxfoodshop.model.dto.OrderDetails;
+import com.phucx.phucxfoodshop.model.dto.OrderWithProducts;
 
 public interface EmployeeOrderService {
     // processing order of customer

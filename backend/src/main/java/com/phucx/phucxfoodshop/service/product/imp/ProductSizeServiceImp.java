@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.phucx.phucxfoodshop.exceptions.EntityExistsException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.Product;
-import com.phucx.phucxfoodshop.model.ProductSize;
-import com.phucx.phucxfoodshop.model.ProductSizeInfo;
+import com.phucx.phucxfoodshop.model.entity.Product;
+import com.phucx.phucxfoodshop.model.entity.ProductSize;
+import com.phucx.phucxfoodshop.model.entity.ProductSizeInfo;
 import com.phucx.phucxfoodshop.repository.ProductRepository;
 import com.phucx.phucxfoodshop.repository.ProductSizeInfoRepository;
 import com.phucx.phucxfoodshop.repository.ProductSizeRepository;

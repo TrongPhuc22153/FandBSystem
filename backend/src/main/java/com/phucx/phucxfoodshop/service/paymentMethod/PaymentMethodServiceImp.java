@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.phucx.phucxfoodshop.exceptions.PaymentNotFoundException;
-import com.phucx.phucxfoodshop.model.PaymentMethod;
+import com.phucx.phucxfoodshop.model.entity.PaymentMethod;
 import com.phucx.phucxfoodshop.repository.PaymentMethodRepository;
 
 import lombok.extern.slf4j.Slf4j;

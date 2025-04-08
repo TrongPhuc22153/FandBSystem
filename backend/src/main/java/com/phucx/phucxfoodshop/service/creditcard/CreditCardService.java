@@ -1,7 +1,7 @@
 package com.phucx.phucxfoodshop.service.creditcard;
 
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.CreditCard;
+import com.phucx.phucxfoodshop.model.entity.CreditCard;
 
 public interface CreditCardService {
     public Boolean updateCreditCard(CreditCard creditCard);

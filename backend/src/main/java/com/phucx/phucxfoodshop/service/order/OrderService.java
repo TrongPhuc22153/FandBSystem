@@ -9,11 +9,11 @@ import com.phucx.phucxfoodshop.exceptions.EmployeeNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.InvalidDiscountException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
 import com.phucx.phucxfoodshop.exceptions.ShipperNotFoundException;
-import com.phucx.phucxfoodshop.model.InvoiceDetails;
-import com.phucx.phucxfoodshop.model.OrderDetails;
-import com.phucx.phucxfoodshop.model.OrderSummary;
-import com.phucx.phucxfoodshop.model.OrderWithProducts;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.InvoiceDetails;
+import com.phucx.phucxfoodshop.model.dto.OrderDetails;
+import com.phucx.phucxfoodshop.model.dto.OrderSummary;
+import com.phucx.phucxfoodshop.model.dto.OrderWithProducts;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
 
 public interface OrderService {
     // check pending order

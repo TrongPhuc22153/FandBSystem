@@ -10,8 +10,8 @@ import com.phucx.phucxfoodshop.constant.NotificationBroadCast;
 import com.phucx.phucxfoodshop.constant.NotificationIsRead;
 import com.phucx.phucxfoodshop.constant.WebConstant;
 import com.phucx.phucxfoodshop.constant.WebSocketConstant;
-import com.phucx.phucxfoodshop.model.NotificationDetail;
-import com.phucx.phucxfoodshop.model.UserNotificationDTO;
+import com.phucx.phucxfoodshop.model.dto.UserNotificationDTO;
+import com.phucx.phucxfoodshop.model.entity.NotificationDetail;
 import com.phucx.phucxfoodshop.service.messageQueue.MessageQueueService;
 import com.phucx.phucxfoodshop.service.notification.SendUserNotificationService;
 

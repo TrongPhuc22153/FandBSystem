@@ -13,9 +13,9 @@ import com.phucx.phucxfoodshop.constant.DiscountTypeConst;
 import com.phucx.phucxfoodshop.exceptions.ExceedMaxDiscountException;
 import com.phucx.phucxfoodshop.exceptions.InvalidDiscountException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.DiscountDetail;
-import com.phucx.phucxfoodshop.model.ProductDiscountsDTO;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.ProductDiscountsDTO;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.entity.DiscountDetail;
 import com.phucx.phucxfoodshop.repository.DiscountDetailRepository;
 import com.phucx.phucxfoodshop.service.discount.ValidateDiscountService;
 

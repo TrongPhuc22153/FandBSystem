@@ -3,7 +3,7 @@ package com.phucx.phucxfoodshop.service.paymentMethod;
 import java.util.List;
 
 import com.phucx.phucxfoodshop.exceptions.PaymentNotFoundException;
-import com.phucx.phucxfoodshop.model.PaymentMethod;
+import com.phucx.phucxfoodshop.model.entity.PaymentMethod;
 
 public interface PaymentMethodService {
     public List<PaymentMethod> getPaymmentMethods();   

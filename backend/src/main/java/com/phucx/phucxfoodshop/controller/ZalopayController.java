@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/payment/zalopay", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/payment/zalopay", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ZalopayController {
     private final ZaloPayHandlerService zaloPayHandlerService;
     @Value("${phucx.payment-successful-url}")

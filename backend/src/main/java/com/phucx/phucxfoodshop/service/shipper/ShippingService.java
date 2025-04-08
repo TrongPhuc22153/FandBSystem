@@ -6,11 +6,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.phucx.phucxfoodshop.exceptions.EmptyCartException;
 import com.phucx.phucxfoodshop.exceptions.InvalidOrderException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.District;
-import com.phucx.phucxfoodshop.model.Location;
-import com.phucx.phucxfoodshop.model.Province;
-import com.phucx.phucxfoodshop.model.ShippingResponse;
-import com.phucx.phucxfoodshop.model.Ward;
+import com.phucx.phucxfoodshop.model.dto.District;
+import com.phucx.phucxfoodshop.model.dto.Location;
+import com.phucx.phucxfoodshop.model.dto.Province;
+import com.phucx.phucxfoodshop.model.dto.ShippingResponse;
+import com.phucx.phucxfoodshop.model.dto.Ward;
 
 public interface ShippingService {
     // estimate shipping cost

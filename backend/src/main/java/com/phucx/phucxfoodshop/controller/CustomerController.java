@@ -15,11 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.phucx.phucxfoodshop.exceptions.CustomerNotFoundException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.CreditCard;
-import com.phucx.phucxfoodshop.model.CustomerDetail;
-import com.phucx.phucxfoodshop.model.CustomerFullDetails;
-import com.phucx.phucxfoodshop.model.ImageFormat;
-import com.phucx.phucxfoodshop.model.ResponseFormat;
+import com.phucx.phucxfoodshop.model.dto.CustomerFullDetails;
+import com.phucx.phucxfoodshop.model.dto.ImageFormat;
+import com.phucx.phucxfoodshop.model.dto.ResponseFormat;
+import com.phucx.phucxfoodshop.model.entity.CreditCard;
+import com.phucx.phucxfoodshop.model.entity.CustomerDetail;
 import com.phucx.phucxfoodshop.service.creditcard.CreditCardService;
 import com.phucx.phucxfoodshop.service.customer.CustomerService;
 import com.phucx.phucxfoodshop.service.image.CustomerImageService;
@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/account/customer", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/account/customer", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CustomerController {
     private final CustomerService customerService;
     private final CustomerImageService customerImageService;

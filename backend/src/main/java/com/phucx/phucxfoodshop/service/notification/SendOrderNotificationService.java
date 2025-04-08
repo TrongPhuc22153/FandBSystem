@@ -2,7 +2,7 @@ package com.phucx.phucxfoodshop.service.notification;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.OrderNotificationDTO;
+import com.phucx.phucxfoodshop.model.dto.OrderNotificationDTO;
 
 public interface SendOrderNotificationService {
     // customer send notification message to employee

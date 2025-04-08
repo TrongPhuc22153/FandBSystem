@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.CustomerDetail;
+import com.phucx.phucxfoodshop.model.entity.CustomerDetail;
 
 import jakarta.servlet.http.HttpServletRequest;
 

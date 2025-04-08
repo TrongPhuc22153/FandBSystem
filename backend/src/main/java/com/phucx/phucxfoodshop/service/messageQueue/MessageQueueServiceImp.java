@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 
 import com.phucx.phucxfoodshop.config.WebSocketConfig;
-import com.phucx.phucxfoodshop.model.NotificationDetail;
+import com.phucx.phucxfoodshop.model.entity.NotificationDetail;
 import com.phucx.phucxfoodshop.service.notification.NotificationService;
 import com.phucx.phucxfoodshop.service.user.UserService;
 

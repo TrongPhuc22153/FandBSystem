@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.phucx.phucxfoodshop.exceptions.NotFoundException;
-import com.phucx.phucxfoodshop.model.District;
-import com.phucx.phucxfoodshop.model.Location;
-import com.phucx.phucxfoodshop.model.Province;
-import com.phucx.phucxfoodshop.model.Ward;
+import com.phucx.phucxfoodshop.model.dto.District;
+import com.phucx.phucxfoodshop.model.dto.Location;
+import com.phucx.phucxfoodshop.model.dto.Province;
+import com.phucx.phucxfoodshop.model.dto.Ward;
 import com.phucx.phucxfoodshop.service.shipper.ShippingService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/address", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/address", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AddressController {
     private final ShippingService shippingService;
 

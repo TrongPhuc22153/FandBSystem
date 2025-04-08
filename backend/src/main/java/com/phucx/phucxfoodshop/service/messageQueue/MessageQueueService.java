@@ -1,6 +1,6 @@
 package com.phucx.phucxfoodshop.service.messageQueue;
 
-import com.phucx.phucxfoodshop.model.NotificationDetail;
+import com.phucx.phucxfoodshop.model.entity.NotificationDetail;
 
 public interface MessageQueueService {
     // send message to user

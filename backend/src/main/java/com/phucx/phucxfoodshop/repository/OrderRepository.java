@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 import com.phucx.phucxfoodshop.constant.OrderStatus;
-import com.phucx.phucxfoodshop.model.Order;
+import com.phucx.phucxfoodshop.model.entity.Order;
 
 
 
