@@ -36,6 +36,14 @@ const config = {
     Active: "badge bg-success",
     Deactive: "badge bg-danger",
   },
+  tableColors: {
+    "Default": "#3788d8", // Default color for tables
+    "Table 1": "#3788d8", // Blue
+    "Table 2": "#2ecc71", // Green
+    "Table 3": "#e74c3c", // Red
+    "Table 4": "#9b59b6", // Purple
+    "Table 5": "#f1c40f", // Yellow
+  }
 };
 
 export default config;

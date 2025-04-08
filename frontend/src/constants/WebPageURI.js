@@ -41,6 +41,7 @@ export const ADMIN_ORDERS_URI = '/user/admin/orders';
 export const ADMIN_ORDER_DETAILS_URI = '/user/admin/order-details';
 
 export const ADMIN_CALENDAR_URI = '/user/admin/calendar';
+export const ADMIN_TABLE_CALENDAR_URI = '/user/admin/table-calendar';
 
 export const ADMIN_CUSTOMERS_URI = '/user/admin/customers';
 export const ADMIN_CUSTOMER_URI = '/user/admin/customers';

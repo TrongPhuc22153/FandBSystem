@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import {
+  ADMIN_CALENDAR_URI,
   ADMIN_CUSTOMERS_URI,
   ADMIN_DASHBOARD_URI,
   ADMIN_NOTIFICATIONS_URI,
   ADMIN_ORDERS_URI,
   ADMIN_PRODUCTS_URI,
+  ADMIN_TABLE_CALENDAR_URI,
   HOME_URI,
 } from "../../../constants/WebPageURI";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendar } from "@fortawesome/free-regular-svg-icons";
 import { useLocation } from "react-router-dom";
 
 const items = [
@@ -48,22 +52,19 @@ const items = [
       {
         title: "Customers",
         href: ADMIN_CUSTOMERS_URI,
-        children: [
-        ],
+        children: [],
         active: false,
       },
       {
         title: "Orders",
         href: ADMIN_ORDERS_URI,
-        children: [
-        ],
+        children: [],
         active: false,
       },
       {
         title: "Products",
         href: ADMIN_PRODUCTS_URI,
-        children: [
-        ],
+        children: [],
         active: false,
       },
       {
@@ -75,26 +76,34 @@ const items = [
     ],
   },
   {
-    title: "Pages",
-    href: "/user/pages",
+    title: "Calendar",
+    href: ADMIN_CALENDAR_URI,
     icon: (
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4V3.6C3 3.26863 3.26863 3 3.6 3Z"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        />
-        <path d="M9.75 9.75V21" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M3 9.75H21" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
+      <FontAwesomeIcon
+        icon={faCalendar}
+        style={{ height: "24px", width: "24px" }}
+      />
     ),
-    tree_branchs: [],
+    tree_branchs: [
+      {
+        title: "Calendar",
+        href: ADMIN_CALENDAR_URI,
+        children: [],
+        active: false,
+      },
+      {
+        title: "Table Calendar",
+        href: ADMIN_TABLE_CALENDAR_URI,
+        children: [],
+        active: false,
+      },
+      {
+        title: "Back To Home",
+        href: HOME_URI,
+        children: [],
+        active: false,
+      }
+    ],
   },
   {
     title: "Media & Files",
@@ -326,9 +335,9 @@ export default function AdminSidebar() {
 
   useEffect(() => {
     // First check localStorage
-    const storedBranch = localStorage.getItem('activeBranch');
-    const storedLeaf = localStorage.getItem('activeLeaf');
-    const storedNavItem = localStorage.getItem('selectedNavigationItem');
+    const storedBranch = localStorage.getItem("activeBranch");
+    const storedLeaf = localStorage.getItem("activeLeaf");
+    const storedNavItem = localStorage.getItem("selectedNavigationItem");
 
     if (storedBranch && storedLeaf && storedNavItem) {
       const branchTitle = JSON.parse(storedBranch).title;
@@ -336,12 +345,12 @@ export default function AdminSidebar() {
         if (item.tree_branchs.length > 0) {
           return {
             ...item,
-            tree_branchs: activateBranch(item.tree_branchs, branchTitle)
+            tree_branchs: activateBranch(item.tree_branchs, branchTitle),
           };
         }
         return item;
       });
-      
+
       setNavigationItems(updatedItems);
       setSelectedNavigationItem(parseInt(storedNavItem));
       setActiveBranch(JSON.parse(storedBranch));
@@ -352,14 +361,14 @@ export default function AdminSidebar() {
       if (matched) {
         const { item, branch, leaf } = matched;
         const itemIndex = items.indexOf(item);
-        
+
         let updatedItems = [...items];
         if (branch && leaf) {
           updatedItems = updatedItems.map((navItem) => {
             if (navItem.tree_branchs.length > 0) {
               return {
                 ...navItem,
-                tree_branchs: activateBranch(navItem.tree_branchs, leaf.title)
+                tree_branchs: activateBranch(navItem.tree_branchs, leaf.title),
               };
             }
             return navItem;
@@ -370,11 +379,11 @@ export default function AdminSidebar() {
         setSelectedNavigationItem(itemIndex);
         setActiveBranch(branch);
         setActiveLeaf(leaf);
-        
+
         // Store the initial URL-based selection
-        localStorage.setItem('activeBranch', JSON.stringify(branch));
-        localStorage.setItem('activeLeaf', JSON.stringify(leaf));
-        localStorage.setItem('selectedNavigationItem', itemIndex.toString());
+        localStorage.setItem("activeBranch", JSON.stringify(branch));
+        localStorage.setItem("activeLeaf", JSON.stringify(leaf));
+        localStorage.setItem("selectedNavigationItem", itemIndex.toString());
       }
     }
   }, [location.pathname]);
@@ -424,7 +433,7 @@ export default function AdminSidebar() {
           deactivateAllBranches(item.tree_branchs),
           leafTitle
         );
-        
+
         updatedBranches.forEach((branch) => {
           if (branch.active) {
             newActiveBranch = branch;
@@ -450,15 +459,18 @@ export default function AdminSidebar() {
     setNavigationItems(updatedItems);
     setActiveBranch(newActiveBranch);
     setActiveLeaf(newActiveLeaf);
-    
-    localStorage.setItem('activeBranch', JSON.stringify(newActiveBranch));
-    localStorage.setItem('activeLeaf', JSON.stringify(newActiveLeaf));
-    localStorage.setItem('selectedNavigationItem', selectedNavigationItem.toString());
+
+    localStorage.setItem("activeBranch", JSON.stringify(newActiveBranch));
+    localStorage.setItem("activeLeaf", JSON.stringify(newActiveLeaf));
+    localStorage.setItem(
+      "selectedNavigationItem",
+      selectedNavigationItem.toString()
+    );
   };
 
   const handleNavItemClick = (index) => {
     setSelectedNavigationItem(index);
-    localStorage.setItem('selectedNavigationItem', index.toString());
+    localStorage.setItem("selectedNavigationItem", index.toString());
   };
 
   return (
