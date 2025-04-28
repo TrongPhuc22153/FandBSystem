@@ -1,0 +1,26 @@
+package com.phucx.phucxfandb.service.user;
+
+import com.phucx.phucxfandb.dto.request.*;
+import com.phucx.phucxfandb.dto.response.LoginResponse;
+import com.phucx.phucxfandb.dto.response.LogoutResponseDTO;
+import com.phucx.phucxfandb.dto.response.RegisteredUserDTO;
+import com.phucx.phucxfandb.dto.response.UserDTO;
+import com.phucx.phucxfandb.entity.User;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication;
+
+public interface AuthenticationService {
+    // signUp
+    RegisteredUserDTO registerCustomer(RegisterUserDTO registerUserDTO);
+    RegisteredUserDTO registerEmployee(RegisterUserDTO registerUserDTO);
+    RegisteredUserDTO registerAdmin(RegisterUserDTO registerUserDTO);
+    // signIn
+    LoginResponse signIn(LoginUserDTO loginUserDTO);
+    LogoutResponseDTO signOut(HttpServletRequest request, HttpServletResponse response, Authentication authentication);
+    // update password
+    Boolean updateUserPassword(UpdateForgetPassword UpdateForgetPassword);
+    Boolean resetUserPasswordRandom(String userID);
+    Boolean changePassword(UpdateUserPasswordDTO userChangePassword);
+
+}
