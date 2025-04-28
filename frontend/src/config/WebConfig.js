@@ -1,5 +1,5 @@
 const config = {
-  TODAY_SPECIAL_SURFING_TIME: 5000,
+  TODAY_SPECIAL_SURFING_TIME: 2000,
 
   order_status: {
     statuses: [

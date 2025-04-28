@@ -17,42 +17,42 @@ export const LOGOUT_URI = '/logout'
 
 
 // USER
-export const USER_DASHBOARD_URI = '/user/dashboard'
-export const USER_NOTIFICATION_URI = '/user/notification'
-export const USER_ORDER_URI = '/user/order'
+export const USER_DASHBOARD_URI = '/dashboard'
+export const USER_NOTIFICATION_URI = '/notification'
+export const USER_ORDER_URI = '/order'
 
 
 // EMPLOYEE
-export const EMPLOYEE_DASHBOARD_URI = '/user/employee/dashboard';
-export const EMPLOYEE_ORDER_URI = '/user/employee/order';
-export const EMPLOYEE_ORDERS_URI = '/user/employee/orders';
-export const EMPLOYEE_NOTIFICATIONS_URI = '/user/employee/notifications';
+export const EMPLOYEE_DASHBOARD_URI = '/employee/dashboard';
+export const EMPLOYEE_ORDER_URI = '/employee/order';
+export const EMPLOYEE_ORDERS_URI = '/employee/orders';
+export const EMPLOYEE_NOTIFICATIONS_URI = '/employee/notifications';
 
 // CUSTOMER
-export const CUSTOMER_DAHSBOARD_URI = '/user/customer/dashboard';
-export const CUSTOMER_ORDER_URI = '/user/customer/order';
-export const CUSTOMER_ORDERS_URI = '/user/customer/orders';
-export const CUSTOMER_NOTIFICATIONS_URI = '/user/customer/notifications';
+export const CUSTOMER_DAHSBOARD_URI = '/customer/dashboard';
+export const CUSTOMER_ORDER_URI = '/customer/order';
+export const CUSTOMER_ORDERS_URI = '/customer/orders';
+export const CUSTOMER_NOTIFICATIONS_URI = '/customer/notifications';
 
 // ADMIN
-export const ADMIN_DASHBOARD_URI = '/user/admin/dashboard';
-export const ADMIN_ORDER_URI = '/user/admin/order';
-export const ADMIN_ORDERS_URI = '/user/admin/orders';
-export const ADMIN_ORDER_DETAILS_URI = '/user/admin/order-details';
+export const ADMIN_DASHBOARD_URI = '/admin/dashboard';
+export const ADMIN_ORDER_URI = '/admin/order';
+export const ADMIN_ORDERS_URI = '/admin/orders';
+export const ADMIN_ORDER_DETAILS_URI = '/admin/order-details';
 
-export const ADMIN_TABLES_URI = '/user/admin/tables';
-export const ADMIN_TABLE_URI = '/user/admin/table';
+export const ADMIN_TABLES_URI = '/admin/tables';
+export const ADMIN_TABLE_URI = '/admin/table';
 
-export const ADMIN_CALENDAR_URI = '/user/admin/calendar';
-export const ADMIN_TABLE_CALENDAR_URI = '/user/admin/table-calendar';
+export const ADMIN_CALENDAR_URI = '/admin/calendar';
+export const ADMIN_TABLE_CALENDAR_URI = '/admin/table-calendar';
 
-export const ADMIN_CUSTOMERS_URI = '/user/admin/customers';
-export const ADMIN_CUSTOMER_URI = '/user/admin/customers';
+export const ADMIN_CUSTOMERS_URI = '/admin/customers';
+export const ADMIN_CUSTOMER_URI = '/admin/customers';
 
-export const ADMIN_PRODUCTS_URI = '/user/admin/products';
-export const ADMIN_PRODUCT_URI = '/user/admin/product';
+export const ADMIN_PRODUCTS_URI = '/admin/products';
+export const ADMIN_PRODUCT_URI = '/admin/product';
 
-export const ADMIN_NOTIFICATIONS_URI = '/user/admin/notifications';
+export const ADMIN_NOTIFICATIONS_URI = '/admin/notifications';
 
 // AUTHENTICATION
 export const AUTH_URI = '/auth';
