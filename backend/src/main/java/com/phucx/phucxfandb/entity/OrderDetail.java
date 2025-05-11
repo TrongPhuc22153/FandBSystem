@@ -14,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "order_details")
+@EqualsAndHashCode(callSuper = true)
 public class OrderDetail extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,7 +29,7 @@ public class OrderDetail extends Auditable{
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     private Order order;
 
-    @OneToMany(mappedBy = "orderDetail")
+    @OneToMany(mappedBy = "orderDetail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailDiscount> orderDetailDiscounts = new ArrayList<>();
 
     @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)

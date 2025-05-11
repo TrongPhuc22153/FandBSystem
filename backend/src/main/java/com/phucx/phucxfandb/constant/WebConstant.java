@@ -1,7 +1,8 @@
 package com.phucx.phucxfandb.constant;
 
 public class WebConstant {
-    public final static int PAGE_SIZE = 12;
+    public final static Integer PAGE_NUMBER = 0;
+    public final static Integer PAGE_SIZE = 10;
     public final static int NOTIFICATION_PAGE_SIZE = 15;
     public final static int RECOMMENDED_PRODUCT_PAGE_SIZE = 8;
     public final static int RECOMMENDED_PAGE_SIZE = 4;

@@ -7,8 +7,9 @@ import com.phucx.phucxfandb.entity.Product;
 import com.phucx.phucxfandb.entity.Reservation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ProductMapper.class})
 public interface MenuItemMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -21,5 +22,7 @@ public interface MenuItemMapper {
     @Mapping(target = "reservation", source = "reservation")
     MenuItem toMenuItem(RequestMenuItemDTO requestMenuItemDTO, Reservation reservation, Product product);
 
+    @Named("toMenuItemDTO")
+    @Mapping(target = "product", qualifiedByName = {"toProductKitchen"})
     MenuItemDTO toMenuItemDTO(MenuItem menuItem);
 }

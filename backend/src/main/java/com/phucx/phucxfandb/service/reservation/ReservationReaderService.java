@@ -1,16 +1,13 @@
 package com.phucx.phucxfandb.service.reservation;
 
-import com.phucx.phucxfandb.constant.ReservationStatus;
+import com.phucx.phucxfandb.dto.request.ReservationRequestParamDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.Reservation;
 import org.springframework.data.domain.Page;
-
-import java.time.LocalDate;
+import org.springframework.security.core.Authentication;
 
 public interface ReservationReaderService {
-    Page<ReservationDTO> getAllReservations(LocalDate date, ReservationStatus status, int pageNumber, int pageSize);
-    Page<ReservationDTO> getReservations(ReservationStatus status, int pageNumber, int pageSize);
-    Page<ReservationDTO> getAllReservations(int pageNumber, int pageSize);
+    Page<ReservationDTO> getReservations(ReservationRequestParamDTO params, Authentication authentication);
     ReservationDTO getReservation(String reservationId);
     Reservation getReservationEntity(String reservationId);
 

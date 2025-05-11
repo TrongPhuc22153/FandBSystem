@@ -17,6 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "orders")
+@EqualsAndHashCode(callSuper = true)
 public class Order extends Auditable{
     @Id
     @Column(name = "order_id", nullable = false, length = 36, updatable = false)

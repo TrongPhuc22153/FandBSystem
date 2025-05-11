@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Roles")
+@EqualsAndHashCode(callSuper = true)
 public class Role extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

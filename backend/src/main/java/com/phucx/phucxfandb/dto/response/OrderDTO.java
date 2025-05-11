@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.phucx.phucxfandb.constant.OrderStatus;
 import com.phucx.phucxfandb.constant.OrderType;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Value
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDTO {
     String orderId;
     List<OrderDetailDTO> orderDetails;
@@ -23,4 +25,8 @@ public class OrderDTO {
     CustomerDTO customer;
     EmployeeDTO employee;
     OrderType type;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime lastModifiedAt;
 }

@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 public interface RoleMapper {
     RoleDTO toRoleDTO(Role role);
 
+    @Mapping(target = "roleId", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)

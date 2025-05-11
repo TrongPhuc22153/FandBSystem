@@ -6,10 +6,16 @@ import com.phucx.phucxfandb.entity.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     CategoryDTO toCategoryDTO(Category category);
+
+    @Named("categoryListEntry")
+    @Mapping(target = "description", ignore = true)
+    @Mapping(target = "picture", ignore = true)
+    CategoryDTO toCategoryListEntry(Category category);
 
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedAt", ignore = true)

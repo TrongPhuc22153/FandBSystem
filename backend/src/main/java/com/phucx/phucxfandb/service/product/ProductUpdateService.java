@@ -10,5 +10,6 @@ public interface ProductUpdateService {
     Product updateProductInStock(long productId, int quantity);
     ProductDTO updateProduct(long productId, RequestProductDTO requestProductDTO);
     ProductDTO createProduct(RequestProductDTO requestProductDTO);
+    ProductDTO updateProductIsDeletedStatus(long id, RequestProductDTO requestProductDTO);
     List<ProductDTO> createProducts(List<RequestProductDTO> requestProductDTOs);
 }

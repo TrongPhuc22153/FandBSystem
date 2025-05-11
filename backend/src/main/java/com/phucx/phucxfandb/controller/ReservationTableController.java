@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.controller;
 
 import com.phucx.phucxfandb.dto.request.RequestReservationTableDTO;
+import com.phucx.phucxfandb.dto.request.TableRequestParamDTO;
 import com.phucx.phucxfandb.dto.response.ReservationTableDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
@@ -29,12 +30,9 @@ public class ReservationTableController {
 
     @Operation(summary = "Get all reservation tables", description = "Public access")
     @GetMapping
-    public ResponseEntity<Page<ReservationTableDTO>> getReservationTables(
-            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "size", defaultValue = "10") Integer pageSize
-    ) {
+    public ResponseEntity<Page<ReservationTableDTO>> getReservationTables(@ModelAttribute TableRequestParamDTO params) {
         Page<ReservationTableDTO> data = reservationTableReaderService
-                .getReservationTables(pageNumber, pageSize);
+                .getReservationTables(params);
         return ResponseEntity.ok().body(data);
     }
 
@@ -63,13 +61,28 @@ public class ReservationTableController {
     }
 
     @Operation(summary = "Update reservation table", description = "Admin access")
-    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<ReservationTableDTO>> updateReservationTable(
             @Valid @RequestBody RequestReservationTableDTO requestReservationTableDTO,
             @PathVariable String id
     ) {
         ReservationTableDTO updatedReservationTable = reservationTableUpdateService
                 .updateReservationTable(id, requestReservationTableDTO);
+        ResponseDTO<ReservationTableDTO> responseDTO = ResponseDTO.<ReservationTableDTO>builder()
+                .message("Table updated successfully")
+                .data(updatedReservationTable)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+
+    @Operation(summary = "Update reservation table status", description = "Employee access")
+    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<ReservationTableDTO>> updateReservationTableStatus(
+            @RequestBody RequestReservationTableDTO requestReservationTableDTO,
+            @PathVariable String id
+    ) {
+        ReservationTableDTO updatedReservationTable = reservationTableUpdateService
+                .updateTableStatus(id, requestReservationTableDTO);
         ResponseDTO<ReservationTableDTO> responseDTO = ResponseDTO.<ReservationTableDTO>builder()
                 .message("Table updated successfully")
                 .data(updatedReservationTable)

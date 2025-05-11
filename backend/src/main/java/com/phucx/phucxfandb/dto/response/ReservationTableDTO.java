@@ -1,34 +1,26 @@
 package com.phucx.phucxfandb.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.phucx.phucxfandb.constant.TableStatus;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+import java.time.LocalDateTime;
+
+@Value
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReservationTableDTO {
-    private String tableId;
+    String tableId;
+    Integer tableNumber;
+    String location;
+    TableStatus status;
+    Integer capacity;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime lastModifiedAt;
+    String lastModifiedBy;
 
-    @NotNull(message = "Table number cannot be null")
-    @Positive(message = "Table number must be positive")
-    private Integer tableNumber = 1;
-
-    @Size(max = 100, message = "Location cannot exceed 100 characters")
-    private String location;
-
-    @NotNull(message = "Status cannot be null")
-    private TableStatus status;
-
-    @Min(1)
-    @NotNull(message = "Capacity cannot be null")
-    @Positive(message = "Capacity must be positive")
-    private Integer capacity;
+    Boolean isDeleted;
 }

@@ -7,12 +7,20 @@ import com.phucx.phucxfandb.entity.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CategoryMapper.class})
 public interface ProductMapper {
 
     ProductDTO toProductDTO(Product product);
 
+    @Named("toProductKitchen")
+    @Mapping(target = "category", ignore = true)
+    @Mapping(target = "picture", ignore = true)
+    @Mapping(target = "description", ignore = true)
+    ProductDTO toProductKitchen(Product product);
+
+    @Mapping(target = "productSize", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
     @Mapping(target = "discounts", ignore = true)
     @Mapping(target = "category", source = "category")
@@ -24,6 +32,7 @@ public interface ProductMapper {
     @Mapping(target = "createdAt", ignore = true)
     Product toProduct(RequestProductDTO requestProductDTO, Category category);
 
+    @Mapping(target = "productSize", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
     @Mapping(target = "discounts", ignore = true)
     @Mapping(target = "category", source = "category")

@@ -25,4 +25,6 @@ public class RequestCategoryDTO {
     @Size(max = 255, message = "Picture URL cannot exceed 255 characters")
     private String picture;
 
+    private Boolean isDeleted = false;
+
 }

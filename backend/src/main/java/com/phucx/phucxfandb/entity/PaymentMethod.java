@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "payment_methods")
+@EqualsAndHashCode(callSuper = true)
 public class PaymentMethod extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -8,6 +8,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
 
+
+
     @Mapping(target = "order", source = "order")
     @Mapping(target = "reservation", ignore = true)
     @Mapping(target = "topic", source = "topic")

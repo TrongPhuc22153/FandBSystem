@@ -1,24 +1,32 @@
 package com.phucx.phucxfandb.constant;
 
 public class ApiEndpoint {
+
+    public static final String ORDER_BY_ID_ENDPOINT = "/api/v1/orders/{orderId}";
+    public static final String RESERVATION_BY_ID_ENDPOINT = "/api/v1/reservations/{reservationId}";
     /**
      * Public APIs accessible to everyone without authentication.
      */
     public static final String[] PUBLIC_API = {
-            "/api/v1/categories/**",
+            "/api/v1/categories",
+            "/api/v1/categories/{id}",
             "/api/v1/products/**",
             "/api/v1/discount-types/**",
             "/api/v1/payment-methods/**",
             "/api/v1/auth/**",
             "/api-docs/**",
             "/swagger-ui/**",
-            "/api/v1/feedback"
+            "/api/v1/feedback",
+            "/api/v1/tables",
+            "/api/v1/tables/table",
+            "/api/v1/images/{imageName}"
 
     };
 
     public static final String[] AUTH_API = {
             "/api/v1/auth/login",
             "/api/v1/auth/register",
+            "/api/v1/images"
     };
 
     /**
@@ -26,10 +34,16 @@ public class ApiEndpoint {
      */
     public static final String[] AUTHENTICATED_USER_API = {
             "/api/v1/topics/**",
-            "/api/v1/users/me/**",
+            "/api/v1/users/me",
+            "/api/v1/profiles/me",
             "/api/v1/address/**",
             "/api/v1/auth/logout",
-            "/api/v1/notifications/me"
+            "/api/v1/notifications/me",
+            "/api/v1/notifications/{notificationId}/me",
+            "/api/v1/orders",
+            "/api/v1/reservations",
+            ORDER_BY_ID_ENDPOINT,
+            RESERVATION_BY_ID_ENDPOINT
     };
 
     /**
@@ -43,15 +57,14 @@ public class ApiEndpoint {
             "/api/v1/tables/**",
             "/api/v1/topics/**",
             "/api/v1/discount-types/**",
-            "/api/v1/customers/image/upload",
-            "/api/v1/employees/image/upload",
-            "/api/v1/categories/image/upload",
-            "/api/v1/products/image/upload",
             "/api/v1/dine-in/**",
             "/api/v1/employee/reservations/**",
             "/api/v1/kitchen/**",
             "/api/v1/employees/order/**",
-            "/api/v1/users/**"
+            "/api/v1/users",
+            "/api/v1/users/{userId}",
+            "/api/v1/roles",
+            "/api/v1/profiles/{userId}",
     };
 
     public static final String[] WAITER_API = {
@@ -70,7 +83,6 @@ public class ApiEndpoint {
     public static final String[] CUSTOMER_API = {
             "/api/v1/carts/me/**",
             "/api/v1/customers/profile/me/**",
-            "/api/v1/customers/image/upload",
             "/api/v1/customer/reservations/**",
             "/api/v1/customers/order/**",
             "/api/v1/feedback/**",
@@ -81,7 +93,6 @@ public class ApiEndpoint {
      */
     public static final String[] EMPLOYEE_API = {
             "/api/v1/employees/profile/me/**",
-            "/api/v1/employees/image/upload",
             "/api/v1/employee/reservations/**",
             "/api/v1/orders/employees/**"
     };

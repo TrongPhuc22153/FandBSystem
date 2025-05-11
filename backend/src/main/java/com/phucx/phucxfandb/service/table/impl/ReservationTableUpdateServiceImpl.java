@@ -43,10 +43,26 @@ public class ReservationTableUpdateServiceImpl implements ReservationTableUpdate
     @Override
     @Modifying
     @Transactional
+    public ReservationTableDTO updateTableStatus(String tableId, RequestReservationTableDTO requestReservationTableDTO) {
+        log.info("updateTableStatus(id={}, requestReservationTableDTO={})", tableId, requestReservationTableDTO);
+        ReservationTable existingReservationTable = reservationTableRepository.findById(tableId)
+                .orElseThrow(() -> new NotFoundException("ReservationTable", "id", tableId));
+        if(requestReservationTableDTO.getStatus()!=null)
+            existingReservationTable.setStatus(requestReservationTableDTO.getStatus());
+        if(requestReservationTableDTO.getIsDeleted()!=null) {
+            existingReservationTable.setIsDeleted(requestReservationTableDTO.getIsDeleted());
+        }
+        ReservationTable updatedReservationTable = reservationTableRepository.save(existingReservationTable);
+        return mapper.toReservationTableDTO(updatedReservationTable);
+    }
+
+    @Override
+    @Modifying
+    @Transactional
     public ReservationTableDTO updateTableStatus(String tableId, TableStatus status) {
         log.info("updateTableStatus(id={}, status={})", tableId, status);
         ReservationTable existingReservationTable = reservationTableRepository.findByTableIdAndIsDeletedFalse(tableId)
-                .orElseThrow(() -> new NotFoundException("ReservationTable", tableId));
+                .orElseThrow(() -> new NotFoundException("ReservationTable", "id", tableId));
         existingReservationTable.setStatus(status);
         ReservationTable updatedReservationTable = reservationTableRepository.save(existingReservationTable);
         return mapper.toReservationTableDTO(updatedReservationTable);
@@ -126,5 +142,16 @@ public class ReservationTableUpdateServiceImpl implements ReservationTableUpdate
         return reservationTableRepository.saveAll(reservationTablesToSave).stream()
                 .map(mapper::toReservationTableDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public void deleteTable(String tableId) {
+        log.info("deleteTable(id={})", tableId);
+        ReservationTable existingReservationTable = reservationTableRepository.findByTableIdAndIsDeletedFalse(tableId)
+                .orElseThrow(() -> new NotFoundException("ReservationTable", "id", tableId));
+        existingReservationTable.setIsDeleted(Boolean.TRUE);
+        reservationTableRepository.save(existingReservationTable);
     }
 }

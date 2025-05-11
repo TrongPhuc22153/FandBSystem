@@ -31,6 +31,10 @@ public interface FeedbackMapper {
     @Mapping(target = "reservation", source = "reservation")
     Feedback toFeedback(RequestFeedBackDTO feedBackDTO, Reservation reservation, Customer customer);
 
+    @Mapping(target = "order.customer", ignore = true)
+    @Mapping(target = "order.employee", ignore = true)
+    @Mapping(target = "order.customer.profile.user.roles", ignore = true)
+    @Mapping(target = "customer.profile.user.roles", ignore = true)
     FeedBackDTO toFeedbackDTO(Feedback feedback);
 
     @Mapping(target = "id", ignore = true)

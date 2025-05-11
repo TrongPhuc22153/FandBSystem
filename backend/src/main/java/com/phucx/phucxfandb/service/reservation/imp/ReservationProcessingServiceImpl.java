@@ -1,7 +1,6 @@
 package com.phucx.phucxfandb.service.reservation.imp;
 
-import com.phucx.phucxfandb.constant.ReservationStatus;
-import com.phucx.phucxfandb.constant.TableStatus;
+import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.ReservationTable;
@@ -11,9 +10,13 @@ import com.phucx.phucxfandb.service.reservation.ReservationReaderService;
 import com.phucx.phucxfandb.service.reservation.ReservationUpdateService;
 import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
 import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
+import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -33,9 +36,9 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     @Override
-    public void cancelReservation(String username, String reservationId) {
+    public ReservationDTO cancelReservation(String username, String reservationId) {
         log.info("cancelReservation(username={}, reservationId={})", username, reservationId);
-        reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.CANCELED);
+        return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.CANCELLED);
     }
 
     @Override
@@ -85,8 +88,36 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
         );
         return reservationUpdateService.updateReservationStatus(
                 reservationId,
-                ReservationStatus.COMPLETE
+                ReservationStatus.COMPLETED
         );
+    }
+
+    @Override
+    public ReservationDTO processReservation(String username, String reservationId, ReservationAction action) {
+        return switch (action){
+            case PREPARING -> this.preparingReservation(username, reservationId);
+            case READY -> this.markReservationAsPrepared(reservationId);
+            case COMPLETE -> this.completeReservation(username, reservationId);
+            case CANCEL -> this.cancelReservation(username, reservationId);
+        };
+    }
+
+    @Override
+    public ReservationDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication) {
+        List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
+        if(roleNames.contains(RoleName.CUSTOMER)){
+            return this.placeCustomerReservation(authentication.getName(), requestReservationDTO);
+        }else if(roleNames.contains(RoleName.EMPLOYEE)){
+            return this.placeEmployeeReservation(authentication.getName(), requestReservationDTO);
+        } else{
+            throw new IllegalArgumentException("Invalid order type");
+        }
+    }
+
+    @Override
+    public ReservationDTO preparingReservation(String username, String reservationId) {
+        log.info("preparingReservation(username={}, reservationId={})", username, reservationId);
+        return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.PREPARING);
     }
 
     @Override

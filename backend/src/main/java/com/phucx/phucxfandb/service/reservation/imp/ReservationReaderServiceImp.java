@@ -1,21 +1,27 @@
 package com.phucx.phucxfandb.service.reservation.imp;
 
-import com.phucx.phucxfandb.constant.ReservationStatus;
+import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.dto.request.ReservationRequestParamDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.Reservation;
 import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.mapper.ReservationMapper;
 import com.phucx.phucxfandb.repository.ReservationRepository;
 import com.phucx.phucxfandb.service.reservation.ReservationReaderService;
+import com.phucx.phucxfandb.specifications.ReservationSpecification;
+import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,25 +31,40 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
     private final ReservationMapper reservationMapper;
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<ReservationDTO> getAllReservations(LocalDate date, ReservationStatus status, int pageNumber, int pageSize) {
-        return null;
+    public Page<ReservationDTO> getReservations(ReservationRequestParamDTO params, Authentication authentication) {
+        List<RoleName> roles = RoleUtils.getRoles(authentication.getAuthorities());
+        if(roles.contains(RoleName.ADMIN)){
+            return getAdminReservations(params);
+        }else {
+            return getCustomerReservations(authentication.getName(), params);
+        }
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public Page<ReservationDTO> getReservations(ReservationStatus status, int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return reservationRepository.findByStatus(status, pageable)
-                .map(reservationMapper::toReservationDTO);
+    public Page<ReservationDTO> getCustomerReservations(String username, ReservationRequestParamDTO params){
+        Pageable pageable = PageRequest.of(
+                params.getPage(),
+                params.getSize(),
+                Sort.by(params.getDirection(), params.getField())
+        );
+        Specification<Reservation> spec = Specification
+                .where(ReservationSpecification.hasCustomerUsername(username))
+                .and(ReservationSpecification.hasStatus(params.getStatus()));
+        return reservationRepository.findAll(spec, pageable)
+                .map(reservationMapper::toReservationListEntryDTO);
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public Page<ReservationDTO> getAllReservations(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return reservationRepository.findAll(pageable)
-                .map(reservationMapper::toReservationDTO);
+    public Page<ReservationDTO> getAdminReservations(ReservationRequestParamDTO params){
+        Pageable pageable = PageRequest.of(
+                params.getPage(),
+                params.getSize(),
+                Sort.by(params.getDirection(), params.getField())
+        );
+        Specification<Reservation> spec = Specification
+                .where(ReservationSpecification.hasStatus(params.getStatus()));
+        return reservationRepository.findAll(spec, pageable)
+                .map(reservationMapper::toReservationListEntryDTO);
     }
 
     @Override

@@ -1,10 +1,7 @@
 package com.phucx.phucxfandb.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -14,6 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cart_items")
+@EqualsAndHashCode(callSuper = true)
 public class CartItem extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

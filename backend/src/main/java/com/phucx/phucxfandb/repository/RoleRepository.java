@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Integer>{
@@ -17,10 +18,14 @@ public interface RoleRepository extends JpaRepository<Role, Integer>{
     @Transactional(readOnly = true)
     List<Role> findByRoleNameInAndIsDeletedFalse(List<RoleName> roleNames);
 
+    Set<Role> findByRoleNameInAndIsDeletedFalse(Set<RoleName> roleNames);
+
     @Transactional(readOnly = true)
     boolean existsByRoleName(RoleName roleName);
 
     @Transactional(readOnly = true)
     boolean existsByRoleNameIn(List<RoleName> roleNames);
+
+    Set<Role> findByIsDeletedFalse();
     
 }

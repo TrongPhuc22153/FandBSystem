@@ -21,6 +21,8 @@ target/
 
 .env
 
+images
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

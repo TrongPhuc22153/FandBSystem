@@ -55,7 +55,7 @@ public class FeedBackUpdateServiceImpl implements FeedBackUpdateService {
                 username, reservationId, requestFeedBackDTO);
         Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
 
-        if (!ReservationStatus.COMPLETE.equals(reservation.getStatus())) {
+        if (!ReservationStatus.COMPLETED.equals(reservation.getStatus())) {
             throw new IllegalStateException(
                     "Feedback can only be submitted for completed reservations with served pre-orders");
         }

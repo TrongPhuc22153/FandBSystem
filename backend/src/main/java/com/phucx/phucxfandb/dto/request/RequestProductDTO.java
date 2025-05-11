@@ -1,6 +1,5 @@
 package com.phucx.phucxfandb.dto.request;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -37,6 +36,8 @@ public class RequestProductDTO {
     @Size(max = 1000, message = "Description must not exceed 1000 characters")
     private String description;
 
-    @Valid
-    private RequestProductSizeDTO productSize;
+    private Boolean isDeleted = false;
+
+//    @Valid
+//    private RequestProductSizeDTO productSize;
 }

@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "reservations")
+@EqualsAndHashCode(callSuper = true)
 public class Reservation extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

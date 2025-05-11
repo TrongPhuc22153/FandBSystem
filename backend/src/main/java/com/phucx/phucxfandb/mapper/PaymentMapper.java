@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
 
+    @Mapping(target = "customer", ignore = true)
     PaymentDTO toPaymentDTO(Payment payment);
 
     @Mapping(target = "method", source = "paymentMethod")

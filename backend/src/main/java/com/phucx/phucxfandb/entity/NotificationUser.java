@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "notification_users")
+@EqualsAndHashCode(callSuper = true)
 public class NotificationUser extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

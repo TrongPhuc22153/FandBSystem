@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "discounts")
+@EqualsAndHashCode(callSuper = true)
 public class Discount extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

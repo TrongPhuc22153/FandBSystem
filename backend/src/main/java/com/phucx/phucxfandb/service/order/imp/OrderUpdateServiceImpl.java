@@ -2,6 +2,7 @@ package com.phucx.phucxfandb.service.order.imp;
 
 import com.phucx.phucxfandb.constant.OrderStatus;
 import com.phucx.phucxfandb.constant.OrderType;
+import com.phucx.phucxfandb.constant.TableStatus;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.*;
@@ -14,6 +15,7 @@ import com.phucx.phucxfandb.service.employee.EmployeeReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
 import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
+import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,14 +23,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderUpdateServiceImpl implements OrderUpdateService {
     private final ReservationTableReaderService reservationTableReaderService;
+    private final ReservationTableUpdateService reservationTableUpdateService;
     private final CustomerReaderService customerReaderService;
     private final EmployeeReaderService employeeReaderService;
     private final ProductReaderService productReaderService;
@@ -112,16 +115,15 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
                 customer);
         newOrder.setStatus(OrderStatus.PENDING);
 
-        List<OrderDetail> newOrderDetails = new ArrayList<>();
-        requestOrderDTO.getOrderDetails().forEach(requestOrderDetail -> {
-            Product product = productReaderService.getProductEntity(requestOrderDetail.getProductId());
-            OrderDetail newOrderDetail = orderDetailsMapper.toOrderDetail(requestOrderDetail, product, newOrder);
-            newOrderDetails.add(newOrderDetail);
-        });
+        List<OrderDetail> newOrderDetails = requestOrderDTO.getOrderDetails().stream()
+                .map(requestOrderDetail -> {
+                    Product product = productReaderService.getProductEntity(requestOrderDetail.getProductId());
+                    return orderDetailsMapper.toOrderDetail(requestOrderDetail, product, newOrder);
+                })
+                .collect(Collectors.toList());
 
         newOrder.setOrderDetails(newOrderDetails);
         newOrder.setTotalPrice(calculateTotalPrice(newOrderDetails));
-
 
         Order savedOrder = orderRepository.save(newOrder);
         return orderMapper.toOrderDTO(savedOrder);
@@ -133,20 +135,25 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     public OrderDTO createOrderEmployee(String username, RequestOrderDTO requestOrderDTO) {
         log.info("createOrderEmployee(username={}, requestOrderDTO={})", username, requestOrderDTO);
         Employee employee = employeeReaderService.getEmployeeEntityByUsername(username);
-        ReservationTable table = reservationTableReaderService.getReservationTableEntity(requestOrderDTO.getTableId());
+        // Get table
+        ReservationTable table = reservationTableReaderService
+                .getReservationTableEntity(requestOrderDTO.getTableId());
 
+        if(table.getStatus().equals(TableStatus.UNOCCUPIED)){
+            reservationTableUpdateService.updateTableStatus(table.getTableId(), TableStatus.OCCUPIED);
+        }
+        // Create new order
         Order newOrder = orderMapper.toEmployeeOrder(
                 requestOrderDTO,
                 employee, table
         );
         newOrder.setStatus(OrderStatus.PENDING);
 
-        List<OrderDetail> newOrderDetails = new ArrayList<>();
-        requestOrderDTO.getOrderDetails().forEach(requestOrderDetail -> {
-            Product product = productReaderService.getProductEntity(requestOrderDetail.getProductId());
-            OrderDetail newOrderDetail = orderDetailsMapper.toOrderDetail(requestOrderDetail, product, newOrder);
-            newOrderDetails.add(newOrderDetail);
-        });
+        List<OrderDetail> newOrderDetails = requestOrderDTO.getOrderDetails().stream()
+                .map(requestOrderDetail -> {
+                    Product product = productReaderService.getProductEntity(requestOrderDetail.getProductId());
+                    return orderDetailsMapper.toOrderDetail(requestOrderDetail, product, newOrder);
+                }).collect(Collectors.toList());
 
         newOrder.setOrderDetails(newOrderDetails);
         newOrder.setTotalPrice(calculateTotalPrice(newOrderDetails));

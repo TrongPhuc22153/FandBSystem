@@ -11,4 +11,5 @@ public interface CategoryUpdateService {
     // create
     CategoryDTO createCategory(RequestCategoryDTO createCategoryDTO);
     List<CategoryDTO> createCategories(List<RequestCategoryDTO> createCategoryDTOs);
+    CategoryDTO updateCategoryIsDeleted(long id, RequestCategoryDTO requestCategoryDTO);
 }

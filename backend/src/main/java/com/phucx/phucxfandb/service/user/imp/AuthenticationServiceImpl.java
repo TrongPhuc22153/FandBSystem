@@ -145,6 +145,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Employee employee = new Employee();
         profile.setEmployee(employee);
         employee.setProfile(profile);
+        profile.setEmployee(employee);
         // Save and return the user
         User savedUser = userRepository.save(user);
         return RegisteredUserDTO.builder()
@@ -233,6 +234,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         customer.setContactName(firstName + " " + lastName);
         profile.setCustomer(customer);
         customer.setProfile(profile);
+        profile.setCustomer(customer);
         // Save and return the user
         User savedUser = userRepository.save(user);
         return RegisteredUserDTO.builder()

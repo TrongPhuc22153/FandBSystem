@@ -38,9 +38,9 @@ public class GlobalExceptionController {
     }
 
     @ExceptionHandler(value = EmailNotVerifiedException.class)
-    protected ResponseEntity<ResponseDTO<Object>> handleEmailNotVerified(EmailNotVerifiedException exception) {
+    protected ResponseEntity<ResponseDTO<Void>> handleEmailNotVerified(EmailNotVerifiedException exception) {
         log.error("handleEmailNotVerified: {}", exception.getMessage());
-        ResponseDTO<Object> response = ResponseDTO.builder()
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("Email not verified")
                 .build();
@@ -51,9 +51,9 @@ public class GlobalExceptionController {
 
 
     @ExceptionHandler(value = InSufficientInventoryException.class)
-    protected ResponseEntity<ResponseDTO<Object>> handleInSufficientInventoryException(InSufficientInventoryException exception) {
+    protected ResponseEntity<ResponseDTO<Void>> handleInSufficientInventoryException(InSufficientInventoryException exception) {
         log.error("handleInSufficientInventoryException: {}", exception.getMessage());
-        ResponseDTO<Object> response = ResponseDTO.builder()
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("Insufficient inventory")
                 .build();
@@ -63,9 +63,9 @@ public class GlobalExceptionController {
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)
-    protected ResponseEntity<ResponseDTO<Object>> handleIllegalArgumentException(IllegalArgumentException exception) {
+    protected ResponseEntity<ResponseDTO<Void>> handleIllegalArgumentException(IllegalArgumentException exception) {
         log.error("handleIllegalArgumentException: {}", exception.getMessage());
-        ResponseDTO<Object> response = ResponseDTO.builder()
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("Illegal argument")
                 .build();
@@ -75,9 +75,9 @@ public class GlobalExceptionController {
     }
 
     @ExceptionHandler(value = NullPointerException.class)
-    protected ResponseEntity<ResponseDTO<Object>> handleNullPointerException(NullPointerException exception) {
+    protected ResponseEntity<ResponseDTO<Void>> handleNullPointerException(NullPointerException exception) {
         log.error("handleNullPointerException: {}", exception.getMessage());
-        ResponseDTO<Object> response = ResponseDTO.builder()
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("Null pointer")
                 .build();
@@ -87,9 +87,9 @@ public class GlobalExceptionController {
     }
 
     @ExceptionHandler(EmptyCartException.class)
-    protected ResponseEntity<ResponseDTO<Object>> handleEmptyCartException(EmptyCartException exception) {
+    protected ResponseEntity<ResponseDTO<Void>> handleEmptyCartException(EmptyCartException exception) {
         log.error("handleEmptyCartException: {}", exception.getMessage());
-        ResponseDTO<Object> response = ResponseDTO.builder()
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("Empty cart")
                 .build();
@@ -99,9 +99,9 @@ public class GlobalExceptionController {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    protected ResponseEntity<ResponseDTO<Object>> handleNotFoundException(NotFoundException exception) {
-        log.error("handleNotFoundException: {}", exception.getMessage());
-        ResponseDTO<Object> response = ResponseDTO.builder()
+    protected ResponseEntity<ResponseDTO<Void>> handleNotFoundException(NotFoundException exception) {
+        log.error("handleNotFoundException ", exception);
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("Resource not found")
                 .build();
@@ -111,9 +111,9 @@ public class GlobalExceptionController {
     }
 
     @ExceptionHandler(EntityExistsException.class)
-    protected ResponseEntity<ResponseDTO<Object>> handleEntityExistsException(EntityExistsException exception) {
+    protected ResponseEntity<ResponseDTO<Void>> handleEntityExistsException(EntityExistsException exception) {
         log.error("handleEntityExistsException: {}", exception.getMessage());
-        ResponseDTO<Object> response = ResponseDTO.builder()
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("Entity already exists")
                 .build();
@@ -123,9 +123,9 @@ public class GlobalExceptionController {
     }
 
     @ExceptionHandler(InsufficientResourcesException.class)
-    protected ResponseEntity<ResponseDTO<Object>> handleInsufficientResourcesException(InsufficientResourcesException exception) {
+    protected ResponseEntity<ResponseDTO<Void>> handleInsufficientResourcesException(InsufficientResourcesException exception) {
         log.error("handleInsufficientResourcesException: {}", exception.getMessage());
-        ResponseDTO<Object> response = ResponseDTO.builder()
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("Insufficient resources")
                 .build();
@@ -135,9 +135,9 @@ public class GlobalExceptionController {
     }
 
     @ExceptionHandler(IOException.class)
-    protected ResponseEntity<ResponseDTO<Object>> handleIOException(IOException exception) {
+    protected ResponseEntity<ResponseDTO<Void>> handleIOException(IOException exception) {
         log.error("handleIOException: {}", exception.getMessage());
-        ResponseDTO<Object> response = ResponseDTO.builder()
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("IO error")
                 .build();

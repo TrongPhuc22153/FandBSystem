@@ -10,10 +10,18 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {OrderDetailsMapper.class})
 public interface OrderMapper {
 
+    @Mapping(target = "customer.profile.user.roles", ignore = true)
+    @Mapping(target = "employee.profile.user.roles", ignore = true)
     OrderDTO toOrderDTO(Order order);
+
+    @Mapping(target = "orderDetails", qualifiedByName = {"toOrderDetailsDTO"})
+    @Mapping(target = "employee.profile.user.roles", ignore = true)
+    @Mapping(target = "customer.profile.user.roles", ignore = true)
+    OrderDTO toOrderListEntryDTO(Order order);
+
 
     @Mapping(target = "table", ignore = true)
     @Mapping(target = "totalPrice", ignore = true)

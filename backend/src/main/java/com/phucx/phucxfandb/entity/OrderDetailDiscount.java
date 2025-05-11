@@ -13,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "order_details_discounts")
+@EqualsAndHashCode(callSuper = true)
 public class OrderDetailDiscount extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

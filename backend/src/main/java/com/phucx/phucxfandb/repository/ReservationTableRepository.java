@@ -5,6 +5,7 @@ import com.phucx.phucxfandb.entity.ReservationTable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ReservationTableRepository extends JpaRepository<ReservationTable, String> {
+public interface ReservationTableRepository extends JpaRepository<ReservationTable, String>, JpaSpecificationExecutor<ReservationTable> {
 
     boolean existsByTableNumber(int tableNumber);
 
@@ -42,6 +43,7 @@ public interface ReservationTableRepository extends JpaRepository<ReservationTab
     @Query("""
             SELECT t FROM ReservationTable t \
             WHERE t.capacity >= :numberOfGuests \
+            AND t.isDeleted = :isDeleted \
             AND NOT EXISTS (SELECT r FROM Reservation r \
                             WHERE r.table = t \
                                 AND (:startTime < r.endTime AND :endTime > r.startTime) \
@@ -50,6 +52,7 @@ public interface ReservationTableRepository extends JpaRepository<ReservationTab
             """)
     List<ReservationTable> findFirstAvailableTableWithLeastCapacity(
             @Param("numberOfGuests") int numberOfGuests,
+            @Param("isDeleted") boolean isDeleted,
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime);
 
@@ -63,13 +66,6 @@ public interface ReservationTableRepository extends JpaRepository<ReservationTab
             @Param("numberOfGuests") int numberOfGuests,
             @Param("status") TableStatus status
     );
-
-    // You might also want a method to find a table by its ID
-    Optional<ReservationTable> findByTableId(String tableId);
-
-    List<ReservationTable> findByStatusAndCapacityGreaterThanEqualAndIsDeletedFalse(
-            TableStatus status, Integer capacity);
-
 
     Optional<ReservationTable> findByTableNumberAndIsDeletedFalse(int tableNumber);
 

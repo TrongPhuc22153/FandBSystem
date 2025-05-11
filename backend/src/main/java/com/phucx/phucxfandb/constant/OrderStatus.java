@@ -3,11 +3,8 @@ package com.phucx.phucxfandb.constant;
 public enum OrderStatus {
     PENDING,
     CONFIRMED,
-
-
-
-    SUCCESSFULLY,
-    COMPLETED,
+    PREPARING,
     PREPARED,
+    COMPLETED,
     CANCELLED
 }

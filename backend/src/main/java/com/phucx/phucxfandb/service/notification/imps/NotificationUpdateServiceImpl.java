@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.service.notification.imps;
 
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
+import com.phucx.phucxfandb.dto.request.RequestNotificationUserDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.exception.NotFoundException;
@@ -96,5 +97,16 @@ public class NotificationUpdateServiceImpl implements NotificationUpdateService 
 
         NotificationUser notificationUser = notificationUserRepository.save(newNotificationUser);
         return notificationUserMapper.toNotificationUserDTO(notificationUser);
+    }
+
+    @Override
+    @Transactional
+    public NotificationUserDTO updateNotificationIsReadStatus(String username, String notificationId, RequestNotificationUserDTO requestNotificationUserDTO) {
+        log.info("updateNotificationStatus(username={}, notificationId={}, requestNotificationUserDTO={})", username, notificationId, requestNotificationUserDTO);
+        NotificationUser notificationUser = notificationUserRepository.findByReceiverUsernameAndId(username, notificationId)
+                .orElseThrow(() -> new NotFoundException("Notification", "id", notificationId));
+        notificationUser.setIsRead(requestNotificationUserDTO.getIsRead());
+        NotificationUser updated = notificationUserRepository.save(notificationUser);
+        return notificationUserMapper.toNotificationUserDTO(updated);
     }
 }

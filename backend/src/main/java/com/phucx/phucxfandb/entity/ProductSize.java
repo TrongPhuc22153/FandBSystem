@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "product_sizes")
+@EqualsAndHashCode(callSuper = true)
 public class ProductSize extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

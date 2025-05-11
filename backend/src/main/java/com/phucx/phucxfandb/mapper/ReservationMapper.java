@@ -10,10 +10,17 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {MenuItemMapper.class})
 public interface ReservationMapper {
 
+    @Mapping(target = "customer.profile.user.roles", ignore = true)
     ReservationDTO toReservationDTO(Reservation reservation);
+
+
+    @Mapping(target = "menuItems", qualifiedByName = {"toMenuItemDTO"})
+    @Mapping(target = "customer.profile.user.roles", ignore = true)
+    @Mapping(target = "employee.profile.user.roles", ignore = true)
+    ReservationDTO toReservationListEntryDTO(Reservation reservation);
 
     @Mapping(target = "table", source = "table")
     @Mapping(target = "customer", source = "customer")

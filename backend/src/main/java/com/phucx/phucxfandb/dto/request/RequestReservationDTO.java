@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.dto.request;
 
+import com.phucx.phucxfandb.constant.ReservationAction;
 import com.phucx.phucxfandb.constant.ReservationStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -34,11 +35,11 @@ public class RequestReservationDTO {
 
     private ReservationStatus status;
 
-    @NotBlank(message = "Customer ID is required")
     private String customerId;
 
-    @NotBlank(message = "Table ID is required")
     private String tableId;
+
+    private ReservationAction action;
 
     @NotEmpty(message = "Menu can not be null")
     private List<@Valid RequestMenuItemDTO> menuItems;

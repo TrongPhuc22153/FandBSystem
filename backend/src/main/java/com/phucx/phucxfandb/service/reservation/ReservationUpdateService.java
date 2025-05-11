@@ -10,9 +10,7 @@ public interface ReservationUpdateService {
 
     ReservationDTO updateReservation(String username, String reservationId, RequestReservationDTO reservationDTO);
     ReservationDTO updateReservationStatus(String reservationId, ReservationStatus status);
-//    ReservationDTO updateReservationStatus(String reservationId, ReservationStatus status);
-//    void cancelReservation(String reservationId);
-//    void cancelReservation(String username, String reservationId);
+
     ReservationDTO createReservationAndAssignTable(String username, RequestReservationDTO requestReservationDTO);
 
 }

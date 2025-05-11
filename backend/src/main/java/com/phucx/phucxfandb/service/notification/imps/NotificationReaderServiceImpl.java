@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.service.notification.imps;
 
+import com.phucx.phucxfandb.dto.request.NotificationRequestParamDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;
 import com.phucx.phucxfandb.mapper.NotificationUserMapper;
 import com.phucx.phucxfandb.repository.NotificationUserRepository;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +35,9 @@ public class NotificationReaderServiceImpl implements NotificationReaderService 
 
     @Override
     @Transactional(readOnly = true)
-    public Page<NotificationUserDTO> getNotificationsByUsername(String username, int pageNumber, int pageSize) {
-        log.info("getNotificationsByUsername(username={}, pageNumber={}, pageSize={})", username, pageNumber, pageSize);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public Page<NotificationUserDTO> getNotificationsByUsername(String username, NotificationRequestParamDTO params) {
+        log.info("getNotificationsByUsername(username={}, params={})", username, params);
+        Pageable pageable = PageRequest.of(params.getPage(), params.getSize(), Sort.by(params.getDirection(), params.getField()));
         return notificationUserRepository.findByReceiverUsername(username, pageable)
                 .map(mapper::toNotificationUserDTO);
     }

@@ -1,10 +1,14 @@
 package com.phucx.phucxfandb.controller;
 
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.dto.request.RequestUserDTO;
+import com.phucx.phucxfandb.dto.request.UserRequestParamDTO;
+import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.dto.response.UserDTO;
 import com.phucx.phucxfandb.service.user.UserReaderService;
+import com.phucx.phucxfandb.service.user.UserUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +25,8 @@ import java.security.Principal;
 @RequestMapping(value = "/api/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
     private final UserReaderService userReaderService;
+    private final UserUpdateService userUpdateService;
+
 
     @GetMapping("/me")
     @Operation(summary = "Get user information", description = "Authenticated access")
@@ -32,14 +38,48 @@ public class UserController {
 
     @GetMapping
     @Operation(summary = "Get users", description = "Admin access")
-    public ResponseEntity<Page<UserDTO>> getUsers(
-            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "size", defaultValue = "10") Integer pageSize,
-            @RequestParam(name = "role")RoleName roleName
-    ){
-        log.info("getUsers(roleName={})", roleName);
-        Page<UserDTO> users = userReaderService.getUsersByRole(roleName, pageNumber, pageSize);
+    public ResponseEntity<Page<UserDTO>> getUsers(@ModelAttribute UserRequestParamDTO params){
+        Page<UserDTO> users = userReaderService.getUsers(params);
         return ResponseEntity.ok().body(users);
+    }
+
+    @GetMapping("{userId}")
+    @Operation(summary = "Get user information", description = "Admin access")
+    public ResponseEntity<UserDTO> getUser(
+            @PathVariable String userId
+    ){
+        log.info("getUser(userId={})", userId);
+        UserDTO user = userReaderService.getUserByUserId(userId);
+        return ResponseEntity.ok().body(user);
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create user", description = "Admin access")
+    public ResponseEntity<ResponseDTO<UserDTO>> createUser(
+            @Valid @RequestBody RequestUserDTO requestUserDTO
+    ){
+        log.info("createUser(username={})", requestUserDTO.getUsername());
+        var userDTO = userUpdateService.createUser(requestUserDTO);
+        ResponseDTO<UserDTO> responseDTO = ResponseDTO.<UserDTO>builder()
+                .message("User created successfully")
+                .data(userDTO)
+                .build();
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PatchMapping("{userId}")
+    @Operation(summary = "Update user enabled status", description = "Admin access")
+    public ResponseEntity<ResponseDTO<UserDTO>> updateUserEnabledStatus(
+            @PathVariable String userId,
+            @RequestBody RequestUserDTO requestUserDTO
+    ){
+        log.info("updateUserEnabledStatus(userId={})", userId);
+        var data = userUpdateService.updateUserEnabledStatus(userId, requestUserDTO);
+        ResponseDTO<UserDTO> responseDTO = ResponseDTO.<UserDTO>builder()
+                .message("User updated successfully")
+                .data(data)
+                .build();
+        return ResponseEntity.ok(responseDTO);
     }
 
 

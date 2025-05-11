@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "customers")
+@EqualsAndHashCode(callSuper = true)
 public class Customer extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

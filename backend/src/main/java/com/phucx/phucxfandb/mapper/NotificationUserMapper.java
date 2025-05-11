@@ -11,6 +11,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface NotificationUserMapper {
 
+    @Mapping(target = "sender.roles", ignore = true)
+    @Mapping(target = "receiver.roles", ignore = true)
     NotificationUserDTO toNotificationUserDTO(NotificationUser notificationUser);
 
     @Mapping(target = "id", ignore = true)

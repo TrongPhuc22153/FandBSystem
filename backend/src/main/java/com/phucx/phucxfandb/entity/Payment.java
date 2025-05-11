@@ -13,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "payments")
+@EqualsAndHashCode(callSuper = true)
 public class Payment extends Auditable{
     @Id
     @Column(name = "payment_id", nullable = false, length = 36, updatable = false)

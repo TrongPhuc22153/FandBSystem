@@ -6,4 +6,5 @@ import lombok.*;
 @Builder
 public class ImageDTO {
     String imageUrl;
+
 }

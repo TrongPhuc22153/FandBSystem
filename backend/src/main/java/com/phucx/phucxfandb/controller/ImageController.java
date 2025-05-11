@@ -1,61 +1,54 @@
 package com.phucx.phucxfandb.controller;
 
-import com.phucx.phucxfandb.service.image.CategoryImageService;
-import com.phucx.phucxfandb.service.image.CustomerImageService;
-import com.phucx.phucxfandb.service.image.EmployeeImageService;
-import com.phucx.phucxfandb.service.image.ProductImageService;
+import com.phucx.phucxfandb.dto.response.ImageDTO;
+import com.phucx.phucxfandb.dto.response.ResponseDTO;
+import com.phucx.phucxfandb.service.image.ImageReaderService;
+import com.phucx.phucxfandb.service.image.ImageUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/images")
-@Tag(name = "Images", description = "Public and Admin operations for products")
+@Tag(name = "Image API", description = "Image operation")
 public class ImageController {
-    private final ProductImageService productImageService;
-    private final CategoryImageService categoryImageService;
-    private final EmployeeImageService employeeImageService;
-    private final CustomerImageService customerImageService;
+    private final ImageReaderService imageReaderService;
+    private final ImageUpdateService imageUpdateService;
 
-    @Operation(summary = "Get employee image", description = "Public access")
-    @GetMapping("/employee/{imageName}")
-    public ResponseEntity<byte[]> getEmployeeImage(@PathVariable String imageName) throws IOException {
-        byte[] image = employeeImageService.getEmployeeImage(imageName);
-        String mimeType = employeeImageService.getMimeType(imageName);
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(mimeType)).body(image);
+    @GetMapping("/{imageName}")
+    @Operation(summary = "Get image", description = "Public access")
+    public ResponseEntity<InputStreamResource> getImage(@PathVariable String imageName) throws IOException {
+        InputStream image = imageReaderService.getImage(imageName);
+        String mimeType = imageReaderService.getMimeType(imageName);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(mimeType))
+                .body(new InputStreamResource(image));
     }
 
-    @Operation(summary = "Get customer image", description = "Public access")
-    @GetMapping("/customer/{imageName}")
-    public ResponseEntity<byte[]> getCustomerImage(@PathVariable String imageName) throws IOException {
-        byte[] image = customerImageService.getCustomerImage(imageName);
-        String mimeType = customerImageService.getMimeType(imageName);
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(mimeType)).body(image);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload image",  description = "Authenticated access")
+    public ResponseEntity<ResponseDTO<List<ImageDTO>>> uploadProductImage(
+            @Valid @NotNull @RequestPart("files") MultipartFile[] files
+    ) throws Exception {
+        List<ImageDTO> images = imageUpdateService.uploadImages(files);
+        ResponseDTO<List<ImageDTO>> responseDTO = ResponseDTO.<List<ImageDTO>>builder()
+                .message("Your images uploaded successfully")
+                .data(images)
+                .build();
+        return ResponseEntity.ok().body(responseDTO);
     }
-
-    @Operation(summary = "Get product's image", description = "Public access")
-    @GetMapping("/product/{imageName}")
-    public ResponseEntity<byte[]> getProductImage(@PathVariable String imageName) throws IOException {
-        byte[] image = productImageService.getProductImage(imageName);
-        String mimeType = productImageService.getProductMimeType(imageName);
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(mimeType)).body(image);
-    }
-
-    @Operation(summary = "Get category's image", description = "Public access")
-    @GetMapping("/category/{imageName}")
-    public ResponseEntity<byte[]> getCategoryImage(@PathVariable String imageName) throws IOException {
-        byte[] image = categoryImageService.getCategoryImage(imageName);
-        String mimeType = categoryImageService.getCategoryMimeType(imageName);
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(mimeType)).body(image);
-    }
-    
 }

@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "employees")
+@EqualsAndHashCode(callSuper = true)
 public class Employee extends Auditable{
     @Id
     @Column(name = "employee_id", length = 36, updatable = false, nullable = false)

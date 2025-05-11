@@ -1,6 +1,9 @@
 package com.phucx.phucxfandb.controller;
 
+import com.phucx.phucxfandb.dto.request.NotificationRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.RequestNotificationUserDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;
+import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.service.notification.NotificationReaderService;
 import com.phucx.phucxfandb.service.notification.NotificationUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,30 +26,30 @@ public class NotificationController {
     private final NotificationReaderService notificationReaderService;
     private final NotificationUpdateService notificationUpdateService;
 
-//    @Operation(summary = "Mark notification as read", description = "Customer access")
-//    @PostMapping(value = "/notification/{notificationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ResponseDTO<Boolean>> markAsReadNotification(
-//            @PathVariable String notificationId,
-//            Principal principal
-//    ){
-//        boolean status = notificationUpdateService.(
-//                notification.getNotificationID(), principal.getName(), marktype);
-//        ResponseDTO<Boolean> responseDTO = ResponseDTO.<Boolean>builder()
-//                .message("Notification marked as read successfully")
-//                .data(status)
-//                .build();
-//        return ResponseEntity.ok().body(responseDTO);
-//    }
-
     @GetMapping("/me")
     @Operation(summary = "Get notifications", description = "Authenticated access")
     public ResponseEntity<Page<NotificationUserDTO>> getNotifications(
-            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "size", defaultValue = "10") Integer pageSize,
+            @ModelAttribute NotificationRequestParamDTO params,
             Principal principal
     ) {
         Page<NotificationUserDTO> notifications = notificationReaderService
-                .getNotificationsByUsername(principal.getName(), pageNumber, pageSize);
+                .getNotificationsByUsername(principal.getName(), params);
         return ResponseEntity.ok().body(notifications);
+    }
+
+    @PatchMapping("/{notificationId}/me")
+    @Operation(summary = "Update notification is read status", description = "Authenticated access")
+    public ResponseEntity<ResponseDTO<NotificationUserDTO>> updateIsReadStatus(
+            @PathVariable String notificationId,
+            @RequestBody RequestNotificationUserDTO requestNotificationUserDTO,
+            Principal principal
+    ) {
+        NotificationUserDTO notificationUserDTO = notificationUpdateService
+                .updateNotificationIsReadStatus(principal.getName(), notificationId, requestNotificationUserDTO);
+        ResponseDTO<NotificationUserDTO> responseDTO = ResponseDTO.<NotificationUserDTO>builder()
+                .message("Notification updated successfully")
+                .data(notificationUserDTO)
+                .build();
+        return ResponseEntity.ok().body(responseDTO);
     }
 }

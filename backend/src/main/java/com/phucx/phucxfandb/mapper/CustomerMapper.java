@@ -9,6 +9,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
+    @Mapping(target = "profile.user.roles", ignore = true)
     CustomerDTO toCustomerDTO(Customer customer);
 
     @Mapping(target = "lastModifiedBy", ignore = true)

@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "menu_items")
+@EqualsAndHashCode(callSuper = true)
 public class MenuItem extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

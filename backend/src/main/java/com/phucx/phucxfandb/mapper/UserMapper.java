@@ -12,6 +12,8 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+    @Mapping(target = "image", source = "user.profile.picture")
+    @Mapping(target = "roles", expression = "java(user.getRoles().stream().map(role -> role.getRoleName().name()).collect(java.util.stream.Collectors.toSet()))")
     UserDTO toUserDTO(User user);
 
     @Mapping(target = "userId", ignore = true)

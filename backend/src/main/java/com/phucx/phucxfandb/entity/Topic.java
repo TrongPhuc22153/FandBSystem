@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "topics")
+@EqualsAndHashCode(callSuper = true)
 public class Topic extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

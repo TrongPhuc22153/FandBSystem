@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "discount_types")
+@EqualsAndHashCode(callSuper = true)
 public class DiscountType extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

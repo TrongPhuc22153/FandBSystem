@@ -1,25 +1,20 @@
 package com.phucx.phucxfandb.controller;
 
+import com.phucx.phucxfandb.dto.request.ProductRequestParamDTO;
 import com.phucx.phucxfandb.dto.request.RequestProductDTO;
-import com.phucx.phucxfandb.dto.response.ImageDTO;
 import com.phucx.phucxfandb.dto.response.ProductDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
-import com.phucx.phucxfandb.service.image.ProductImageService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
 import com.phucx.phucxfandb.service.product.ProductUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -29,43 +24,21 @@ import java.util.List;
 public class ProductController {
     private final ProductReaderService productReaderService;
     private final ProductUpdateService productUpdateService;
-    private final ProductImageService productImageService;
 
     @GetMapping
     @Operation(summary = "Get products", description = "Public access")
-    public ResponseEntity<Page<ProductDTO>> getProducts(
-            @RequestParam(required = false) String productName,
-            @RequestParam(required = false) String searchValue,
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) String categoryName,
-            @RequestParam(required = false, defaultValue = "false") Boolean isFeatured,
-            @RequestParam(defaultValue = "productId") String field,
-            @RequestParam(defaultValue = "ASC") Sort.Direction direction,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-
-        Page<ProductDTO> products;
-        if( isFeatured ){
-            products = productReaderService.getFeaturedProducts(field, direction, page, size);
-        }else if (productName != null) {
-            products = productReaderService.getProductsByName(productName, field, direction, page, size);
-        } else if (searchValue != null) {
-            products = productReaderService.getProductsBySearch(searchValue, field, direction, page, size);
-        } else if (categoryId != null) {
-            products = productReaderService.getProductsByCategoryId(categoryId, field, direction, page, size);
-        } else if (categoryName != null) {
-            products = productReaderService.getProductsByCategory(categoryName, field, direction, page, size);
-        } else {
-            products = productReaderService.getProducts(field, direction, page, size);
-        }
-        return ResponseEntity.ok(products);
+    public ResponseEntity<Page<ProductDTO>> getProducts(@ModelAttribute ProductRequestParamDTO params) {
+        Page<ProductDTO> productDTOS = productReaderService.getProducts(params);
+        return ResponseEntity.ok(productDTOS);
     }
 
 
     @GetMapping("{id}")
     @Operation(summary = "Get product by id", description = "Public access")
-    public ResponseEntity<ProductDTO> getProductByID(@PathVariable(name = "id") Integer productID) {
-        ProductDTO product = productReaderService.getProduct(productID);
+    public ResponseEntity<ProductDTO> getProductByID(
+            @RequestParam(name = "isDeleted", required = false) Boolean isDeleted,
+            @PathVariable(name = "id") Integer productID) {
+        ProductDTO product = productReaderService.getProduct(productID, isDeleted);
         return ResponseEntity.ok().body(product);
     }
 
@@ -78,6 +51,7 @@ public class ProductController {
     ){
         ProductDTO updatedProduct = productUpdateService.updateProduct(id, requestProductDTO);
         var response = ResponseDTO.<ProductDTO>builder()
+                .message("Product updated successfully")
                 .data(updatedProduct)
                 .build();
         return ResponseEntity.ok().body(response);
@@ -90,6 +64,7 @@ public class ProductController {
     ){
         ProductDTO updatedProduct = productUpdateService.createProduct(requestProductDTO);
         var response = ResponseDTO.<ProductDTO>builder()
+                .message("Product created successfully")
                 .data(updatedProduct)
                 .build();
         return ResponseEntity.ok().body(response);
@@ -107,22 +82,17 @@ public class ProductController {
         return ResponseEntity.ok().body(response);
     }
 
-    // set image
-    @Operation(summary = "Upload product image",  description = "Admin access")
-    @PostMapping("/images/upload")
-    public ResponseEntity<ResponseDTO<ImageDTO>> uploadProductImage(
-            @RequestBody MultipartFile file,
-            HttpServletRequest request
-    ) throws IOException {
-
-        String filename = productImageService.uploadProductImage(file);
-        String imageUrl = productImageService.getCurrentUrl(request) + "/" + filename;
-        ImageDTO imageDTO = ImageDTO.builder()
-                .imageUrl(imageUrl)
+    @PatchMapping("{id}")
+    @Operation(summary = "Update product is deleted status", description = "Admin access")
+    public ResponseEntity<ResponseDTO<ProductDTO>> updateProductIsDeletedStatus(
+            @PathVariable long id,
+            @RequestBody RequestProductDTO requestProductDTO
+    ) {
+        var data = productUpdateService.updateProductIsDeletedStatus(id, requestProductDTO);
+        ResponseDTO<ProductDTO> response = ResponseDTO.<ProductDTO>builder()
+                .message("Product updated successfully")
+                .data(data)
                 .build();
-        ResponseDTO<ImageDTO> responseDTO = ResponseDTO.<ImageDTO>builder()
-                .data(imageDTO)
-                .build();
-        return ResponseEntity.ok().body(responseDTO);
+        return ResponseEntity.ok().body(response);
     }
 }

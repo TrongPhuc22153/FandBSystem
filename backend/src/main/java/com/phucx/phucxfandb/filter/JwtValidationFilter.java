@@ -49,7 +49,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getServletPath().startsWith("/api/v1/auth/");
+        return request.getServletPath().startsWith("/api/v1/auth/login");
     }
 
     private String extractToken(HttpServletRequest request) {

@@ -10,6 +10,7 @@ import com.phucx.phucxfandb.service.product.ProductSizeUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -19,6 +20,7 @@ public class ProductSizeUpdateServiceImpl implements ProductSizeUpdateService {
     private final ProductSizeMapper mapper;
 
     @Override
+    @Transactional(readOnly = true)
     public ProductSizeDTO updateProductSize(long productId, RequestProductSizeDTO requestProductSizeDTO) {
         log.info("updateProductSize(productId={}, requestProductSizeDTO={})", productId, requestProductSizeDTO);
         ProductSize productSize = productSizeRepository.findByProductProductId(productId)

@@ -31,4 +31,6 @@ public class RequestReservationTableDTO {
     @NotNull(message = "Capacity cannot be null")
     @Positive(message = "Capacity must be positive")
     private Integer capacity;
+
+    private Boolean isDeleted = false;
 }
