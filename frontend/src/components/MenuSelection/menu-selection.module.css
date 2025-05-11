@@ -1,0 +1,49 @@
+.menuForm {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.categoryTitle {
+  background-color: #f8f9fa;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.menuItem {
+  transition: background-color 0.2s;
+}
+
+.menuItem:hover {
+  background-color: #f8f9fa;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity {
+  display: inline-block;
+  min-width: 30px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.orderSummary {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}

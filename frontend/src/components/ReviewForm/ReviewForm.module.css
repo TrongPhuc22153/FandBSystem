@@ -1,0 +1,132 @@
+/* Star Rating Styles */
+.star-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.star-rating button {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    padding: 0;
+    margin-right: 0.2rem;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.star-rating button:hover {
+    transform: scale(1.2);
+}
+
+.star-rating button.text-warning {
+    color: #ffc107 !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.star-rating button.text-secondary {
+    color: #e0e0e0 !important;
+}
+
+/* Review Form Card Styles */
+.review-card {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.review-card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.review-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.5rem;
+}
+
+.review-card .card-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.review-card .card-body {
+    padding: 1.5rem;
+}
+
+/* Form Elements */
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Submit Button */
+.btn-primary {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Success Message */
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.alert-success .btn-link {
+    color: #155724;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.alert-success .btn-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+}
+
+/* Error Message */
+.alert-danger {
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .star-rating button {
+        font-size: 1.5rem;
+    }
+
+    .review-card .card-header h3 {
+        font-size: 1.3rem;
+    }
+}

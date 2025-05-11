@@ -1,0 +1,50 @@
+.tableGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.tableButton {
+    flex: 0 0 calc(16.666% - 0.75rem);
+    min-width: 80px;
+    padding: 0.5rem;
+    background-color: white;
+    border: 1px solid #0d6efd;
+    color: #0d6efd;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.tableButton:hover {
+    background-color: #f0f7ff;
+}
+
+.tableButton.selected {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.seatInfo {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 992px) {
+    .tableButton {
+        flex: 0 0 calc(25% - 0.75rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .tableButton {
+        flex: 0 0 calc(33.333% - 0.75rem);
+    }
+}
+
+@media (max-width: 576px) {
+    .tableButton {
+        flex: 0 0 calc(50% - 0.75rem);
+    }
+}

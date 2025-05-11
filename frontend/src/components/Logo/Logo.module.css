@@ -1,0 +1,31 @@
+.logo {
+    display: flex;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #222;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+    padding: 10px;
+  }
+  
+  .logo::before {
+    content: '';
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(45deg, #FF6B6B, #FFE66D);
+    clip-path: circle(50% at 50% 50%);
+    margin-right: 15px;
+    transition: transform 0.3s ease;
+  }
+  
+  .logo:hover::before {
+    transform: rotate(360deg);
+  }
+  
+  .logo:hover {
+    color: #FF6B6B;
+    transition: color 0.3s ease;
+  }

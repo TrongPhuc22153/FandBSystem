@@ -1,0 +1,336 @@
+.tableGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .tableGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .tableGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .tableGrid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .tableGrid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+.tableCard {
+    border: 2px solid;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tableCard:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.tableAvailable {
+    border-color: #22c55e;
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #166534;
+}
+
+.tableOccupied {
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #b91c1c;
+}
+
+.tableReserved {
+    border-color: #f59e0b;
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #b45309;
+}
+
+.tableCleaning {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #1d4ed8;
+}
+
+.tableHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.tableNumber {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+}
+
+.seatsInfo {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.usersIcon {
+    margin-right: 0.25rem;
+}
+
+.statusBadge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.5);
+    text-transform: capitalize;
+}
+
+.tableInfo {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.infoLabel {
+    font-weight: 500;
+}
+
+/* Modal styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: white;
+    border-radius: 0.5rem;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.modalTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.modalBody {
+    padding: 1rem;
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.statusSection,
+.statusActions,
+.assignSection {
+    margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0 0 0.75rem;
+}
+
+.statusText {
+    text-transform: capitalize;
+}
+
+.statusDetails {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.statusDetails p {
+    margin: 0.25rem 0;
+}
+
+.detailLabel {
+    font-weight: 500;
+}
+
+.actionButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.actionButton {
+    padding: 0.5rem 1rem;
+    border: 1px solid;
+    border-radius: 0.25rem;
+    background-color: white;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.availableButton {
+    border-color: #22c55e;
+    color: #22c55e;
+}
+
+.availableButton:hover,
+.availableButton.activeButton {
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+.reservedButton {
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+.reservedButton:hover,
+.reservedButton.activeButton {
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+.cleaningButton {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.cleaningButton:hover,
+.cleaningButton.activeButton {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.assignActions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.dropdownContainer {
+    position: relative;
+    width: 200px;
+}
+
+.dropdownButton {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    background-color: white;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.dropdownIcon {
+    opacity: 0.5;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    margin-top: 0.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    z-index: 10;
+}
+
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.dropdownItem:hover {
+    background-color: #f8fafc;
+}
+
+.checkIcon {
+    margin-right: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+}
+
+.visible {
+    visibility: visible;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.primaryButton {
+    padding: 0.5rem 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.primaryButton:hover {
+    background-color: #2563eb;
+}
+
+.primaryButton.disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.cancelButton {
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.cancelButton:hover {
+    background-color: #f8fafc;
+}

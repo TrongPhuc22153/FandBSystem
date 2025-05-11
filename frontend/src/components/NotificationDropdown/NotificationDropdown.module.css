@@ -1,0 +1,57 @@
+.notificationContainer {
+    position: relative;
+}
+
+.notificationButton {
+    padding: 8px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bellIcon {
+    width: 20px;
+    height: 20px;
+    color: #495057;
+}
+
+.badge {
+    font-size: 0.65rem;
+    transform: translate(-50%, -50%) !important;
+}
+
+.dropdownMenu {
+    width: 320px;
+    padding: 0;
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.notificationHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.unreadCount {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.notificationList {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.emptyState {
+    padding: 20px;
+    text-align: center;
+    color: #6c757d;
+}

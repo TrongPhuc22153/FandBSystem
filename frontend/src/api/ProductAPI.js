@@ -1,220 +1,106 @@
-import axios from "axios";
-import { getMenuItemThumbnail1, getMenuItemThumbnail2, getMenuItemThumbnail3, getMenuItemThumbnail4, getSpecialMenu1, getSpecialMenu2, getSpecialMenu3 } from "../services/ImageService";
-import { PRODUCT_URL } from "../constants/ApiEndpoints"
+import { PRODUCTS_ENDPOINT } from "../constants/api";
+
+export const fetchProducts = async ({
+  page = 0,
+  size = 10,
+  categoryId,
+  search,
+  isFeatured,
+  discontinued,
+  isDeleted = false,
+  direction = "ASC",
+  sortBy = "productName",
+}) => {
+  const params = new URLSearchParams();
+  params.append("page", page.toString());
+  params.append("size", size.toString());
+  params.append("direction", direction.toString());
+  params.append("sortBy", sortBy.toString());
+  if (search) {
+    params.append("searchValue", search.toString());
+  }
+  if (isFeatured !== undefined && isFeatured !== null) {
+    params.append("isFeature", isFeatured.toString())
+  }
+  if (isDeleted !== undefined && isDeleted !== null) {
+    params.append("isDeleted", isDeleted.toString())
+  }
+  if (categoryId) {
+    params.append("categoryId", categoryId.toString())
+  }
+  if (discontinued !== undefined && discontinued !== null) {
+    params.append("discontinued", discontinued.toString())
+  }
+
+  const response = await fetch(`${PRODUCTS_ENDPOINT}?${params.toString()}`);
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};
+
+export const fetchProduct = async ({ productId, isDeleted = false }) => {
+  const params = new URLSearchParams();
+  if (isDeleted != null && isDeleted != undefined) {
+    params.append("isDeleted", isDeleted.toString());
+  }
+  const response = await fetch(`${PRODUCTS_ENDPOINT}/${productId}?${params.toString()}`);
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};
 
 
-export const getProducts = (page = 0, size = 10) => {
-    return axios.get(`${PRODUCT_URL}?page=${page}&size=${size}`, {
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-}
+// Update product
+export const updateProduct = async ({ productId, productData, token }) => {
+  const response = await fetch(`${PRODUCTS_ENDPOINT}/${productId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(productData),
+  });
 
+  if (!response.ok) {
+    throw await response.json();
+  }
 
+  return response.json();
+};
 
+// Create new product
+export const createProduct = async ({ productData, token }) => {
+  const response = await fetch(PRODUCTS_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(productData),
+  });
 
+  if (!response.ok) {
+    throw await response.json();
+  }
 
+  return response.json();
+};
 
+// Delete product
+export const deleteProduct = async ({ productId, isDeleted, token }) => {
+  const response = await fetch(`${PRODUCTS_ENDPOINT}/${productId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ isDeleted })
+  });
 
-
-
-
-
-
-
-
-
-// export const getProducts = ()=>{
-//     const productsdata = [
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product A",
-//             description: "This is a great product.",
-//             price: "$10.99"
-//         },
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product B",
-//             description: "High quality and reliable.",
-//             price: "$15.49"
-//         },
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product C",
-//             description: "Perfect for everyday use.",
-//             price: "$8.99"
-//         },
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product D",
-//             description: "A must-have item.",
-//             price: "$12.99"
-//         },
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product E",
-//             description: "Affordable and durable.",
-//             price: "$9.49"
-//         },
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product F",
-//             description: "Stylish and functional.",
-//             price: "$14.99"
-//         },
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product G",
-//             description: "Top-rated by customers.",
-//             price: "$11.99"
-//         },
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product H",
-//             description: "Innovative and unique.",
-//             price: "$13.49"
-//         },
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product I",
-//             description: "Compact and lightweight.",
-//             price: "$7.99"
-//         },
-//         {
-//             image: "https://dummyimage.com/300X400/000/fff",
-//             name: "Product J",
-//             description: "Best value for money.",
-//             price: "$16.99"
-//         }
-//     ];
-//     return productsdata
-// }
-
-export const getProductsPerMenu = () => {
-    return [
-        {
-            category: "starters",
-            foods: [
-                {
-                    name: "CHOCOLATE FUDGECAKE",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail1(),
-                    price: 8.5
-                },
-                {
-                    name: "MIXED SALAD",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail2(),
-                    price: 8.5
-                },
-                {
-                    name: "BBQ CHICKEN WINGS",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail3(),
-                    price: 8.5
-                }
-            ]
-        },
-        {
-            category: "main dishes",
-            foods: [
-                {
-                    name: "MEAT FEAST PIZZA",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail4(),
-                    price: 8.5
-                },
-                {
-                    name: "CHICKEN TIKKA MASALA",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail2(),
-                    price: 8.5
-                },
-                {
-                    name: "SPICY MEATBALLS",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail3(),
-                    price: 8.5
-                }
-            ]
-        },
-        {
-            category: "deserts",
-            foods: [
-                {
-                    name: "CHOCOLATE FUDGECAKE",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail4(),
-                    price: 8.5
-                },
-                {
-                    name: "CHICKEN TIKKA MASALA",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail2(),
-                    price: 8.5
-                },
-                {
-                    name: "SPICY MEATBALLS",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail3(),
-                    price: 8.5
-                }
-            ]
-        },
-        {
-            category: "drinks",
-            foods: [
-                {
-                    name: "CHOCOLATE FUDGECAKE",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail4(),
-                    price: 8.5
-                },
-                {
-                    name: "CHICKEN TIKKA MASALA",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail2(),
-                    price: 8.5
-                },
-                {
-                    name: "SPICY MEATBALLS",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus.",
-                    image: getMenuItemThumbnail3(),
-                    price: 8.5
-                }
-            ]
-        }
-    ];
-}
-
-export const getSpecialDishes = () => {
-    return [
-        {
-            name: 'SALMON STEAK',
-            description: 'Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.',
-            image: getSpecialMenu1()
-        },
-        {
-            name: "ITALIAN PIZZA",
-            description: "Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.",
-            image: getSpecialMenu2()
-        },
-        {
-            name: "VEG. ROLL",
-            description: "Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.",
-            image: getSpecialMenu3()
-        },
-        {
-            name: 'SALMON STEAK',
-            description: 'Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.',
-            image: getSpecialMenu1()
-        },
-        {
-            name: "ITALIAN PIZZA",
-            description: "Lorem ipsum dolor sit amet, consectetur adip aliqua. Ut enim ad minim venia.",
-            image: getSpecialMenu2()
-        },
-    ]
-
-}
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};

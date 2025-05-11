@@ -1,0 +1,45 @@
+.container {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #ffffff;
+  transition: background-color 0.2s;
+}
+
+.container:hover {
+  background-color: #e9ecef;
+}
+
+.container__selected {
+  background-color: #d1e7dd;
+  border-color: #198754;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #212529;
+}
+
+.text {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.status {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  color: #ffffff;
+}
+
+.status--pending {
+  background-color: #ffc107;
+}
+
+.status--completed {
+  background-color: #198754;
+}

@@ -1,0 +1,73 @@
+.kitchenTable {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.tabContent {
+  padding: 1rem;
+}
+
+.orderRow:hover,
+.reservationRow:hover,
+.menuItemRow:hover {
+  background-color: rgba(0, 123, 255, 0.05) !important;
+  cursor: pointer;
+}
+
+.itemsList {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.timeUntil {
+  font-weight: 600;
+}
+
+/* Add a highlight for urgent items */
+.orderRow[data-urgent="true"] {
+  background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+/* Add a highlight for low stock items */
+.menuItemRow[data-low-stock="true"] {
+  background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+/* Modal styles */
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modalContent {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tabContent {
+    padding: 0.5rem;
+  }
+
+  .modalContent {
+    width: 95%;
+    max-height: 95vh;
+  }
+}

@@ -1,0 +1,22 @@
+.content {
+    padding: 16px;
+}
+
+.productItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.productImage {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 16px;
+}
+
+.placeholder {
+    color: #6b7280;
+    font-style: italic;
+}

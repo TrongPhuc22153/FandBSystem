@@ -1,0 +1,239 @@
+.waiterOrderPage {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+/* Table Selection Area */
+.tableSelection {
+    width: 200px;
+    margin-right: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tableButtons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.tableButtons button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.tableButtons button.selected {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.tableButtons button:hover {
+    background-color: #ddd;
+}
+
+.transferTable {
+    margin-top: 15px;
+}
+
+.transferTable select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Menu Area */
+.menuArea {
+    flex-grow: 1;
+    margin-right: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+.searchBar {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.searchIcon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #777;
+}
+
+.searchBar input[type="text"] {
+    width: 100%;
+    padding: 10px 30px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.menuCategories {
+    margin-top: 10px;
+}
+
+.categorySection {
+    margin-bottom: 20px;
+}
+
+.categorySection h3 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.categoryItems {
+    list-style: none;
+    padding: 0;
+}
+
+.categoryItems li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.categoryItems li:hover {
+    background-color: #f9f9f9;
+}
+
+.categoryItems li span {
+    flex-grow: 1;
+}
+
+.categoryItems li .price {
+    font-weight: bold;
+    color: #007bff;
+    margin-left: 10px;
+}
+
+/* Cart Sidebar */
+.cartSidebar {
+    width: 300px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.cartSidebar h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.cartItems {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.cartItems li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.cartItems li:last-child {
+    border-bottom: none;
+}
+
+.itemDetails {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+.quantityControls {
+    display: flex;
+    align-items: center;
+}
+
+.quantityControls button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #555;
+}
+
+.quantityControls span {
+    margin: 0 8px;
+    font-weight: bold;
+}
+
+.itemTotal {
+    font-weight: bold;
+    color: #28a745;
+    margin-left: 10px;
+}
+
+.removeItem {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.cartTotal {
+    padding-top: 15px;
+    border-top: 2px solid #eee;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.specialRequests {
+    margin-bottom: 15px;
+}
+
+.specialRequests h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.specialRequests textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+.submitOrder {
+    background-color: #007bff;
+    color: white;
+    padding: 12
+}

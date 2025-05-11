@@ -1,0 +1,19 @@
+.review-rating {
+    display: flex;
+}
+
+.star {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    margin-left: 2px;
+}
+
+.star.filled {
+    color: #ffc107;
+}
+
+@media (max-width: 576px) {
+    .review-rating {
+        margin-top: 0.75rem;
+    }
+}

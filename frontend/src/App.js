@@ -1,114 +1,130 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import HomePage from "./pages/Home";
-import UserPage from "./pages/User";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage/HomePage";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import ShopPage from "./pages/ShopPage/ShopPage";
 import "./App.css";
-import "./App.scss";
-import "slick-carousel/slick/slick.css"; // Import Slick CSS
-import "slick-carousel/slick/slick-theme.css"; // Import Slick theme CSS
-import AuthenticationPage from "./pages/Authentication";
-import "react-datepicker/dist/react-datepicker.css";
-import AuthProvider from "./hooks/AuthContext";
-import { DefaultHomePage } from "./pages/DefaultHome";
-import ReservationPage from "./pages/Reservation";
-import MenuPage from "./pages/Menu";
-import ProductPage from "./pages/Product";
-import FoodReservationPage from "./pages/FoodReservationPage";
-import CartPage from "./pages/Cart";
-import CheckoutOrderPage from "./pages/Checkout";
-import PrivateRoute from "./auth/PrivateRoute";
-import AdminPage from "./pages/Admin";
-import CustomerPage from "./pages/Customer";
-import AdminDashboard from "./pages/AdminDashboard";
-import OrdersAdmin from "./pages/OrdersAdmin";
-import ProductManagement from "./pages/ProductManagement";
-import ProductAdmin from "./pages/ProductAdmin";
-import TablesAdmin from "./pages/TablesAdmin";
-import TableAdmin from "./pages/TableAdmin";
-import OrderDetailsAdmin from "./pages/OrderDetailsAdmin";
-import CustomersAdmin from "./pages/CustomersAdmin";
-import NotificationsAdmin from "./pages/NotificationsAdmin";
-import AdminCalendarPage from "./pages/AdminCalendar";
-import AdminTableCalendar from "./pages/AdminTableCalendar";
-import ResetPasswordPage from "./pages/ResetPassword";
-import ForgetPasswordPage from "./pages/ForgetPassword";
-import RegisterPage from './pages/Register';
-import LoginPage from './pages/Login';
-import OrdersCustomer from "./pages/OrdersCustomer";
-import CustomerDashboard from "./pages/CustomerDashboard";
-import NotificationsCustomer from "./pages/NotificationsCustomer";
-import OrderDetailsCustomer from "./pages/OrderDetailsCustomer";
-import EmployeePage from "./pages/Employee";
-import EmployeeDashboard from "./pages/EmployeeDashboard";
-import OrdersEmployee from "./pages/OrdersEmployee";
-import NotificationsEmployee from "./pages/NotificationsEmployee";
-import OrderDetailsEmployee from "./pages/OrderDetailsEmployee";
-import Authorization from "./auth/Authorization";
-import { ROLES } from "./constants/RoleName";
+import SingleProduct from "./pages/SingleProductPage/SingleProduct";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import AuthProvider from "./context/AuthContext";
+import LayoutPage from "./pages/LayoutPage/LayoutPage";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import Authorization from "./components/Authorization/Authorization";
+import { ROLES } from "./constants/roles";
+import AuthLayoutPage from "./pages/AuthLayoutPage/AuthLayoutPage";
+import AdminUsersPage from "./pages/AdminUsersPage/AdminUsersPage";
+import AdminCategoriesPage from "./pages/AdminCategoriesPage/AdminCategoriesPage";
+import AdminCreateCategoryPage from "./pages/AdminCreateCategory/AdminCreateCategoryPage";
+import AdminUpdateCategoryPage from "./pages/AdminUpdateCategory/AdminUpdateCategoryPage";
+import AdminUserProfilePage from "./pages/AdminViewUserProfile/AdminUserProfilePage";
+import AdminCreateUserPage from "./pages/AdminCreateUserPage/AdminCreateUserPage";
+import ModalProvider from "./context/ModalContext";
+import ProfilePage from "./pages/UserProfilePage/ProfilePage";
+import ShoppingCart from "./pages/ShoppingCartPage/ShoppingCart";
+import AlertProvider from "./context/AlertContext";
+import ShippingAddressesPage from "./pages/ShippingAddressesPage/ShippingAddressesPage";
+import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
+import UserOrdersPage from "./pages/UserOrdersPage/UserOrdersPage";
+import UserOrderDetailsPage from "./pages/UserOrderDetailsPage/UserOrderDetailsPage";
+import AdminOrdersPage from "./pages/AdminOrdersPage/AdminOrdersPage";
+import AdminOrderDetailsPage from "./pages/AdminOrderDetailsPage/AdminOrderDetailsPage";
+import AdminProductsPage from "./pages/AdminProductsPage/AdminProductsPage";
+import AdminCreateProductPage from "./pages/AdminCreateProduct/AdminCreateProductPage";
+import AdminUpdateProductPage from "./pages/AdminUpdateProduct/AdminUpdateProductPage";
+import AdminDashboardPage from "./pages/AdminDashboard/AdminDashboardPage";
+import AdminTablesPage from "./pages/AdminTablesPage/AdminTablePage";
+import AdminCreateTablePage from "./pages/AdminCreateTablePage/AdminCreateTablePage";
+import AdminUpdateTablePage from "./pages/AdminUpdateTablePage/AdminUpdateTablePage";
+import AdminReservationsPage from "./pages/AdminReservationsPage/AdminReservationsPage";
+import AdminReservationPage from "./pages/AdminReservationPage/AdminReservationPage";
+import AdminKitChenPage from "./pages/AdminKitchenPage/AdminKitchenPage";
+import WaiterOrderPage from "./pages/WaiterOrderPage/WaiterOrderPage";
+import AdminLayout from "./pages/ProfileLayout/AdminLayout";
+import CustomerLayout from "./pages/ProfileLayout/CustomerLayout";
+import EmployeeLayout from "./pages/ProfileLayout/EmployeeLayout";
+import EmployeeTableManagement from "./pages/TableManagement/EmployeeTableManagement"
+import EmployeeKitchenPage from "./pages/EmployeeKitchenPage/EmployeeKitchennPage";
+import RestaurantOrderSystem from "./pages/RestaurantOrderSystemPage/RestaurantOrderSystemPage";
+import UserReservationsPage from "./pages/UserReservationsPage/UserReservationsPage";
+import ReservationFormPage from "./pages/ReservationFormPage/ReservationPage";
+import UserReservationDetailsPage from "./pages/UserReservationDetailsPage/UserReservationDetailsPage";
+import UserNotificationPage from "./pages/UserNotificationPage/UserNotificationPage";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <Routes>
-          <Route element={<HomePage />}>
-            <Route path="" element={<DefaultHomePage />} />
-            <Route path="home" element={<DefaultHomePage />} />
-            <Route path="reservation" element={<ReservationPage />} />
-            <Route path="menu" element={<MenuPage />} />
-            <Route path="foods/:food" element={<ProductPage />} />
-            <Route path="food-reservation" element={<FoodReservationPage />} />
-            <Route element={<PrivateRoute/>}>
-              <Route element={<Authorization roles={[ROLES.CUSTOMER]}/>}>
-                <Route path="cart" element={<CartPage />} />
-                <Route path="checkout" element={<CheckoutOrderPage />} />
-              </Route>
-            </Route>
-          </Route>
-          <Route element={<PrivateRoute />}>
-            <Route element={<UserPage />}>
-              <Route element={<Authorization roles={[ROLES.ADMIN]} />}>
-                <Route path="admin" element={<AdminPage />}>
-                  <Route path="" element={<AdminDashboard />} />
-                  <Route path="dashboard" element={<AdminDashboard />} />
-                  <Route path="orders" element={<OrdersAdmin />} />
-                  <Route path="order" element={<OrderDetailsAdmin />} />
-                  <Route path="products" element={<ProductManagement />} />
-                  <Route path="product/:id" element={<ProductAdmin />} />
-                  <Route path="tables" element={<TablesAdmin />} />
-                  <Route path="table" element={<TableAdmin />} />
-                  <Route path="customers" element={<CustomersAdmin />} />
-                  <Route path="notifications" element={<NotificationsAdmin />} />
-                  <Route path="calendar" element={<AdminCalendarPage />} />
-                  <Route path="table-calendar" element={<AdminTableCalendar />} />
+        <AlertProvider>
+          <ModalProvider>
+            <Routes>
+              <Route element={<LayoutPage />}>
+                <Route path="" element={<HomePage />} />
+                <Route path="shop" element={<ShopPage />} />
+                <Route path="shop/:foodname" element={<SingleProduct />} />
+                <Route element={<PrivateRoute />}>
+                  <Route element={<Authorization roles={[ROLES.CUSTOMER]} />}>
+                    <Route path="cart" element={<ShoppingCart />} />
+                    <Route path="checkout" element={<CheckoutPage />} />
+                    <Route path="reservation" element={<ReservationFormPage />} />
+                  </Route>
                 </Route>
               </Route>
-              <Route element={<Authorization roles={[ROLES.CUSTOMER]} />}>
-                <Route path="customer" element={<CustomerPage />}>
-                  <Route path="" element={<CustomerDashboard />} />
-                  <Route path="dashboard" element={<CustomerDashboard />} />
-                  <Route path="orders" element={<OrdersCustomer />} />
-                  <Route path="order" element={<OrderDetailsCustomer />} />
-                  <Route path="notifications" element={<NotificationsCustomer />} />
+
+              <Route element={<PrivateRoute />}>
+                <Route path="admin" element={<Authorization roles={[ROLES.ADMIN]} />} >
+                  <Route element={<AdminLayout />}>
+                    <Route path="dashboard" element={<AdminDashboardPage />} />
+                    <Route path="categories" element={<AdminCategoriesPage />} />
+                    <Route path="categories/add" element={<AdminCreateCategoryPage />} />
+                    <Route path="categories/:id" element={<AdminUpdateCategoryPage />} />
+                    <Route path="products" element={<AdminProductsPage />} />
+                    <Route path="products/add" element={<AdminCreateProductPage />}/>
+                    <Route path="products/:id" element={<AdminUpdateProductPage />}/>
+                    <Route path="users" element={<AdminUsersPage />} />
+                    <Route path="users/:userId" element={<AdminUserProfilePage />}/>
+                    <Route path="users/add" element={<AdminCreateUserPage />} />
+                    <Route path="orders" element={<AdminOrdersPage />} />
+                    <Route path="orders/:id" element={<AdminOrderDetailsPage />} />
+                    <Route path="tables" element={<AdminTablesPage />} />
+                    <Route path="tables/add" element={<AdminCreateTablePage />} />
+                    <Route path="tables/:id" element={<AdminUpdateTablePage />}/>
+                    <Route path="reservations" element={<AdminReservationsPage />} />
+                    <Route path="reservations/:id" element={<AdminReservationPage />}/>
+                    <Route path="kitchen" element={<AdminKitChenPage />} />
+                    <Route path="waiter/orders" element={<WaiterOrderPage />} />
+                  </Route>
+                </Route>
+
+                <Route path="employee" element={<Authorization roles={[ROLES.EMPLOYEE]} />}>
+                  <Route element={<EmployeeLayout />}>
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="orders/place" element={<RestaurantOrderSystem />}/>
+                    <Route path="tables" element={<EmployeeTableManagement/>}/>
+                    <Route path="kitchen" element={<EmployeeKitchenPage/>}/>
+                  </Route>
+                </Route>
+
+                <Route path="user" element={<Authorization roles={[ROLES.CUSTOMER]} />}>
+                  <Route element={<CustomerLayout />}>
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="addresses" element={<ShippingAddressesPage />}/>
+                    <Route path="orders" element={<UserOrdersPage />} />
+                    <Route path="orders/:id" element={<UserOrderDetailsPage />}/>
+                    <Route path="reservations" element={<UserReservationsPage/>}/>
+                    <Route path="reservations/:id" element={<UserReservationDetailsPage/>}/>
+                    <Route path="notifications" element={<UserNotificationPage/>}/>
+                  </Route>
                 </Route>
               </Route>
-              <Route element={<Authorization roles={[ROLES.EMPLOYEE]} />}>
-                <Route path="employee" element={<EmployeePage />}>
-                  <Route path="" element={<EmployeeDashboard />} />
-                  <Route path="dashboard" element={<EmployeeDashboard />} />
-                  <Route path="orders" element={<OrdersEmployee />} />
-                  <Route path="order" element={<OrderDetailsEmployee />} />
-                  <Route path="notifications" element={<NotificationsEmployee />} />
-                </Route>
+
+              <Route element={<AuthLayoutPage />}>
+                <Route path="login" element={<LoginPage />} />
+                <Route path="register" element={<RegisterPage />} />
               </Route>
-            </Route>
-          </Route>
-          <Route element={<AuthenticationPage />}>
-            <Route path="login" element={<LoginPage />} />
-            <Route path="register" element={<RegisterPage />} />
-            <Route path="forget-password" element={<ForgetPasswordPage />} />
-            <Route path="reset-password" element={<ResetPasswordPage />} />
-          </Route>
-        </Routes>
+            </Routes>
+          </ModalProvider>
+        </AlertProvider>
       </AuthProvider>
     </Router>
   );
