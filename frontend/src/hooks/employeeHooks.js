@@ -1,26 +1,26 @@
 import useSWR from "swr";
 import { useCallback, useState } from "react";
-import { CUSTOMER_PROFILE_ENDPOINT } from "../constants/api";
+import { EMPLOYEE_PROFILE_ENDPOINT } from "../constants/api";
 import {
-  updateCustomerProfile,
-  fetchCustomerProfile,
-} from "../api/customerApi";
+  fetchEmployeeProfile,
+  updateEmployeeProfile,
+} from "../api/employeeApi";
 import { useAuth } from "../context/AuthContext";
 
-export const useCustomerProfile = () => {
+export const useEmployeeProfile = () => {
   const { token } = useAuth();
 
   const fetcher = async () => {
     if (!token) {
       return null;
     }
-    return await fetchCustomerProfile(token);
+    return await fetchEmployeeProfile(token);
   };
 
-  return useSWR(token ? CUSTOMER_PROFILE_ENDPOINT : null, fetcher);
+  return useSWR(token ? EMPLOYEE_PROFILE_ENDPOINT : null, fetcher);
 };
 
-export const useCustomerProfileActions = () => {
+export const useEmployeeProfileActions = () => {
   const { token } = useAuth();
   const [updateError, setUpdateError] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
@@ -32,11 +32,11 @@ export const useCustomerProfileActions = () => {
       setUpdateSuccess(null);
       setUpdateLoading(true);
       try {
-        const { message, data } = await updateCustomerProfile(
+        const { message, data } = await updateEmployeeProfile(
           token,
           requestData
         );
-        setUpdateSuccess(message || "Profile updated successfully");
+        setUpdateSuccess(message || "Your profile updated successfully");
         return data;
       } catch (error) {
         setUpdateError(error);

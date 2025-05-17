@@ -7,12 +7,15 @@ import { useImageUpload } from "../../hooks/imageHooks";
 import SingleImageDisplay from "../../components/SingleImageDisplay/SingleImageDisplay";
 import { mutate } from "swr";
 import { USER_ENDPOINT } from "../../constants/api";
-import { useCustomerProfile, useCustomerProfileActions } from "../../hooks/customerHooks";
+import { useEmployeeProfile, useEmployeeProfileActions } from "../../hooks/employeeHooks";
 
-const CustomerProfilePage = () => {
-  const [userProfile, setUserProfile] = useState({
-    customerId: "",
-    contactName: "",
+const EmployeeProfilePage = () => {
+  const [employeeProfile, setEmployeeProfile] = useState({
+    employeeId: "",
+    title: "",
+    birthDate: "",
+    hireDate: "",
+    notes: "",
     profile: {
       address: "",
       ward: "",
@@ -31,13 +34,13 @@ const CustomerProfilePage = () => {
         image: "",
         roles: [],
         createdAt: "",
-        lastModifiedAt: "",
+        lastModifiedAt: ""
       },
       createdAt: "",
-      lastModifiedAt: "",
+      lastModifiedAt: ""
     },
     createdAt: "",
-    lastModifiedAt: "",
+    lastModifiedAt: ""
   });
   const imageInputRef = useRef();
   const [uploadImage, setUploadImage] = useState(null);
@@ -49,7 +52,7 @@ const CustomerProfilePage = () => {
     data: profileData,
     isLoading: loadingProfile,
     error,
-  } = useCustomerProfile();
+  } = useEmployeeProfile();
 
   const {
     handleUpdateProfile,
@@ -57,7 +60,7 @@ const CustomerProfilePage = () => {
     updateError,
     updateSuccess,
     resetUpdate,
-  } = useCustomerProfileActions();
+  } = useEmployeeProfileActions();
 
   const { handleUploadImage } = useImageUpload();
 
@@ -66,9 +69,12 @@ const CustomerProfilePage = () => {
 
   useEffect(() => {
     if (profileData) {
-      setUserProfile({
-        customerId: profileData.customerId || "",
-        contactName: profileData.contactName || "",
+      setEmployeeProfile({
+        employeeId: profileData.employeeId || "",
+        title: profileData.title || "",
+        birthDate: profileData.birthDate || "",
+        hireDate: profileData.hireDate || "",
+        notes: profileData.notes || "",
         profile: {
           address: profileData.profile?.address || "",
           ward: profileData.profile?.ward || "",
@@ -87,13 +93,13 @@ const CustomerProfilePage = () => {
             image: profileData.profile?.user?.image || "",
             roles: profileData.profile?.user?.roles || [],
             createdAt: profileData.profile?.user?.createdAt || "",
-            lastModifiedAt: profileData.profile?.user?.lastModifiedAt || "",
+            lastModifiedAt: profileData.profile?.user?.lastModifiedAt || ""
           },
           createdAt: profileData.profile?.createdAt || "",
-          lastModifiedAt: profileData.profile?.lastModifiedAt || "",
+          lastModifiedAt: profileData.profile?.lastModifiedAt || ""
         },
         createdAt: profileData.createdAt || "",
-        lastModifiedAt: profileData.lastModifiedAt || "",
+        lastModifiedAt: profileData.lastModifiedAt || ""
       });
 
       if (profileData.profile?.picture) {
@@ -117,7 +123,7 @@ const CustomerProfilePage = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setUserProfile((prevProfile) => ({
+    setEmployeeProfile((prevProfile) => ({
       ...prevProfile,
       profile: {
         ...prevProfile.profile,
@@ -133,9 +139,9 @@ const CustomerProfilePage = () => {
     }));
   };
 
-  const handleAddressChange = (event) => {
+  const handleProfileChange = (event) => {
     const { name, value } = event.target;
-    setUserProfile((prevProfile) => ({
+    setEmployeeProfile((prevProfile) => ({
       ...prevProfile,
       profile: {
         ...prevProfile.profile,
@@ -145,13 +151,13 @@ const CustomerProfilePage = () => {
     setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
   };
 
-  const handleContactNameChange = (event) => {
-    const { value } = event.target;
-    setUserProfile((prevProfile) => ({
+  const handleEmployeeChange = (event) => {
+    const { name, value } = event.target;
+    setEmployeeProfile((prevProfile) => ({
       ...prevProfile,
-      contactName: value,
+      [name]: value,
     }));
-    setFieldErrors((prevErrors) => ({ ...prevErrors, contactName: null }));
+    setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
   };
 
   const handleImageUpload = async (event) => {
@@ -185,7 +191,7 @@ const CustomerProfilePage = () => {
   const submitForm = async (event) => {
     event.preventDefault();
     onOpen({
-      title: "Update Profile",
+      title: "Update Employee Profile",
       message: "Do you want to save these changes?",
       onYes: handleUpdate,
     });
@@ -207,17 +213,18 @@ const CustomerProfilePage = () => {
     }
 
     const data = {
-      customerId: profileData.customerId,
-      contactName: userProfile.contactName,
+      employeeId: employeeProfile.employeeId,
+      birthDate: employeeProfile.birthDate,
+      notes: employeeProfile.notes,
       profile: {
-        address: userProfile.profile.address,
-        city: userProfile.profile.city,
-        district: userProfile.profile.district,
-        ward: userProfile.profile.ward,
-        phone: userProfile.profile.phone,
+        address: employeeProfile.profile.address,
+        city: employeeProfile.profile.city,
+        district: employeeProfile.profile.district,
+        ward: employeeProfile.profile.ward,
+        phone: employeeProfile.profile.phone,
         picture: uploadedImageData
           ? uploadedImageData[0].imageUrl
-          : userProfile.profile.picture,
+          : employeeProfile.profile.picture,
       },
     };
     const response = await handleUpdateProfile(data);
@@ -227,16 +234,15 @@ const CustomerProfilePage = () => {
       mutate(USER_ENDPOINT);
     }
   }, [
-    userProfile,
+    employeeProfile,
     handleUpdateProfile,
     uploadImage,
     handleUploadImage,
     isEditing,
-    profileData,
     showNewAlert,
   ]);
 
-  if ((!profileData && loadingProfile))
+  if ((!profileData && loadingProfile) || updateLoading)
     return <Loading />;
 
   if (error?.message) return <ErrorDisplay message={error.message} />;
@@ -271,7 +277,7 @@ const CustomerProfilePage = () => {
                   </button>
                   <input
                     ref={imageInputRef}
-                    id="farceUpload"
+                    id="forceUpload"
                     type="file"
                     accept="image/png, image/jpeg"
                     className="d-none"
@@ -283,7 +289,7 @@ const CustomerProfilePage = () => {
             <div className="col-xl-8">
               <div className="card mb-4">
                 <div className="card-header">
-                  <h5 className="card-title mb-0">Account Details</h5>
+                  <h5 className="card-title mb-0">Employee Details</h5>
                 </div>
                 <div className="card-body">
                   <form onSubmit={submitForm}>
@@ -300,7 +306,7 @@ const CustomerProfilePage = () => {
                         type="text"
                         placeholder="Enter your username"
                         name="username"
-                        value={userProfile?.profile?.user?.username || ""}
+                        value={employeeProfile?.profile?.user?.username || ""}
                         onChange={handleChange}
                         disabled={!isEditing || true}
                       />
@@ -325,7 +331,7 @@ const CustomerProfilePage = () => {
                           type="text"
                           placeholder="Enter your first name"
                           name="firstName"
-                          value={userProfile?.profile?.user?.firstName || ""}
+                          value={employeeProfile?.profile?.user?.firstName || ""}
                           onChange={handleChange}
                           disabled={!isEditing || true}
                         />
@@ -352,7 +358,7 @@ const CustomerProfilePage = () => {
                           type="text"
                           placeholder="Enter your last name"
                           name="lastName"
-                          value={userProfile?.profile?.user?.lastName || ""}
+                          value={employeeProfile?.profile?.user?.lastName || ""}
                           onChange={handleChange}
                           disabled={!isEditing || true}
                         />
@@ -380,7 +386,7 @@ const CustomerProfilePage = () => {
                         type="email"
                         placeholder="Enter your email address"
                         name="email"
-                        value={userProfile?.profile?.user?.email || ""}
+                        value={employeeProfile?.profile?.user?.email || ""}
                         onChange={handleChange}
                         disabled={!isEditing || true}
                       />
@@ -391,29 +397,25 @@ const CustomerProfilePage = () => {
                           </div>
                         ))}
                     </div>
-                    <div className="row gx-3 mb-3">
+                                        <div className="row gx-3 mb-3">
                       <div className="col-md-6">
-                        <label
-                          className="small mb-1"
-                          htmlFor="inputContactName"
-                        >
-                          Contact Name
+                        <label className="small mb-1" htmlFor="inputBirthDate">
+                          Birth Date
                         </label>
                         <input
                           required
                           className={`form-control ${
-                            fieldErrors?.contactName ? "is-invalid" : ""
+                            fieldErrors?.birthDate ? "is-invalid" : ""
                           }`}
-                          id="inputContactName"
-                          type="text"
-                          placeholder="Enter your contact name"
-                          name="contactName"
-                          value={userProfile?.contactName || ""}
-                          onChange={handleContactNameChange}
+                          id="inputBirthDate"
+                          type="date"
+                          name="birthDate"
+                          value={employeeProfile?.birthDate || ""}
+                          onChange={handleEmployeeChange}
                           disabled={!isEditing}
                         />
-                        {fieldErrors?.contactName &&
-                          fieldErrors.contactName.map((error, index) => (
+                        {fieldErrors?.birthDate &&
+                          fieldErrors.birthDate.map((error, index) => (
                             <div
                               key={index}
                               className="invalid-feedback d-block"
@@ -422,6 +424,33 @@ const CustomerProfilePage = () => {
                             </div>
                           ))}
                       </div>
+                      <div className="col-md-6">
+                        <label className="small mb-1" htmlFor="inputHireDate">
+                          Hire Date
+                        </label>
+                        <input
+                          className={`form-control ${
+                            fieldErrors?.hireDate ? "is-invalid" : ""
+                          }`}
+                          id="inputHireDate"
+                          type="date"
+                          name="hireDate"
+                          value={employeeProfile?.hireDate || ""}
+                          onChange={handleEmployeeChange}
+                          disabled={!isEditing}
+                        />
+                        {fieldErrors?.hireDate &&
+                          fieldErrors.hireDate.map((error, index) => (
+                            <div
+                              key={index}
+                              className="invalid-feedback d-block"
+                            >
+                              {error}
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                    <div className="row gx-3 mb-3">
                       <div className="col-md-6">
                         <label className="small mb-1" htmlFor="inputPhone">
                           Phone number
@@ -434,8 +463,8 @@ const CustomerProfilePage = () => {
                           type="tel"
                           placeholder="Enter your phone number"
                           name="phone"
-                          value={userProfile?.profile?.phone || ""}
-                          onChange={handleAddressChange}
+                          value={employeeProfile?.profile?.phone || ""}
+                          onChange={handleProfileChange}
                           disabled={!isEditing}
                         />
                         {fieldErrors?.phone &&
@@ -448,9 +477,6 @@ const CustomerProfilePage = () => {
                             </div>
                           ))}
                       </div>
-                    </div>
-
-                    <div className="row gx-3 mb-3">
                       <div className="col-md-6">
                         <label className="small mb-1" htmlFor="inputAddress">
                           Address
@@ -463,8 +489,8 @@ const CustomerProfilePage = () => {
                           type="text"
                           placeholder="Enter your address"
                           name="address"
-                          value={userProfile?.profile?.address || ""}
-                          onChange={handleAddressChange}
+                          value={employeeProfile?.profile?.address || ""}
+                          onChange={handleProfileChange}
                           disabled={!isEditing}
                         />
                         {fieldErrors?.address &&
@@ -477,6 +503,8 @@ const CustomerProfilePage = () => {
                             </div>
                           ))}
                       </div>
+                    </div>
+                    <div className="row gx-3 mb-3">
                       <div className="col-md-6">
                         <label className="small mb-1" htmlFor="inputCity">
                           City
@@ -489,8 +517,8 @@ const CustomerProfilePage = () => {
                           type="text"
                           placeholder="Enter your city"
                           name="city"
-                          value={userProfile?.profile?.city || ""}
-                          onChange={handleAddressChange}
+                          value={employeeProfile?.profile?.city || ""}
+                          onChange={handleProfileChange}
                           disabled={!isEditing}
                         />
                         {fieldErrors?.city &&
@@ -503,9 +531,6 @@ const CustomerProfilePage = () => {
                             </div>
                           ))}
                       </div>
-                    </div>
-
-                    <div className="row gx-3 mb-3">
                       <div className="col-md-6">
                         <label className="small mb-1" htmlFor="inputState">
                           District
@@ -518,8 +543,8 @@ const CustomerProfilePage = () => {
                           type="text"
                           placeholder="Enter your district"
                           name="district"
-                          value={userProfile?.profile?.district || ""}
-                          onChange={handleAddressChange}
+                          value={employeeProfile?.profile?.district || ""}
+                          onChange={handleProfileChange}
                           disabled={!isEditing}
                         />
                         {fieldErrors?.district &&
@@ -532,6 +557,8 @@ const CustomerProfilePage = () => {
                             </div>
                           ))}
                       </div>
+                    </div>
+                    <div className="row gx-3 mb-3">
                       <div className="col-md-6">
                         <label className="small mb-1" htmlFor="inputWard">
                           Ward
@@ -544,8 +571,8 @@ const CustomerProfilePage = () => {
                           type="text"
                           placeholder="Enter your ward"
                           name="ward"
-                          value={userProfile?.profile?.ward || ""}
-                          onChange={handleAddressChange}
+                          value={employeeProfile?.profile?.ward || ""}
+                          onChange={handleProfileChange}
                           disabled={!isEditing}
                         />
                         {fieldErrors?.ward &&
@@ -559,7 +586,29 @@ const CustomerProfilePage = () => {
                           ))}
                       </div>
                     </div>
-
+                    <div className="mb-3">
+                      <label className="small mb-1" htmlFor="inputNotes">
+                        Notes
+                      </label>
+                      <textarea
+                        className={`form-control ${
+                          fieldErrors?.notes ? "is-invalid" : ""
+                        }`}
+                        id="inputNotes"
+                        placeholder="Enter any notes"
+                        name="notes"
+                        value={employeeProfile?.notes || ""}
+                        onChange={handleEmployeeChange}
+                        disabled={!isEditing}
+                        rows="4"
+                      />
+                      {fieldErrors?.notes &&
+                        fieldErrors.notes.map((error, index) => (
+                          <div key={index} className="invalid-feedback d-block">
+                            {error}
+                          </div>
+                        ))}
+                    </div>
                     <div className="d-flex justify-content-between">
                       <button
                         className="btn btn-primary"
@@ -587,4 +636,4 @@ const CustomerProfilePage = () => {
   );
 };
 
-export default CustomerProfilePage;
+export default EmployeeProfilePage;
