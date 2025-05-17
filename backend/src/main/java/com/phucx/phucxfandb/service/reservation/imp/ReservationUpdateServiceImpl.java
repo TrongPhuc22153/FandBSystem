@@ -18,7 +18,6 @@ import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
 import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +41,6 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
     private final MenuItemMapper menuItemMapper;
 
     @Override
-    @Modifying
     @Transactional
     public ReservationDTO createCustomerReservation(String username, RequestReservationDTO requestReservationDTO) {
         log.info("createCustomerReservation(username={}, requestReservationDTO={})", username, requestReservationDTO);
@@ -72,7 +70,6 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
     }
 
     @Override
-    @Modifying
     @Transactional
     public ReservationDTO createEmployeeReservation(String username, RequestReservationDTO requestReservationDTO) {
         log.info("createEmployeeReservation(username={}, requestReservationDTO={})", username, requestReservationDTO);
@@ -107,15 +104,6 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
 
 
     @Override
-    @Modifying
-    @Transactional
-    public ReservationDTO updateReservation(String username, String reservationId,
-            RequestReservationDTO reservationDTO) {
-        return null;
-    }
-
-    @Override
-    @Modifying
     @Transactional
     public ReservationDTO updateReservationStatus(String reservationId, ReservationStatus status) {
         log.info("updateReservationStatus(reservationId={}, status={})", reservationId, status);
@@ -127,7 +115,28 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
     }
 
     @Override
-    @Modifying
+    @Transactional
+    public ReservationDTO updateReservationStatusByCustomer(String username, String reservationId, ReservationStatus status) {
+        log.info("updateReservationStatusByCustomer(username={}, reservationId={}, status={})", username, reservationId, status);
+        Reservation reservation = reservationRepository.findByReservationIdAndCustomerProfileUserUsername(reservationId, username)
+                .orElseThrow(()-> new NotFoundException("Reservation", "id", reservationId));
+        reservation.setStatus(status);
+        Reservation updatedOrder = reservationRepository.save(reservation);
+        return reservationMapper.toReservationDTO(updatedOrder);
+    }
+
+    @Override
+    @Transactional
+    public ReservationDTO updateReservationStatusByEmployee(String username, String reservationId, ReservationStatus status) {
+        log.info("updateReservationStatusByEmployee(username={}, reservationId={}, status={})", username, reservationId, status);
+        Reservation reservation = reservationRepository.findByReservationIdAndEmployeeProfileUserUsername(reservationId, username)
+                .orElseThrow(()-> new NotFoundException("Reservation", "id", reservationId));
+        reservation.setStatus(status);
+        Reservation updatedOrder = reservationRepository.save(reservation);
+        return reservationMapper.toReservationDTO(updatedOrder);
+    }
+
+    @Override
     @Transactional
     public ReservationDTO createReservationAndAssignTable(String username,
             RequestReservationDTO requestReservationDTO) {

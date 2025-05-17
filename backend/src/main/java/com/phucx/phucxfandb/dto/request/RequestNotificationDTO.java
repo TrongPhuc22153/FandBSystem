@@ -1,6 +1,9 @@
 package com.phucx.phucxfandb.dto.request;
 
 import com.phucx.phucxfandb.constant.NotificationTopic;
+import com.phucx.phucxfandb.constant.ReceiverType;
+import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.constant.SenderType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,13 +15,20 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestNotificationDTO {
-    @NotBlank(message = "Sender ID cannot be empty")
+
+    @NotNull(message = "Sender type cannot be null")
+    private SenderType senderType;
+
     @Size(min = 3, max = 20, message = "Sender username must be between 3 and 20 characters")
     private String senderUsername;
 
-    @NotBlank(message = "Receiver ID cannot be empty")
+    @NotNull(message = "Receiver type cannot be null")
+    private ReceiverType receiverType;
+
     @Size(min = 3, max = 20, message = "Receiver username must be between 3 and 20 characters")
     private String receiverUsername;
+
+    private RoleName receiverRole;
 
     @NotBlank(message = "Title cannot be empty")
     @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")

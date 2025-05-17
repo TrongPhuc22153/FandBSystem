@@ -1,22 +1,26 @@
 package com.phucx.phucxfandb.service.notification;
 
+import com.phucx.phucxfandb.constant.OrderAction;
+import com.phucx.phucxfandb.constant.OrderType;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
+import com.phucx.phucxfandb.dto.response.OrderDTO;
+import org.springframework.security.core.Authentication;
 
 public interface SendOrderNotificationService {
-    void sendOrderNotificationToTopic(String orderId, RequestNotificationDTO requestNotificationDTO);
-    void sendOrderNotificationToEmployee(String orderId, RequestNotificationDTO requestNotificationDTO);
-    void sendOrderNotificationToCustomer(String orderId, RequestNotificationDTO requestNotificationDTO);
-    void sendOrderNotificationToKitchen(String orderId, RequestNotificationDTO requestNotificationDTO);
 
+    void sendNotificationToUser(String orderId, RequestNotificationDTO requestNotificationDTO);
+    void sendNotificationToGroup(String orderId, String topic, RequestNotificationDTO requestNotificationDTO);
 
-//    // customer send notification message to employee
-//    public void sendNotificationToEmployee(OrderNotificationDTO notificationDetail) throws NotFoundException;
-//    public void sendNotificationToAllEmployees(OrderNotificationDTO notificationDetail);
-//    // employee send notification message to customer
-//    public void sendNotificationToCustomer(OrderNotificationDTO notificationDetail, Boolean firstNotification) throws NotFoundException;
-//    public void sendNotificationToAllCustomers(OrderNotificationDTO notificationDetail);
-//
-//    // send notification to notification service
-//    public void sendCustomerOrderNotification(OrderNotificationDTO notification, Boolean firstNotification) throws JsonProcessingException, NotFoundException;
-//    public void sendEmployeeOrderNotification(OrderNotificationDTO notification) throws JsonProcessingException, NotFoundException;
+    void sendNotificationForOrderAction(Authentication authentication, String orderId,
+                                        OrderAction action, OrderType type, OrderDTO order);
+
+    void sendPlaceOrderNotification(Authentication authentication, String orderId, OrderType type, OrderDTO order);
+
+    void sendPreparingNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order);
+
+    void sendReadyNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order);
+
+    void sendCompleteNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order);
+
+    void sendCancelNotification(Authentication authentication, String orderId, OrderType type, OrderDTO order);
 }

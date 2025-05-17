@@ -2,11 +2,7 @@ package com.phucx.phucxfandb.service.table;
 
 import com.phucx.phucxfandb.constant.TableStatus;
 import com.phucx.phucxfandb.dto.request.RequestReservationTableDTO;
-import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationTableDTO;
-import com.phucx.phucxfandb.entity.Reservation;
-import com.phucx.phucxfandb.entity.ReservationTable;
-
 import java.util.List;
 
 public interface ReservationTableUpdateService {

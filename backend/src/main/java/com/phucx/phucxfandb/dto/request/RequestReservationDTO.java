@@ -31,17 +31,22 @@ public class RequestReservationDTO {
     @Future(message = "End time must be in the future")
     private LocalDateTime endTime;
 
+    @NotEmpty(message = "Menu can not be null")
+    private List<@Valid RequestMenuItemDTO> menuItems;
+
     private String notes;
 
-    private ReservationStatus status;
-
+    @Size(min = 3, max = 36, message = "Customer ID must be between 3 and 36 characters")
     private String customerId;
 
+    @Size(min = 3, max = 36, message = "Employee ID must be between 3 and 36 characters")
+    private String employeeId;
+
+    @Size(min = 3, max = 36, message = "Table ID must be between 3 and 36 characters")
     private String tableId;
 
     private ReservationAction action;
 
-    @NotEmpty(message = "Menu can not be null")
-    private List<@Valid RequestMenuItemDTO> menuItems;
+    private ReservationStatus status;
 
 }

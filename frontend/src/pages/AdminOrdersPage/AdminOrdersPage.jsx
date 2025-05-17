@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useOrders } from "../../hooks/orderHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
@@ -7,29 +7,42 @@ import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { formatDate } from "../../utils/datetimeUtils";
 import { Badge } from "react-bootstrap";
-import { ORDER_STATUS_CLASSES } from "../../constants/webConstant";
+import {
+  ORDER_STATUS_CLASSES,
+  SORTING_DIRECTIONS,
+} from "../../constants/webConstant";
 import { ADMIN_ORDERS_URI } from "../../constants/routes";
 
 const AdminOrdersPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page") || "0");
+  const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchValue, setSearchValue] = useState(
     searchParams.get("searchValue") || ""
   );
-  const [searchBy, setSearchBy] = useState(() => {
-    const param = searchParams.get("searchBy");
-    return param ? [param] : ["id"];
-  });
+
+  const [currentPage, setCurrentPage] = useState(currentPageFromURL);
+
+  useEffect(() => {
+    const pageFromURL = parseInt(searchParams.get("page")) || 1;
+    setCurrentPage(pageFromURL - 1);
+  }, [searchParams]);
 
   const {
     data: ordersData,
     isLoading: loadingOrders,
     error: ordersError,
-  } = useOrders();
+  } = useOrders({
+    page: currentPage,
+    sortDirection: SORTING_DIRECTIONS.DESC,
+    sortField: "orderDate",
+  });
 
-  const orderData = ordersData?.content || [];
+  const orderData = useMemo(() => 
+    ordersData?.content || [], 
+  [ordersData]);
+  
   const totalPages = ordersData?.totalPages || 0;
 
   const orderColumns = [
@@ -59,13 +72,6 @@ const AdminOrdersPage = () => {
       ),
     },
   ];
-
-  useEffect(() => {
-    const searchByParam = searchParams.get("searchBy");
-    if (searchByParam) {
-      setSearchBy(searchByParam.split(","));
-    }
-  }, [searchParams]);
 
   const handleViewOrder = useCallback(
     (id) => {

@@ -20,7 +20,6 @@ import AdminUpdateCategoryPage from "./pages/AdminUpdateCategory/AdminUpdateCate
 import AdminUserProfilePage from "./pages/AdminViewUserProfile/AdminUserProfilePage";
 import AdminCreateUserPage from "./pages/AdminCreateUserPage/AdminCreateUserPage";
 import ModalProvider from "./context/ModalContext";
-import ProfilePage from "./pages/UserProfilePage/ProfilePage";
 import ShoppingCart from "./pages/ShoppingCartPage/ShoppingCart";
 import AlertProvider from "./context/AlertContext";
 import ShippingAddressesPage from "./pages/ShippingAddressesPage/ShippingAddressesPage";
@@ -50,81 +49,88 @@ import UserReservationsPage from "./pages/UserReservationsPage/UserReservationsP
 import ReservationFormPage from "./pages/ReservationFormPage/ReservationPage";
 import UserReservationDetailsPage from "./pages/UserReservationDetailsPage/UserReservationDetailsPage";
 import UserNotificationPage from "./pages/UserNotificationPage/UserNotificationPage";
+import WebSocketProvider from "./context/WebSocketContext";
+import EmployeeNotificationPage from "./pages/EmployeeNotificationPage/EmployeeNotificationPage";
+import CustomerProfilePage from "./pages/CustomerProfilePage/CustomerProfilePage";
+import EmployeeProfilePage from "./pages/EmployeeProfilePage/EmployeeProfilePage";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <AlertProvider>
-          <ModalProvider>
-            <Routes>
-              <Route element={<LayoutPage />}>
-                <Route path="" element={<HomePage />} />
-                <Route path="shop" element={<ShopPage />} />
-                <Route path="shop/:foodname" element={<SingleProduct />} />
+        <WebSocketProvider>
+          <AlertProvider>
+            <ModalProvider>
+              <Routes>
+                <Route element={<LayoutPage />}>
+                  <Route path="" element={<HomePage />} />
+                  <Route path="shop" element={<ShopPage />} />
+                  <Route path="shop/:foodname" element={<SingleProduct />} />
+                  <Route element={<PrivateRoute />}>
+                    <Route element={<Authorization roles={[ROLES.CUSTOMER]} />}>
+                      <Route path="cart" element={<ShoppingCart />} />
+                      <Route path="checkout" element={<CheckoutPage />} />
+                      <Route path="reservation" element={<ReservationFormPage />} />
+                    </Route>
+                  </Route>
+                </Route>
+
                 <Route element={<PrivateRoute />}>
-                  <Route element={<Authorization roles={[ROLES.CUSTOMER]} />}>
-                    <Route path="cart" element={<ShoppingCart />} />
-                    <Route path="checkout" element={<CheckoutPage />} />
-                    <Route path="reservation" element={<ReservationFormPage />} />
+                  <Route path="admin" element={<Authorization roles={[ROLES.ADMIN]} />} >
+                    <Route element={<AdminLayout />}>
+                      <Route path="dashboard" element={<AdminDashboardPage />} />
+                      <Route path="categories" element={<AdminCategoriesPage />} />
+                      <Route path="categories/add" element={<AdminCreateCategoryPage />} />
+                      <Route path="categories/:id" element={<AdminUpdateCategoryPage />} />
+                      <Route path="products" element={<AdminProductsPage />} />
+                      <Route path="products/add" element={<AdminCreateProductPage />}/>
+                      <Route path="products/:id" element={<AdminUpdateProductPage />}/>
+                      <Route path="users" element={<AdminUsersPage />} />
+                      <Route path="users/:userId" element={<AdminUserProfilePage />}/>
+                      <Route path="users/add" element={<AdminCreateUserPage />} />
+                      <Route path="orders" element={<AdminOrdersPage />} />
+                      <Route path="orders/:id" element={<AdminOrderDetailsPage />} />
+                      <Route path="tables" element={<AdminTablesPage />} />
+                      <Route path="tables/add" element={<AdminCreateTablePage />} />
+                      <Route path="tables/:id" element={<AdminUpdateTablePage />}/>
+                      <Route path="reservations" element={<AdminReservationsPage />} />
+                      <Route path="reservations/:id" element={<AdminReservationPage />}/>
+                      <Route path="kitchen" element={<AdminKitChenPage />} />
+                      <Route path="waiter/orders" element={<WaiterOrderPage />} />
+                    </Route>
+                  </Route>
+
+                  <Route path="employee" element={<Authorization roles={[ROLES.EMPLOYEE]} />}>
+                    <Route element={<EmployeeLayout />}>
+                      <Route path="profile" element={<EmployeeProfilePage />} />
+                      <Route path="orders/place" element={<RestaurantOrderSystem />}/>
+                      <Route path="tables" element={<EmployeeTableManagement/>}/>
+                      <Route path="kitchen" element={<EmployeeKitchenPage/>}/>
+                      <Route path="notifications" element={<EmployeeNotificationPage/>}/>
+                    </Route>
+                  </Route>
+
+                  <Route path="user" element={<Authorization roles={[ROLES.CUSTOMER]} />}>
+                    <Route element={<CustomerLayout />}>
+                      <Route path="profile" element={<CustomerProfilePage />} />
+                      <Route path="addresses" element={<ShippingAddressesPage />}/>
+                      <Route path="orders" element={<UserOrdersPage />} />
+                      <Route path="orders/:id" element={<UserOrderDetailsPage />}/>
+                      <Route path="reservations" element={<UserReservationsPage/>}/>
+                      <Route path="reservations/:id" element={<UserReservationDetailsPage/>}/>
+                      <Route path="notifications" element={<UserNotificationPage/>}/>
+                    </Route>
                   </Route>
                 </Route>
-              </Route>
 
-              <Route element={<PrivateRoute />}>
-                <Route path="admin" element={<Authorization roles={[ROLES.ADMIN]} />} >
-                  <Route element={<AdminLayout />}>
-                    <Route path="dashboard" element={<AdminDashboardPage />} />
-                    <Route path="categories" element={<AdminCategoriesPage />} />
-                    <Route path="categories/add" element={<AdminCreateCategoryPage />} />
-                    <Route path="categories/:id" element={<AdminUpdateCategoryPage />} />
-                    <Route path="products" element={<AdminProductsPage />} />
-                    <Route path="products/add" element={<AdminCreateProductPage />}/>
-                    <Route path="products/:id" element={<AdminUpdateProductPage />}/>
-                    <Route path="users" element={<AdminUsersPage />} />
-                    <Route path="users/:userId" element={<AdminUserProfilePage />}/>
-                    <Route path="users/add" element={<AdminCreateUserPage />} />
-                    <Route path="orders" element={<AdminOrdersPage />} />
-                    <Route path="orders/:id" element={<AdminOrderDetailsPage />} />
-                    <Route path="tables" element={<AdminTablesPage />} />
-                    <Route path="tables/add" element={<AdminCreateTablePage />} />
-                    <Route path="tables/:id" element={<AdminUpdateTablePage />}/>
-                    <Route path="reservations" element={<AdminReservationsPage />} />
-                    <Route path="reservations/:id" element={<AdminReservationPage />}/>
-                    <Route path="kitchen" element={<AdminKitChenPage />} />
-                    <Route path="waiter/orders" element={<WaiterOrderPage />} />
-                  </Route>
+                <Route element={<AuthLayoutPage />}>
+                  <Route path="login" element={<LoginPage />} />
+                  <Route path="register" element={<RegisterPage />} />
                 </Route>
-
-                <Route path="employee" element={<Authorization roles={[ROLES.EMPLOYEE]} />}>
-                  <Route element={<EmployeeLayout />}>
-                    <Route path="profile" element={<ProfilePage />} />
-                    <Route path="orders/place" element={<RestaurantOrderSystem />}/>
-                    <Route path="tables" element={<EmployeeTableManagement/>}/>
-                    <Route path="kitchen" element={<EmployeeKitchenPage/>}/>
-                  </Route>
-                </Route>
-
-                <Route path="user" element={<Authorization roles={[ROLES.CUSTOMER]} />}>
-                  <Route element={<CustomerLayout />}>
-                    <Route path="profile" element={<ProfilePage />} />
-                    <Route path="addresses" element={<ShippingAddressesPage />}/>
-                    <Route path="orders" element={<UserOrdersPage />} />
-                    <Route path="orders/:id" element={<UserOrderDetailsPage />}/>
-                    <Route path="reservations" element={<UserReservationsPage/>}/>
-                    <Route path="reservations/:id" element={<UserReservationDetailsPage/>}/>
-                    <Route path="notifications" element={<UserNotificationPage/>}/>
-                  </Route>
-                </Route>
-              </Route>
-
-              <Route element={<AuthLayoutPage />}>
-                <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<RegisterPage />} />
-              </Route>
-            </Routes>
-          </ModalProvider>
-        </AlertProvider>
+              </Routes>
+            </ModalProvider>
+          </AlertProvider>
+        </WebSocketProvider>
       </AuthProvider>
     </Router>
   );

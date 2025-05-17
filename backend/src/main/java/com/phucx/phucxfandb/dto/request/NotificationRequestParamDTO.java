@@ -16,4 +16,5 @@ public class NotificationRequestParamDTO {
     private Sort.Direction direction = Sort.Direction.DESC;
     private int page = WebConstant.PAGE_NUMBER;
     private int size = WebConstant.PAGE_SIZE;
+    private Boolean isRead;
 }

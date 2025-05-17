@@ -32,10 +32,10 @@ function AdminUpdateCategoryPage() {
 
   const {
     handleUpdateCategory,
-    updateError: updateError,
-    updateLoading: updateLoading,
-    updateSuccess: updateSuccess,
-    resetUpdate: resetUpdate,
+    updateError,
+    updateLoading,
+    updateSuccess,
+    resetUpdate,
   } = useCategoryActions();
 
   const { onOpen } = useModal();
@@ -67,7 +67,7 @@ function AdminUpdateCategoryPage() {
         action: resetUpdate(),
       });
     }
-  }, [updateSuccess, mutateCategory]);
+  }, [updateSuccess, mutateCategory, resetUpdate, showNewAlert]);
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -123,7 +123,7 @@ function AdminUpdateCategoryPage() {
       setImagePreview(response.picture || null);
       setIsEditMode(false);
     }
-  }, [id, categoryDetails, uploadImage, handleUpdateCategory, imagePreview, showNewAlert]);
+  }, [id, categoryDetails, uploadImage, handleUpdateCategory, imagePreview, showNewAlert, handleUploadImage]);
 
   const handleCancelClick = () => {
     setImagePreview(categoryData?.picture || null);

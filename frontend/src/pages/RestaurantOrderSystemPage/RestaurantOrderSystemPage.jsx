@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import TableSelection from "../../components/TableSelection/TableSelection";
 import MenuCategories from "../../components/MenuCategories/MenuCategories";
 import FoodItems from "../../components/FootItems/FoodItems";
@@ -33,6 +33,9 @@ export default function RestaurantOrderSystem() {
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
+  const { showNewAlert } = useAlert();
+  const { onOpen } = useModal();
+
   const { handlePlaceOrder, placeSuccess, placeError, resetPlace } =
     useOrderActions();
 
@@ -43,16 +46,17 @@ export default function RestaurantOrderSystem() {
         action: resetPlace,
       });
     }
-  }, [placeSuccess, resetPlace]);
+  }, [placeSuccess, resetPlace, showNewAlert]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (placeError) {
       showNewAlert({
         message: placeError?.message,
+        variant: "danger",
         action: resetPlace,
       });
     }
-  }, [placeError, resetPlace]);
+  }, [placeError, resetPlace, showNewAlert]);
 
   //tables
   const {
@@ -60,7 +64,7 @@ export default function RestaurantOrderSystem() {
     isLoading: loadingTablesData,
     error: tablesDataError,
   } = useReservationTables();
-  const tables = tablesData?.content || [];
+  const tables = useMemo(() =>tablesData?.content || [], [tablesData]);
 
   // products
   const {
@@ -72,7 +76,7 @@ export default function RestaurantOrderSystem() {
     categoryId: categoryIdFromURL,
     search: searchTermFromURL,
   });
-  const menuItems = productsData?.content || [];
+  const menuItems = useMemo(() => productsData?.content || [], [productsData]);
   const totalPages = productsData?.totalPages || 0;
 
   // categories
@@ -81,10 +85,7 @@ export default function RestaurantOrderSystem() {
     isLoading: loadingCategoriesData,
     error: categoriesError,
   } = useCategories();
-  const categories = categoriesData?.content || [];
-
-  const { showNewAlert } = useAlert();
-  const { onOpen } = useModal();
+  const categories = useMemo(() => categoriesData?.content || [], [categoriesData]);
 
   const addToOrder = useCallback(
     (food) => {
@@ -173,9 +174,12 @@ export default function RestaurantOrderSystem() {
     });
   };
 
-  const handleSelectCategory = useCallback((categoryId) => {
-    navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?categoryId=${categoryId}`);
-  }, []);
+  const handleSelectCategory = useCallback(
+    (categoryId) => {
+      navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?categoryId=${categoryId}`);
+    },
+    [navigate]
+  );
 
   if (
     !categoriesData ||

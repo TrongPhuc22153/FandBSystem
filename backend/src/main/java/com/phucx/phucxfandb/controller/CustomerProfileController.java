@@ -46,17 +46,4 @@ public class CustomerProfileController {
                 .build();
         return ResponseEntity.ok(responseDTO);
     }
-
-//    @PostMapping("/sendEmailVerification")
-//    @Operation(summary = "Send verification email to customer", tags = {"customer", "post"})
-//    public ResponseEntity<ResponseFormat> sendEmailVerification (
-//        HttpServletRequest request, Authentication authentication
-//    ){
-//        String baseUrl = ServerUrlUtils.getBaseUrl(request);
-//        customerService.sendVerificationEmail(authentication.getName(), baseUrl);
-//        ResponseFormat responseFormat = ResponseFormat.builder()
-//                .status(true)
-//                .build();
-//        return ResponseEntity.ok().body(responseFormat);
-//    }
 }

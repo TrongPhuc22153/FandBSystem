@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"profile"})
 public class User extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

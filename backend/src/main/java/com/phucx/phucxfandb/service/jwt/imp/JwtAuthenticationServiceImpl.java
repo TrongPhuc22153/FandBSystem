@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.service.jwt.imp;
 
+import com.phucx.phucxfandb.constant.RoleName;
 import com.phucx.phucxfandb.entity.User;
 import com.phucx.phucxfandb.service.jwt.JwtAuthenticationService;
 import io.jsonwebtoken.Claims;
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,7 +35,7 @@ public class JwtAuthenticationServiceImpl implements JwtAuthenticationService {
 
     @Override
     public String generateAuthToken(User user) {
-        log.info("generateAuthToken(username={})", user.getUsername());
+        log.debug("generateAuthToken(username={})", user.getUsername());
         Date now = new Date();
         Date expiry = new Date(now.getTime() + EXPIRATION_TIME);
         List<String> roles = user.getRoles().stream()
@@ -53,14 +54,31 @@ public class JwtAuthenticationServiceImpl implements JwtAuthenticationService {
 
     @Override
     public String extractUsername(String token) {
-        log.info("generateAuthToken(token={})", token);
+        log.debug("generateAuthToken(token={})", token);
         return extractAllClaims(token)
                 .get(USERNAME_CLAIM, String.class);
     }
 
     @Override
+    public Set<RoleName> extractRoles(String token) {
+        log.debug("extractRoles(token={})", token);
+        try {
+            Collection<?> roles = extractAllClaims(token).get(ROLE_CLAIM, Collection.class);
+            if (roles != null) {
+                return roles.stream()
+                        .map(Object::toString)
+                        .map(RoleName::valueOf)
+                        .collect(Collectors.toSet());
+            }
+        } catch (Exception e) {
+            log.warn("Error: {}", e.getMessage());
+        }
+        return Collections.emptySet();
+    }
+
+    @Override
     public Boolean validateToken(String token) {
-        log.info("validateToken(token={})", token);
+        log.debug("validateToken(token={})", token);
         try {
             Date expiration = extractAllClaims(token).getExpiration();
             return expiration.after(new Date());
@@ -71,7 +89,7 @@ public class JwtAuthenticationServiceImpl implements JwtAuthenticationService {
     }
 
     private Claims extractAllClaims(String token) {
-        log.info("extractAllClaims(token={})", token);
+        log.debug("extractAllClaims(token={})", token);
         return Jwts.parser()
                 .verifyWith(getSecretKey())
                 .build()

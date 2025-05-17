@@ -29,10 +29,10 @@ function AdminUpdateTablePage() {
 
   const {
     handleUpdateReservationTable,
-    updateError: updateError,
-    updateLoading: updateLoading,
-    updateSuccess: updateSuccess,
-    resetUpdate: resetUpdate,
+    updateError,
+    updateLoading,
+    updateSuccess,
+    resetUpdate,
   } = useReservationTableActions(); // Use the correct hook
 
   const { onOpen } = useModal();
@@ -64,7 +64,7 @@ function AdminUpdateTablePage() {
         clearTimeout(timer);
       };
     }
-  }, [updateSuccess, mutateTable]);
+  }, [updateSuccess, mutateTable, resetUpdate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

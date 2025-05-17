@@ -54,4 +54,7 @@ public class Order extends Auditable{
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
+    @ManyToOne
+    private ShippingAddress shippingAddress;
+
 }

@@ -1,7 +1,6 @@
 package com.phucx.phucxfandb.service.menu;
 
 import com.phucx.phucxfandb.dto.request.RequestMenuItemDTO;
-import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.MenuItemDTO;
 
 public interface MenuItemUpdateService {

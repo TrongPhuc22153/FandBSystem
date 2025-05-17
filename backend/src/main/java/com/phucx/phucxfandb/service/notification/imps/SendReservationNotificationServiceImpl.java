@@ -1,12 +1,16 @@
 package com.phucx.phucxfandb.service.notification.imps;
 
+import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;
+import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.service.notification.NotificationUpdateService;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
+import com.phucx.phucxfandb.utils.NotificationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import static com.phucx.phucxfandb.constant.WebSocketEndpoint.*;
@@ -20,19 +24,8 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
 
 
     @Override
-    public void sendReservationNotificationToTopic(String reservationId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendReservationNotificationToTopic(reservationId={}, requestNotificationDTO={})", reservationId, requestNotificationDTO);
-        NotificationUserDTO notificationDTO = notificationUpdateService.createReservationNotification(
-                requestNotificationDTO.getSenderUsername(), reservationId, requestNotificationDTO);
-        simpMessagingTemplate.convertAndSend(
-                TOPIC_RESERVATION,
-                notificationDTO
-        );
-    }
-
-    @Override
-    public void sendReservationNotificationToEmployee(String reservationId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendReservationNotificationToEmployee(reservationId={}, requestNotificationDTO={})", reservationId, requestNotificationDTO);
+    public void sendNotificationToUser(String reservationId, RequestNotificationDTO requestNotificationDTO) {
+        log.info("sendNotificationToUser(reservationId={}, requestNotificationDTO={})", reservationId, requestNotificationDTO);
         NotificationUserDTO notificationDTO = notificationUpdateService.createReservationNotification(
                 requestNotificationDTO.getSenderUsername(), reservationId, requestNotificationDTO);
         simpMessagingTemplate.convertAndSendToUser(
@@ -43,25 +36,123 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
     }
 
     @Override
-    public void sendReservationNotificationToCustomer(String reservationId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendReservationNotificationToCustomer(reservationId={}, requestNotificationDTO={})", reservationId, requestNotificationDTO);
+    public void sendNotificationToGroup(String reservationId, String topic, RequestNotificationDTO requestNotificationDTO) {
+        log.info("sendNotificationToGroup(reservationId={}, requestNotificationDTO={})", reservationId, requestNotificationDTO);
         NotificationUserDTO notificationDTO = notificationUpdateService.createReservationNotification(
                 requestNotificationDTO.getSenderUsername(), reservationId, requestNotificationDTO);
-        simpMessagingTemplate.convertAndSendToUser(
-                requestNotificationDTO.getReceiverUsername(),
-                QUEUE_MESSAGES,
+        simpMessagingTemplate.convertAndSend(
+                topic,
                 notificationDTO
         );
     }
 
     @Override
-    public void sendReservationNotificationToKitchen(String reservationId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendReservationNotificationToKitchen(reservationId={}, requestNotificationDTO={})", reservationId, requestNotificationDTO);
-        NotificationUserDTO notificationDTO = notificationUpdateService.createReservationNotification(
-                requestNotificationDTO.getSenderUsername(), reservationId, requestNotificationDTO);
-        simpMessagingTemplate.convertAndSend(
-                TOPIC_KITCHEN,
-                notificationDTO
+    public void sendNotificationForReservationAction(Authentication authentication, String reservationId,
+                                                      ReservationAction action, ReservationDTO reservation) {
+        String username = authentication.getName();
+
+        switch (action) {
+            case PREPARING -> sendPreparingNotification(username, reservationId, reservation);
+            case READY -> sendReadyNotification(username, reservationId, reservation);
+            case COMPLETE -> sendCompleteNotification(username, reservationId, reservation);
+            case CANCEL -> sendCancelNotification(authentication, reservationId, reservation);
+        }
+    }
+
+    @Override
+    public void sendPreparingNotification(String employeeUsername, String reservationId, ReservationDTO reservation) {
+        RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                reservation.getCustomer().getProfile().getUser().getUsername(),
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_PREPARING,
+                String.format("Your reservation #%s is now being preparing by our staff", reservationId)
         );
+
+        this.sendNotificationToUser(reservationId, customerNotification);
+
+        // Notification to other employees
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_PREPARING,
+                String.format("Reservation #%s is now being preparing by %s", reservationId, employeeUsername)
+        );
+
+        this.sendNotificationToGroup(reservationId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
+    public void sendReadyNotification(String employeeUsername, String reservationId, ReservationDTO reservation) {
+        RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                reservation.getCustomer().getProfile().getUser().getUsername(),
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_READY,
+                String.format("Good news! Your reservation #%s is now ready for pickup", reservationId)
+        );
+
+        this.sendNotificationToUser(reservationId, customerNotification);
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_READY,
+                String.format("Reservation #%s is prepared and ready for customer pickup", reservationId)
+        );
+
+        this.sendNotificationToGroup(reservationId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
+    public void sendCompleteNotification(String employeeUsername, String reservationId, ReservationDTO reservation) {
+        RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                reservation.getCustomer().getProfile().getUser().getUsername(),
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_COMPLETED,
+                String.format("Your reservation #%s has been successfully completed. Thank you for your business!", reservationId)
+        );
+
+        this.sendNotificationToUser(reservationId, customerNotification);
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_COMPLETED,
+                String.format("Reservation #%s has been marked as complete by %s", reservationId, employeeUsername)
+        );
+
+        this.sendNotificationToGroup(reservationId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
+    public void sendCancelNotification(Authentication authentication, String reservationId, ReservationDTO reservation) {
+        String username = authentication.getName();
+        boolean isEmployee = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE") || a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isEmployee) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    reservation.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.RESERVATION,
+                    NotificationTitle.RESERVATION_CANCELLED,
+                    String.format("Your reservation #%s has been cancelled by our staff. Please contact us for more information.", reservationId)
+            );
+
+            this.sendNotificationToUser(reservationId, customerNotification);
+        }
+
+        if (!isEmployee) {
+            RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                    username,
+                    RoleName.EMPLOYEE,
+                    NotificationTopic.RESERVATION,
+                    NotificationTitle.RESERVATION_CANCELLED,
+                    String.format("Reservation #%s has been cancelled by customer %s", reservationId, username)
+            );
+
+            this.sendNotificationToGroup(reservationId, TOPIC_EMPLOYEE, employeeNotification);
+        }
     }
 }

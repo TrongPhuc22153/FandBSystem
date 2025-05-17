@@ -1,5 +1,7 @@
 package com.phucx.phucxfandb.dto.request;
 
+import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.constant.SenderType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +26,11 @@ public class RequestNotificationUserDTO {
 
     @NotBlank(message = "Receiver cannot be blank")
     private String receiver;
+
+    @NotNull(message = "Sender type cannot be null")
+    private SenderType senderType;
+
+    private RoleName receiverRole;
 
     private Boolean isRead = false;
 }

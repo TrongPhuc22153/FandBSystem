@@ -19,7 +19,8 @@ public class ApiEndpoint {
             "/api/v1/feedback",
             "/api/v1/tables",
             "/api/v1/tables/table",
-            "/api/v1/images/{imageName}"
+            "/api/v1/images/{imageName}",
+            "/chat",
 
     };
 
@@ -38,8 +39,7 @@ public class ApiEndpoint {
             "/api/v1/profiles/me",
             "/api/v1/address/**",
             "/api/v1/auth/logout",
-            "/api/v1/notifications/me",
-            "/api/v1/notifications/{notificationId}/me",
+            "/api/v1/notifications/**",
             "/api/v1/orders",
             "/api/v1/reservations",
             ORDER_BY_ID_ENDPOINT,
@@ -86,6 +86,7 @@ public class ApiEndpoint {
             "/api/v1/customer/reservations/**",
             "/api/v1/customers/order/**",
             "/api/v1/feedback/**",
+            "/api/v1/addresses/**"
     };
 
     /**

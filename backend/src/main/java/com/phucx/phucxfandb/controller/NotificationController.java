@@ -37,15 +37,15 @@ public class NotificationController {
         return ResponseEntity.ok().body(notifications);
     }
 
-    @PatchMapping("/{notificationId}/me")
-    @Operation(summary = "Update notification is read status", description = "Authenticated access")
+    @PatchMapping("/{id}/me")
+    @Operation(summary = "Update notification as read status", description = "Authenticated access")
     public ResponseEntity<ResponseDTO<NotificationUserDTO>> updateIsReadStatus(
-            @PathVariable String notificationId,
+            @PathVariable String id,
             @RequestBody RequestNotificationUserDTO requestNotificationUserDTO,
             Principal principal
     ) {
         NotificationUserDTO notificationUserDTO = notificationUpdateService
-                .updateNotificationIsReadStatus(principal.getName(), notificationId, requestNotificationUserDTO);
+                .updateNotificationIsReadStatus(principal.getName(), id, requestNotificationUserDTO);
         ResponseDTO<NotificationUserDTO> responseDTO = ResponseDTO.<NotificationUserDTO>builder()
                 .message("Notification updated successfully")
                 .data(notificationUserDTO)

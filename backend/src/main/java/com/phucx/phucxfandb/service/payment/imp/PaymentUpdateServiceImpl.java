@@ -7,7 +7,6 @@ import com.phucx.phucxfandb.entity.Customer;
 import com.phucx.phucxfandb.entity.Payment;
 import com.phucx.phucxfandb.entity.PaymentMethod;
 import com.phucx.phucxfandb.exception.EntityExistsException;
-import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.mapper.PaymentMapper;
 import com.phucx.phucxfandb.repository.PaymentRepository;
 import com.phucx.phucxfandb.service.customer.CustomerReaderService;

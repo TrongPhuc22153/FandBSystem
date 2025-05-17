@@ -51,11 +51,4 @@ public class TopicReaderServiceImpl implements TopicReaderService {
                 .orElseThrow(() -> new NotFoundException("Topic", topicName));
         return mapper.toTopicDTO(topic);
     }
-
-    @Override
-    public Topic getTopicEntity(long topicId) {
-        log.info("getTopicEntity(topicId={})", topicId);
-        return topicRepository.findByTopicIdAndIsDeletedFalse(topicId)
-                .orElseThrow(() -> new NotFoundException("Topic", topicId));
-    }
 }

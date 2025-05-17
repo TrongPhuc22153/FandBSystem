@@ -34,19 +34,14 @@ public class ImageUpdateServiceImpl implements ImageUpdateService {
     public ImageDTO uploadImage(MultipartFile file)  throws Exception {
         log.info("Uploading file: name={}, size={}", file.getName(), file.getSize());
 
-        // Get and validate filename
         String filename = file.getOriginalFilename();
         String extension = getExtension(filename);
 
-        // Generate new filename
         String newFile = UUID.randomUUID() + "." + extension;
 
-        // Ensure directory exists
-        // Create directory if it doesn't exist
         Path targetPath = Path.of(imageDirectory, newFile);
         Files.createDirectories(targetPath.getParent());
 
-        // Copy file
         try (InputStream inputStream = file.getInputStream()) {
             Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
         }
@@ -82,7 +77,6 @@ public class ImageUpdateServiceImpl implements ImageUpdateService {
             throw new IllegalArgumentException("Invalid or missing filename");
         }
 
-        // Extract and validate extension
         int dotIndex = filename.lastIndexOf(".");
         if (dotIndex == -1) {
             throw new IllegalArgumentException("File has no extension");

@@ -34,11 +34,6 @@ export default function NotificationHeader({
               >
                 <option value="all">All notifications</option>
                 <option value="unread">Unread</option>
-                <option value="message">Messages</option>
-                <option value="system">System</option>
-                <option value="reminder">Reminders</option>
-                <option value="feature">Features</option>
-                <option value="payment">Payments</option>
               </select>
             </div>
           </div>

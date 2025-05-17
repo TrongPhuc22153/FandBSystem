@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import styles from "./kitchen-table.module.css";
 import OrderDetailModal from "./OrderDetailModal";
 import { Badge } from "react-bootstrap";
@@ -7,17 +7,35 @@ import {
   ORDER_STATUS_CLASSES,
   ORDER_STATUSES,
   ORDER_TYPE_CLASSES,
+  SORTING_DIRECTIONS,
 } from "../../constants/webConstant";
 import { useOrderActions, useOrders } from "../../hooks/orderHooks";
 import { useModal } from "../../context/ModalContext";
 import { useAlert } from "../../context/AlertContext";
+import { useSearchParams } from "react-router-dom";
+import Pagination from "../Pagination/Pagination";
 
 export default function OrdersTable() {
+  const [searchParams] = useSearchParams();
+  const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
+  const [currentPage, setCurrentPage] = useState(currentPageFromURL);
+
+  useEffect(() => {
+    const pageFromURL = parseInt(searchParams.get("page")) || 1;
+    setCurrentPage(pageFromURL - 1);
+  }, [searchParams]);
+
   const [filterStatus, setFilterStatus] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const { data: ordersData, mutate } = useOrders({ status: filterStatus });
-  const orders = ordersData?.content || [];
+  const { data: ordersData, mutate } = useOrders({
+    status: filterStatus,
+    sortDirection: SORTING_DIRECTIONS.ASC,
+    sortField: "orderDate",
+    page: currentPage,
+  });
+  const orders = useMemo(() => ordersData?.content || [], [ordersData]);
+  const totalPages = ordersData?.totalPages || 0;
 
   const { handleProcessOrder, processError, processSuccess, resetProcess } =
     useOrderActions();
@@ -48,7 +66,7 @@ export default function OrdersTable() {
       const res = await handleProcessOrder(orderId, action, type);
       if (res) {
         mutate();
-        closeOrderDetail()
+        closeOrderDetail();
       }
     },
     [mutate, handleProcessOrder]
@@ -155,7 +173,7 @@ export default function OrdersTable() {
                     <ul className={styles.itemsList}>
                       {order.orderDetails.map((item, index) => (
                         <li key={index}>
-                          {item.quantity}x {item.product.productName}
+                          {item.quantity}x {item.product?.productName}
                           {item.specialInstructions && (
                             <small className="d-block text-muted">
                               Note: {item?.specialInstructions}
@@ -246,6 +264,9 @@ export default function OrdersTable() {
             )}
           </tbody>
         </table>
+        {totalPages > 1 && (
+          <Pagination totalPages={totalPages} currentPage={currentPage + 1} />
+        )}
       </div>
 
       {selectedOrder && (

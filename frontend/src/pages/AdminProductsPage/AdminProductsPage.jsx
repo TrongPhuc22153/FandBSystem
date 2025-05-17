@@ -1,12 +1,12 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ADMIN_ADD_PRODUCT_URI,
   ADMIN_PRODUCTS_URI,
 } from "../../constants/routes";
-import { getImageSrc, getPrimaryProductImage } from "../../utils/imageUtils";
+import { getImageSrc } from "../../utils/imageUtils";
 import Pagination from "../../components/Pagination/Pagination";
 import { useProducts, useProductActions } from "../../hooks/productHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
@@ -32,9 +32,9 @@ const AdminProductsPage = () => {
   const { data: productDataResult, mutate } = useProducts({
     page: currentPage,
     search: searchValue,
-    sortBy: "createdOn",
+    sortBy: "createdAt",
     direction: "DESC",
-    isDeleted: null
+    isDeleted: null,
   });
 
   const {
@@ -45,7 +45,10 @@ const AdminProductsPage = () => {
     resetDelete,
   } = useProductActions();
 
-  const productData = productDataResult?.content || [];
+  const productData = useMemo(
+    () => productDataResult?.content || [],
+    [productDataResult]
+  );
   const totalPages = productDataResult?.totalPages || 0;
 
   const productColumns = [
@@ -113,8 +116,10 @@ const AdminProductsPage = () => {
   const showDeleteConfirmation = useCallback(
     (id, isDeleted) => {
       onOpen({
-        title: `${isDeleted?"Enable":"Delete"} Product!`,
-        message: `Do you want to ${isDeleted?"enable":"delete"} this product?`,
+        title: `${isDeleted ? "Enable" : "Delete"} Product!`,
+        message: `Do you want to ${
+          isDeleted ? "enable" : "delete"
+        } this product?`,
         onYes: () => handleDeleteConfirm(id, isDeleted),
       });
     },

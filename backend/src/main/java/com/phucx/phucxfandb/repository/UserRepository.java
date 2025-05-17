@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -28,6 +30,7 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
     @EntityGraph(attributePaths = {"roles"})
     Page<User> findByRolesRoleName(RoleName roleName, Pageable pageable);
 
+    @NonNull
     @EntityGraph(attributePaths = {"roles"})
-    Page<User> findAll(Specification<User> spec, Pageable pageable);
+    Page<User> findAll(@Nullable Specification<User> spec, @NonNull Pageable pageable);
 }

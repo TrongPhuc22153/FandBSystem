@@ -131,7 +131,7 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus }) {
                 <tbody>
                   {order.orderDetails.map((item, index) => (
                     <tr key={index}>
-                      <td>{item.product.productName}</td>
+                      <td>{item.product?.productName}</td>
                       <td>{item.quantity}</td>
                       <td>{item.specialInstructions || "-"}</td>
                       <td className="text-end">${item.quantity * item.product.unitPrice}</td>

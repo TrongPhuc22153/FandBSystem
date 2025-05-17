@@ -4,6 +4,9 @@ package com.phucx.phucxfandb.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -23,6 +26,9 @@ public class Customer extends Auditable{
     @OneToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "profile_id", nullable = false)
     private UserProfile profile;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "customer")
+    private List<ShippingAddress> shippingAddresses = new ArrayList<>();
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;

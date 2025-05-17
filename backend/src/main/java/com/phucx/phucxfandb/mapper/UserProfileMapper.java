@@ -7,9 +7,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface UserProfileMapper {
-    @Mapping(target = "user.roles", ignore = true)
+    @Mapping(target = "user", qualifiedByName = "toBriefUserDTO")
     UserProfileDTO toUserProfileDTO(UserProfile userProfile);
 
     @Mapping(target = "profileId", ignore = true)

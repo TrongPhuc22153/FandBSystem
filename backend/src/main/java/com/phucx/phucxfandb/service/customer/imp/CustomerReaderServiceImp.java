@@ -23,37 +23,33 @@ public class CustomerReaderServiceImp implements CustomerReaderService {
     @Override
     @Transactional(readOnly = true)
     public CustomerDTO getCustomerById(String customerId){
-        log.info("getCustomerByID(customerId={})", customerId);
         return customerRepository.findById(customerId)
                 .map(this::setImageUrl)
                 .map(mapper::toCustomerDTO)
-                .orElseThrow(() -> new NotFoundException("Customer", customerId));
+                .orElseThrow(() -> new NotFoundException(Customer.class.getName(), customerId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public CustomerDTO getCustomerByUsername(String username) {
-        log.info("getCustomerByUsername(username={})", username);
         return customerRepository.findByProfileUserUsername(username)
                 .map(this::setImageUrl)
                 .map(mapper::toCustomerDTO)
-                .orElseThrow(() -> new NotFoundException("Customer", username));
+                .orElseThrow(() -> new NotFoundException(Customer.class.getName(), username));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Customer getCustomerEntityById(String customerId) {
-        log.info("getCustomerEntityById(customerId={})", customerId);
         return customerRepository.findById(customerId)
-                .orElseThrow(() -> new NotFoundException("Customer", customerId));
+                .orElseThrow(() -> new NotFoundException(Customer.class.getName(), customerId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Customer getCustomerEntityByUsername(String username) {
-        log.info("getCustomerEntityByUsername(username={})", username);
         return customerRepository.findByProfileUserUsername(username)
-                .orElseThrow(() -> new NotFoundException("Customer", username));
+                .orElseThrow(() -> new NotFoundException(Customer.class.getName(), username));
     }
 
     private Customer setImageUrl(Customer customer){

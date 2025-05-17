@@ -45,14 +45,14 @@ const SingleProduct = () => {
         onNo: () => resetAdd(),
       });
     }
-    if(addError?.message){
+    if (addError?.message) {
       showNewAlert({
         message: addError.message,
         variant: "danger",
-        action: resetAdd
+        action: resetAdd,
       });
     }
-  }, [authError, addError]);
+  }, [authError, addError, showNewAlert, resetAdd, onOpen, navigate]);
 
   const handleQuantityChange = useCallback((newQuantity) => {
     setQuantity(newQuantity);
@@ -71,7 +71,7 @@ const SingleProduct = () => {
         });
       }
     },
-    [handleAddCartItem]
+    [handleAddCartItem, showNewAlert]
   );
 
   const {
@@ -147,7 +147,7 @@ const SingleProduct = () => {
         <div className="container-fluid">
           <div className="row px-3">
             <div className="col-lg-4">
-              <SingleImageDisplay imageUrl={product.picture}/>
+              <SingleImageDisplay imageUrl={product.picture} />
               {/* <ImagesShowcase images={product.images} /> */}
             </div>
             <div className="col-lg-6 mt-5 mt-lg-0">

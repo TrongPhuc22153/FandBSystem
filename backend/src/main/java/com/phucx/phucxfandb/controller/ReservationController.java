@@ -18,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/reservations")
@@ -52,13 +50,13 @@ public class ReservationController {
     @PatchMapping("/{reservationId}")
     @Operation(summary = "Update reservation status", description = "Employee access")
     public ResponseEntity<ResponseDTO<ReservationDTO>> updateReservationStatus(
-            Principal principal,
+            Authentication authentication,
             @PathVariable String reservationId,
             @RequestBody RequestReservationDTO requestReservationDTO
     ) {
         log.info("updateReservationStatus(reservationId={})", reservationId);
         ReservationDTO updatedReservation = reservationProcessingService.processReservation(
-                principal.getName(),
+                authentication,
                 reservationId,
                 requestReservationDTO.getAction());
         ResponseDTO<ReservationDTO> response = ResponseDTO.<ReservationDTO>builder()

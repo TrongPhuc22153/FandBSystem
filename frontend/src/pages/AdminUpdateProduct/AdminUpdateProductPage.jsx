@@ -154,6 +154,7 @@ function AdminUpdateProductPage() {
     imagePreview,
     uploadImage,
     handleUpdateProduct,
+    handleUploadImage,
     showNewAlert,
   ]);
 

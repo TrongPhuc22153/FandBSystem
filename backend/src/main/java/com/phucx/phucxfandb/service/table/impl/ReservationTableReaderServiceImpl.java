@@ -6,7 +6,6 @@ import com.phucx.phucxfandb.dto.response.ReservationTableDTO;
 import com.phucx.phucxfandb.entity.ReservationTable;
 import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.mapper.ReservationTableMapper;
-import com.phucx.phucxfandb.repository.ReservationRepository;
 import com.phucx.phucxfandb.repository.ReservationTableRepository;
 import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
 import com.phucx.phucxfandb.specifications.TableSpecification;
@@ -29,7 +28,6 @@ import java.util.List;
 public class ReservationTableReaderServiceImpl implements ReservationTableReaderService {
     private final ReservationTableRepository reservationTableRepository;
     private final ReservationTableMapper mapper;
-    private final ReservationRepository reservationRepository;
 
     @Override
     @Transactional(readOnly = true)

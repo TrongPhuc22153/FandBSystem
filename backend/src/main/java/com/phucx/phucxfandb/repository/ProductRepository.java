@@ -7,6 +7,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -19,11 +21,13 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
        @EntityGraph(attributePaths = {"category"})
        Page<Product> findByIsDeletedFalse(Pageable pageable);
 
+       @NonNull
        @EntityGraph(attributePaths = {"category"})
-       Page<Product> findAll(Specification<Product> spec, Pageable pageable);
+       Page<Product> findAll(@Nullable Specification<Product> spec, @NonNull Pageable pageable);
 
+       @NonNull
        @EntityGraph(attributePaths = {"category"})
-       Page<Product> findAll(Pageable pageable);
+       Page<Product> findAll(@NonNull Pageable pageable);
 
        @EntityGraph(attributePaths = {"category"})
        Optional<Product> findByProductIdAndIsDeleted(long productId, boolean isDeleted);

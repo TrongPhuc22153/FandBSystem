@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import styles from "./kitchen-table.module.css";
 import ReservationDetailModal from "./ReservationDetailModal";
 import {
@@ -13,21 +13,37 @@ import {
 import { useModal } from "../../context/ModalContext";
 import { useAlert } from "../../context/AlertContext";
 import { Badge } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
+import Pagination from "../Pagination/Pagination";
 
 export default function ReservationsTable() {
+  const [searchParams] = useSearchParams();
+  const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
+  const [currentPage, setCurrentPage] = useState(currentPageFromURL);
+
+  useEffect(() => {
+    const pageFromURL = parseInt(searchParams.get("page")) || 1;
+    setCurrentPage(pageFromURL - 1);
+  }, [searchParams]);
+
   const [filterStatus, setFilterStatus] = useState(null);
   const [selectedReservation, setSelectedReservation] = useState(null);
 
+  useEffect(() => {
+    const pageFromURL = parseInt(searchParams.get("page")) || 1;
+    setCurrentPage(pageFromURL - 1);
+  }, [searchParams]);
+
   const { data: reservationsData, mutate } = useReservations({
     status: filterStatus,
+    page: currentPage,
     direction: SORTING_DIRECTIONS.ASC,
   });
-  const reservations = reservationsData?.content || [];
-
-  // const {
-  //   data: tablesData
-  // } = useReservationTables()
-  // const tables = tablesData?.content || []
+  const reservations = useMemo(
+    () => reservationsData?.content || [],
+    [reservationsData]
+  );
+  const totalPages = reservationsData?.totalPages || 0;
 
   const {
     handleProcessReservation,
@@ -282,6 +298,9 @@ export default function ReservationsTable() {
             )}
           </tbody>
         </table>
+        {totalPages > 1 && (
+          <Pagination currentPage={currentPage + 1} totalPages={totalPages} />
+        )}
       </div>
 
       {selectedReservation && (

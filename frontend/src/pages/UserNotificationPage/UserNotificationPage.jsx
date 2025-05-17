@@ -1,50 +1,104 @@
-import { useCallback, useState } from "react";
-import NotificationHeader from "../../components/Notification/NotificationHeader";
-import NotificationList from "../../components/Notification/NotificationList";
-import styles from "./NotificationPage.module.css";
+import { useCallback, useEffect, useState } from "react";
+import Notification from "../../components/Notification/Notification";
 import {
   useNotificationActions,
   useNotifications,
 } from "../../hooks/notificationHooks";
+import { useAuth } from "../../context/AuthContext";
+import { hasRole } from "../../utils/authUtils";
+import { ROLES } from "../../constants/roles";
+import { useStompSubscription } from "../../hooks/websocketHooks";
+import { USER_NOTIFICATION_MESSAGE } from "../../constants/webSocketEnpoint";
 
 export default function UserNotificationPage() {
-  const { data: notificationsData, isLoading: loadingNotifications } =
-    useNotifications();
-  const notifications = notificationsData?.content || [];
+  const { data: notificationsData } = useNotifications();
+  const { handleUpdateIsReadStatus } = useNotificationActions();
+  const { user } = useAuth();
 
-  const {
-    handleUpdateIsReadStatus,
-  } = useNotificationActions();
-  const [filter, setFilter] = useState("all");
+  const [notifications, setNotifications] = useState(
+    notificationsData?.content || []
+  );
 
-  const filteredNotifications =
-    filter === "all"
-      ? notifications
-      : filter === "unread"
-      ? notifications.filter((notif) => !notif.isRead)
-      : notifications.filter((notif) => notif.type === filter);
+  useEffect(() => {
+    if (notificationsData?.content) {
+      setNotifications(notificationsData.content);
+    }
+  }, [notificationsData]);
 
-  const markAllAsRead = useCallback(() => {}, []);
+  const handleMessage = useCallback((message) => {
+    try {
+      const newNotification =
+        typeof message === "string" ? JSON.parse(message) : message;
+
+      if (!newNotification?.id) {
+        return;
+      }
+
+      setNotifications((prevNotifications) => {
+        const exists = prevNotifications.some(
+          (n) => n.id === newNotification.id
+        );
+        if (exists) {
+          return prevNotifications.map((n) =>
+            n.id === newNotification.id ? { ...n, ...newNotification } : n
+          );
+        }
+        return [newNotification, ...prevNotifications];
+      });
+    } catch (error) {}
+  }, []);
+
+  useStompSubscription({
+    topic: USER_NOTIFICATION_MESSAGE,
+    onMessage: handleMessage,
+    shouldSubscribe: hasRole(user, ROLES.CUSTOMER),
+  });
+
+  const markAllAsRead = useCallback(async () => {
+    try {
+      const unreadIds = notifications
+        .filter((notification) => !notification.isRead)
+        .map((notification) => notification.id);
+
+      if (unreadIds.length === 0) return;
+
+      await Promise.all(
+        unreadIds.map((id) => handleUpdateIsReadStatus(id, true))
+      );
+
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) =>
+          unreadIds.includes(notification.id)
+            ? { ...notification, isRead: true }
+            : notification
+        )
+      );
+    } catch (error) {}
+  }, [notifications, handleUpdateIsReadStatus]);
 
   const markAsRead = useCallback(
     async (id) => {
-      await handleUpdateIsReadStatus(id, true);
+      try {
+        await handleUpdateIsReadStatus(id, true);
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((notification) =>
+            notification.id === id
+              ? { ...notification, isRead: true }
+              : notification
+          )
+        );
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
+      }
     },
     [handleUpdateIsReadStatus]
   );
 
   return (
-    <div className={styles.notificationPage}>
-      <NotificationHeader
-        filter={filter}
-        setFilter={setFilter}
-        markAllAsRead={markAllAsRead}
-        unreadCount={notifications.filter((n) => !n.isRead).length}
-      />
-      <NotificationList
-        notifications={filteredNotifications}
-        markAsRead={markAsRead}
-      />
-    </div>
+    <Notification
+      notifications={notifications}
+      markAllAsRead={markAllAsRead}
+      markAsRead={markAsRead}
+    />
   );
 }

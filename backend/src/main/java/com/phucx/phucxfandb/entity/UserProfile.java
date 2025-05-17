@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user_profiles")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"customer", "employee"})
 public class UserProfile extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

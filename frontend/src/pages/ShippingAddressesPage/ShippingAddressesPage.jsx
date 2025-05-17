@@ -70,7 +70,7 @@ const ShippingAddressesPage = () => {
         clearTimeout(timer);
       };
     }
-  }, [createSuccessMessage]);
+  }, [createSuccessMessage, resetCreateForm]);
 
   useEffect(() => {
     if (updateSuccessMessage) {
@@ -82,7 +82,7 @@ const ShippingAddressesPage = () => {
         clearTimeout(timer);
       };
     }
-  }, [updateSuccessMessage]);
+  }, [updateSuccessMessage, resetUpdateForm]);
 
   const handleAddressSelect = (addressId) => {
     const addressToEdit = addresses.find((addr) => addr.id === addressId);
@@ -175,7 +175,7 @@ const ShippingAddressesPage = () => {
         setIsDefaultAddress(addressId);
       }
     },
-    [handleUpdateShippingAddress, mutate, selectedAddress]
+    [handleUpdateShippingAddress, mutate, addresses]
   );
 
   const handleClickCreateAddress = () => {

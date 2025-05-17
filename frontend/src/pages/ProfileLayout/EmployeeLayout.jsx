@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faX } from "@fortawesome/free-solid-svg-icons";
 import { getImageSrc } from "../../utils/imageUtils";
@@ -6,10 +6,24 @@ import { Outlet } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./ProfileLayout.module.css";
 import { EmpoyeeSidebar } from "../../components/Sidebar/EmployeeSidebar";
+import { useStompSubscription } from "../../hooks/websocketHooks";
+import { TOPIC_EMPLOYEE } from "../../constants/webSocketEnpoint";
+import { hasRole } from "../../utils/authUtils";
+import { ROLES } from "../../constants/roles";
 
 function EmployeeLayout() {
   const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleMessage = useCallback((message) => {
+    console.log(message)
+  }, [])
+
+  useStompSubscription({
+    topic: TOPIC_EMPLOYEE,
+    onMessage: handleMessage,
+    shouldSubscribe: hasRole(user, ROLES.EMPLOYEE),
+  });
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);

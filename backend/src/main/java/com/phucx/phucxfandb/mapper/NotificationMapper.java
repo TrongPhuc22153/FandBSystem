@@ -4,12 +4,12 @@ import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
 
-
-
+    @Named("toOrderNotification")
     @Mapping(target = "order", source = "order")
     @Mapping(target = "reservation", ignore = true)
     @Mapping(target = "topic", source = "topic")
@@ -26,6 +26,7 @@ public interface NotificationMapper {
     @Mapping(target = "createdAt", ignore = true)
     Notification toOrderNotification(RequestNotificationDTO requestNotificationDTO, Order order, Topic topic);
 
+    @Named("toReservationNotification")
     @Mapping(target = "order", ignore = true)
     @Mapping(target = "reservation", source = "reservation")
     @Mapping(target = "topic", source = "topic")

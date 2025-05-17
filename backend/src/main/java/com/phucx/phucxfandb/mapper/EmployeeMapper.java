@@ -7,9 +7,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface EmployeeMapper {
-    @Mapping(target = "profile.user.roles", ignore = true)
+    @Mapping(target = "profile.user", qualifiedByName = "toBriefUserDTO")
     EmployeeDTO toEmployeeDTO(Employee employee);
 
     @Mapping(target = "lastModifiedBy", ignore = true)
@@ -18,5 +18,6 @@ public interface EmployeeMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
     @Mapping(target = "employeeId", ignore = true)
+    @Mapping(target = "profile", ignore = true)
     void updateEmployee(RequestEmployeeDTO requestEmployeeDTO, @MappingTarget Employee employee);
 }

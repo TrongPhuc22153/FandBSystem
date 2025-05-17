@@ -1,10 +1,22 @@
 package com.phucx.phucxfandb.service.notification;
 
+import com.phucx.phucxfandb.constant.ReservationAction;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
+import com.phucx.phucxfandb.dto.response.ReservationDTO;
+import org.springframework.security.core.Authentication;
 
 public interface SendReservationNotificationService {
-    void sendReservationNotificationToTopic(String reservationId, RequestNotificationDTO requestNotificationDTO);
-    void sendReservationNotificationToEmployee(String reservationId, RequestNotificationDTO requestNotificationDTO);
-    void sendReservationNotificationToCustomer(String reservationId, RequestNotificationDTO requestNotificationDTO);
-    void sendReservationNotificationToKitchen(String reservationId, RequestNotificationDTO requestNotificationDTO);
+
+    void sendNotificationToUser(String reservationId, RequestNotificationDTO requestNotificationDTO);
+    void sendNotificationToGroup(String reservationId, String topic, RequestNotificationDTO requestNotificationDTO);
+
+    void sendNotificationForReservationAction(Authentication authentication, String reservationId,
+                                              ReservationAction action, ReservationDTO reservation);
+    void sendPreparingNotification(String employeeUsername, String reservationId, ReservationDTO reservation);
+    void sendReadyNotification(String employeeUsername, String reservationId, ReservationDTO reservation);
+    void sendCompleteNotification(String employeeUsername, String reservationId, ReservationDTO reservation);
+    void sendCancelNotification(Authentication authentication, String reservationId, ReservationDTO reservation);
+
+
+
 }

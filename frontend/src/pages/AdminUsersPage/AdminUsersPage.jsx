@@ -1,6 +1,6 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ADMIN_ADD_USER_URI, ADMIN_USERS_URI } from "../../constants/routes";
 import Pagination from "../../components/Pagination/Pagination";
@@ -30,6 +30,7 @@ const AdminUsersPage = () => {
   const { data: userDataResult, mutate } = useUsers({
     page: currentPage,
     search: searchValue,
+    
   });
 
   const userColumns = [
@@ -43,7 +44,11 @@ const AdminUsersPage = () => {
       render: (user) =>
         user.roles ? (
           user.roles.map((role, index) => (
-            <Badge className="me-2" bg={ROLE_CLASSES[role]} key={`${role}--${index}`}>
+            <Badge
+              className="me-2"
+              bg={ROLE_CLASSES[role]}
+              key={`${role}--${index}`}
+            >
               {role}
             </Badge>
           ))
@@ -71,7 +76,10 @@ const AdminUsersPage = () => {
     resetDelete,
   } = useUserActions();
 
-  const userData = userDataResult?.content || [];
+  const userData = useMemo(
+    () => userDataResult?.content || [],
+    [userDataResult]
+  );
   const totalPages = userDataResult?.totalPages || 0;
 
   // alert
@@ -81,7 +89,7 @@ const AdminUsersPage = () => {
     if (deleteSuccess) {
       showNewAlert({ message: deleteSuccess, action: resetDelete });
     }
-  }, [deleteSuccess]);
+  }, [deleteSuccess, showNewAlert, resetDelete]);
 
   // modal
   const { onOpen } = useModal();
@@ -109,14 +117,14 @@ const AdminUsersPage = () => {
         }
       }
     },
-    [handleDeleteUser, mutate, resetDelete]
+    [handleDeleteUser, mutate]
   );
 
   const showDeleteConfirmation = useCallback(
     (id, enabled) => {
       onOpen({
-        title: `${enabled?"Delete":"Enable"} User!`,
-        message: `Do you want to ${enabled?"delete":"enable"} this user?`,
+        title: `${enabled ? "Delete" : "Enable"} User!`,
+        message: `Do you want to ${enabled ? "delete" : "enable"} this user?`,
         onYes: () => handleDeleteConfirm(id, enabled),
       });
     },
@@ -162,7 +170,7 @@ const AdminUsersPage = () => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);
     },
-    [setSearchParams]
+    [setSearchParams, searchParams]
   );
 
   const handleSearchInputChange = (e) => {
@@ -186,8 +194,7 @@ const AdminUsersPage = () => {
                     to={ADMIN_ADD_USER_URI}
                     className="btn btn-primary float-start"
                   >
-                    <FontAwesomeIcon icon={faPlus} />
-                      Add User
+                    <FontAwesomeIcon icon={faPlus} />  Add User
                   </Link>
                 </div>
                 <div className="col-sm-7">

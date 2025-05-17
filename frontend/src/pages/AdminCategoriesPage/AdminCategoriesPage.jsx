@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -34,8 +34,8 @@ const AdminCategoriesPage = () => {
     page: currentPage,
     search: searchValue,
     direction: SORTING_DIRECTIONS.DESC,
-    sortBy: "createdOn",
-    isDeleted: null
+    field: "createdAt",
+    isDeleted: null,
   });
   const {
     handleDeleteCategory,
@@ -45,7 +45,10 @@ const AdminCategoriesPage = () => {
     resetDelete,
   } = useCategoryActions();
 
-  const categoryData = categoryDataResult?.content || [];
+  const categoryData = useMemo(
+    () => categoryDataResult?.content || [],
+    [categoryDataResult]
+  );
   const totalPages = categoryDataResult?.totalPages || 0;
 
   const categoryColumns = [
@@ -106,8 +109,10 @@ const AdminCategoriesPage = () => {
   const showDeleteConfirmation = useCallback(
     (id, isDeleted) => {
       onOpen({
-        title: `${isDeleted?`Enable`:`Delete`} Category!`,
-        message: `Do you want to ${isDeleted?`enable`:`delete`} this category?`,
+        title: `${isDeleted ? `Enable` : `Delete`} Category!`,
+        message: `Do you want to ${
+          isDeleted ? `enable` : `delete`
+        } this category?`,
         onYes: () => handleDeleteConfirm(id, isDeleted),
       });
     },

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useOrders } from "../../hooks/orderHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
@@ -35,7 +35,7 @@ const UserOrdersPage = () => {
     error: ordersError,
   } = useOrders({ page: currentPage });
 
-  const orderData = ordersData?.content || [];
+  const orders = useMemo(() => ordersData?.content || [], [ordersData]);
   const totalPages = ordersData?.totalPages || 0;
 
   const orderColumns = [
@@ -74,13 +74,13 @@ const UserOrdersPage = () => {
     (event) => {
       const isChecked = event.target.checked;
       if (isChecked) {
-        const allOrderIds = orderData.map((order) => order.orderId);
+        const allOrderIds = orders.map((order) => order.orderId);
         setSelectedItems(allOrderIds);
       } else {
         setSelectedItems([]);
       }
     },
-    [orderData]
+    [orders]
   );
 
   const handleSelectItem = useCallback((event, orderId) => {
@@ -101,7 +101,7 @@ const UserOrdersPage = () => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);
     },
-    [setSearchParams]
+    [setSearchParams, searchParams]
   );
 
   const handleSearchInputChange = (e) => {
@@ -146,7 +146,7 @@ const UserOrdersPage = () => {
               </div>
 
               <DataTable
-                data={orderData}
+                data={orders}
                 columns={orderColumns}
                 selectedItems={selectedItems}
                 handleSelectItem={handleSelectItem}

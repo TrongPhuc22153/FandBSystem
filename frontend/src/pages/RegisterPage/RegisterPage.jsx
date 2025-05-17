@@ -50,7 +50,7 @@ export default function RegisterPage() {
     setPasswordMatchError(
       password !== confirmPassword ? "Passwords do not match" : ""
     );
-  }, [registerInfo.password, registerInfo.confirmPassword]);
+  }, [registerInfo]);
 
   useEffect(() => {
     setFieldErrors(registerError?.fields ?? {});

@@ -1,5 +1,7 @@
 package com.phucx.phucxfandb.entity;
 
+import com.phucx.phucxfandb.constant.ReceiverType;
+import com.phucx.phucxfandb.constant.SenderType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,13 +22,25 @@ public class NotificationUser extends Auditable{
     @JoinColumn(name = "notification_id", referencedColumnName = "notification_id", nullable = false)
     private Notification notification;
 
-    @ManyToOne
-    @JoinColumn(name = "sender_id", referencedColumnName = "user_id", nullable = false)
-    private User sender;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sender_type", nullable = false)
+    private SenderType senderType;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "sender_id", referencedColumnName = "user_id")
+    private User sender;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "receiver_type", nullable = false)
+    private ReceiverType receiverType;
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", referencedColumnName = "user_id")
     private User receiver;
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_role_id", referencedColumnName = "role_id")
+    private Role receiverRole;
 
     @Column(name = "is_read", nullable = false)
     private Boolean isRead = false;

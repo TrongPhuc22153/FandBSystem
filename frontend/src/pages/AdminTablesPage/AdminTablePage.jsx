@@ -1,17 +1,20 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useReservationTables, useReservationTableActions } from "../../hooks/tableHooks";
+import {
+  useReservationTables,
+  useReservationTableActions,
+} from "../../hooks/tableHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
-import {
-  ADMIN_ADD_TABLE_URI,
-  ADMIN_TABLES_URI,
-} from "../../constants/routes";
+import { ADMIN_ADD_TABLE_URI, ADMIN_TABLES_URI } from "../../constants/routes";
 import { useModal } from "../../context/ModalContext";
 import { Badge } from "react-bootstrap";
-import { SORTING_DIRECTIONS, TABLE_STATUS_CLASSES } from "../../constants/webConstant";
+import {
+  SORTING_DIRECTIONS,
+  TABLE_STATUS_CLASSES,
+} from "../../constants/webConstant";
 
 const AdminTablesPage = () => {
   const navigate = useNavigate();
@@ -33,8 +36,8 @@ const AdminTablesPage = () => {
     page: currentPage,
     search: searchValue,
     direction: SORTING_DIRECTIONS.DESC,
-    sortBy: "createdOn",
-    isDeleted: null
+    sortBy: "createdAt",
+    isDeleted: null,
   });
   const {
     handleUpdateReservationTableStatus,
@@ -44,7 +47,10 @@ const AdminTablesPage = () => {
     resetUpdateStatus,
   } = useReservationTableActions();
 
-  const tableData = tableDataResult?.content || [];
+  const tableData = useMemo(
+    () => tableDataResult?.content || [],
+    [tableDataResult]
+  );
   const totalPages = tableDataResult?.totalPages || 0;
 
   const tableColumns = [
@@ -79,8 +85,8 @@ const AdminTablesPage = () => {
     async (idToDelete, isDeleted) => {
       if (idToDelete) {
         const success = await handleUpdateReservationTableStatus({
-          id: idToDelete, 
-          isDeleted: !isDeleted
+          id: idToDelete,
+          isDeleted: !isDeleted,
         });
         if (success) {
           // Optimistically update the cache
@@ -108,7 +114,9 @@ const AdminTablesPage = () => {
     (id, isDeleted) => {
       onOpen({
         title: `${isDeleted ? `Enable` : `Delete`} Table!`,
-        message: `Do you want to ${isDeleted ? `enable` : `delete`} this table?`,
+        message: `Do you want to ${
+          isDeleted ? `enable` : `delete`
+        } this table?`,
         onYes: () => handleDeleteConfirm(id, isDeleted),
       });
     },
@@ -155,7 +163,7 @@ const AdminTablesPage = () => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);
     },
-    [setSearchParams]
+    [setSearchParams, searchParams]
   );
 
   const handleSearchInputChange = (e) => {
@@ -179,8 +187,7 @@ const AdminTablesPage = () => {
                     to={ADMIN_ADD_TABLE_URI}
                     className="btn btn-primary float-start"
                   >
-                    <FontAwesomeIcon icon={faPlus} />
-                      Add Table
+                    <FontAwesomeIcon icon={faPlus} />  Add Table
                   </Link>
                 </div>
                 <div className="col-sm-7">
@@ -209,7 +216,9 @@ const AdminTablesPage = () => {
                 <div className="alert alert-success">{updateStatusSuccess}</div>
               )}
               {updateStatusError?.message && (
-                <div className="alert alert-danger">{updateStatusError.message}</div>
+                <div className="alert alert-danger">
+                  {updateStatusError.message}
+                </div>
               )}
 
               <DataTable

@@ -28,12 +28,10 @@ const AdminKitchenPage = () => {
     markOrderError,
     markOrderLoading,
     markOrderSuccess,
-    resetMarkOrder,
     handleMarkReservationAsPrepared,
     markReservationError,
     markReservationLoading,
     markReservationSuccess,
-    resetMarkReservation,
   } = usePreparationActions();
   const [orders, setOrders] = useState([]);
   const [reservations, setReservations] = useState([]);

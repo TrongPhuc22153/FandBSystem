@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.service.reservation.imp;
 
 import com.phucx.phucxfandb.constant.*;
+import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.ReservationTable;
@@ -10,6 +11,7 @@ import com.phucx.phucxfandb.service.reservation.ReservationReaderService;
 import com.phucx.phucxfandb.service.reservation.ReservationUpdateService;
 import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
 import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
+import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,28 +32,69 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
 
     @Override
-    public ReservationDTO confirmReservation(String username, String reservationId) {
-        log.info("confirmReservation(username={}, reservationId={})", username, reservationId);
-        return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.CONFIRMED);
+    public ReservationDTO cancelReservation(Authentication authentication, String reservationId) {
+        log.info("cancelReservation(username={}, reservationId={})", authentication.getName(), reservationId);
+
+        List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
+        if (roleNames.contains(RoleName.CUSTOMER)) {
+            return this.cancelReservationByCustomer(authentication.getName(), reservationId);
+        } else if (roleNames.contains(RoleName.EMPLOYEE)) {
+            return this.cancelReservationByEmployee(authentication.getName(), reservationId);
+        } else {
+            throw new IllegalArgumentException("Invalid role for cancelling reservation");
+        }
     }
 
-    @Override
-    public ReservationDTO cancelReservation(String username, String reservationId) {
-        log.info("cancelReservation(username={}, reservationId={})", username, reservationId);
-        return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.CANCELLED);
-    }
+    private ReservationDTO cancelReservationByCustomer(String username, String reservationId) {
+        log.info("cancelReservationByCustomer(username={}, reservationId={})", username, reservationId);
+        ReservationDTO reservationDTO = reservationUpdateService.updateReservationStatusByCustomer(username, reservationId, ReservationStatus.CANCELLED);
 
-    @Override
-    public ReservationDTO markReservationAsReceived(String username, String reservationId) {
-        log.info("markReservationAsReceived(username={}, reservationId={})", username, reservationId);
-        ReservationDTO reservationDTO = reservationReaderService.getReservation(reservationId);
-        reservationTableUpdateService.updateTableStatus(
-                reservationDTO.getTable().getTableId(),
-                TableStatus.OCCUPIED
+        RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
+                username,
+                reservationDTO.getEmployee().getProfile().getUser().getUsername(),
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_CANCELLED,
+                NotificationMessage.RESERVATION_CANCELLED_MESSAGE
         );
-        return reservationUpdateService.updateReservationStatus(
+
+        sendReservationNotificationService.sendNotificationToUser(
                 reservationDTO.getReservationId(),
-                ReservationStatus.SEATED);
+                requestNotificationDTO
+        );
+
+        return reservationDTO;
+    }
+
+    private ReservationDTO cancelReservationByEmployee(String username, String reservationId) {
+        log.info("cancelReservationByEmployee(username={}, reservationId={})", username, reservationId);
+        ReservationDTO reservationDTO = reservationUpdateService.updateReservationStatusByEmployee(username, reservationId, ReservationStatus.CANCELLED);
+
+        RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
+                username,
+                reservationDTO.getCustomer().getProfile().getUser().getUsername(),
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_CANCELLED,
+                NotificationMessage.RESERVATION_CANCELLED_MESSAGE
+        );
+
+        sendReservationNotificationService.sendNotificationToUser(
+                reservationDTO.getReservationId(),
+                requestNotificationDTO
+        );
+
+        return reservationDTO;
+    }
+
+    @Override
+    public ReservationDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication) {
+        List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
+        if(roleNames.contains(RoleName.CUSTOMER)){
+            return this.placeCustomerReservation(authentication.getName(), requestReservationDTO);
+        }else if(roleNames.contains(RoleName.EMPLOYEE)){
+            return this.placeEmployeeReservation(authentication.getName(), requestReservationDTO);
+        } else{
+            throw new IllegalArgumentException("Invalid order type");
+        }
     }
 
     @Override
@@ -75,7 +118,9 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
                 requestReservationDTO.getEndTime()
         );
         requestReservationDTO.setTableId(table.getTableId());
-        return reservationUpdateService.createEmployeeReservation(username, requestReservationDTO);
+
+        return reservationUpdateService
+                .createEmployeeReservation(username, requestReservationDTO);
     }
 
     @Override
@@ -93,36 +138,28 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     @Override
-    public ReservationDTO processReservation(String username, String reservationId, ReservationAction action) {
-        return switch (action){
-            case PREPARING -> this.preparingReservation(username, reservationId);
-            case READY -> this.markReservationAsPrepared(reservationId);
-            case COMPLETE -> this.completeReservation(username, reservationId);
-            case CANCEL -> this.cancelReservation(username, reservationId);
-        };
-    }
-
-    @Override
-    public ReservationDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication) {
-        List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
-        if(roleNames.contains(RoleName.CUSTOMER)){
-            return this.placeCustomerReservation(authentication.getName(), requestReservationDTO);
-        }else if(roleNames.contains(RoleName.EMPLOYEE)){
-            return this.placeEmployeeReservation(authentication.getName(), requestReservationDTO);
-        } else{
-            throw new IllegalArgumentException("Invalid order type");
-        }
-    }
-
-    @Override
     public ReservationDTO preparingReservation(String username, String reservationId) {
         log.info("preparingReservation(username={}, reservationId={})", username, reservationId);
         return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.PREPARING);
     }
 
     @Override
-    public ReservationDTO markReservationAsPrepared(String reservationId) {
-        log.info("markReservationAsPrepared(reservationId={})", reservationId);
+    public ReservationDTO markReservationAsPrepared(String username, String reservationId) {
+        log.info("markReservationAsPrepared(username={}, reservationId={})", username, reservationId);
         return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.PREPARED);
+    }
+
+    @Override
+    public ReservationDTO processReservation(Authentication authentication, String reservationId, ReservationAction action) {
+        ReservationDTO result = switch (action){
+            case PREPARING -> this.preparingReservation(authentication.getName(), reservationId);
+            case READY -> this.markReservationAsPrepared(authentication.getName(), reservationId);
+            case COMPLETE -> this.completeReservation(authentication.getName(), reservationId);
+            case CANCEL -> this.cancelReservation(authentication, reservationId);
+        };
+
+        sendReservationNotificationService.sendNotificationForReservationAction(authentication, reservationId, action, result);
+
+        return result;
     }
 }

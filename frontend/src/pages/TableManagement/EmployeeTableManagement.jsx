@@ -49,7 +49,7 @@ export default function EmployeeTableManagement() {
         variant: "danger",
       });
     }
-  }, [updateStatusError]);
+  }, [updateStatusError, showNewAlert]);
 
   useEffect(() => {
     if (updateStatusSuccess) {
@@ -58,7 +58,7 @@ export default function EmployeeTableManagement() {
         action: resetUpdateStatus,
       });
     }
-  }, [updateStatusSuccess]);
+  }, [updateStatusSuccess, resetUpdateStatus, showNewAlert]);
 
   const updateTableStatus = useCallback(
     async (tableId, newStatus) => {

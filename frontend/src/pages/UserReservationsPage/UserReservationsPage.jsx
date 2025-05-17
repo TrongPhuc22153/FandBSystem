@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
@@ -7,7 +7,10 @@ import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { formatDate } from "../../utils/datetimeUtils";
 import { USER_RESERVATIONS_URI } from "../../constants/routes";
 import { Badge } from "react-bootstrap";
-import { RESERVATION_STATUS_CLASSES, SORTING_DIRECTIONS } from "../../constants/webConstant";
+import {
+  RESERVATION_STATUS_CLASSES,
+  SORTING_DIRECTIONS,
+} from "../../constants/webConstant";
 import { useReservations } from "../../hooks/reservationHooks";
 
 const UserReservationsPage = () => {
@@ -30,9 +33,15 @@ const UserReservationsPage = () => {
     data: reservationsData,
     isLoading: loadingReservations,
     error: reservationsError,
-  } = useReservations({ page: currentPage, direction: SORTING_DIRECTIONS.DESC });
+  } = useReservations({
+    page: currentPage,
+    direction: SORTING_DIRECTIONS.DESC,
+  });
 
-  const reservations = reservationsData?.content || [];
+  const reservations = useMemo(
+    () => reservationsData?.content || [],
+    [reservationsData]
+  );
   const totalPages = reservationsData?.totalPages || 0;
 
   const reservationColumns = [
@@ -101,7 +110,7 @@ const UserReservationsPage = () => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);
     },
-    [setSearchParams]
+    [setSearchParams, searchParams]
   );
 
   const handleSearchInputChange = (e) => {

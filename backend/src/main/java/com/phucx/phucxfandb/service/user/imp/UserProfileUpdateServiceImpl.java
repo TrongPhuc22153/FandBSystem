@@ -11,7 +11,6 @@ import com.phucx.phucxfandb.service.user.UserProfileUpdateService;
 import com.phucx.phucxfandb.utils.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,16 +25,12 @@ public class UserProfileUpdateServiceImpl implements UserProfileUpdateService {
     private final UserProfileMapper userProfileMapper;
 
     @Override
-    @Modifying
     @Transactional
     public UserProfileDTO updateUserProfile(String username, RequestUserProfileDTO requestUserProfileDTO) {
-        log.info("updateUserProfile(username={}, requestUserProfileDTO={})", username, requestUserProfileDTO);
         UserProfile existingProfile = userProfileRepository.findByUserUsername(username)
-                .orElseThrow(()-> new NotFoundException("User", "username", username));
+                .orElseThrow(()-> new NotFoundException(UserProfile.class.getName(), "username", username));
 
-        // upload new image
         updateImage(requestUserProfileDTO, existingProfile.getPicture());
-        // update user profile
         userProfileMapper.updateUserProfile(requestUserProfileDTO, existingProfile);
 
         UserProfile updatedProfile = userProfileRepository.save(existingProfile);
@@ -43,7 +38,6 @@ public class UserProfileUpdateServiceImpl implements UserProfileUpdateService {
     }
 
     private void updateImage(RequestUserProfileDTO requestUserProfileDTO, String existingImage){
-        // upload new image
         if(requestUserProfileDTO.getPicture()!=null && !requestUserProfileDTO.getPicture().isEmpty()){
             String newImageName = ImageUtils.extractImageNameFromUrl(requestUserProfileDTO.getPicture());
             if(existingImage != null){

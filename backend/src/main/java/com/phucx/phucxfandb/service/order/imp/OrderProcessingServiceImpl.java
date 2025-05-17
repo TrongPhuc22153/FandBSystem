@@ -11,15 +11,14 @@ import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
 import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
+import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderProcessingServiceImpl implements OrderProcessingService {
@@ -29,124 +28,103 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     private final ReservationTableUpdateService reservationTableUpdateService;
 
     @Override
-    public OrderDTO confirmOrder(String username, String orderId, OrderType type) {
-        log.info("confirmOrder(username={}, orderId={}, type={})", username, orderId, type);
-        OrderDTO orderDTO = orderUpdateService.updateOrderStatusAndEmployee(
-                username, orderId, type, OrderStatus.CONFIRMED);
-
-        RequestNotificationDTO requestNotificationDTO = RequestNotificationDTO.builder()
-                .title(NotificationTitle.PLACE_ORDER.getValue())
-                .message("Your order has been confirmed")
-                .topic(NotificationTopic.ORDER)
-                .senderUsername(username)
-                .receiverUsername(orderDTO.getCustomer().getProfile().getUser().getUsername())
-                .build();
-        sendOrderNotificationService.sendOrderNotificationToCustomer(orderId, requestNotificationDTO);
-        return orderDTO;
-    }
-
-    @Override
-    public OrderDTO fulfillOrder(String username, String orderId, OrderType type) {
-        log.info("fulfillOrder(username={}, orderId={}, type={})", username, orderId, type);
-        OrderDTO orderDTO = orderUpdateService.updateOrderStatusByEmployee(
-                username, orderId, type, OrderStatus.CONFIRMED);
-
-        RequestNotificationDTO requestNotificationDTO = RequestNotificationDTO.builder()
-                .title(NotificationTitle.PLACE_ORDER.getValue())
-                .message("Your order has been fulfilled")
-                .topic(NotificationTopic.ORDER)
-                .senderUsername(username)
-                .receiverUsername(orderDTO.getCustomer().getProfile().getUser().getUsername())
-                .build();
-        sendOrderNotificationService.sendOrderNotificationToCustomer(orderId, requestNotificationDTO);
-        return orderDTO;
-    }
-
-    @Override
-    public OrderDTO cancelPendingOrder(String username, String orderId, OrderType type) {
-        log.info("cancelPendingOrder(username={}, orderId={}, type={})", username, orderId, type);
-        return orderUpdateService.updateOrderStatusAndEmployee(username, orderId, type, OrderStatus.CANCELLED);
-    }
-
-    @Override
     public OrderDTO cancelOrderByEmployee(String username, String orderId, OrderType type) {
-        log.info("cancelOrderByEmployee(username={}, orderId={}, type={})", username, orderId, type);
-        return orderUpdateService.updateOrderStatusByEmployee(username, orderId, type, OrderStatus.CANCELLED);
+        OrderDTO orderDTO = orderUpdateService.updateOrderStatusByEmployee(username, orderId, type, OrderStatus.CANCELLED);
+
+        RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
+                username,
+                orderDTO.getEmployee().getProfile().getUser().getUsername(),
+                NotificationTopic.ORDER,
+                NotificationTitle.ORDER_CANCELLED,
+                NotificationMessage.ORDER_CANCELLED_MESSAGE
+        );
+
+        sendOrderNotificationService.sendNotificationToUser(
+                orderDTO.getOrderId(),
+                requestNotificationDTO
+        );
+
+        return orderDTO;
     }
 
     @Override
-    public OrderDTO cancelConfirmedOrder(String username, String orderId, OrderType type) {
-        log.info("cancelConfirmedOrder(username={}, orderId={}, type={})", username, orderId, type);
-        return orderUpdateService.updateOrderStatusByCustomer(username, orderId, type, OrderStatus.CANCELLED);
+    public OrderDTO cancelOrderByCustomer(String username, String orderId, OrderType type) {
+        OrderDTO orderDTO = orderUpdateService.updateOrderStatusByCustomer(username, orderId, type, OrderStatus.CANCELLED);
+
+        RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
+                username,
+                orderDTO.getCustomer().getProfile().getUser().getUsername(),
+                NotificationTopic.ORDER,
+                NotificationTitle.ORDER_CANCELLED,
+                NotificationMessage.ORDER_CANCELLED_MESSAGE
+        );
+
+        sendOrderNotificationService.sendNotificationToUser(
+                orderDTO.getOrderId(),
+                requestNotificationDTO
+        );
+
+        return orderDTO;
     }
 
     @Override
-    public OrderDTO placeOrderByCustomer(String username, RequestOrderDTO requestOrderDTO) {
-        log.info("placeOrderByCustomer(username={}, requestOrderDTO={})", username, requestOrderDTO);
-        OrderDTO newOrderDTO = orderUpdateService.createOrderCustomer(username, requestOrderDTO);
-
-        RequestNotificationDTO requestNotificationDTO = RequestNotificationDTO.builder()
-                .title(NotificationTitle.PLACE_ORDER.getValue())
-                .message(String.format("Order of user %s has been placed", username))
-                .topic(NotificationTopic.ORDER)
-                .senderUsername(username)
-                .build();
-        sendOrderNotificationService.sendOrderNotificationToTopic(newOrderDTO.getOrderId(), requestNotificationDTO);
-        return newOrderDTO;
+    public OrderDTO cancelOrder(String orderId, OrderType type, Authentication authentication) {
+        List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
+        if(roleNames.contains(RoleName.CUSTOMER) && type.equals(OrderType.TAKE_AWAY)){
+            return this.cancelOrderByCustomer(authentication.getName(), orderId, type);
+        }else if(roleNames.contains(RoleName.EMPLOYEE) && type.equals(OrderType.DINE_IN)){
+            return this.cancelOrderByEmployee(authentication.getName(), orderId, type);
+        }else{
+            throw new IllegalArgumentException("Invalid order type and role");
+        }
     }
 
     @Override
-    public OrderDTO receiveCustomerOrder(String username, String orderId, OrderType type) {
-        log.info("receiveCustomerOrder(username={}, orderId={}, type={})", username, orderId, type);
-        return orderUpdateService.updateOrderStatusByCustomer(
-                username, orderId, type, OrderStatus.COMPLETED);
-    }
-
-    @Override
-    public OrderDTO markOrderAsPrepared(String orderId) {
-        log.info("markOrderAsPrepared(orderId={})", orderId);
-        return orderUpdateService.updateOrderStatus(orderId, OrderStatus.PREPARED);
+    public OrderDTO markOrderAsPrepared(String username, String orderId, OrderType type) {
+        return orderUpdateService.updateOrderStatus(orderId, type, OrderStatus.PREPARED);
     }
 
     @Override
     public OrderDTO preparingOrder(String username, String orderId, OrderType type) {
-        log.info("preparingOrder(username={}, orderId={}, type={})", username, orderId, type);
         return orderUpdateService.updateOrderStatus(orderId, type, OrderStatus.PREPARING);
     }
 
     @Override
     public OrderDTO placeOrder(RequestOrderDTO requestOrderDTO, Authentication authentication) {
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
+        OrderDTO result;
+
         if(roleNames.contains(RoleName.CUSTOMER) && requestOrderDTO.getType().equals(OrderType.TAKE_AWAY)){
-            return this.placeOrderByCustomer(authentication.getName(), requestOrderDTO);
+            result = this.placeOrderByCustomer(authentication.getName(), requestOrderDTO);
         }else if(roleNames.contains(RoleName.EMPLOYEE) && requestOrderDTO.getType().equals(OrderType.DINE_IN)){
-            return this.placeOrderByEmployee(authentication.getName(), requestOrderDTO);
+            result = this.placeOrderByEmployee(authentication.getName(), requestOrderDTO);
         }else{
             throw new IllegalArgumentException("Invalid order type");
         }
+
+        sendOrderNotificationService.sendPlaceOrderNotification(
+                authentication,
+                result.getOrderId(),
+                result.getType(),
+                result
+        );
+
+        return result;
     }
 
     @Override
-    public OrderDTO processOrder(String username, String orderId, OrderAction action, OrderType type) {
-        return switch (action){
-            case PREPARING -> this.preparingOrder(username, orderId, type);
-            case READY -> this.markOrderAsPrepared(orderId);
-            case COMPLETE -> this.completeOrder(username, orderId, type);
-            case CANCEL -> this.cancelOrderByEmployee(username, orderId, type);
-        };
+    public OrderDTO placeOrderByCustomer(String username, RequestOrderDTO requestOrderDTO) {
+        return orderUpdateService.createOrderCustomer(username, requestOrderDTO);
     }
 
     @Override
     public OrderDTO placeOrderByEmployee(String username, RequestOrderDTO requestOrderDTO) {
-        log.info("placeOrderByEmployee(username={}, requestOrderDTO={})",
-                username, requestOrderDTO);
         return orderUpdateService.createOrderEmployee(username, requestOrderDTO);
     }
 
     @Override
     public OrderDTO completeOrder(String username, String orderId, OrderType type) {
-        log.info("completeOrder(orderId={}, type={})", orderId, type);
-        return switch (type){
+        return switch (type) {
             case DINE_IN -> this.completeDineInOrder(username, orderId);
             case TAKE_AWAY -> this.completeTakeAwayOrder(username, orderId);
         };
@@ -154,7 +132,6 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
 
     @Override
     public OrderDTO completeDineInOrder(String username, String orderId){
-        log.info("completeDineInOrder(username={}, orderId={})", username, orderId);
         Order order = orderReaderService.getOrderEntity(orderId, OrderType.DINE_IN);
         if(!order.getOrderId().equals(orderId)){
             throw new NotFoundException(String.format("Table with id %s and order with id %s not found", order.getTable().getTableId(), orderId));
@@ -165,8 +142,21 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
 
     @Override
     public OrderDTO completeTakeAwayOrder(String username, String orderId) {
-        log.info("completeTakeAwayOrder(username={}, orderId={})", username, orderId);
         OrderDTO orderDTO = orderReaderService.getOrder(orderId, OrderType.TAKE_AWAY);
         return orderUpdateService.updateOrderStatus(orderDTO.getOrderId(), OrderType.TAKE_AWAY, OrderStatus.COMPLETED);
+    }
+
+    @Override
+    public OrderDTO processOrder(Authentication authentication, String orderId, OrderAction action, OrderType type) {
+        OrderDTO result = switch (action){
+            case PREPARING -> this.preparingOrder(authentication.getName(), orderId, type);
+            case READY -> this.markOrderAsPrepared(authentication.getName(), orderId, type);
+            case COMPLETE -> this.completeOrder(authentication.getName(), orderId, type);
+            case CANCEL -> this.cancelOrder(orderId, type, authentication);
+        };
+
+        sendOrderNotificationService.sendNotificationForOrderAction(authentication, orderId, action, type, result);
+
+        return result;
     }
 }

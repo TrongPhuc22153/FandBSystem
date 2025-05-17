@@ -1,16 +1,20 @@
 package com.phucx.phucxfandb.service.notification.imps;
 
-import com.phucx.phucxfandb.constant.WebSocketEndpoint;
+import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;
+import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.service.notification.NotificationUpdateService;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
+import com.phucx.phucxfandb.utils.NotificationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import static com.phucx.phucxfandb.constant.WebSocketEndpoint.TOPIC_KITCHEN;
+import static com.phucx.phucxfandb.constant.WebSocketEndpoint.QUEUE_MESSAGES;
+import static com.phucx.phucxfandb.constant.WebSocketEndpoint.TOPIC_EMPLOYEE;
 
 @Slf4j
 @Service
@@ -20,50 +24,171 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
-    public void sendOrderNotificationToTopic(String orderId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendOrderNotificationToTopic(orderId={}, requestNotificationDTO={})", orderId, requestNotificationDTO);
-        NotificationUserDTO notificationDTO = notificationUpdateService.createOrderNotification(
-                requestNotificationDTO.getSenderUsername(), orderId, requestNotificationDTO);
-        simpMessagingTemplate.convertAndSend(
-                WebSocketEndpoint.TOPIC_ORDER,
-                notificationDTO
-        );
-    }
-
-    @Override
-    public void sendOrderNotificationToEmployee(String orderId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendOrderNotificationToEmployee(orderId={}, requestNotificationDTO={})", orderId, requestNotificationDTO);
+    public void sendNotificationToUser(String orderId, RequestNotificationDTO requestNotificationDTO) {
+        log.info("sendNotificationToUser(orderId={}, requestNotificationDTO={})", orderId, requestNotificationDTO);
         NotificationUserDTO notificationDTO = notificationUpdateService.createOrderNotification(
                 requestNotificationDTO.getSenderUsername(), orderId, requestNotificationDTO);
         simpMessagingTemplate.convertAndSendToUser(
                 requestNotificationDTO.getReceiverUsername(),
-                WebSocketEndpoint.QUEUE_MESSAGES,
+                QUEUE_MESSAGES,
                 notificationDTO
         );
-
     }
 
     @Override
-    public void sendOrderNotificationToCustomer(String orderId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendOrderNotificationToCustomer(orderId={}, requestNotificationDTO={})", orderId, requestNotificationDTO);
+    public void sendNotificationToGroup(String orderId, String topic, RequestNotificationDTO requestNotificationDTO) {
+        log.info("sendNotificationToGroup(orderId={}, requestNotificationDTO={})", orderId, requestNotificationDTO);
         NotificationUserDTO notificationDTO = notificationUpdateService.createOrderNotification(
                 requestNotificationDTO.getSenderUsername(), orderId, requestNotificationDTO);
-        simpMessagingTemplate.convertAndSendToUser(
-                requestNotificationDTO.getReceiverUsername(),
-                WebSocketEndpoint.QUEUE_MESSAGES,
+        simpMessagingTemplate.convertAndSend(
+                topic,
                 notificationDTO
         );
     }
 
+    @Override
+    public void sendNotificationForOrderAction(Authentication authentication, String orderId,
+                                               OrderAction action, OrderType type, OrderDTO order) {
+        String username = authentication.getName();
+
+        switch (action) {
+            case PREPARING -> sendPreparingNotification(username, orderId, type, order);
+            case READY -> sendReadyNotification(username, orderId, type, order);
+            case COMPLETE -> sendCompleteNotification(username, orderId, type, order);
+            case CANCEL -> sendCancelNotification(authentication, orderId, type, order);
+        }
+    }
 
     @Override
-    public void sendOrderNotificationToKitchen(String orderId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendOrderNotificationToKitchen(orderId={}, requestNotificationDTO={})", orderId, requestNotificationDTO);
-        NotificationUserDTO notificationDTO = notificationUpdateService.createReservationNotification(
-                requestNotificationDTO.getSenderUsername(), orderId, requestNotificationDTO);
-        simpMessagingTemplate.convertAndSend(
-                TOPIC_KITCHEN,
-                notificationDTO
+    public void sendPlaceOrderNotification(Authentication authentication, String orderId, OrderType type, OrderDTO order) {
+        String username = authentication.getName();
+
+        if (type == OrderType.TAKE_AWAY) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    order.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.ORDER,
+                    NotificationTitle.ORDER_PLACED,
+                    String.format("Your order #%s has been successfully placed. We'll notify you when it's ready!", orderId)
+            );
+
+            this.sendNotificationToUser(orderId, customerNotification);
+        }
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                username,
+                RoleName.EMPLOYEE,
+                NotificationTopic.ORDER,
+                NotificationTitle.ORDER_PLACED,
+                String.format("New %s order #%s has been placed by %s",
+                        type.toString().toLowerCase().replace('_', ' '),
+                        orderId,
+                        type == OrderType.TAKE_AWAY ? "customer " + username : username)
         );
+
+        this.sendNotificationToGroup(orderId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
+    public void sendPreparingNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order) {
+        if (type == OrderType.TAKE_AWAY) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    order.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.ORDER,
+                    NotificationTitle.ORDER_PREPARING,
+                    String.format("Your order #%s is now being preparing by our staff", orderId)
+            );
+
+            this.sendNotificationToUser(orderId, customerNotification);
+        }
+
+        // Notification to employees
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.ORDER,
+                NotificationTitle.ORDER_PREPARING,
+                String.format("Order #%s is now being preparing by %s", orderId, employeeUsername)
+        );
+
+        this.sendNotificationToGroup(orderId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
+    public void sendReadyNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order) {
+        if (type == OrderType.TAKE_AWAY) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    order.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.ORDER,
+                    NotificationTitle.ORDER_PREPARED,
+                    String.format("Good news! Your order #%s is now ready for pickup", orderId)
+            );
+
+            this.sendNotificationToUser(orderId, customerNotification);
+        }
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.ORDER,
+                NotificationTitle.ORDER_PREPARED,
+                String.format("Order #%s is prepared and ready for %s", orderId,
+                        type == OrderType.TAKE_AWAY ? "customer pickup" : "service")
+        );
+
+        this.sendNotificationToGroup(orderId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
+    public void sendCompleteNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order) {
+        if (type == OrderType.TAKE_AWAY) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    order.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.ORDER,
+                    NotificationTitle.ORDER_COMPLETED,
+                    String.format("Your order #%s has been successfully completed. Thank you for your business!", orderId)
+            );
+
+            this.sendNotificationToUser(orderId, customerNotification);
+        }
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.ORDER,
+                NotificationTitle.ORDER_COMPLETED,
+                String.format("Order #%s has been marked as complete by %s", orderId, employeeUsername)
+        );
+
+        this.sendNotificationToGroup(orderId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
+    public void sendCancelNotification(Authentication authentication, String orderId, OrderType type, OrderDTO order) {
+        String username = authentication.getName();
+        boolean isEmployee = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE") || a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isEmployee && type == OrderType.TAKE_AWAY) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    order.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.ORDER,
+                    NotificationTitle.ORDER_CANCELLED,
+                    String.format("Your order #%s has been cancelled by our staff. Please contact us for more information.", orderId)
+            );
+
+            this.sendNotificationToUser(orderId, customerNotification);
+        }
+
+        if (!isEmployee && type == OrderType.DINE_IN) {
+            RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                    username,
+                    RoleName.EMPLOYEE,
+                    NotificationTopic.ORDER,
+                    NotificationTitle.ORDER_CANCELLED,
+                    String.format("Order #%s has been cancelled by customer %s", orderId, username)
+            );
+
+            this.sendNotificationToGroup(orderId, TOPIC_EMPLOYEE, employeeNotification);
+        }
     }
 }   

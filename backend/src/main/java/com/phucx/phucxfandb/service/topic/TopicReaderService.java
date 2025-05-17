@@ -10,5 +10,4 @@ public interface TopicReaderService {
     TopicDTO getTopic(long topicId);
     Topic getTopicEntity(NotificationTopic topic);
     TopicDTO getTopic(String topicName);
-    Topic getTopicEntity(long topicId);
 }

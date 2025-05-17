@@ -86,7 +86,7 @@ const ProfilePage = () => {
         action: resetUpdateUserAuthProfile,
       });
     }
-  }, [updateSuccess, resetUpdateUserAuthProfile]);
+  }, [updateSuccess, resetUpdateUserAuthProfile, showNewAlert]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -115,7 +115,6 @@ const ProfilePage = () => {
   const handleImageUpload = async (event) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Basic client-side validation (file type and size)
       if (file.type !== "image/jpeg" && file.type !== "image/png") {
         showNewAlert({
           message: "Invalid file type. Please upload a JPG or PNG image.",
@@ -124,7 +123,6 @@ const ProfilePage = () => {
         return;
       }
       if (file.size > 1024 * 1024) {
-        // 1MB limit
         showNewAlert({
           message: "File size exceeds 1MB limit.",
           variant: "danger",
@@ -185,7 +183,15 @@ const ProfilePage = () => {
       setIsEditing(false);
       mutate(USER_ENDPOINT);
     }
-  }, [userProfile, handleUpdateUserAuthenticatedProfile, uploadImage]);
+  }, [
+    userProfile,
+    handleUpdateUserAuthenticatedProfile,
+    uploadImage,
+    handleUploadImage,
+    isEditing,
+    profileData,
+    showNewAlert,
+  ]);
 
   if ((!profileData && loadingProfile) || loadingUpdateProfile)
     return <Loading />;

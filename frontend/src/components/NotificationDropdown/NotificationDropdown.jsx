@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { Bell } from "lucide-react";
 import NotificationItem from "../NotificationItem/NotificationItem";
 import { useNotifications } from "../../hooks/notificationHooks";
@@ -7,28 +7,85 @@ import { Link } from "react-router-dom";
 import { hasRole } from "../../utils/authUtils";
 import { useAuth } from "../../context/AuthContext";
 import { ROLES } from "../../constants/roles";
+import { useStompSubscription } from "../../hooks/websocketHooks";
 import {
   EMPLOYEE_NOTIFICATIONS_URI,
   USER_NOTIFICATIONS_URI,
 } from "../../constants/routes";
+import { TOPIC_EMPLOYEE } from "../../constants/webSocketEnpoint";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
+  const dropdownRef = useRef(null);
 
-  const { data: notificationsData } = useNotifications();
-  const notifications = notificationsData?.content || [];
+  const { data: notificationsData, isLoading } = useNotifications();
+  const [notifications, setNotifications] = useState(
+    notificationsData?.content || []
+  );
+
+  useEffect(() => {
+    if (notificationsData?.content) {
+      setNotifications(notificationsData.content);
+    }
+  }, [notificationsData]);
+
+  const handleMessage = useCallback((newNotification) => {
+    try {
+      if (!newNotification?.id) {
+        return;
+      }
+
+      setNotifications((prevNotifications) => {
+        const exists = prevNotifications.some(
+          (n) => n.id === newNotification.id
+        );
+        if (exists) {
+          return prevNotifications.map((n) =>
+            n.id === newNotification.id ? { ...n, ...newNotification } : n
+          );
+        }
+        return [newNotification, ...prevNotifications];
+      });
+    } catch (error) {
+      console.error("Error processing notification:", error);
+    }
+  }, []);
+
+  useStompSubscription({
+    topic: TOPIC_EMPLOYEE,
+    onMessage: handleMessage,
+    shouldSubscribe: hasRole(user, ROLES.EMPLOYEE),
+  });
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const unreadCount = notifications.filter(
-    (notification) => !notification.isRead
-  ).length;
+  const unreadCount = useMemo(
+    () => notifications.filter((notification) => !notification.isRead).length,
+    [notifications]
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isOpen &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
-    <div className={`${styles.notificationContainer} dropdown`}>
+    <div className={`${styles.notificationContainer} dropdown`} ref={dropdownRef}>
       <button
         className={`${styles.notificationButton} btn btn-light position-relative`}
         onClick={toggleDropdown}
@@ -58,7 +115,9 @@ export default function NotificationDropdown() {
         </div>
 
         <div className={styles.notificationList}>
-          {notifications.length > 0 ? (
+          {isLoading ? (
+            <div className={styles.loadingState}>Loading...</div>
+          ) : notifications.length > 0 ? (
             notifications.map((notification) => (
               <NotificationItem
                 key={notification.id}

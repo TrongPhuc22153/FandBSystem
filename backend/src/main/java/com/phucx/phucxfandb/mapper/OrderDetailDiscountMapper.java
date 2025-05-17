@@ -16,5 +16,6 @@ public interface OrderDetailDiscountMapper {
     @Mapping(target = "lastModifiedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "discount", ignore = true)
     OrderDetailDiscount toOrderDetailsDiscount(RequestOrderDetailsDiscountDTO requestOrderDetailsDiscountDTO, Discount discount, OrderDetail orderDetail);
 }

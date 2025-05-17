@@ -30,44 +30,37 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Collections;
-import java.util.List;
 
 import static com.phucx.phucxfandb.constant.ApiEndpoint.*;
 
 @Configuration
 @EnableWebSecurity
 @EnableAspectJAutoProxy
-@ComponentScans({
-    @ComponentScan("com.phucx.phucxfoodshop.aspects"),
-    @ComponentScan("com.phucx.phucxfoodshop.provider"),
-    @ComponentScan("com.phucx.phucxfoodshop.converter")
-})
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+    @Value("${phucx.allowed-url}")
+    private String allowedUrl;
+
     private final JwtValidationFilter jwtValidationFilter;
-    // token
-    @Value("${phucx.allowed-urls}")
-    private List<String> allowedUrls;
 
     @Bean
     public SecurityFilterChain dFilterChain(HttpSecurity http) throws Exception{
-        // session
         http.sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        // cors
+
         http.cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+            configuration.setAllowedOrigins(Collections.singletonList(allowedUrl));
             configuration.setAllowedMethods(Collections.singletonList("*"));
             configuration.setAllowedHeaders(Collections.singletonList("*"));
             configuration.setAllowCredentials(true);
             return configuration;
         }));
-        // csrf
+
         http.csrf(AbstractHttpConfigurer::disable);
-        // filter
+
         http.addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class);
-        // request
+
         http.authorizeHttpRequests(request -> request
                 .requestMatchers(HttpMethod.GET, PUBLIC_API).permitAll()
                 .requestMatchers(AUTH_API).permitAll()
@@ -81,6 +74,7 @@ public class WebSecurityConfig {
                 .requestMatchers(RECEPTIONIST_API).hasRole(RoleName.RECEPTIONIST.name())
                 .requestMatchers(ADMIN_API).hasRole(RoleName.ADMIN.name())
                 .anyRequest().denyAll());
+
         http.exceptionHandling(ex -> ex
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler)

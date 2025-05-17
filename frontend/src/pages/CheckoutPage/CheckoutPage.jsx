@@ -144,7 +144,7 @@ const CheckoutPage = () => {
         variant: "danger"
       });
     }
-  }, [handlePlaceOrder, address, selectedAddressId, cartData]);
+  }, [handlePlaceOrder, address, selectedAddressId, cartData, handleCreateShippingAddress, showNewAlert]);
 
   const showConfirmModal = () => {
     if (validateForm()) {

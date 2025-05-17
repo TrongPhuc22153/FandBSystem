@@ -1,4 +1,6 @@
 const API_BASE_URL = "http://localhost:8080";
+const WEBSOCKET_URL = "ws://localhost:8080/chat";
+export const WEBSOCKET_ENDPOINT = `${WEBSOCKET_URL}`;
 
 export const PRODUCTS_ENDPOINT = `${API_BASE_URL}/api/v1/products`;
 
@@ -21,7 +23,7 @@ export const USER_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/profiles/me`;
 export const USER_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/profiles`;
 
 export const USER_NOTIFICATIONS_ENDPOINT = `${API_BASE_URL}/api/v1/notifications/me`;
-export const USER_NOTIFICATION_ENDPOINT = (id) => `${API_BASE_URL}/api/v1/${id}/me`;
+export const USER_NOTIFICATION_ENDPOINT = (id) => `${API_BASE_URL}/api/v1/notifications/${id}/me`;
 
 export const SHIPPING_ADDRESS_ENDPOINT = `${API_BASE_URL}/api/v1/addresses`;
 export const USER_SHIPPING_ADDRESS_ENDPOINT = `${API_BASE_URL}/api/v1/addresses/me`;
@@ -38,6 +40,9 @@ export const RESERVATIONS_ENDPOINT = `${API_BASE_URL}/api/v1/reservations`;
 
 export const CUSTOMER_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/customers/profile`;
 export const CUSTOMER_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/customers/profile/me`;
+
+export const EMPLOYEE_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/employees/profile`;
+export const EMPLOYEE_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/employees/profile/me`;
 
 export const DINE_IN_ENDPOINT = `${API_BASE_URL}/api/v1/dine-in`
 

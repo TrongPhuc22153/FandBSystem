@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   useReservation,
@@ -84,7 +84,7 @@ function AdminReservationDetailsPage() {
           break;
       }
     },
-    [id, handleConfirm, handleCancel, onOpen, showNewAlert]
+    [handleConfirm, handleCancel, onOpen, showNewAlert]
   );
 
   if (loadingReservation || processLoading) {

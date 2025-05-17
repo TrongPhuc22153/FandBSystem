@@ -47,15 +47,15 @@ public class Notification extends Auditable{
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
-    @OneToMany(mappedBy = "notification")
+    @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NotificationUser> notificationUsers = new ArrayList<>();
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "notification_time", nullable = false)
     private LocalDateTime time;
 
-    @JsonManagedReference
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "repliedTo", referencedColumnName = "notification_id")
     private Notification notification;
 

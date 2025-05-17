@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useReservations } from "../../hooks/reservationHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
@@ -7,29 +7,39 @@ import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { formatDate } from "../../utils/datetimeUtils";
 import { Badge } from "react-bootstrap";
-import { RESERVATION_STATUS_CLASSES } from "../../constants/webConstant";
+import { RESERVATION_STATUS_CLASSES, SORTING_DIRECTIONS } from "../../constants/webConstant";
 import { ADMIN_RESERVATIONS_URI } from "../../constants/routes";
 
 const AdminReservationsPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page") || "0");
+  const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchValue, setSearchValue] = useState(
     searchParams.get("searchValue") || ""
   );
-  const [searchBy, setSearchBy] = useState(() => {
-    const param = searchParams.get("searchBy");
-    return param ? [param] : ["id"];
-  });
+
+  const [currentPage, setCurrentPage] = useState(currentPageFromURL);
+
+  useEffect(() => {
+    const pageFromURL = parseInt(searchParams.get("page")) || 1;
+    setCurrentPage(pageFromURL - 1);
+  }, [searchParams]);
 
   const {
     data: reservationsData,
     isLoading: loadingReservations,
     error: reservationsError,
-  } = useReservations();
+  } = useReservations({
+    currentPage: currentPage,
+    direction: SORTING_DIRECTIONS.DESC,
+    sortBy: "createdAt"
+  });
 
-  const reservationData = reservationsData?.content || [];
+  const reservations = useMemo(
+    () => reservationsData?.content || [],
+    [reservationsData]
+  );
   const totalPages = reservationsData?.totalPages || 0;
 
   const reservationColumns = [
@@ -50,10 +60,10 @@ const AdminReservationsPage = () => {
       render: (reservation) => formatDate(reservation.startTime),
     },
     {
-        key: "endTime",
-        title: "End Time",
-        render: (reservation) => formatDate(reservation.endTime),
-      },
+      key: "endTime",
+      title: "End Time",
+      render: (reservation) => formatDate(reservation.endTime),
+    },
     {
       key: "status",
       title: "Status",
@@ -64,13 +74,6 @@ const AdminReservationsPage = () => {
       ),
     },
   ];
-
-  useEffect(() => {
-    const searchByParam = searchParams.get("searchBy");
-    if (searchByParam) {
-      setSearchBy(searchByParam.split(","));
-    }
-  }, [searchParams]);
 
   const handleViewReservation = useCallback(
     (id) => {
@@ -84,7 +87,7 @@ const AdminReservationsPage = () => {
     (event) => {
       const isChecked = event.target.checked;
       if (isChecked) {
-        const allReservationIds = reservationData.map(
+        const allReservationIds = reservations.map(
           (reservation) => reservation.reservationId
         );
         setSelectedItems(allReservationIds);
@@ -92,7 +95,7 @@ const AdminReservationsPage = () => {
         setSelectedItems([]);
       }
     },
-    [reservationData]
+    [reservations]
   );
 
   const handleSelectItem = useCallback((event, reservationId) => {
@@ -113,7 +116,7 @@ const AdminReservationsPage = () => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);
     },
-    [setSearchParams]
+    [setSearchParams, searchParams]
   );
 
   const handleSearchInputChange = (e) => {
@@ -158,7 +161,7 @@ const AdminReservationsPage = () => {
               </div>
 
               <DataTable
-                data={reservationData}
+                data={reservations}
                 columns={reservationColumns}
                 selectedItems={selectedItems}
                 handleSelectItem={handleSelectItem}

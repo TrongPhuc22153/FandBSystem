@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @ToString
@@ -8,6 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ShippingInfo {
     private Integer serviceId;
     private Integer insuranceValue;

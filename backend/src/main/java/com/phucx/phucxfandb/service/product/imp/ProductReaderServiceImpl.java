@@ -2,7 +2,6 @@ package com.phucx.phucxfandb.service.product.imp;
 
 import com.phucx.phucxfandb.dto.request.ProductRequestParamDTO;
 import com.phucx.phucxfandb.dto.response.ProductDTO;
-import com.phucx.phucxfandb.entity.Category;
 import com.phucx.phucxfandb.entity.Product;
 import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.mapper.ProductMapper;

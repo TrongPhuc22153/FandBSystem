@@ -10,7 +10,7 @@ export default function NotificationItem({ notification }) {
     >
       <div className={styles.notificationContent}>
         <div className={styles.senderInfo}>
-          <span className={styles.sender}>{notification.sender?.username || "System"}</span>
+          <span className={styles.sender}>{notification.notification.title}</span>
           {!notification.isRead && <span className={styles.dot}></span>}
         </div>
         <p className={styles.message}>{notification.notification.message}</p>

@@ -18,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -51,13 +49,12 @@ public class OrderController {
     @PatchMapping("/{orderId}")
     @Operation(summary = "Process order", description = "Employee access")
     public ResponseEntity<ResponseDTO<OrderDTO>> updateOrderStatus(
-            Principal principal,
+            Authentication authentication,
             @PathVariable String orderId,
             @RequestBody RequestOrderDTO requestOrderDTO
     ) {
-        log.info("updateOrderStatus(orderId={})", orderId);
         OrderDTO updatedOrder = orderProcessingService.processOrder(
-                principal.getName(),
+                authentication,
                 orderId,
                 requestOrderDTO.getAction(),
                 requestOrderDTO.getType());
@@ -74,7 +71,6 @@ public class OrderController {
             Authentication authentication,
             @Valid @RequestBody RequestOrderDTO requestOrderDTO
     ) {
-        log.info("createOrder(requestOrderDTO={})", requestOrderDTO);
         OrderDTO orderDTO = orderProcessingService.placeOrder(requestOrderDTO, authentication);
         ResponseDTO<OrderDTO> response = ResponseDTO.<OrderDTO>builder()
                 .message("Order placed successfully")

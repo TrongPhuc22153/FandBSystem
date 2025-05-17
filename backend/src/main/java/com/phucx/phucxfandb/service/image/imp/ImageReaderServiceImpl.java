@@ -29,7 +29,6 @@ public class ImageReaderServiceImpl implements ImageReaderService {
 
     @Override
     public InputStream getImage(String imageName) throws IOException {
-        log.info("getProductImage(imageName={})", imageName);
         Path path = Paths.get(imageDirectory, imageName);
         if (!Files.exists(path) || !Files.isReadable(path)) {
             throw new NotFoundException("Image", "name", imageName);

@@ -9,8 +9,9 @@ import {
 import { CATEGORIES_ENDPOINT } from "../constants/api";
 import { useAuth } from "../context/AuthContext";
 import { useCallback, useState } from "react";
+import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
-export const useCategories = ({ page = 0, size = 10, direction = "ASC", field = "categoryName", isDeleted = false } = {}) => {
+export const useCategories = ({ page = 0, size = 10, direction = SORTING_DIRECTIONS.ASC, field = "categoryName", isDeleted = false } = {}) => {
   return useSWR([CATEGORIES_ENDPOINT, page, size, direction, field, isDeleted], () =>
     fetchCategories({ page: page, size: size, direction: direction, field: field, isDeleted: isDeleted })
   );

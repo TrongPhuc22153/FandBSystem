@@ -26,10 +26,10 @@
 .dropdownMenu {
     width: 320px;
     padding: 0;
-    max-height: 400px;
-    overflow-y: auto;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    left: 0;
+    transform: translateX(-40%);
 }
 
 .notificationHeader {

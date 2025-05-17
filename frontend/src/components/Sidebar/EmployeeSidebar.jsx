@@ -6,6 +6,7 @@ import {
   faUser,
   faCartShopping,
   faTable,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import {
@@ -14,6 +15,7 @@ import {
   HOME_URI,
   EMPLOYEE_KITCHEN_URI,
   EMPLOYEE_TABLES_URI,
+  EMPLOYEE_NOTIFICATIONS_URI,
 } from "../../constants/routes";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
@@ -99,6 +101,20 @@ export const EmpoyeeSidebar = () => {
                   className={styles["nav_icon"]}
                 />
                 <span className={styles["nav_name"]}>Tables</span>
+              </Link>
+              <Link
+                to={EMPLOYEE_NOTIFICATIONS_URI}
+                className={`${styles["nav_link"]} ${
+                  window.location.pathname === EMPLOYEE_NOTIFICATIONS_URI
+                    ? styles["active"]
+                    : ""
+                }`}
+              >
+                <FontAwesomeIcon
+                  icon={faBell}
+                  className={styles["nav_icon"]}
+                />
+                <span className={styles["nav_name"]}>Notifications</span>
               </Link>
             </>
           )}
