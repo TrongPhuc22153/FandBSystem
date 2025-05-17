@@ -1,6 +1,9 @@
+import { Link } from "react-router-dom";
 import { getImageSrc } from "../../utils/imageUtils";
 import styles from "./OrderDetails.module.css";
-function OrderDetail({
+import { SHOP_URI } from "../../constants/routes";
+
+const OrderDetail = ({
   orderDate,
   orderNumber,
   orderStatus,
@@ -8,9 +11,8 @@ function OrderDetail({
   shippingCost,
   total,
   table,
-  billingAddress,
   shippingAddress,
-}) {
+}) => {
   return (
     <div className="container py-3" style={{ maxWidth: "800px" }}>
       <div
@@ -24,7 +26,7 @@ function OrderDetail({
         <div className="pt-1">
           <p>
             Order #{orderNumber} is currently
-            <b className="text-dark">{orderStatus}</b>
+            <b className="ms-1 text-dark">{orderStatus}</b>
           </p>
         </div>
       </div>
@@ -48,12 +50,12 @@ function OrderDetail({
                         key={item.id}
                         className="d-flex justify-content-start align-items-center list py-1"
                       >
-                        <div>
+                        <div style={{ minWidth: "50px" }}>
                           <b>{item.quantity}px</b>
                         </div>
                         <div className="mx-3">
                           <img
-                            src={item.picture || getImageSrc()}
+                            src={item.product.picture || getImageSrc()}
                             alt={item.product.productName}
                             className="rounded-circle"
                             width="30"
@@ -61,7 +63,12 @@ function OrderDetail({
                           />
                         </div>
                         <div className="order-item">
-                          {item.product.productName}
+                          <Link
+                            to={`${SHOP_URI}/${item.product.productName}?id=${item.product.productId}`}
+                            className={styles.productLink}
+                          >
+                            {item.product.productName}
+                          </Link>
                         </div>
                       </div>
                     </th>
@@ -96,7 +103,7 @@ function OrderDetail({
             <div className="col-md-6 py-3">
               <div className="d-flex flex-column align-items-start">
                 <b>Table Information</b>
-                {table && ( // Assuming you have table data in a variable called table
+                {table && (
                   <>
                     <p className="text-justify pt-2">
                       Table Number: {table.tableNumber}
@@ -110,25 +117,6 @@ function OrderDetail({
           </div>
         ) : (
           <div className="row border rounded p-1 my-3">
-            <div className="col-md-6 py-3">
-              <div className="d-flex flex-column align-items start">
-                <b>Billing Address</b>
-                {billingAddress && (
-                  <>
-                    <p className="text-justify pt-2">
-                      {billingAddress.address},
-                    </p>
-                    <p className="text-justify">
-                      {billingAddress.city}, {billingAddress.district},
-                      {billingAddress.ward}
-                    </p>
-                    <p className="text-justify">
-                      Phone: {billingAddress.phone}
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
             <div className="col-md-6 py-3">
               <div className="d-flex flex-column align-items start">
                 <b>Shipping Address</b>
@@ -151,11 +139,12 @@ function OrderDetail({
                 )}
               </div>
             </div>
+            <div className="col-md-6 py-3"></div>
           </div>
         )}
       </div>
     </div>
   );
-}
+};
 
 export default OrderDetail;

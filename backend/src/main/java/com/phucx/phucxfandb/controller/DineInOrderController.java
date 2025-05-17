@@ -40,7 +40,6 @@ public class DineInOrderController {
             @Valid @RequestBody RequestOrderDTO requestOrderDTO
     ) {
         requestOrderDTO.setType(OrderType.DINE_IN);
-        log.info("createMenuItem(requestOrderDTO={})", requestOrderDTO);
         OrderDTO orderDTO = orderProcessingService.placeOrderByEmployee(
                 principal.getName(), requestOrderDTO);
         ResponseDTO<OrderDTO> response = ResponseDTO.<OrderDTO>builder()

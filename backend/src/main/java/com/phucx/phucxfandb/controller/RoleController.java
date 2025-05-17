@@ -25,7 +25,6 @@ public class RoleController {
     @GetMapping
     @Operation(summary = "Get roles", description = "Admin access")
     public ResponseEntity<Set<RoleDTO>> getRoles(){
-        log.info("getRoles()");
         var roles = roleReaderService.getRoles();
         return ResponseEntity.ok(roles);
     }

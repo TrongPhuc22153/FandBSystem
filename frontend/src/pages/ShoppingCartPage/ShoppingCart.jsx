@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useCart, useCartActions } from "../../hooks/cartHooks";
 import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
@@ -6,9 +6,11 @@ import { getPrimaryProductImage } from "../../utils/imageUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useModal } from "../../context/ModalContext";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CHECKOUT_URI } from "../../constants/routes";
 import styles from "./ShoppingCart.module.css";
+import { useAlert } from "../../context/AlertContext";
+import { CHECKOUT_ITEMS } from "../../constants/webConstant";
 
 const shippingCost = 0;
 
@@ -29,24 +31,34 @@ const ShoppingCart = () => {
   } = useCartActions();
 
   const { onOpen } = useModal();
+  const { showNewAlert } = useAlert();
+  const navigate = useNavigate();
+
+  // State to manage selected items
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  // State to manage "Select All" checkbox
+  const [selectAll, setSelectAll] = useState(false);
 
   // Modal confirmations
 
   const handleRemoveConfirm = useCallback(
     async (idToRemove) => {
-      // Receive productId as argument
       if (idToRemove) {
         const success = await handleRemoveItemFromCart(idToRemove);
         if (success) {
-          mutateCart((prevData) => {
-            if (!prevData?.cartItems) return prevData;
-            return {
+          mutateCart(
+            (prevData) => ({
               ...prevData,
-              cartItems: prevData.cartItems.filter(
+              cartItems: prevData?.cartItems?.filter(
                 (cartItem) => cartItem.product.productId !== idToRemove
               ),
-            };
-          }, false);
+            }),
+            false
+          );
+          setSelectedItems((prevSelected) =>
+            prevSelected.filter((id) => id !== idToRemove)
+          );
         }
       }
     },
@@ -68,6 +80,8 @@ const ShoppingCart = () => {
     const response = await handleClearCart();
     if (response) {
       mutateCart();
+      setSelectedItems([]);
+      setSelectAll(false);
     }
   }, [handleClearCart, mutateCart]);
 
@@ -85,21 +99,67 @@ const ShoppingCart = () => {
   // Update local cart when fetched data changes
   useEffect(() => {
     setLocalCart(cartDataResult?.cartItems || []);
+    // Reset selected items and "Select All" when cart data changes
+    setSelectedItems([]);
+    setSelectAll(false);
   }, [cartDataResult?.cartItems]);
 
-  // Increase/Decrease product quantity
-  const handleIncrement = (productId) => {
+  // Handle "Select All" checkbox change
+  const handleSelectAll = (event) => {
+    const isChecked = event.target.checked;
+    setSelectAll(isChecked);
+    if (isChecked) {
+      const allProductIds = localCart.map((item) => item.product.productId);
+      setSelectedItems(allProductIds);
+    } else {
+      setSelectedItems([]);
+    }
+  };
+
+  // Handle selection of a single item
+  const handleSelectItem = (event, productId) => {
+    const isChecked = event.target.checked;
+    if (isChecked) {
+      setSelectedItems((prevSelected) => [...prevSelected, productId]);
+    } else {
+      setSelectedItems((prevSelected) =>
+        prevSelected.filter((id) => id !== productId)
+      );
+    }
+  };
+
+  // Update "Select All" state based on individual item selections
+  useEffect(() => {
+    if (localCart.length > 0 && selectedItems.length === localCart.length) {
+      setSelectAll(true);
+    } else {
+      setSelectAll(false);
+    }
+  }, [selectedItems, localCart.length]);
+
+  const handleIncrement = (product) => {
+    const cartItem = localCart.find((item) => item.product.productId === product.productId);
+    const currentQuantity = cartItem ? cartItem.quantity : 0;
+
+    if (product.unitsInStock <= currentQuantity) {
+      showNewAlert({
+        message: "Exceed the maximun in stock of product",
+        variant: "warning",
+      });
+      return;
+    }
+
     const updatedCart = localCart.map((item) =>
-      item.product.productId === productId
+      item.product.productId === product.productId
         ? { ...item, quantity: item.quantity + 1 }
         : item
     );
     setLocalCart(updatedCart);
     const data = {
-      productId: productId,
+      productId: product.productId,
       quantity:
-        updatedCart.find((item) => item.product.productId === productId)
-          ?.quantity || 0,
+        updatedCart.find((item) => item.product.productId === product.productId)?.quantity ||
+        0,
     };
     handleUpdateCartItemQuantity(data);
   };
@@ -118,15 +178,38 @@ const ShoppingCart = () => {
       const data = {
         productId: productId,
         quantity:
-          updatedCart.find((item) => item.product.productId === productId)
-            ?.quantity || 0,
+          updatedCart.find((item) => item.product.productId === productId)?.quantity ||
+          0,
       };
       handleUpdateCartItemQuantity(data);
     }
   };
 
   const totalItems = localCart.reduce((sum, item) => sum + item.quantity, 0);
-  const total = (cartDataResult?.totalPrice || 0) + shippingCost;
+
+  // Calculate total price based on selected items and their quantities
+  const totalPrice = localCart.reduce((sum, item) => {
+    if (selectedItems.includes(item.product.productId)) {
+      sum += item.unitPrice * item.quantity;
+    }
+    return sum;
+  }, 0);
+
+  const total = totalPrice + shippingCost;
+
+  const handleClickCheckout = (e) =>{
+    e.preventDefault();
+    const selectedItemsWithQuantity = selectedItems.map((productId) => {
+      const cartItem = localCart.find((item) => item.product.productId === productId);
+      return {
+        productId: productId,
+        quantity: cartItem ? cartItem.quantity : 0,
+      };
+    });
+    const serializedItems = JSON.stringify(selectedItemsWithQuantity);
+    localStorage.setItem(CHECKOUT_ITEMS, serializedItems);
+    navigate(CHECKOUT_URI)
+  }
 
   if (loadingCartItems || clearLoading) return <Loading />;
 
@@ -142,7 +225,7 @@ const ShoppingCart = () => {
         <div className={`col-md-8 ${styles["cart"]}`}>
           <div className="mb-3">
             <div className="row d-flex justify-content-between align-items-center">
-              <div className="col-5">
+              <div className="col-6">
                 <h4>
                   <b>Shopping Cart</b>
                 </h4>
@@ -154,15 +237,26 @@ const ShoppingCart = () => {
           </div>
           {localCart.length > 0 && (
             <div className="row px-3 d-flex justify-content-center align-items-center mb-2">
-              <div className="col-lg-6 col-sm-5">
+              <div className="col-1">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    style={{ width: "20px", height: "20px", padding: "0" }}
+                    type="checkbox"
+                    onChange={handleSelectAll}
+                    checked={selectAll}
+                  />
+                </div>
+              </div>
+              <div className="col-lg-5 col-sm-4">
                 <h6 className="heading">Your Item</h6>
               </div>
               <div className="col-lg-6 col-sm-7">
                 <div className="row text-right align-items-center">
-                  <div className="col-5">
+                  <div className="col-4">
                     <h6 className="mt-2">Quantity</h6>
                   </div>
-                  <div className="col-5">
+                  <div className="col-4">
                     <h6 className="mt-2">Price</h6>
                   </div>
                   <div className="col-2">
@@ -187,26 +281,36 @@ const ShoppingCart = () => {
                 className="row border-top border-bottom"
               >
                 <div className="row w-100 m-0 px-3 py-4 align-items-center">
+                  <div className="col-1">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        style={{ width: "20px", height: "20px", padding: "0" }}
+                        type="checkbox"
+                        value={item.product.productId}
+                        checked={selectedItems.includes(item.product.productId)}
+                        onChange={(e) => handleSelectItem(e, item.product.productId)}
+                      />
+                    </div>
+                  </div>
                   <div className="col-2">
                     <img
-                      className="img-fluid"
+                      className="img-icon rounded-2"
                       src={getPrimaryProductImage(item.product.images)}
                       alt={item.product.productName}
                     />
                   </div>
-                  <div className="col-lg-4 col-sm-3">
+                  <div className="col-lg-3 col-sm-3">
                     <div className="row text-muted">
                       {item.product.productName}
                     </div>
                     <div className="row">{item.description}</div>
                   </div>
                   <div className="col-lg-6 col-sm-7">
-                    <div className="row">
-                      <div className="col-5 d-flex align-items-center">
+                    <div className="row align-items-center">
+                      <div className="col-4 d-flex align-items-center">
                         <button
-                          onClick={() =>
-                            handleDecrement(item.product.productId)
-                          }
+                          onClick={() => handleDecrement(item.product.productId)}
                           className="btn btn-sm"
                           disabled={clearLoading}
                         >
@@ -214,17 +318,15 @@ const ShoppingCart = () => {
                         </button>
                         <span className="border px-2">{item.quantity}</span>
                         <button
-                          onClick={() =>
-                            handleIncrement(item.product.productId)
-                          }
+                          onClick={() => handleIncrement(item.product)}
                           className="btn btn-sm"
                           disabled={clearLoading}
                         >
                           +
                         </button>
                       </div>
-                      <div className="col-5 text-right">
-                        &euro; {item.unitPrice.toFixed(2)}{" "}
+                      <div className="col-4 text-right">
+                        &euro; {item.unitPrice.toFixed(2)}
                       </div>
                       <div className="col-2">
                         <button
@@ -253,9 +355,9 @@ const ShoppingCart = () => {
           <hr />
           <div className="row">
             <div className="col" style={{ paddingLeft: "0" }}>
-              ITEMS {totalItems}
+              ITEMS {selectedItems.length}
             </div>
-            <div className="col text-right">&euro; {total.toFixed(2)}</div>
+            <div className="col text-right">&euro; {totalPrice.toFixed(2)}</div>
           </div>
           <div
             className="row"
@@ -264,13 +366,9 @@ const ShoppingCart = () => {
             <div className="col">TOTAL PRICE</div>
             <div className="col text-right">&euro; {total.toFixed(2)}</div>
           </div>
-          <Link
-            to={CHECKOUT_URI}
-            className="btn btn-dark"
-            disabled={clearLoading}
-          >
+          <button className="btn btn-dark" onClick={handleClickCheckout} disabled={clearLoading || selectedItems.length === 0}>
             CHECKOUT
-          </Link>
+          </button>
         </div>
       </div>
     </div>

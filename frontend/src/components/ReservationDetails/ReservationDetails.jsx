@@ -47,7 +47,7 @@ export default function ReservationDetail({ reservation }) {
   };
 
   return (
-    <div className="container bg-white mt-3 py-3 rounded-3" style={{ maxWidth: "800px" }}>
+    <div className="container bg-white py-3 px-3 rounded-3" style={{ maxWidth: "800px" }}>
       <h5>Reservation Details: {reservation.reservationId}</h5>
       <div className="row mb-4">
         <div className="col-md-6">

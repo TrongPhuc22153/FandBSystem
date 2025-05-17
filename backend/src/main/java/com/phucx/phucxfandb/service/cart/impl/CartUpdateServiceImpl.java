@@ -15,7 +15,6 @@ import com.phucx.phucxfandb.service.cart.CartUpdateService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,117 +32,116 @@ public class CartUpdateServiceImpl implements CartUpdateService {
     private final CartItemMapper cartItemMapper;
 
     @Override
-    @Modifying
     @Transactional
-    @EnsureCartExists
     public CartDTO updateCartItemQuantity(String username, RequestCartItemDTO requestCartItemDTO) {
-        log.info("updateCartItemQuantity(username={}, requestCartItemDTO={})", username, requestCartItemDTO);
         Cart cart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException("Cart", "user", "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
         Product product = productReaderService.getProductEntity(requestCartItemDTO.getProductId());
 
-        // Check if the product already exists in the cart
         CartItem existingItem = cart.getCartItems().stream()
                 .filter(item -> item.getProduct().getProductId().equals(product.getProductId()))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Cart item", "user", "username", username));
+                .orElseThrow(() -> new NotFoundException("Cart item", "username", username));
 
         cartItemMapper.updateCartItem(requestCartItemDTO, product, existingItem);
         if(existingItem.getQuantity()>product.getUnitsInStock()){
             throw new IllegalArgumentException("Requested quantity exceeds available stock");
         }
 
-        // Update total price
         cart.setTotalPrice(calculateTotalPrice(cart.getCartItems()));
         Cart updatedCart = cartRepository.save(cart);
         return cartMapper.toCartDTO(updatedCart);
     }
 
     @Override
-    @Modifying
     @Transactional
     @EnsureCartExists
     public CartDTO updateCart(String username, RequestCartDTO requestCartDTO) {
-        log.info("updateCart(username={}, requestCartDTO={})", username, requestCartDTO);
         Cart existingCart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException("Cart", "user", "username", username));
-        // Empty all existing cart items
+                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
         existingCart.getCartItems().clear();
-        // Add new cart items
+
         List<CartItem> newItems = requestCartDTO.getCartItems().stream()
                 .map(dto -> {
                     Product existingProduct = productReaderService.getProductEntity(dto.getProductId());
                     return cartItemMapper.toCartItem(dto, existingProduct, existingCart);
                 })
                 .collect(Collectors.toList());
-        // Save new items
-        existingCart.setCartItems(newItems);
-        // Recalculate total price
-        existingCart.setTotalPrice(calculateTotalPrice(existingCart.getCartItems()));
-        // Save updated cart
-        Cart updatedCart = cartRepository.save(existingCart);
 
+        existingCart.setCartItems(newItems);
+        existingCart.setTotalPrice(calculateTotalPrice(existingCart.getCartItems()));
+
+        Cart updatedCart = cartRepository.save(existingCart);
         return cartMapper.toCartDTO(updatedCart);
     }
 
     @Override
-    @Modifying
     @Transactional
     @EnsureCartExists
     public CartDTO addCartItem(String username, RequestCartItemDTO requestCartItemDTO) {
-        log.info("addCartItem(username={}, requestCartItemDTO={})", username, requestCartItemDTO);
         Cart cart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException("Cart", "user", "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
         Product product = productReaderService.getProductEntity(requestCartItemDTO.getProductId());
 
-        CartItem newCartItem = cartItemMapper.toCartItem(requestCartItemDTO, product, cart);
-        if(newCartItem.getQuantity()>product.getUnitsInStock()){
-            throw new IllegalArgumentException("Requested quantity exceeds available stock");
-        }
-
-        // Check if the product already exists in the cart
         CartItem existingItem = cart.getCartItems().stream()
                 .filter(item -> item.getProduct().getProductId().equals(product.getProductId()))
                 .findFirst()
                 .orElse(null);
 
+        int requestedQuantity = requestCartItemDTO.getQuantity();
+
         if (existingItem != null) {
-            // Update existing item
-            existingItem.setQuantity(newCartItem.getQuantity() + existingItem.getQuantity());
-            existingItem.setUnitPrice(newCartItem.getUnitPrice());
+            int newTotalQuantity = existingItem.getQuantity() + requestedQuantity;
+            if (newTotalQuantity > product.getUnitsInStock()) {
+                throw new IllegalArgumentException("Total requested quantity exceeds available stock");
+            }
+            existingItem.setQuantity(newTotalQuantity);
+            existingItem.setUnitPrice(product.getUnitPrice());
         } else {
-            // Add new item
+            if (requestedQuantity > product.getUnitsInStock()) {
+                throw new IllegalArgumentException("Requested quantity exceeds available stock");
+            }
+            CartItem newCartItem = cartItemMapper.toCartItem(requestCartItemDTO, product, cart);
             cart.getCartItems().add(newCartItem);
         }
 
-        // Update total price
         cart.setTotalPrice(calculateTotalPrice(cart.getCartItems()));
+
         Cart updatedCart = cartRepository.save(cart);
         return cartMapper.toCartDTO(updatedCart);
     }
 
     @Override
-    @Modifying
     @Transactional
-    @EnsureCartExists
-    public CartDTO removeCartItems(String username) {
-        log.info("removeCartItems(username={})", username);
+    public void removeCartItems(String username, List<Long> productIds) {
         Cart existingCart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException("Cart", "user", "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
+
+        List<CartItem> cartItemsToRemove = existingCart.getCartItems().stream()
+                .filter(item -> productIds.contains(item.getProduct().getProductId()))
+                .toList();
+
+        existingCart.getCartItems().removeAll(cartItemsToRemove);
+        cartRepository.save(existingCart);
+    }
+
+
+
+    @Override
+    @Transactional
+    public void removeCartItems(String username) {
+        Cart existingCart = cartRepository.findByCustomerProfileUserUsername(username)
+                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
         existingCart.getCartItems().clear();
         existingCart.setTotalPrice(BigDecimal.ZERO);
-        Cart updatedCart = cartRepository.save(existingCart);
-        return cartMapper.toCartDTO(updatedCart);
+        cartRepository.save(existingCart);
     }
 
     @Override
-    @Modifying
     @Transactional
-    @EnsureCartExists
     public CartDTO removeCartItem(String username, long productId) {
-        log.info("removeCartItem(username={}, productId={})", username, productId);
         Cart existingCart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException("Cart", "user", "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
         CartItem cartItemToRemove = existingCart.getCartItems().stream()
                 .filter(item -> item.getProduct().getProductId().equals(productId))
                 .findFirst()

@@ -54,7 +54,6 @@ public class ReservationController {
             @PathVariable String reservationId,
             @RequestBody RequestReservationDTO requestReservationDTO
     ) {
-        log.info("updateReservationStatus(reservationId={})", reservationId);
         ReservationDTO updatedReservation = reservationProcessingService.processReservation(
                 authentication,
                 reservationId,
@@ -72,7 +71,6 @@ public class ReservationController {
             Authentication authentication,
             @Valid @RequestBody RequestReservationDTO requestReservationDTO // Changed RequestOrderDTO
     ) {
-        log.info("createReservation(requestReservationDTO={})", requestReservationDTO);
         ReservationDTO reservationDTO = reservationProcessingService.placeReservation(requestReservationDTO, authentication);
         ResponseDTO<ReservationDTO> response = ResponseDTO.<ReservationDTO>builder()
                 .message("Reservation placed successfully")

@@ -2,10 +2,7 @@ package com.phucx.phucxfandb.mapper;
 
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
-import com.phucx.phucxfandb.entity.Customer;
-import com.phucx.phucxfandb.entity.Employee;
-import com.phucx.phucxfandb.entity.Order;
-import com.phucx.phucxfandb.entity.ReservationTable;
+import com.phucx.phucxfandb.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -20,8 +17,8 @@ public interface OrderMapper {
     @Mapping(target = "orderDetails", qualifiedByName = {"toOrderDetailsDTO"})
     @Mapping(target = "employee.profile.user.roles", ignore = true)
     @Mapping(target = "customer.profile.user.roles", ignore = true)
+    @Mapping(target = "shippingAddress", ignore = true)
     OrderDTO toOrderListEntryDTO(Order order);
-
 
     @Mapping(target = "table", ignore = true)
     @Mapping(target = "totalPrice", ignore = true)
@@ -35,7 +32,8 @@ public interface OrderMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status", ignore = true)
-    Order toCustomerOrder(RequestOrderDTO order, Customer customer);
+    @Mapping(target = "shippingAddress", source = "shippingAddress")
+    Order toCustomerOrder(RequestOrderDTO order, Customer customer, ShippingAddress shippingAddress);
 
     @Mapping(target = "table", source = "table")
     @Mapping(target = "totalPrice", ignore = true)

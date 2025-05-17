@@ -109,7 +109,7 @@ const SingleProduct = () => {
         : "Stock information unavailable",
     unitsInStock: product?.unitsInStock,
     category: {
-      id: product?.category?.id,
+      id: product?.category?.categoryId,
       name: product?.category?.categoryName || "Uncategorized",
     },
     images: product?.images,
@@ -148,7 +148,6 @@ const SingleProduct = () => {
           <div className="row px-3">
             <div className="col-lg-4">
               <SingleImageDisplay imageUrl={product.picture} />
-              {/* <ImagesShowcase images={product.images} /> */}
             </div>
             <div className="col-lg-6 mt-5 mt-lg-0">
               <div className="product-info">
@@ -185,7 +184,7 @@ const SingleProduct = () => {
                             type="button"
                             className="text-capitalize me-1 px-3 py-2 btn btn-primary"
                             onClick={() =>
-                              handleAddToCart(product.id, quantity)
+                              handleAddToCart(product.productId, quantity)
                             }
                           >
                             Add to Cart
@@ -202,7 +201,7 @@ const SingleProduct = () => {
                     </h5>
                     <ul className="select-list list-unstyled d-flex">
                       <Link
-                        to={`${SHOP_URI}?categoryId=${formattedProduct.category.id}`}
+                        to={`${SHOP_URI}?categoryId=${formattedProduct.category.categoryId}`}
                       >
                         {formattedProduct.category.name}
                       </Link>

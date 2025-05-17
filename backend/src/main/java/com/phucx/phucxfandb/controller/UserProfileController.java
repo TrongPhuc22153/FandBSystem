@@ -28,7 +28,6 @@ public class UserProfileController {
     @GetMapping("{userId}")
     @Operation(summary = "Get user profile", description = "Admin access")
     public ResponseEntity<UserProfileDTO> getProfile(@PathVariable String userId){
-        log.info("getProfile(userId={})", userId);
         var profileDTO = userProfileReaderService.getUserProfileByUserId(userId);
         return ResponseEntity.ok(profileDTO);
     }
@@ -36,7 +35,6 @@ public class UserProfileController {
     @GetMapping("/me")
     @Operation(summary = "Get authenticated user profile", description = "Authenticated access")
     public ResponseEntity<UserProfileDTO> getUserProfile(Principal principal){
-        log.info("getUserProfile(username={})", principal.getName());
         var profileDTO = userProfileReaderService.getUserProfileByUsername(principal.getName());
         return ResponseEntity.ok(profileDTO);
     }
@@ -46,7 +44,6 @@ public class UserProfileController {
     public ResponseEntity<ResponseDTO<UserProfileDTO>> updateUserProfile(
             Principal principal,
             @Valid @RequestBody RequestUserProfileDTO requestUserProfileDTO){
-        log.info("updateUserProfile(username={}, requestUserProfileDTO={})", principal.getName(), requestUserProfileDTO);
         var profileDTO = userProfileUpdateService.updateUserProfile(principal.getName(), requestUserProfileDTO);
         ResponseDTO<UserProfileDTO> responseDTO = ResponseDTO.<UserProfileDTO>builder()
                 .message("Your profile updated successfully")

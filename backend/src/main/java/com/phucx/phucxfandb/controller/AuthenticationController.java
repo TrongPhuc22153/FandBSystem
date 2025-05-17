@@ -60,7 +60,6 @@ public class AuthenticationController {
             HttpServletResponse response,
             Authentication authentication
     ){
-        log.info("logout(username={})", authentication.getName());
         var logoutResponse = authenticationService
                 .signOut(request, response, authentication);
 
@@ -70,53 +69,4 @@ public class AuthenticationController {
                 .build();
         return ResponseEntity.ok().body(responseDTO);
     }
-
-//
-//    @GetMapping("/verify")
-//    @Operation(tags = {"public", "get", "verify token"}, summary = "User verification email")
-//    public ResponseEntity<Void> verifyEmail(@RequestParam String token){
-//        Boolean result = emailService.validateEmail(token);
-//        String redirectUrl = serverURLProperties.getUiUrl() + "/auth";
-//        if(result){
-//            redirectUrl += "?status=true";
-//        }else{
-//            redirectUrl += "?status=false";
-//        }
-//        return ResponseEntity.status(HttpStatus.FOUND)
-//            .location(URI.create(redirectUrl)).build();
-//    }
-//
-//    @Operation(summary = "Send a email to user", tags = {"public", "get", "forgot password"},
-//        description = "Send a reset password link to user via email")
-//    @PostMapping("/forgot")
-//    public ResponseEntity<ResponseFormat> forgotEmail(HttpServletRequest request,
-//        @RequestParam(name = "email") String email) {
-//
-//        Boolean result = userPasswordService.sendResetPasswordLink(serverURLProperties.getUiUrl(), email);
-//        ResponseFormat responseFormat = ResponseFormat.builder()
-//                .status(result)
-//                .build();
-//        return ResponseEntity.ok().body(responseFormat);
-//    }
-//
-//    @Operation(summary = "Verfiy a reset password token", tags = {"public", "get", "verify token"})
-//    @GetMapping("/verifyReset")
-//    public ResponseEntity<UserInfo> verifyResetToken(
-//        @RequestParam(name = "token", required = true) String token
-//    ) throws NotFoundException, InvalidTokenException {
-//        UserInfo userInfo = userPasswordService.getUserByResetToken(token);
-//        return ResponseEntity.ok().body(userInfo);
-//    }
-//
-//    @Operation(summary = "Reset user's password", tags = {"public", "post", "change password"})
-//    @PostMapping("/reset")
-//    public ResponseEntity<ResponseFormat> resetPassword(
-//        @RequestBody UserChangePasswordToken userChangePasswordToken
-//    ) throws UserPasswordException, InvalidTokenException {
-//        Boolean status = userPasswordService.resetUserPassword(userChangePasswordToken);
-//        ResponseFormat responseFormat = ResponseFormat.builder()
-//                .status(status)
-//                .build();
-//        return ResponseEntity.ok().body(responseFormat);
-//    }
 }

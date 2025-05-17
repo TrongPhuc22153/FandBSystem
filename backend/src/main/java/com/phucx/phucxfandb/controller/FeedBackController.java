@@ -35,7 +35,6 @@ public class FeedBackController {
             @PathVariable String reservationId,
             @Valid @RequestBody RequestFeedBackDTO requestFeedbackDTO
     ) {
-        log.info("submitReservationFeedback(username={}, requestFeedbackDTO={})", principal.getName(), requestFeedbackDTO);
         FeedBackDTO feedbackDTO = feedbackUpdateService.createFeedbackForReservation(principal.getName(), reservationId, requestFeedbackDTO);
         ResponseDTO<FeedBackDTO> response = ResponseDTO.<FeedBackDTO>builder()
                 .message("Feedback submitted successfully")
@@ -51,7 +50,6 @@ public class FeedBackController {
             @PathVariable String orderId,
             @Valid @RequestBody RequestFeedBackDTO requestFeedbackDTO
     ) {
-        log.info("submitOrderFeedback(username={}, requestFeedbackDTO={})", principal.getName(), requestFeedbackDTO);
         FeedBackDTO feedbackDTO = feedbackUpdateService.createFeedbackForOrder(principal.getName(), orderId, requestFeedbackDTO);
         ResponseDTO<FeedBackDTO> response = ResponseDTO.<FeedBackDTO>builder()
                 .message("Feedback submitted successfully")
@@ -67,7 +65,6 @@ public class FeedBackController {
             @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
             @RequestParam(name = "size", defaultValue = "10") Integer pageSize
     ) {
-        log.info("getMyFeedback(username={})", principal.getName());
         Page<FeedBackDTO> feedbackList = feedbackReadService.getFeedbackByUsername(principal.getName(), pageNumber, pageSize);
         return ResponseEntity.ok(feedbackList);
     }
@@ -75,7 +72,6 @@ public class FeedBackController {
     @GetMapping("/{feedbackId}")
     @Operation(summary = "Get feedback by ID", description = "Allows authorized users to retrieve specific feedback by its ID.")
     public ResponseEntity<FeedBackDTO> getFeedbackById(@PathVariable Long feedbackId) {
-        log.info("getFeedbackById(feedbackId={})", feedbackId);
         FeedBackDTO feedbackDTO = feedbackReadService.getFeedbackById(feedbackId);
         return ResponseEntity.ok(feedbackDTO);
     }
@@ -87,7 +83,6 @@ public class FeedBackController {
             @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
             @RequestParam(name = "size", defaultValue = "10") Integer pageSize
     ) {
-        log.info("getAllReservationFeedback(reservationId={}, pageNumber={}, pageSize={})", reservationId, pageNumber, pageSize);
         Page<FeedBackDTO> allFeedback = feedbackReadService.getFeedbackByReservationId(reservationId, pageNumber, pageSize);
         return ResponseEntity.ok(allFeedback);
     }
@@ -99,7 +94,6 @@ public class FeedBackController {
             @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
             @RequestParam(name = "size", defaultValue = "10") Integer pageSize
     ) {
-        log.info("getAllOrderFeedback(orderId={}, pageNumber={}, pageSize={})", orderId, pageNumber, pageSize);
         Page<FeedBackDTO> allFeedback = feedbackReadService.getFeedbackByOrderId(orderId, pageNumber, pageSize);
         return ResponseEntity.ok(allFeedback);
     }

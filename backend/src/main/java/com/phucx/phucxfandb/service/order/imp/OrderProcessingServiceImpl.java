@@ -3,9 +3,11 @@ package com.phucx.phucxfandb.service.order.imp;
 import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
+import com.phucx.phucxfandb.dto.request.RequestOrderDetailsDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.Order;
 import com.phucx.phucxfandb.exception.NotFoundException;
+import com.phucx.phucxfandb.service.cart.CartUpdateService;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
@@ -22,6 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OrderProcessingServiceImpl implements OrderProcessingService {
+    private final CartUpdateService cartUpdateService;
     private final OrderUpdateService orderUpdateService;
     private final OrderReaderService orderReaderService;
     private final SendOrderNotificationService sendOrderNotificationService;
@@ -114,7 +117,12 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
 
     @Override
     public OrderDTO placeOrderByCustomer(String username, RequestOrderDTO requestOrderDTO) {
-        return orderUpdateService.createOrderCustomer(username, requestOrderDTO);
+        List<Long> productIds = requestOrderDTO.getOrderDetails().stream()
+                .map(RequestOrderDetailsDTO::getProductId)
+                .toList();
+        OrderDTO newOrder = orderUpdateService.createOrderCustomer(username, requestOrderDTO);
+        cartUpdateService.removeCartItems(username, productIds);
+        return newOrder;
     }
 
     @Override

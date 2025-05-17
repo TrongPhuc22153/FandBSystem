@@ -30,6 +30,8 @@ public class RequestOrderDTO {
     @NotNull(message = "Order type cannot be null")
     private OrderType type;
 
+    private Long shippingAddressId;
+
     private OrderStatus status;
 
     private OrderAction action;

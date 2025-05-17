@@ -69,17 +69,17 @@ export const useShippingAddressActions = () => {
         updateError,
         updateLoading,
         updateSuccess,
-        resetUpdate: () => {
+        resetUpdate: useCallback(() => {
             setUpdateError(null);
             setUpdateSuccess(null);
-        },
+        }, []),
         handleCreateShippingAddress,
         createError,
         createLoading,
         createSuccess,
-        resetCreate: () => {
+        resetCreate: useCallback(() => {
             setCreateError(null);
             setCreateSuccess(null);
-        },
+        }, []),
     };
 };

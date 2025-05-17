@@ -29,7 +29,7 @@ const CheckoutSummary = ({
       <hr />
       <h6 className="text-dark my-4">Items in cart</h6>
       {cartItems.map((item) => (
-        <div className="d-flex align-items-center mb-4" key={item.product.id}>
+        <div className="d-flex align-items-center mb-4" key={item.product.productId}>
           <div className="me-3 position-relative">
             <span className="text-black text-bg-light position-absolute top-0 start-100 translate-middle badge rounded-pill badge-dark">
               {item.quantity}
@@ -43,7 +43,7 @@ const CheckoutSummary = ({
           </div>
           <div className="">
             <Link
-              to={`${SHOP_URI}/${item.product.productName}?id=${item.product.id}`}
+              to={`${SHOP_URI}/${item.product.productName}?id=${item.product.productId}`}
               className="nav-link"
             >
               <b>{item.product.productName}</b> <br />

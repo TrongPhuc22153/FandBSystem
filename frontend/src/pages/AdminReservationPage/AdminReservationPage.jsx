@@ -98,29 +98,20 @@ function AdminReservationDetailsPage() {
       />
     );
   }
-
-  const startTime = formatDate(reservationData?.startTime);
-  const reservationNumber = reservationData?.reservationId;
   const reservationStatus = reservationData?.status?.toLowerCase();
-  const table = reservationData?.table; //Get Table
-  const customer = reservationData?.customer; //Get Customer
-  const menuItems = reservationData?.menuItems || []; //Get Menu Items
-  const totalPrice = menuItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
 
   return (
-    <div>
-      <ReservationDetails 
-        startTime={startTime}
-        reservationNumber={reservationNumber}
-        reservationStatus={reservationStatus}
-        reservedItems={menuItems}
-        table={table}
-        total={totalPrice}
-        customer={customer}
-      />
+    <div
+      style={{
+        position: "absolute",
+        top: "12%",
+        left: "50%",
+        transform: "translate(-50%, 0)",
+      }}
+    >
+      <div className="shadow rounded">
+        <ReservationDetails reservation={reservationData} />
+      </div>
       {reservationData?.status === RESERVATION_STATUSES.PENDING && (
         <div
           className="d-flex justify-content-end mt-3 container"

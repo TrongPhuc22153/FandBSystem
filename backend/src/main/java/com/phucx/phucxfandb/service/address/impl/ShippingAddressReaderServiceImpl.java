@@ -23,14 +23,6 @@ public class ShippingAddressReaderServiceImpl implements ShippingAddressReaderSe
 
     @Override
     @Transactional(readOnly = true)
-    public ShippingAddressDTO getShippingAddress(long id) {
-        return shippingAddressRepository.findByIdAndIsDeletedFalse(id)
-                .map(mapper::toShippingAddressDTO)
-                .orElseThrow(()-> new NotFoundException(ShippingAddress.class.getName(), id));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public ShippingAddress getShippingAddressEntity(long id) {
         return shippingAddressRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(()-> new NotFoundException(ShippingAddress.class.getName(), id));

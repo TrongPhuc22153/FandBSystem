@@ -28,7 +28,6 @@ public class CartController {
     @GetMapping("/me")
     @Operation(summary = "Get user cart", description = "Customer access")
     public ResponseEntity<CartDTO> getUserCart(Principal principal){
-        log.info("getUserCart(username={})", principal.getName());
         CartDTO cartDTO = cartReaderService.getCartByUsername(principal.getName());
         return ResponseEntity.ok(cartDTO);
     }
@@ -39,7 +38,6 @@ public class CartController {
             @Valid @RequestBody RequestCartItemDTO requestCartItemDTO,
             Principal principal
     ){
-        log.info("addCartItem(username={}, requestCartItemDTO={})", principal.getName(), requestCartItemDTO);
         CartDTO cartDTO = cartUpdateService.addCartItem(principal.getName(), requestCartItemDTO);
         ResponseDTO<CartDTO> response = ResponseDTO.<CartDTO>builder()
                 .message("Cart item quantity updated successfully")
@@ -54,7 +52,6 @@ public class CartController {
             @Valid @RequestBody RequestCartItemDTO requestCartItemDTO,
             Principal principal
     ){
-        log.info("updateCartItemQuantity(username={}, requestCartItemDTO={})", principal.getName(), requestCartItemDTO);
         CartDTO cartDTO = cartUpdateService.updateCartItemQuantity(principal.getName(), requestCartItemDTO);
         ResponseDTO<CartDTO> response = ResponseDTO.<CartDTO>builder()
                 .message("Cart item quantity updated successfully")
@@ -68,7 +65,6 @@ public class CartController {
     public ResponseEntity<ResponseDTO<CartDTO>> removeItemFromUserCart(
             Principal principal,
             @PathVariable long productId) {
-        log.info("removeItemFromUserCart(username={}, productId={})", principal.getName(), productId);
         CartDTO updatedCartDTO = cartUpdateService.removeCartItem(principal.getName(), productId);
         ResponseDTO<CartDTO> responseDTO = ResponseDTO.<CartDTO>builder()
                 .message("Item removed from cart successfully")
@@ -80,7 +76,6 @@ public class CartController {
     @DeleteMapping("/me")
     @Operation(summary = "Clear user cart", description = "Customer access")
     public ResponseEntity<ResponseDTO<Void>> clearCart(Principal principal) {
-        log.info("clearCart(username={})", principal.getName());
         cartUpdateService.removeCartItems(principal.getName());
         ResponseDTO<Void> responseDTO = ResponseDTO.<Void>builder()
                 .message("Cart cleared successfully")

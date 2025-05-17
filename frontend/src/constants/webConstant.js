@@ -75,3 +75,4 @@ export const SORTING_DIRECTIONS = {
     ASC: "ASC",
     DESC: "DESC"
 }
+export const CHECKOUT_ITEMS = "checkoutItems";

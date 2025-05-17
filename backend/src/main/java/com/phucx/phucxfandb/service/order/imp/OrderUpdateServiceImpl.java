@@ -10,15 +10,16 @@ import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.mapper.OrderDetailsMapper;
 import com.phucx.phucxfandb.mapper.OrderMapper;
 import com.phucx.phucxfandb.repository.OrderRepository;
+import com.phucx.phucxfandb.service.address.ShippingAddressReaderService;
 import com.phucx.phucxfandb.service.customer.CustomerReaderService;
 import com.phucx.phucxfandb.service.employee.EmployeeReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
+import com.phucx.phucxfandb.service.product.ProductUpdateService;
 import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
 import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,21 +33,20 @@ import java.util.stream.Collectors;
 public class OrderUpdateServiceImpl implements OrderUpdateService {
     private final ReservationTableReaderService reservationTableReaderService;
     private final ReservationTableUpdateService reservationTableUpdateService;
+    private final ShippingAddressReaderService shippingAddressReaderService;
     private final CustomerReaderService customerReaderService;
     private final EmployeeReaderService employeeReaderService;
     private final ProductReaderService productReaderService;
+    private final ProductUpdateService productUpdateService;
     private final OrderRepository orderRepository;
     private final OrderDetailsMapper orderDetailsMapper;
     private final OrderMapper orderMapper;
 
     @Override
-    @Modifying
     @Transactional
     public OrderDTO updateOrderStatusAndEmployee(String username, String orderID, OrderType type, OrderStatus status) {
-        log.info("updateOrderStatusAndEmployee(username={}, orderID={}, type={} status={})",
-                username, orderID, type, status);
         Order order = orderRepository.findByOrderIdAndType(orderID, type)
-                .orElseThrow(()-> new NotFoundException("Order", "id", orderID));
+                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderID));
         Employee employee = employeeReaderService.getEmployeeEntityByUsername(username);
         order.setEmployee(employee);
         order.setStatus(status);
@@ -55,85 +55,86 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     }
 
     @Override
-    @Modifying
     @Transactional
     public OrderDTO updateOrderStatusByEmployee(String username, String orderID, OrderType type, OrderStatus status) {
-        log.info("updateOrderStatusByEmployee(username={}, orderID={}, type={}, status={})",
-                username, orderID, type, status);
         Order order = orderRepository.findByOrderIdAndEmployeeProfileUserUsername(orderID, username)
-                .orElseThrow(()-> new NotFoundException("Order", "id", orderID));
+                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderID));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderDTO(updatedOrder);
     }
 
     @Override
-    @Modifying
     @Transactional
     public OrderDTO updateOrderStatusByCustomer(String username, String orderId, OrderType type, OrderStatus status) {
-        log.info("updateOrderStatusByCustomer(username={}, orderId={}, type={} status={})",
-                username, orderId, type, status);
         Order order = orderRepository.findByOrderIdAndCustomerProfileUserUsername(orderId, username)
-                .orElseThrow(()-> new NotFoundException("Order", "id", orderId));
+                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderId));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderDTO(updatedOrder);
     }
 
     @Override
-    @Modifying
     @Transactional
     public OrderDTO updateOrderStatus(String orderID, OrderType type, OrderStatus status) {
-        log.info("updateOrderStatus(orderID={}, type={}, status={})", orderID, type, status);
         Order order = orderRepository.findByOrderIdAndType(orderID, type)
-                .orElseThrow(()-> new NotFoundException("Order", "id", orderID));
+                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderID));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderDTO(updatedOrder);
     }
 
     @Override
-    @Modifying
     @Transactional
     public OrderDTO updateOrderStatus(String orderID, OrderStatus status) {
-        log.info("updateOrderStatus(orderID={}, status={})", orderID, status);
         Order order = orderRepository.findById(orderID)
-                .orElseThrow(()-> new NotFoundException("Order", "id", orderID));
+                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderID));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderDTO(updatedOrder);
     }
 
     @Override
-    @Modifying
     @Transactional
     public OrderDTO createOrderCustomer(String username, RequestOrderDTO requestOrderDTO) {
-        log.info("createOrderCustomer(username={}, requestOrderDTO={})", username, requestOrderDTO);
         Customer customer = customerReaderService.getCustomerEntityByUsername(username);
+
+        ShippingAddress shippingAddress = shippingAddressReaderService
+                .getShippingAddressEntity(requestOrderDTO.getShippingAddressId());
+
+        UserProfile userProfile = shippingAddress.getCustomer().getProfile();
+        if (!(userProfile.getUser().getUsername().equals(username))) {
+            throw new IllegalArgumentException("Username does not match the shipping address owner");
+        }
+
         Order newOrder = orderMapper.toCustomerOrder(
                 requestOrderDTO,
-                customer);
-        newOrder.setStatus(OrderStatus.PENDING);
+                customer,
+                shippingAddress
+        );
 
         List<OrderDetail> newOrderDetails = requestOrderDTO.getOrderDetails().stream()
-                .map(requestOrderDetail -> {
-                    Product product = productReaderService.getProductEntity(requestOrderDetail.getProductId());
-                    return orderDetailsMapper.toOrderDetail(requestOrderDetail, product, newOrder);
+                .map(item -> {
+                    Product product = productReaderService.getProductEntity(item.getProductId());
+                    if(product.getUnitsInStock()<item.getQuantity()){
+                        throw new IllegalArgumentException("Insufficient stock for product ID: " + item.getProductId());
+                    }
+                    productUpdateService.updateProductInStock(item.getProductId(), product.getUnitsInStock() - item.getQuantity());
+                    return orderDetailsMapper.toOrderDetail(item, product, newOrder);
                 })
                 .collect(Collectors.toList());
 
         newOrder.setOrderDetails(newOrderDetails);
         newOrder.setTotalPrice(calculateTotalPrice(newOrderDetails));
+        newOrder.setStatus(OrderStatus.PENDING);
 
         Order savedOrder = orderRepository.save(newOrder);
         return orderMapper.toOrderDTO(savedOrder);
     }
 
     @Override
-    @Modifying
     @Transactional
     public OrderDTO createOrderEmployee(String username, RequestOrderDTO requestOrderDTO) {
-        log.info("createOrderEmployee(username={}, requestOrderDTO={})", username, requestOrderDTO);
         Employee employee = employeeReaderService.getEmployeeEntityByUsername(username);
         // Get table
         ReservationTable table = reservationTableReaderService

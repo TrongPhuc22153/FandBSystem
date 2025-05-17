@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   useShippingAddressActions,
   useShippingAddresses,
@@ -12,6 +12,7 @@ import CheckoutSummary from "../../components/CheckoutSummary/CheckoutSummary";
 import { useAlert } from "../../context/AlertContext";
 import { Link } from "react-router-dom";
 import { HOME_URI } from "../../constants/routes";
+import { CHECKOUT_ITEMS, ORDER_TYPES } from "../../constants/webConstant";
 
 const CheckoutPage = () => {
   const {
@@ -25,6 +26,46 @@ const CheckoutPage = () => {
     isLoading: loadingCartData,
     error: cartError,
   } = useCart();
+
+  const getItemsFromLocalStorage = (key) => {
+    try {
+      const serializedItems = localStorage.getItem(key);
+      if (serializedItems === null) {
+        return [];
+      }
+      return JSON.parse(serializedItems);
+    } catch (error) {
+      return [];
+    }
+  };
+
+  // get checkout Items
+  const getCheckoutItems = () => {
+    const items = cartData?.cartItems || [];
+    const selectedItems = getItemsFromLocalStorage(CHECKOUT_ITEMS);
+    // filter selected items
+    const checkoutItems = items.filter((item) => {
+      return selectedItems.some(
+        (selectedItem) => selectedItem.productId === item.product.productId
+      );
+    });
+    // merget selectedItems with quantity
+    const result = checkoutItems.map((item) => {
+      const matchingSelectedItem = selectedItems.find(
+        (selectedItem) => selectedItem.productId === item.product.productId
+      );
+      return {
+        ...item,
+        quantity: matchingSelectedItem ? matchingSelectedItem.quantity : 0,
+      };
+    });
+    return result;
+  };
+
+  const cartItems = getCheckoutItems();
+  const totalPrice = cartData?.totalPrice || 0;
+  const shippingCost = 0;
+  const finalTotalPrice = totalPrice + shippingCost;
 
   const { handlePlaceOrder, placeError, placeLoading, placeSuccess } =
     useOrderActions();
@@ -106,14 +147,14 @@ const CheckoutPage = () => {
   };
 
   const handlePlace = useCallback(async () => {
-    if (cartData?.cartItems && cartData.cartItems.length > 0) {
-      const orderItems = cartData.cartItems.map((item) => ({
-        productId: item.product.id,
+    if (cartItems && cartItems.length > 0) {
+      const orderItems = cartItems.map((item) => ({
+        productId: item.product.productId,
         quantity: item.quantity,
       }));
 
       const requestOrderDTO = {
-        orderItems,
+        orderDetails: orderItems,
       };
 
       if (selectedAddressId && selectedAddressId !== "new") {
@@ -133,7 +174,7 @@ const CheckoutPage = () => {
         }
       }
 
-      const resp = await handlePlaceOrder(requestOrderDTO);
+      const resp = await handlePlaceOrder(requestOrderDTO, ORDER_TYPES.TAKE_AWAY);
       if (resp) {
         setIsOpenPopUp(true);
         setFieldErrors({});
@@ -141,10 +182,10 @@ const CheckoutPage = () => {
     } else {
       showNewAlert({
         message: "Your cart is empty. Please add items to proceed.",
-        variant: "danger"
+        variant: "danger",
       });
     }
-  }, [handlePlaceOrder, address, selectedAddressId, cartData, handleCreateShippingAddress, showNewAlert]);
+  }, [handlePlaceOrder, address, selectedAddressId, cartData]);
 
   const showConfirmModal = () => {
     if (validateForm()) {
@@ -198,11 +239,6 @@ const CheckoutPage = () => {
       <ErrorDisplay message={addressesError?.message || cartError?.message} />
     );
   }
-
-  const cartItems = cartData?.cartItems || [];
-  const totalPrice = cartData?.totalPrice || 0;
-  const shippingCost = 0;
-  const finalTotalPrice = totalPrice + shippingCost;
 
   return (
     <div className="container">
@@ -268,7 +304,9 @@ const CheckoutPage = () => {
                   <input
                     type="text"
                     id="shipName"
-                    className="form-control"
+                    className={`form-control ${
+                      fieldErrors?.shipName ? "is-invalid" : ""
+                    }`}
                     value={address.shipName}
                     onChange={handleInputChange}
                     disabled={selectedAddressId && selectedAddressId !== "new"}
@@ -288,7 +326,9 @@ const CheckoutPage = () => {
                   <input
                     type="text"
                     id="shipAddress"
-                    className="form-control"
+                    className={`form-control ${
+                      fieldErrors?.shipAddress ? "is-invalid" : ""
+                    }`}
                     value={address.shipAddress}
                     onChange={handleInputChange}
                     disabled={selectedAddressId && selectedAddressId !== "new"}
@@ -309,7 +349,9 @@ const CheckoutPage = () => {
                     <input
                       type="text"
                       id="shipCity"
-                      className="form-control"
+                      className={`form-control ${
+                        fieldErrors?.shipCity ? "is-invalid" : ""
+                      }`}
                       value={address.shipCity}
                       onChange={handleInputChange}
                       disabled={
@@ -330,7 +372,9 @@ const CheckoutPage = () => {
                     <input
                       type="text"
                       id="shipDistrict"
-                      className="form-control"
+                      className={`form-control ${
+                        fieldErrors?.shipDistrict ? "is-invalid" : ""
+                      }`}
                       value={address.shipDistrict}
                       onChange={handleInputChange}
                       disabled={
@@ -353,7 +397,9 @@ const CheckoutPage = () => {
                   <input
                     type="text"
                     id="shipWard"
-                    className="form-control"
+                    className={`form-control ${
+                      fieldErrors?.shipWard ? "is-invalid" : ""
+                    }`}
                     value={address.shipWard}
                     onChange={handleInputChange}
                     disabled={selectedAddressId && selectedAddressId !== "new"}
@@ -373,7 +419,9 @@ const CheckoutPage = () => {
                   <input
                     type="tel"
                     id="phone"
-                    className="form-control"
+                    className={`form-control ${
+                      fieldErrors?.phone ? "is-invalid" : ""
+                    }`}
                     value={address.phone}
                     onChange={handleInputChange}
                     disabled={selectedAddressId && selectedAddressId !== "new"}

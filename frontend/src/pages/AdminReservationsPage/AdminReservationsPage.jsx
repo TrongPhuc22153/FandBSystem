@@ -133,7 +133,7 @@ const AdminReservationsPage = () => {
   return (
     <main className="content px-5 py-3">
       <h3 className="my-3">
-        <strong>Reservations</strong> {/* Adjusted heading */}
+        <strong>Reservations</strong>
       </h3>
       <div className="container-fluid p-0">
         <div className="row">
@@ -149,7 +149,7 @@ const AdminReservationsPage = () => {
                         <input
                           className="form-control me-2"
                           type="search"
-                          placeholder="Search Reservations" // Adjusted placeholder
+                          placeholder="Search Reservations"
                           aria-label="Search"
                           value={searchValue}
                           onChange={handleSearchInputChange}
@@ -166,8 +166,8 @@ const AdminReservationsPage = () => {
                 selectedItems={selectedItems}
                 handleSelectItem={handleSelectItem}
                 handleSelectAll={handleSelectAll}
-                hadnleViewItem={handleViewReservation} // Adjusted
-                uniqueIdKey="reservationId" // Adjusted key
+                hadnleViewItem={handleViewReservation}
+                uniqueIdKey="reservationId"
               />
 
               {totalPages > 1 && (

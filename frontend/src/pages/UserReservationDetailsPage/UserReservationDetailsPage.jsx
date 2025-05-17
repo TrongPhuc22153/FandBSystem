@@ -20,5 +20,16 @@ export default function UserReservationDetailsPage() {
     return <ErrorDisplay message={reservationError.message} />;
   }
 
-  return <ReservationDetails reservation={reservationData} />;
+  return (
+    <div className="shadow rounded"
+      style={{
+        position: "absolute",
+        top: "12%",
+        left: "50%",
+        transform: "translate(-50%, 0)",
+      }}
+    >
+      <ReservationDetails reservation={reservationData} />
+    </div>
+  );
 }

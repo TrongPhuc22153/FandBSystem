@@ -31,7 +31,6 @@ public class UserController {
     @GetMapping("/me")
     @Operation(summary = "Get user information", description = "Authenticated access")
     public ResponseEntity<UserDTO> getUserInfo(Principal principal){
-        log.info("getUserInfo(username={})", principal.getName());
         UserDTO user = userReaderService.getUserByUsername(principal.getName());
         return ResponseEntity.ok().body(user);
     }
@@ -48,7 +47,6 @@ public class UserController {
     public ResponseEntity<UserDTO> getUser(
             @PathVariable String userId
     ){
-        log.info("getUser(userId={})", userId);
         UserDTO user = userReaderService.getUserByUserId(userId);
         return ResponseEntity.ok().body(user);
     }
@@ -58,7 +56,6 @@ public class UserController {
     public ResponseEntity<ResponseDTO<UserDTO>> createUser(
             @Valid @RequestBody RequestUserDTO requestUserDTO
     ){
-        log.info("createUser(username={})", requestUserDTO.getUsername());
         var userDTO = userUpdateService.createUser(requestUserDTO);
         ResponseDTO<UserDTO> responseDTO = ResponseDTO.<UserDTO>builder()
                 .message("User created successfully")
@@ -73,7 +70,6 @@ public class UserController {
             @PathVariable String userId,
             @RequestBody RequestUserDTO requestUserDTO
     ){
-        log.info("updateUserEnabledStatus(userId={})", userId);
         var data = userUpdateService.updateUserEnabledStatus(userId, requestUserDTO);
         ResponseDTO<UserDTO> responseDTO = ResponseDTO.<UserDTO>builder()
                 .message("User updated successfully")
