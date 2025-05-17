@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.mapper;
 
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
+import com.phucx.phucxfandb.dto.response.NotificationDTO;
 import com.phucx.phucxfandb.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -8,6 +9,11 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
+
+    @Named("toNotificationDTO")
+    @Mapping(target = "orderId", source = "order.orderId")
+    @Mapping(target = "reservationId", source = "reservation.reservationId")
+    NotificationDTO toNotificationDTO(Notification notification);
 
     @Named("toOrderNotification")
     @Mapping(target = "order", source = "order")

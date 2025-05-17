@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -30,10 +31,10 @@ public class NotificationController {
     @Operation(summary = "Get notifications", description = "Authenticated access")
     public ResponseEntity<Page<NotificationUserDTO>> getNotifications(
             @ModelAttribute NotificationRequestParamDTO params,
-            Principal principal
+            Authentication authentication
     ) {
         Page<NotificationUserDTO> notifications = notificationReaderService
-                .getNotificationsByUsername(principal.getName(), params);
+                .getNotifications(authentication, params);
         return ResponseEntity.ok().body(notifications);
     }
 

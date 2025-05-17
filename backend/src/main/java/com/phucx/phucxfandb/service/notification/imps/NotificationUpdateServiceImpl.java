@@ -37,8 +37,6 @@ public class NotificationUpdateServiceImpl implements NotificationUpdateService 
 
     @Override
     public NotificationUserDTO createOrderNotification(String username, String orderId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("createOrderNotification(username={}, orderId={}, requestNotificationDTO={})",
-                username, orderId, requestNotificationDTO);
         Topic topic = topicReaderService.getTopicEntity(requestNotificationDTO.getTopic());
         Order order = orderReaderService.getOrderEntity(orderId);
 
@@ -55,8 +53,6 @@ public class NotificationUpdateServiceImpl implements NotificationUpdateService 
 
     @Override
     public NotificationUserDTO createReservationNotification(String username, String reservationId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("createReservationNotification(username={}, reservationId={}, requestNotificationDTO={})",
-                username, reservationId, requestNotificationDTO);
         Topic topic = topicReaderService.getTopicEntity(requestNotificationDTO.getTopic());
         Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
 
@@ -74,7 +70,6 @@ public class NotificationUpdateServiceImpl implements NotificationUpdateService 
     @Override
     @Transactional
     public NotificationUserDTO updateNotificationIsReadStatus(String username, String notificationId, RequestNotificationUserDTO requestNotificationUserDTO) {
-        log.info("updateNotificationStatus(username={}, notificationId={}, requestNotificationUserDTO={})", username, notificationId, requestNotificationUserDTO);
         NotificationUser notificationUser = notificationUserRepository.findByReceiverUsernameAndId(username, notificationId)
                 .orElseThrow(() -> new NotFoundException("Notification", "id", notificationId));
         notificationUser.setIsRead(requestNotificationUserDTO.getIsRead());

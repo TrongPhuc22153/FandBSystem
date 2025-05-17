@@ -33,8 +33,6 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
     @Override
     public ReservationDTO cancelReservation(Authentication authentication, String reservationId) {
-        log.info("cancelReservation(username={}, reservationId={})", authentication.getName(), reservationId);
-
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
         if (roleNames.contains(RoleName.CUSTOMER)) {
             return this.cancelReservationByCustomer(authentication.getName(), reservationId);
@@ -46,7 +44,6 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     private ReservationDTO cancelReservationByCustomer(String username, String reservationId) {
-        log.info("cancelReservationByCustomer(username={}, reservationId={})", username, reservationId);
         ReservationDTO reservationDTO = reservationUpdateService.updateReservationStatusByCustomer(username, reservationId, ReservationStatus.CANCELLED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
@@ -66,7 +63,6 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     private ReservationDTO cancelReservationByEmployee(String username, String reservationId) {
-        log.info("cancelReservationByEmployee(username={}, reservationId={})", username, reservationId);
         ReservationDTO reservationDTO = reservationUpdateService.updateReservationStatusByEmployee(username, reservationId, ReservationStatus.CANCELLED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
@@ -88,18 +84,27 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     @Override
     public ReservationDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication) {
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
+        ReservationDTO result;
+
         if(roleNames.contains(RoleName.CUSTOMER)){
-            return this.placeCustomerReservation(authentication.getName(), requestReservationDTO);
+            result = this.placeCustomerReservation(authentication.getName(), requestReservationDTO);
         }else if(roleNames.contains(RoleName.EMPLOYEE)){
-            return this.placeEmployeeReservation(authentication.getName(), requestReservationDTO);
+            result = this.placeEmployeeReservation(authentication.getName(), requestReservationDTO);
         } else{
-            throw new IllegalArgumentException("Invalid order type");
+            throw new IllegalArgumentException("Invalid reservation");
         }
+
+        sendReservationNotificationService.sendPlaceReservationNotification(
+                authentication,
+                result.getReservationId(),
+                result
+        );
+
+        return result;
     }
 
     @Override
     public ReservationDTO placeCustomerReservation(String username, RequestReservationDTO requestReservationDTO) {
-        log.info("placeCustomerReservation(username={}, requestReservationDTO={})", username, requestReservationDTO);
         ReservationTable table = reservationTableReaderService.getAvailableTable(
                 requestReservationDTO.getNumberOfGuests(),
                 requestReservationDTO.getStartTime(),
@@ -111,7 +116,6 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
     @Override
     public ReservationDTO placeEmployeeReservation(String username, RequestReservationDTO requestReservationDTO) {
-        log.info("placeEmployeeReservation(username={}, requestReservationDTO={})", username, requestReservationDTO);
         ReservationTable table = reservationTableReaderService.getAvailableTable(
                 requestReservationDTO.getNumberOfGuests(),
                 requestReservationDTO.getStartTime(),
@@ -125,7 +129,6 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
     @Override
     public ReservationDTO completeReservation(String username, String reservationId) {
-        log.info("completeReservation(username={}, reservationId={})", username, reservationId);
         ReservationDTO reservationDTO = reservationReaderService.getReservation(reservationId);
         reservationTableUpdateService.updateTableStatus(
                 reservationDTO.getTable().getTableId(),
@@ -139,13 +142,11 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
     @Override
     public ReservationDTO preparingReservation(String username, String reservationId) {
-        log.info("preparingReservation(username={}, reservationId={})", username, reservationId);
         return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.PREPARING);
     }
 
     @Override
     public ReservationDTO markReservationAsPrepared(String username, String reservationId) {
-        log.info("markReservationAsPrepared(username={}, reservationId={})", username, reservationId);
         return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.PREPARED);
     }
 

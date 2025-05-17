@@ -8,15 +8,12 @@ import com.phucx.phucxfandb.service.notification.NotificationUpdateService;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import static com.phucx.phucxfandb.constant.WebSocketEndpoint.QUEUE_MESSAGES;
-import static com.phucx.phucxfandb.constant.WebSocketEndpoint.TOPIC_EMPLOYEE;
+import static com.phucx.phucxfandb.constant.WebSocketEndpoint.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SendOrderNotificationServiceImp implements SendOrderNotificationService {
@@ -25,7 +22,6 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
 
     @Override
     public void sendNotificationToUser(String orderId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendNotificationToUser(orderId={}, requestNotificationDTO={})", orderId, requestNotificationDTO);
         NotificationUserDTO notificationDTO = notificationUpdateService.createOrderNotification(
                 requestNotificationDTO.getSenderUsername(), orderId, requestNotificationDTO);
         simpMessagingTemplate.convertAndSendToUser(
@@ -37,7 +33,6 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
 
     @Override
     public void sendNotificationToGroup(String orderId, String topic, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendNotificationToGroup(orderId={}, requestNotificationDTO={})", orderId, requestNotificationDTO);
         NotificationUserDTO notificationDTO = notificationUpdateService.createOrderNotification(
                 requestNotificationDTO.getSenderUsername(), orderId, requestNotificationDTO);
         simpMessagingTemplate.convertAndSend(
@@ -47,8 +42,7 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
     }
 
     @Override
-    public void sendNotificationForOrderAction(Authentication authentication, String orderId,
-                                               OrderAction action, OrderType type, OrderDTO order) {
+    public void sendNotificationForOrderAction(Authentication authentication, String orderId, OrderAction action, OrderType type, OrderDTO order) {
         String username = authentication.getName();
 
         switch (action) {
@@ -85,7 +79,7 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
                         type == OrderType.TAKE_AWAY ? "customer " + username : username)
         );
 
-        this.sendNotificationToGroup(orderId, TOPIC_EMPLOYEE, employeeNotification);
+        this.sendNotificationToGroup(orderId, TOPIC_KITCHEN, employeeNotification);
     }
 
     @Override
@@ -101,7 +95,6 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
             this.sendNotificationToUser(orderId, customerNotification);
         }
 
-        // Notification to employees
         RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
                 employeeUsername,
                 RoleName.EMPLOYEE,
@@ -110,7 +103,7 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
                 String.format("Order #%s is now being preparing by %s", orderId, employeeUsername)
         );
 
-        this.sendNotificationToGroup(orderId, TOPIC_EMPLOYEE, employeeNotification);
+        this.sendNotificationToGroup(orderId, TOPIC_KITCHEN, employeeNotification);
     }
 
     @Override

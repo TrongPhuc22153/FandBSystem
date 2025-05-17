@@ -14,6 +14,11 @@ import { useModal } from "../../context/ModalContext";
 import { useAlert } from "../../context/AlertContext";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "../Pagination/Pagination";
+import { TOPIC_KITCHEN } from "../../constants/webSocketEnpoint";
+import { useAuth } from "../../context/AuthContext";
+import { useStompSubscription } from "../../hooks/websocketHooks";
+import { hasRole } from "../../utils/authUtils";
+import { ROLES } from "../../constants/roles";
 
 export default function OrdersTable() {
   const [searchParams] = useSearchParams();
@@ -90,6 +95,25 @@ export default function OrdersTable() {
   const closeOrderDetail = useCallback(() => {
     setSelectedOrder(null);
   }, []);
+
+  const { user } = useAuth();
+
+  const handleMessage = useCallback((newNotification) => {
+    try {
+      if (!newNotification?.id) {
+        return;
+      }
+
+    } catch (error) {
+      console.error("Error processing notification:", error);
+    }
+  }, []);
+
+  useStompSubscription({
+    topic: TOPIC_KITCHEN,
+    onMessage: handleMessage,
+    shouldSubscribe: hasRole(user, ROLES.EMPLOYEE),
+  });
 
   return (
     <>

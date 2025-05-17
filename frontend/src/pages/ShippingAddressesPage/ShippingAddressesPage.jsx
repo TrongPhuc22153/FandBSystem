@@ -149,12 +149,11 @@ const ShippingAddressesPage = () => {
 
   const handleSetDefaultAddress = useCallback(
     async (addressId) => {
-      // First, set all addresses to not be the default.
       const updatedAddresses = addresses.map((addr) => ({
         ...addr,
-        isDefault: addr.id === addressId, // Set the selected address to default
+        isDefault: addr.id === addressId,
       }));
-      // Find the new default address
+      
       const newDefault = updatedAddresses.find((addr) => addr.id === addressId);
 
       const updatedData = await handleUpdateShippingAddress(

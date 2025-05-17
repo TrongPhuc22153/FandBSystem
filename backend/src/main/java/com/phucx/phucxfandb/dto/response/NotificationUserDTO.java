@@ -18,16 +18,20 @@ public class NotificationUserDTO {
     NotificationDTO notification;
 
     SenderType senderType;
+
     UserDTO sender;
 
     ReceiverType receiverType;
+
     UserDTO receiver;
+
     RoleDTO receiverRole;
 
     Boolean isRead;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime lastModifiedAt;
 }

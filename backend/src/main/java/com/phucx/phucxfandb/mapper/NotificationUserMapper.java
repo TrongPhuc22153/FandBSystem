@@ -12,6 +12,7 @@ public interface NotificationUserMapper {
 
     @Mapping(target = "sender", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "receiver", qualifiedByName = "toBriefUserDTO")
+    @Mapping(target = "notification", qualifiedByName = "toNotificationDTO")
     NotificationUserDTO toNotificationUserDTO(NotificationUser notificationUser);
 
     @Mapping(target = "id", ignore = true)

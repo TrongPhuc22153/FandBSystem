@@ -30,7 +30,6 @@ public class ShippingAddressController {
     @GetMapping("/me")
     @Operation(summary = "Get authenticated user's shipping address", description = "Customer access")
     public ResponseEntity<List<ShippingAddressDTO>> getShippingAddresses(Principal principal) {
-        log.info("getShippingAddress(username={})", principal.getName());
         var shippingAddressDTO = shippingAddressReaderService.getShippingAddressByUsername(principal.getName());
         return ResponseEntity.ok(shippingAddressDTO);
     }
@@ -41,7 +40,6 @@ public class ShippingAddressController {
             Principal principal,
             @PathVariable Long id,
             @Valid @RequestBody RequestShippingAddressDTO requestShippingAddressDTO) {
-        log.info("updateShippingAddress(username={}, shippingAddressId={}, requestShippingAddressDTO={})", principal.getName(), id, requestShippingAddressDTO);
         var shippingAddressDTO = shippingAddressUpdateService.updateShippingAddressByUsername(principal.getName(), id, requestShippingAddressDTO);
 
         ResponseDTO<ShippingAddressDTO> responseDTO = ResponseDTO.<ShippingAddressDTO>builder()
@@ -56,7 +54,6 @@ public class ShippingAddressController {
     public ResponseEntity<ResponseDTO<ShippingAddressDTO>> createShippingAddress(
             Principal principal,
             @Valid @RequestBody RequestShippingAddressDTO requestShippingAddressDTO) {
-        log.info("createShippingAddress(username={}, requestShippingAddressDTO={})", principal.getName(), requestShippingAddressDTO);
         var shippingAddressDTO = shippingAddressUpdateService.createShippingAddressByUsername(principal.getName(), requestShippingAddressDTO);
 
         ResponseDTO<ShippingAddressDTO> responseDTO = ResponseDTO.<ShippingAddressDTO>builder()
@@ -71,7 +68,6 @@ public class ShippingAddressController {
     public ResponseEntity<ResponseDTO<Void>> deleteShippingAddress(
             Principal principal,
             @PathVariable long id) {
-        log.info("deleteShippingAddress(username={}, id={})", principal.getName(), id);
         shippingAddressUpdateService.deleteShippingAddress(principal.getName(), id);
 
         ResponseDTO<Void> responseDTO = ResponseDTO.<Void>builder()

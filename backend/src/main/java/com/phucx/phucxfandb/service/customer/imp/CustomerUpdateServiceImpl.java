@@ -35,7 +35,7 @@ public class CustomerUpdateServiceImpl implements CustomerUpdateService {
 
         userProfileUpdateService.updateUserProfile(username, requestCustomerDTO.getProfile());
 
-        if(shippingAddressReaderService.existsByCustomerId(existingCustomer.getCustomerId())){
+        if(!shippingAddressReaderService.existsByCustomerId(existingCustomer.getCustomerId())){
             createNewShippingAddress(existingCustomer);
         }
 

@@ -9,10 +9,10 @@ import org.springframework.security.core.Authentication;
 public interface SendOrderNotificationService {
 
     void sendNotificationToUser(String orderId, RequestNotificationDTO requestNotificationDTO);
+    
     void sendNotificationToGroup(String orderId, String topic, RequestNotificationDTO requestNotificationDTO);
 
-    void sendNotificationForOrderAction(Authentication authentication, String orderId,
-                                        OrderAction action, OrderType type, OrderDTO order);
+    void sendNotificationForOrderAction(Authentication authentication, String orderId, OrderAction action, OrderType type, OrderDTO order);
 
     void sendPlaceOrderNotification(Authentication authentication, String orderId, OrderType type, OrderDTO order);
 

@@ -8,14 +8,12 @@ import com.phucx.phucxfandb.service.notification.NotificationUpdateService;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import static com.phucx.phucxfandb.constant.WebSocketEndpoint.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SendReservationNotificationServiceImpl implements SendReservationNotificationService {
@@ -25,7 +23,6 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
 
     @Override
     public void sendNotificationToUser(String reservationId, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendNotificationToUser(reservationId={}, requestNotificationDTO={})", reservationId, requestNotificationDTO);
         NotificationUserDTO notificationDTO = notificationUpdateService.createReservationNotification(
                 requestNotificationDTO.getSenderUsername(), reservationId, requestNotificationDTO);
         simpMessagingTemplate.convertAndSendToUser(
@@ -37,7 +34,6 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
 
     @Override
     public void sendNotificationToGroup(String reservationId, String topic, RequestNotificationDTO requestNotificationDTO) {
-        log.info("sendNotificationToGroup(reservationId={}, requestNotificationDTO={})", reservationId, requestNotificationDTO);
         NotificationUserDTO notificationDTO = notificationUpdateService.createReservationNotification(
                 requestNotificationDTO.getSenderUsername(), reservationId, requestNotificationDTO);
         simpMessagingTemplate.convertAndSend(
@@ -60,6 +56,32 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
     }
 
     @Override
+    public void sendPlaceReservationNotification(Authentication authentication, String reservationId, ReservationDTO reservation) {
+        String username = authentication.getName();
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                username,
+                RoleName.EMPLOYEE,
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_PLACED,
+                String.format("New reservation #%s has been placed by customer %s",
+                        reservationId,
+                        username)
+        );
+        this.sendNotificationToGroup(reservationId, TOPIC_KITCHEN, employeeNotification);
+
+        RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                username,
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_CONFIRMED,
+                String.format("Your reservation #%s has been confirmed for %s",
+                        reservationId,
+                        reservation.getStartTime() != null ? reservation.getStartTime().toString() : "a specified time")
+        );
+        this.sendNotificationToUser(reservationId, customerNotification);
+    }
+
+    @Override
     public void sendPreparingNotification(String employeeUsername, String reservationId, ReservationDTO reservation) {
         RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
                 reservation.getCustomer().getProfile().getUser().getUsername(),
@@ -70,7 +92,6 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
 
         this.sendNotificationToUser(reservationId, customerNotification);
 
-        // Notification to other employees
         RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
                 employeeUsername,
                 RoleName.EMPLOYEE,
@@ -79,7 +100,7 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
                 String.format("Reservation #%s is now being preparing by %s", reservationId, employeeUsername)
         );
 
-        this.sendNotificationToGroup(reservationId, TOPIC_EMPLOYEE, employeeNotification);
+        this.sendNotificationToGroup(reservationId, TOPIC_KITCHEN, employeeNotification);
     }
 
     @Override
@@ -98,7 +119,7 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
                 RoleName.EMPLOYEE,
                 NotificationTopic.RESERVATION,
                 NotificationTitle.RESERVATION_READY,
-                String.format("Reservation #%s is prepared and ready for customer pickup", reservationId)
+                String.format("Reservation #%s is prepared and ready for customer", reservationId)
         );
 
         this.sendNotificationToGroup(reservationId, TOPIC_EMPLOYEE, employeeNotification);
