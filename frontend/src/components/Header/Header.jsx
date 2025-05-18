@@ -22,6 +22,7 @@ import { useModal } from "../../context/ModalContext";
 import { useCallback } from "react";
 import styles from "./Header.module.css";
 import NotificationDropdown from "../NotificationDropdown/NotificationDropdown";
+import SearchBar from "../Searchbar/SearchBar";
 
 export default function Header() {
   const { user, logoutAction } = useAuth();
@@ -74,6 +75,7 @@ export default function Header() {
               </Nav.Item>
             )}
           </Nav>
+          <SearchBar />
           <Nav>
             {user ? (
               <>

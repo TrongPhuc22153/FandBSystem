@@ -1,11 +1,12 @@
 import ProductCard from "../../components/ProductCard/ProductCard";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { HOME_URI } from "../../constants/routes";
 import { useProducts } from "../../hooks/productHooks";
 import Pagination from "../../components/Pagination/Pagination";
 import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import background from "../../assets/images/background.jpg";
 
 function ShopPage() {
   const [searchParams] = useSearchParams();
@@ -15,26 +16,25 @@ function ShopPage() {
 
   const [currentPage, setCurrentPage] = useState(currentPageFromURL);
   const [categoryId] = useState(categoryIdFromURL);
-  const [search] = useState(searchTermFromURL);
+
+  useEffect(() => {
+    const pageFromURL = parseInt(searchParams.get("page")) || 1;
+    setCurrentPage(pageFromURL - 1);
+  }, [searchParams]);
 
   const {
     data: productData,
-    error: error,
-    isLoading: isLoading,
+    error,
+    isLoading,
   } = useProducts({
     page: currentPage,
     categoryId: categoryId,
-    search: search,
+    search: searchTermFromURL,
   });
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set("page", pageNumber);
-    window.history.pushState(null, "", `?${newSearchParams.toString()}`);
-  };
+  const totalPages = productData?.totalPages || 0;
 
-  if (isLoading) {
+  if (!productData && isLoading) {
     return <Loading />;
   }
 
@@ -45,7 +45,7 @@ function ShopPage() {
           className="container-fluid align-items-center d-flex rounded-4"
           style={{
             height: "40vh",
-            backgroundImage: `url("images/background.jpg")`,
+            backgroundImage: `url(${background})`,
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -68,20 +68,18 @@ function ShopPage() {
         <ErrorDisplay message={error.message} />
       ) : (
         <section id="shop" className="my-5 bg-overlay">
-          <div className="container-fluid">
+          <div className="container-fluid" style={{ minHeight: "50vh" }}>
             <div className="row">
-              {productData?.content &&
-                productData.content.map((product) => (
-                  <div className="col-lg-3 col-md-6 mb-5" key={product.productId}>
-                    <ProductCard product={product} />
-                  </div>
-                ))}
+              {productData?.content.map((product) => (
+                <div className="col-lg-3 col-md-6 mb-5 d-flex" key={product.productId}>
+                  <ProductCard product={product} />
+                </div>
+              ))}
             </div>
-            {productData?.totalPages && productData.totalPages > 1 && (
+            {totalPages > 1 && (
               <Pagination
                 currentPage={currentPage + 1}
-                totalPages={productData.totalPages}
-                onPageChange={handlePageChange}
+                totalPages={totalPages}
               />
             )}
           </div>
