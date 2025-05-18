@@ -3,7 +3,13 @@ package com.phucx.phucxfandb.constant;
 public class ApiEndpoint {
 
     public static final String ORDER_BY_ID_ENDPOINT = "/api/v1/orders/{orderId}";
+
     public static final String RESERVATION_BY_ID_ENDPOINT = "/api/v1/reservations/{reservationId}";
+
+    public static final String RATING_BY_PRODUCT_ID_ENDPOINT = "/api/v1/ratings/products/{productId}";
+    public static final String USER_RATING_BY_PRODUCT_ID_ENDPOINT = "/api/v1/ratings/products/{productId}/me";
+    public static final String RATINGS_ENDPOINT = "/api/v1/ratings";
+    public static final String RATING_ID_ENDPOINT = "/api/v1/ratings/{ratingId}";
     /**
      * Public APIs accessible to everyone without authentication.
      */
@@ -21,6 +27,7 @@ public class ApiEndpoint {
             "/api/v1/tables/table",
             "/api/v1/images/{imageName}",
             "/chat",
+            RATING_BY_PRODUCT_ID_ENDPOINT
 
     };
 
@@ -86,7 +93,10 @@ public class ApiEndpoint {
             "/api/v1/customer/reservations/**",
             "/api/v1/customers/order/**",
             "/api/v1/feedback/**",
-            "/api/v1/addresses/**"
+            "/api/v1/addresses/**",
+            USER_RATING_BY_PRODUCT_ID_ENDPOINT,
+            RATINGS_ENDPOINT,
+            RATING_ID_ENDPOINT
     };
 
     /**

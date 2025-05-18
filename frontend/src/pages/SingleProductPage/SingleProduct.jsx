@@ -17,6 +17,7 @@ import { useAuth } from "../../context/AuthContext";
 import { ROLES } from "../../constants/roles";
 import SingleImageDisplay from "../../components/SingleImageDisplay/SingleImageDisplay";
 import { useModal } from "../../context/ModalContext";
+import ImagesShowcase from "../../components/ImageShowcase/ImageShowcase";
 
 const SingleProduct = () => {
   const [searchParams] = useSearchParams();
@@ -29,7 +30,8 @@ const SingleProduct = () => {
   const { showNewAlert } = useAlert();
 
   const { handleAddCartItem, addError, resetAdd } = useCartActions();
-  const { data: userRatingData } = useUserProductRating({ productId });
+  const { data: userRatingData, mutate: mutateUserRating } =
+    useUserProductRating({ productId });
   const { onOpen } = useModal();
   const navigate = useNavigate();
 
@@ -73,6 +75,10 @@ const SingleProduct = () => {
     },
     [handleAddCartItem, showNewAlert]
   );
+
+  const handleCreateOrUpdateUserRating = useCallback(() => {
+    mutateUserRating();
+  }, [mutateUserRating]);
 
   const {
     data: product,
@@ -147,7 +153,7 @@ const SingleProduct = () => {
         <div className="container-fluid">
           <div className="row px-3">
             <div className="col-lg-4">
-              <SingleImageDisplay imageUrl={product.picture} />
+              <ImagesShowcase imageUrl={product.picture}/>
             </div>
             <div className="col-lg-6 mt-5 mt-lg-0">
               <div className="product-info">
@@ -263,7 +269,13 @@ const SingleProduct = () => {
                   aria-labelledby="nav-review-tab"
                 >
                   {hasRole(user, ROLES.CUSTOMER) && userRatingData && (
-                    <ReviewForm review={userRatingData} productId={productId} />
+                    <ReviewForm
+                      review={userRatingData}
+                      productId={productId}
+                      handleCreateOrUpdateUserRating={
+                        handleCreateOrUpdateUserRating
+                      }
+                    />
                   )}
                   <ReviewList ratingsData={ratingsData} />
                 </div>

@@ -1,5 +1,8 @@
 package com.phucx.phucxfandb.service.product.imp;
 
+import com.phucx.phucxfandb.constant.OrderStatus;
+import com.phucx.phucxfandb.constant.ProductRatingStatus;
+import com.phucx.phucxfandb.constant.ReservationStatus;
 import com.phucx.phucxfandb.dto.request.ProductRequestParamDTO;
 import com.phucx.phucxfandb.dto.response.ProductDTO;
 import com.phucx.phucxfandb.entity.Product;
@@ -31,8 +34,27 @@ public class ProductReaderServiceImpl implements ProductReaderService {
 
     @Override
     @Transactional(readOnly = true)
+    public ProductRatingStatus getRatingStatus(String username, long productId) {
+        Optional<Product> purchasedProductOpt =
+                productRepository.findOptionalRatingProductUsername(
+                        username, productId, OrderStatus.COMPLETED, ReservationStatus.COMPLETED, false);
+
+        if (purchasedProductOpt.isEmpty()) {
+            return ProductRatingStatus.NOT_PURCHASED;
+        }
+
+        Product purchasedProduct = purchasedProductOpt.get();
+
+        boolean hasRating = purchasedProduct.getRatings().stream()
+                .anyMatch(rating ->
+                        rating.getCustomer().getProfile().getUser().getUsername().equals(username));
+
+        return hasRating ? ProductRatingStatus.PURCHASED_AND_RATED : ProductRatingStatus.PURCHASED_NOT_RATED;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ProductDTO getProduct(long productId, Boolean isDeleted) {
-        log.info("getProduct(productId={}, isDeleted={})", productId, isDeleted);
         Optional<Product> product;
         if(isDeleted==null){
             product = productRepository.findById(productId);
@@ -41,15 +63,20 @@ public class ProductReaderServiceImpl implements ProductReaderService {
         }
         return product.map(this::setImageUrl)
                 .map(mapper::toProductDTO)
-                .orElseThrow(()-> new NotFoundException("Product", "id", String.valueOf(productId)));
+                .orElseThrow(()-> new NotFoundException(Product.class.getName(), "id", String.valueOf(productId)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Product getProductEntity(long productID) {
-        log.info("getProductEntity(productID={})", productID);
         return productRepository.findByProductIdAndIsDeletedFalse(productID)
-                .orElseThrow(() -> new NotFoundException("Product", productID));
+                .orElseThrow(() -> new NotFoundException(Product.class.getName(), productID));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Product> getRatingProductEntity(String username, long productId) {
+        return productRepository.findOptionalRatingProductUsername(username, productId, OrderStatus.COMPLETED, ReservationStatus.COMPLETED, Boolean.FALSE);
     }
 
     @Override

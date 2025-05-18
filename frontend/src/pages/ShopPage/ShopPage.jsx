@@ -72,7 +72,7 @@ function ShopPage() {
             <div className="row">
               {productData?.content &&
                 productData.content.map((product) => (
-                  <div className="col-lg-3 col-md-6 mb-5" key={product.id}>
+                  <div className="col-lg-3 col-md-6 mb-5" key={product.productId}>
                     <ProductCard product={product} />
                   </div>
                 ))}

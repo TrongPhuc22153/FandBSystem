@@ -1,30 +1,41 @@
-import React from "react";
-import RatingDisplay from "../RatingDisplay/RatingDisplay";
-import { getImageSrc } from "../../utils/imageUtils";
+import { formatDate } from "../../utils/datetimeUtils";
+import styles from "./ReviewItem.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import RatingStar from "../RatingStar/RatingStar";
 
 const ReviewItem = ({ review }) => {
+  const user = review.profile?.user;
+
   return (
-    <div className="col-lg-6 d-flex flex-wrap gap-3">
-      <div className="col-md-2">
-        <div className="image-holder">
-          <img
-            src={getImageSrc(review?.profile?.picture)}
-            alt="review"
-            className="img-fluid rounded-circle"
-          />
-        </div>
-      </div>
-      <div className="col-md-8">
-        <div className="review-content">
-          <RatingDisplay rating={review.score} />
-          <div className="review-header">
-            <span className="author-name text-black fw-bold">
-              {review?.profile.user.username || "Anonymous"}
-            </span>
-            <span className="review-date">– {review.lastUpdatedOn}</span>
+    <div className={styles["review-item"]}>
+      <div className={styles["review-header"]}>
+        <div className={styles["user-info"]}>
+          {review.customer?.profile?.picture ? (
+            <img
+              src={review.customer?.profile.picture}
+              className={styles["user-avatar"]}
+              alt={user?.username || "User"}
+            />
+          ) : (
+            <FontAwesomeIcon className={styles["user-avatar"]} icon={faUser} />
+          )}
+          <div className={styles["user-details"]}>
+            <h5 className={styles.username}>{review.customer?.profile.user.username}</h5>
+            <span className={styles["review-date"]}>
+              {formatDate(review.createdAt)}
+            </span><br />
+            {review.createdAt !== review.lastModifiedAt &&
+              <span className={styles["review-date"]}>
+                <b>Last modified -</b> {formatDate(review.lastModifiedAt)}
+              </span>
+            }
           </div>
-          <p>{review.comment || ""}</p>
         </div>
+        <RatingStar score={review.score}/>
+      </div>
+      <div className={styles["review-content"]}>
+        <p className={styles["review-text"]}>{review.comment}</p>
       </div>
     </div>
   );

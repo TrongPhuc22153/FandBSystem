@@ -8,13 +8,27 @@ export const fetchRating = async ({ productId }) => {
   return response.json();
 };
 
+export const fetchUserProductRating = async ({ productId, token }) => {
+  const response = await fetch(`${PRODUCT_RATING_ENDPOINT}/${productId}/me`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};
+
 // Create a new rating
 export const createRating = async ({ ratingData, token }) => {
   const response = await fetch(RATINGS_ENDPOINT, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(ratingData),
   });
@@ -29,10 +43,10 @@ export const createRating = async ({ ratingData, token }) => {
 // Update an existing rating
 export const updateRating = async ({ ratingId, ratingData, token }) => {
   const response = await fetch(`${RATINGS_ENDPOINT}/${ratingId}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(ratingData),
   });
@@ -47,9 +61,9 @@ export const updateRating = async ({ ratingId, ratingData, token }) => {
 // Delete a rating
 export const deleteRating = async ({ ratingId, token }) => {
   const response = await fetch(`${RATINGS_ENDPOINT}/${ratingId}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 

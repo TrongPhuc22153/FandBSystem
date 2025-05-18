@@ -45,6 +45,9 @@ public class Product extends Auditable{
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
+    @OneToMany(mappedBy = "product")
+    private List<Rating> ratings = new ArrayList<>();
+
     @OneToOne(mappedBy = "product")
     private ProductSize productSize;
 

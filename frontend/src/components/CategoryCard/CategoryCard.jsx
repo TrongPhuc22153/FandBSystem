@@ -7,7 +7,7 @@ function CategoryCard({ category }) {
     <div
       className="rounded-4 img-fluid align-content-end"
       style={{
-        backgroundImage: `url(${getImageSrc(category.image)})`,
+        backgroundImage: `url(${getImageSrc(category.picture)})`,
         height: "60vh",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",

@@ -3,8 +3,10 @@ import styles from "./ReviewForm.module.css";
 import { useModal } from "../../context/ModalContext";
 import { useRatingActions } from "../../hooks/ratingHooks";
 import { useAlert } from "../../context/AlertContext";
+import { mutate } from "swr";
+import { PRODUCT_RATING_ENDPOINT } from "../../constants/api";
 
-const ReviewForm = ({ review, productId }) => {
+const ReviewForm = ({ review, productId, handleCreateOrUpdateUserRating }) => {
   const [initialReview, setInitialReview] = useState({
     rating: 0,
     comment: "",
@@ -47,6 +49,8 @@ const ReviewForm = ({ review, productId }) => {
     const data = await handleCreateRating(ratingData);
     if (data) {
       setHover(0);
+      mutate(`${PRODUCT_RATING_ENDPOINT}/${productId}`)
+      handleCreateOrUpdateUserRating?.();
     }
   }, [handleCreateRating, initialReview]);
 

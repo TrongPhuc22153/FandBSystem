@@ -1,0 +1,132 @@
+.product-imgs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.img-display {
+    overflow: hidden;
+}
+
+.img-showcase {
+    display: flex;
+    width: 100%;
+    transition: all 0.5s ease;
+}
+
+.img-showcase img {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+    min-width: 100%;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+}
+
+.img-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.upload-btn {
+    padding: 0.5rem 1rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: cursor;
+}
+
+.upload-btn:hover {
+    background: #0056b3;
+}
+
+.img-select {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.3rem;
+}
+
+.img-item {
+    margin: 0.3rem;
+    position: relative;
+    flex: 0 0 auto;
+    width: 80px;
+    padding-bottom: 80px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.img-item img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.img-item:nth-child(1),
+.img-item:nth-child(2),
+.img-item:nth-child(3) {
+    margin-right: 0;
+}
+
+.img-item:hover {
+    opacity: 0.8;
+}
+
+.img-item.active {
+    border-color: #007bff;
+}
+
+.img-item.primary {
+    border-color: #ffd700;
+}
+
+.img-item-controls {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    gap: 0.2rem;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.2rem;
+}
+
+.remove-btn,
+.primary-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    border-radius: 2px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-btn:hover {
+    background: #ff4444;
+    color: white;
+}
+
+.primary-btn:hover,
+.primary-btn.active {
+    background: #ffd700;
+    color: black;
+}
+
+@media screen and (min-width: 992px) {
+    .product-imgs {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}

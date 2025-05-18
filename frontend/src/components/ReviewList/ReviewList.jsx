@@ -3,7 +3,6 @@ import styles from "./ReviewList.module.css";
 
 const ReviewList = ({ ratingsData }) => {
   const reviews = ratingsData?.ratings?.content || [];
-  // Calculate average rating
   const averageRating = ratingsData?.averageScore || 0;
   const roundedAverage = Math.round(averageRating * 10) / 10;
   const totalReviews = ratingsData?.ratings?.totalElements || 0;

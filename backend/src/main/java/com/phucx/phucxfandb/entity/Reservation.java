@@ -3,7 +3,6 @@ package com.phucx.phucxfandb.entity;
 import com.phucx.phucxfandb.constant.ReservationStatus;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -38,11 +37,9 @@ public class Reservation extends Auditable{
     @Column(name = "number_of_guests", nullable = false)
     private Integer numberOfGuests = 1;
 
-    @NotNull
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @NotNull
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 

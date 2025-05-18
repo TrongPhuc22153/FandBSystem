@@ -1,7 +1,6 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { SHOP_URI } from "../../constants/routes";
-import { getPrimaryProductImage } from "../../utils/imageUtils";
+import { getImageSrc } from "../../utils/imageUtils";
 import styles from "./ProductCard.module.css";
 
 function ProductCard({ product }) {
@@ -11,9 +10,14 @@ function ProductCard({ product }) {
         className={`image-holder text-center position-relative ${styles["image-holder"]}`}
       >
         <img
-          src={getPrimaryProductImage(product.picture)}
+          src={getImageSrc(product.picture)}
           alt={product.productName}
           className={`img-fluid rounded-4 ${styles["image"]}`}
+          style={{
+            width: "340px",
+            height: "250px",
+            objectFit: "cover"
+          }}
         />
       </div>
       <div className={`product-detail ${styles["product-detail"]}`}>
