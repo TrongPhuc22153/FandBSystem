@@ -31,7 +31,6 @@ const AuthProvider = ({ children }) => {
     revalidateOnMount: true,
   });
 
-  // login
   const loginAction = useCallback(
     async (credential) => {
       setLoginError(null);
@@ -43,16 +42,14 @@ const AuthProvider = ({ children }) => {
           password: credential.password,
         });
 
-        // Store token in cookie
         Cookies.set("access_token", data.accessToken, {
           expires: 7,
           sameSite: "Strict",
         });
         setToken(data.accessToken);
 
-        // Fetch user data after login
         const userData = await fetchUser({ token: data.accessToken });
-        // Update SWR cache
+
         await mutate(USER_ENDPOINT, userData, { revalidate: false });
         setLoginSuccess(message || "Logged in successfully");
 
@@ -69,10 +66,9 @@ const AuthProvider = ({ children }) => {
         setLoginLoading(false);
       }
     },
-    [mutate]
+    [mutate, navigate]
   );
 
-  // Logout
   const logoutAction = useCallback(async () => {
     try {
       const currentToken = Cookies.get("access_token");
@@ -82,14 +78,13 @@ const AuthProvider = ({ children }) => {
       setToken(null);
       Cookies.remove("access_token", { path: "/" });
 
-      // Clear SWR cache
       await mutate(USER_ENDPOINT, null, { revalidate: false });
       navigate(LOGIN_URI);
       return;
     } catch (error) {
       return;
     }
-  }, [mutate]);
+  }, [mutate, navigate]);
 
   return (
     <AuthContext.Provider

@@ -34,7 +34,7 @@ export default function Header() {
       message: "Do you want to logout?",
       onYes: logoutAction,
     });
-  }, [user, logoutAction]);
+  }, [logoutAction, onOpen]);
 
   return (
     <Navbar expand="lg" id="mainNav" className={styles["main-nav"]}>

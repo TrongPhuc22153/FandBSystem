@@ -20,7 +20,7 @@ export const useCart = () => {
 };
 
 export const useCartActions = () => {
-    const { token, error } = useAuth();
+    const { token } = useAuth();
   
     // --- State for handleAddCartItem ---
     const [addLoading, setAddLoading] = useState(false);
@@ -61,10 +61,6 @@ export const useCartActions = () => {
     // --- Action Handlers ---
     const handleAddCartItem = useCallback(
       async (requestCartItemDTO) => {
-        if (!token) {
-          setAddError(error.message);
-          return null;
-        }
         setAddLoading(true);
         setAddError(null);
         setAddSuccess(null);
@@ -84,10 +80,6 @@ export const useCartActions = () => {
   
     const handleUpdateCartItemQuantity = useCallback(
       async (requestCartItemDTO) => {
-        if (!token) {
-          setUpdateError(error);
-          return null;
-        }
         setUpdateLoading(true);
         setUpdateError(null);
         setUpdateSuccess(null);
@@ -107,10 +99,6 @@ export const useCartActions = () => {
   
     const handleRemoveItemFromCart = useCallback(
       async (productId) => {
-        if (!token) {
-          setRemoveError(error);
-          return null;
-        }
         setRemoveLoading(true);
         setRemoveError(null);
         setRemoveSuccess(null);
@@ -129,10 +117,6 @@ export const useCartActions = () => {
     );
   
     const handleClearCart = useCallback(async () => {
-      if (!token) {
-        setClearError(error);
-        return null;
-      }
       setClearLoading(true);
       setClearError(null);
       setClearSuccess(null);

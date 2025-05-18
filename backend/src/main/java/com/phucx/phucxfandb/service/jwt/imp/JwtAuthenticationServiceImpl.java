@@ -3,12 +3,15 @@ package com.phucx.phucxfandb.service.jwt.imp;
 import com.phucx.phucxfandb.constant.RoleName;
 import com.phucx.phucxfandb.entity.User;
 import com.phucx.phucxfandb.service.jwt.JwtAuthenticationService;
+import com.phucx.phucxfandb.utils.RoleUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -25,19 +28,19 @@ public class JwtAuthenticationServiceImpl implements JwtAuthenticationService {
     private final String ROLE_CLAIM = "role";
 
     @Value("${security.jwt.expiration-time}")
-    private long EXPIRATION_TIME;
+    private long ACCESS_TOKEN_EXPIRATION_TIME;
     @Value("${security.jwt.secret-key}")
-    private String SECRET_KEY;
+    private String jwtSecretKey;
     
     private SecretKey getSecretKey(){
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
     public String generateAuthToken(User user) {
         log.debug("generateAuthToken(username={})", user.getUsername());
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + EXPIRATION_TIME);
+        Date expiry = new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_TIME);
         List<String> roles = user.getRoles().stream()
                 .map(role -> role.getRoleName().name())
                 .toList();
@@ -74,6 +77,14 @@ public class JwtAuthenticationServiceImpl implements JwtAuthenticationService {
             log.warn("Error: {}", e.getMessage());
         }
         return Collections.emptySet();
+    }
+
+    @Override
+    public UsernamePasswordAuthenticationToken extractAuthentication(String token) {
+        String username = this.extractUsername(token);
+        Set<RoleName> roles = this.extractRoles(token);
+        Collection<GrantedAuthority> authorities = RoleUtils.getAuthorities(roles);
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
 
     @Override

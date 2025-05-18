@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,22 +23,14 @@ import static com.phucx.phucxfandb.constant.WebConstant.BEARER_PREFIX;
 @RequiredArgsConstructor
 public class JwtValidationFilter extends OncePerRequestFilter {
     private final JwtAuthenticationService jwtAuthenticationService;
-    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         String token = extractToken(request);
-        // Log token extraction
         if (token != null) {
             if (jwtAuthenticationService.validateToken(token)) {
-                String username = jwtAuthenticationService.extractUsername(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails.getUsername(),
-                        null,
-                        userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = jwtAuthenticationService.extractAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

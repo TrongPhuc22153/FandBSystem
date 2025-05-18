@@ -7,8 +7,11 @@ import {
   faMapMarkedAlt,
   faCalendarCheck,
   faBell,
+  faCog,
+  faKey,
+  faCaretDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   USER_RESERVATIONS_URI,
   HOME_URI,
@@ -16,10 +19,11 @@ import {
   USER_ORDERS_URI,
   USER_PROFILE_URI,
   USER_NOTIFICATIONS_URI,
+  USER_CHANGE_PASSWORD_URI
 } from "../../constants/routes";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { hasRole } from "../../utils/authUtils";
 import { ROLES } from "../../constants/roles";
 import styles from "./Sidebar.module.css";
@@ -27,6 +31,8 @@ import styles from "./Sidebar.module.css";
 export const CustomerSidebar = () => {
   const { logoutAction, user } = useAuth();
   const { onOpen } = useModal();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const location = useLocation();
 
   const showConfirmModal = useCallback(() => {
     onOpen({
@@ -34,7 +40,11 @@ export const CustomerSidebar = () => {
       message: "Do you want to logout?",
       onYes: logoutAction,
     });
-  }, [logoutAction, user]);
+  }, [logoutAction, onOpen]);
+
+  const toggleSettings = useCallback(() => {
+    setIsSettingsOpen((prevState) => !prevState);
+  }, []);
 
   return (
     <nav className={styles["nav"]}>
@@ -52,9 +62,7 @@ export const CustomerSidebar = () => {
               <Link
                 to={USER_PROFILE_URI}
                 className={`${styles["nav_link"]} ${
-                  window.location.pathname === USER_PROFILE_URI
-                    ? styles["active"]
-                    : ""
+                  location.pathname === USER_PROFILE_URI ? styles["active"] : ""
                 }`}
               >
                 <FontAwesomeIcon icon={faUser} className={styles["nav_icon"]} />
@@ -63,9 +71,7 @@ export const CustomerSidebar = () => {
               <Link
                 to={USER_ADDRESSES_URI}
                 className={`${styles["nav_link"]} ${
-                  window.location.pathname === USER_ADDRESSES_URI
-                    ? styles["active"]
-                    : ""
+                  location.pathname === USER_ADDRESSES_URI ? styles["active"] : ""
                 }`}
               >
                 <FontAwesomeIcon
@@ -77,9 +83,7 @@ export const CustomerSidebar = () => {
               <Link
                 to={USER_ORDERS_URI}
                 className={`${styles["nav_link"]} ${
-                  window.location.pathname === USER_ORDERS_URI
-                    ? styles["active"]
-                    : ""
+                  location.pathname === USER_ORDERS_URI ? styles["active"] : ""
                 }`}
               >
                 <FontAwesomeIcon
@@ -91,7 +95,7 @@ export const CustomerSidebar = () => {
               <Link
                 to={USER_RESERVATIONS_URI}
                 className={`${styles["nav_link"]} ${
-                  window.location.pathname === USER_RESERVATIONS_URI
+                  location.pathname === USER_RESERVATIONS_URI
                     ? styles["active"]
                     : ""
                 }`}
@@ -101,21 +105,52 @@ export const CustomerSidebar = () => {
                   className={styles["nav_icon"]}
                 />
                 <span className={styles["nav_name"]}>Reservations</span>
-              </Link>              
+              </Link>
               <Link
                 to={USER_NOTIFICATIONS_URI}
                 className={`${styles["nav_link"]} ${
-                  window.location.pathname === USER_NOTIFICATIONS_URI
+                  location.pathname === USER_NOTIFICATIONS_URI
                     ? styles["active"]
                     : ""
                 }`}
               >
-                <FontAwesomeIcon
-                  icon={faBell}
-                  className={styles["nav_icon"]}
-                />
+                <FontAwesomeIcon icon={faBell} className={styles["nav_icon"]} />
                 <span className={styles["nav_name"]}>Notifications</span>
               </Link>
+
+              <div className={styles["nav_item"]}>
+                <div
+                  className={`${styles["nav_link"]} ${
+                    isSettingsOpen ? styles["active"] : ""
+                  }`}
+                  onClick={toggleSettings}
+                >
+                  <FontAwesomeIcon icon={faCog} className={styles["nav_icon"]} />
+                  <span className={styles["nav_name"]}>Settings</span>
+                  <FontAwesomeIcon
+                    icon={faCaretDown}
+                    className={styles["nav_caret"]}
+                  />
+                </div>
+                {isSettingsOpen && (
+                  <div className={styles["nav_dropdown"]}>
+                    <Link
+                      to={USER_CHANGE_PASSWORD_URI}
+                      className={`${styles["nav_dropdown-link"]} ${
+                        location.pathname === USER_CHANGE_PASSWORD_URI
+                          ? styles["active"]
+                          : ""
+                      }`}
+                    >
+                      <FontAwesomeIcon
+                        icon={faKey}
+                        className={styles["nav_dropdown-icon"]}
+                      />
+                      Change Password
+                    </Link>
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>

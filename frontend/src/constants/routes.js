@@ -2,6 +2,7 @@ export const HOME_URI = "/";
 export const SHOP_URI = "/shop";
 export const ABOUT_URI = "/about";
 export const LOGIN_URI = "/login";
+
 export const REGISTER_URI = "/register";
 export const RESERVATION_URI = "/reservation";
 export const CART_URI = "/cart";
@@ -13,6 +14,7 @@ export const EMPLOYEE_PLACE_ORDERS_URI = `${EMPLOYEE_PATH}/orders/place`;
 export const EMPLOYEE_KITCHEN_URI = `${EMPLOYEE_PATH}/kitchen`;
 export const EMPLOYEE_TABLES_URI = `${EMPLOYEE_PATH}/tables`;
 export const EMPLOYEE_NOTIFICATIONS_URI = `${EMPLOYEE_PATH}/notifications`;
+export const EMPLOYEE_CHANGE_PASSWORD_URI = `${EMPLOYEE_PATH}/password`;
 
 const USER_PATH = "/user"
 export const USER_PROFILE_URI = `${USER_PATH}/profile`;
@@ -22,6 +24,7 @@ export const USER_ADDRESSES_URI = `${USER_PATH}/addresses`;
 export const USER_RATING_URI = `${USER_PATH}/rating`;
 export const USER_RESERVATIONS_URI = `${USER_PATH}/reservations`;
 export const USER_NOTIFICATIONS_URI = `${USER_PATH}/notifications`;
+export const USER_CHANGE_PASSWORD_URI = `${USER_PATH}/password`;
 
 const ADMIN_PATH = "/admin"
 export const ADMIN_DASHBOARD_URI = `${ADMIN_PATH}/dashboard`;

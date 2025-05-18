@@ -10,6 +10,9 @@ public class ApiEndpoint {
     public static final String USER_RATING_BY_PRODUCT_ID_ENDPOINT = "/api/v1/ratings/products/{productId}/me";
     public static final String RATINGS_ENDPOINT = "/api/v1/ratings";
     public static final String RATING_ID_ENDPOINT = "/api/v1/ratings/{ratingId}";
+
+    public static final String IMAGES_ENDPOINT = "/api/v1/images";
+    public static final String IMAGE_BY_NAME_ENDPOINT = "/api/v1/images/{imageName}";
     /**
      * Public APIs accessible to everyone without authentication.
      */
@@ -25,8 +28,8 @@ public class ApiEndpoint {
             "/api/v1/feedback",
             "/api/v1/tables",
             "/api/v1/tables/table",
-            "/api/v1/images/{imageName}",
             "/chat",
+            IMAGE_BY_NAME_ENDPOINT,
             RATING_BY_PRODUCT_ID_ENDPOINT
 
     };
@@ -34,7 +37,7 @@ public class ApiEndpoint {
     public static final String[] AUTH_API = {
             "/api/v1/auth/login",
             "/api/v1/auth/register",
-            "/api/v1/images"
+            IMAGES_ENDPOINT
     };
 
     /**
@@ -46,6 +49,7 @@ public class ApiEndpoint {
             "/api/v1/profiles/me",
             "/api/v1/address/**",
             "/api/v1/auth/logout",
+            "/api/v1/auth/password",
             "/api/v1/notifications/**",
             "/api/v1/orders",
             "/api/v1/reservations",

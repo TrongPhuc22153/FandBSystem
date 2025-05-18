@@ -2,6 +2,7 @@ package com.phucx.phucxfandb.controller;
 
 import com.phucx.phucxfandb.dto.request.LoginUserDTO;
 import com.phucx.phucxfandb.dto.request.RegisterUserDTO;
+import com.phucx.phucxfandb.dto.request.UpdateUserPasswordDTO;
 import com.phucx.phucxfandb.dto.response.LoginResponse;
 import com.phucx.phucxfandb.dto.response.LogoutResponseDTO;
 import com.phucx.phucxfandb.dto.response.RegisteredUserDTO;
@@ -68,5 +69,18 @@ public class AuthenticationController {
                 .data(logoutResponse)
                 .build();
         return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @PatchMapping(value = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Change password endpoint", description = "Authenticated access")
+    public ResponseEntity<ResponseDTO<Void>> changePassword(
+            Authentication authentication,
+            @Valid @RequestBody UpdateUserPasswordDTO updateUserPasswordDTO){
+        authenticationService.updateUserPassword(authentication.getName(), updateUserPasswordDTO);
+
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message("Your password updated successfully")
+                .build();
+        return ResponseEntity.ok().body(response);
     }
 }

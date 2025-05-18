@@ -45,12 +45,15 @@ export default function Confirmation({ reservationData, onPrevious }) {
       startTime: reservationData.startDateTime,
       endTime: reservationData.endDateTime,
       notes: reservationData.notes,
-      tableId: reservationData.tableSelection,
       menuItems: reservationData.selectedItems.map((item) => ({
         productId: item.id,
         quantity: item.quantity
       }))
     }
+    if(reservationData.tableSelection){
+      data.tableId = reservationData.tableSelection
+    }
+    
     const res = await handleCreateReservation(data)
     if(res){
       setConfirmationNumber(res.data.reservationId);

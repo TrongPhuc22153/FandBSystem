@@ -1,4 +1,4 @@
-import { LOGIN_ENDPOINT, LOGOUT_ENDPOINT, REGISTER_ENDPOINT } from "../constants/api";
+import { LOGIN_ENDPOINT, LOGOUT_ENDPOINT, PASSWORD_ENDPOINT, REGISTER_ENDPOINT } from "../constants/api";
 
 export const login = async ({ username, password }) => {
   const response = await fetch(LOGIN_ENDPOINT, {
@@ -11,6 +11,28 @@ export const login = async ({ username, password }) => {
 
   if (!response.ok) {
     throw await response.json();
+  }
+
+  return response.json();
+};
+
+export const changePassword = async ({ userId, oldPassword, newPassword, token }) => {
+  const response = await fetch(PASSWORD_ENDPOINT, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      userId: userId,
+      password: oldPassword,
+      newPassword: newPassword,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw error;
   }
 
   return response.json();

@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.service.image.imp;
 
+import com.phucx.phucxfandb.constant.ApiEndpoint;
 import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.service.image.ImageReaderService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,6 @@ public class ImageReaderServiceImpl implements ImageReaderService {
     @Value("${image.base-url}")
     private String baseUrl;
 
-    private final static String IMAGE_URI = "/api/v1/images";
-
 
     @Override
     public InputStream getImage(String imageName) throws IOException {
@@ -47,6 +46,6 @@ public class ImageReaderServiceImpl implements ImageReaderService {
     @Override
     public String getImageUrl(String imageName) {
         String normalizedBaseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length()-1) : baseUrl;
-        return normalizedBaseUrl + IMAGE_URI + "/" + imageName;
+        return normalizedBaseUrl + ApiEndpoint.IMAGES_ENDPOINT + "/" + imageName;
     }
 }

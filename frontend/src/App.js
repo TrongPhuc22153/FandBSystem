@@ -53,6 +53,8 @@ import WebSocketProvider from "./context/WebSocketContext";
 import EmployeeNotificationPage from "./pages/EmployeeNotificationPage/EmployeeNotificationPage";
 import CustomerProfilePage from "./pages/CustomerProfilePage/CustomerProfilePage";
 import EmployeeProfilePage from "./pages/EmployeeProfilePage/EmployeeProfilePage";
+import UserChangePassword from "./pages/UserChangePassword/UserChangePassword";
+import EmployeeChangePassword from "./pages/EmployeeChangePassword/EmployeeChangePassword";
 
 function App() {
   return (
@@ -107,6 +109,7 @@ function App() {
                       <Route path="tables" element={<EmployeeTableManagement/>}/>
                       <Route path="kitchen" element={<EmployeeKitchenPage/>}/>
                       <Route path="notifications" element={<EmployeeNotificationPage/>}/>
+                      <Route path="password" element={<EmployeeChangePassword/>}/>
                     </Route>
                   </Route>
 
@@ -119,6 +122,7 @@ function App() {
                       <Route path="reservations" element={<UserReservationsPage/>}/>
                       <Route path="reservations/:id" element={<UserReservationDetailsPage/>}/>
                       <Route path="notifications" element={<UserNotificationPage/>}/>
+                      <Route path="password" element={<UserChangePassword/>}/>
                     </Route>
                   </Route>
                 </Route>

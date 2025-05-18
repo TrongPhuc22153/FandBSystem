@@ -9,9 +9,11 @@ export const CATEGORIES_ENDPOINT = `${API_BASE_URL}/api/v1/categories`;
 export const PRODUCT_RATING_ENDPOINT = `${API_BASE_URL}/api/v1/ratings/products`;
 export const RATINGS_ENDPOINT = `${API_BASE_URL}/api/v1/ratings`;
 
-export const REGISTER_ENDPOINT = `${API_BASE_URL}/api/v1/auth/register`;
-export const LOGIN_ENDPOINT = `${API_BASE_URL}/api/v1/auth/login`;
-export const LOGOUT_ENDPOINT = `${API_BASE_URL}/api/v1/auth/logout`;
+const AUTH_PATH = `${API_BASE_URL}/api/v1/auth`
+export const REGISTER_ENDPOINT = `${AUTH_PATH}/register`;
+export const LOGIN_ENDPOINT = `${AUTH_PATH}/login`;
+export const LOGOUT_ENDPOINT = `${AUTH_PATH}/logout`;
+export const PASSWORD_ENDPOINT = `${AUTH_PATH}/password`;
 
 export const USER_ENDPOINT = `${API_BASE_URL}/api/v1/users/me`;
 export const USERS_ENDPOINT = `${API_BASE_URL}/api/v1/users`;

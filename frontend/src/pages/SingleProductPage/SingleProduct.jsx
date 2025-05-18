@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { HOME_URI, LOGIN_URI, SHOP_URI } from "../../constants/routes";
 import QuantityInput from "../../components/QuantityInput/QuanityInput";
@@ -15,14 +15,14 @@ import RatingStar from "../../components/RatingStar/RatingStar";
 import { hasRole } from "../../utils/authUtils";
 import { useAuth } from "../../context/AuthContext";
 import { ROLES } from "../../constants/roles";
-import SingleImageDisplay from "../../components/SingleImageDisplay/SingleImageDisplay";
 import { useModal } from "../../context/ModalContext";
 import ImagesShowcase from "../../components/ImageShowcase/ImageShowcase";
+import { INSUFFICIENT_AUTHENTICATION_ERROR } from "../../constants/error";
 
 const SingleProduct = () => {
   const [searchParams] = useSearchParams();
   const productIdSearch = searchParams.get("id") || 0;
-  const { user, error: authError } = useAuth();
+  const { user } = useAuth();
 
   const [productId] = useState(productIdSearch);
   const [quantity, setQuantity] = useState(1);
@@ -36,25 +36,26 @@ const SingleProduct = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (authError && addError) {
-      onOpen({
-        title: "Login is required!",
-        message: "You need to login to add this food to cart!",
-        onYes: () => {
-          resetAdd();
-          navigate(LOGIN_URI);
-        },
-        onNo: () => resetAdd(),
-      });
+    if (addError) {
+      if(addError.error === INSUFFICIENT_AUTHENTICATION_ERROR){
+        onOpen({
+          title: "Login is required!",
+          message: "You need to login to add this food to cart!",
+          onYes: () => {
+            resetAdd();
+            navigate(LOGIN_URI);
+          },
+          onNo: () => resetAdd(),
+        });
+      }else{
+        showNewAlert({
+          message: addError.message || "Error while adding new item",
+          variant: "danger",
+          action: resetAdd,
+        });
+      }
     }
-    if (addError?.message) {
-      showNewAlert({
-        message: addError.message,
-        variant: "danger",
-        action: resetAdd,
-      });
-    }
-  }, [authError, addError, showNewAlert, resetAdd, onOpen, navigate]);
+  }, [addError, showNewAlert, resetAdd, onOpen, navigate]);
 
   const handleQuantityChange = useCallback((newQuantity) => {
     setQuantity(newQuantity);
