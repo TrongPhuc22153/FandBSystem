@@ -52,7 +52,7 @@ public class CategoryReaderServiceImp implements CategoryReaderService {
         }
         return category.map(this::setImageUrl)
                 .map(mapper::toCategoryDTO)
-                .orElseThrow(()-> new NotFoundException("Category", id));
+                .orElseThrow(()-> new NotFoundException(Category.class.getSimpleName(), id));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class CategoryReaderServiceImp implements CategoryReaderService {
     public Category getCategoryEntity(long categoryId) {
         log.info("getCategoryEntity(categoryId={})", categoryId);
         return categoryRepository.findByCategoryIdAndIsDeletedFalse(categoryId)
-                .orElseThrow(()-> new NotFoundException("Category", categoryId));
+                .orElseThrow(()-> new NotFoundException(Category.class.getSimpleName(), categoryId));
     }
 
     private Category setImageUrl(Category category){

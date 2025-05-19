@@ -28,7 +28,7 @@ public class UserProfileUpdateServiceImpl implements UserProfileUpdateService {
     @Transactional
     public UserProfileDTO updateUserProfile(String username, RequestUserProfileDTO requestUserProfileDTO) {
         UserProfile existingProfile = userProfileRepository.findByUserUsername(username)
-                .orElseThrow(()-> new NotFoundException(UserProfile.class.getName(), "username", username));
+                .orElseThrow(()-> new NotFoundException(UserProfile.class.getSimpleName(), "username", username));
 
         updateImage(requestUserProfileDTO, existingProfile.getPicture());
         userProfileMapper.updateUserProfile(requestUserProfileDTO, existingProfile);

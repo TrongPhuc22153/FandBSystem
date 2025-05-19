@@ -36,7 +36,7 @@ public class ProductUpdateServiceImpl implements ProductUpdateService {
         log.info("updateProductInStock(productId={}, quantity={})", productId, quantity);
         // Find existing product
         Product product = productRepository.findByProductIdAndIsDeletedFalse(productId)
-                .orElseThrow(() -> new NotFoundException("Product", "id", productId));
+                .orElseThrow(() -> new NotFoundException(Product.class.getSimpleName(), "id", productId));
         product.setUnitsInStock(quantity);
         return productRepository.save(product);
     }
@@ -47,7 +47,7 @@ public class ProductUpdateServiceImpl implements ProductUpdateService {
         log.info("updateProduct(productId={}, requestProductDTO={})", productId, requestProductDTO);
         // Find existing product
         Product product = productRepository.findByProductIdAndIsDeletedFalse(productId)
-                .orElseThrow(() -> new NotFoundException("Product", "id", productId));
+                .orElseThrow(() -> new NotFoundException(Product.class.getSimpleName(), "id", productId));
 
         // upload new image
         if(requestProductDTO.getPicture()!=null && !requestProductDTO.getPicture().isEmpty()){
@@ -102,7 +102,7 @@ public class ProductUpdateServiceImpl implements ProductUpdateService {
     public ProductDTO updateProductIsDeletedStatus(long id, RequestProductDTO requestProductDTO) {
         log.info("updateProductIsDeletedStatus(id={})", id);
         Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Product", id));
+                .orElseThrow(() -> new NotFoundException(Product.class.getSimpleName(), id));
         existingProduct.setIsDeleted(requestProductDTO.getIsDeleted());
         Product updated = productRepository.save(existingProduct);
         return mapper.toProductDTO(updated);

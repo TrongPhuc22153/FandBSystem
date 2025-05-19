@@ -26,7 +26,7 @@ public class CustomerReaderServiceImp implements CustomerReaderService {
         return customerRepository.findById(customerId)
                 .map(this::setImageUrl)
                 .map(mapper::toCustomerDTO)
-                .orElseThrow(() -> new NotFoundException(Customer.class.getName(), customerId));
+                .orElseThrow(() -> new NotFoundException(Customer.class.getSimpleName(), customerId));
     }
 
     @Override
@@ -35,21 +35,21 @@ public class CustomerReaderServiceImp implements CustomerReaderService {
         return customerRepository.findByProfileUserUsername(username)
                 .map(this::setImageUrl)
                 .map(mapper::toCustomerDTO)
-                .orElseThrow(() -> new NotFoundException(Customer.class.getName(), username));
+                .orElseThrow(() -> new NotFoundException(Customer.class.getSimpleName(), username));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Customer getCustomerEntityById(String customerId) {
         return customerRepository.findById(customerId)
-                .orElseThrow(() -> new NotFoundException(Customer.class.getName(), customerId));
+                .orElseThrow(() -> new NotFoundException(Customer.class.getSimpleName(), customerId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Customer getCustomerEntityByUsername(String username) {
         return customerRepository.findByProfileUserUsername(username)
-                .orElseThrow(() -> new NotFoundException(Customer.class.getName(), username));
+                .orElseThrow(() -> new NotFoundException(Customer.class.getSimpleName(), username));
     }
 
     private Customer setImageUrl(Customer customer){

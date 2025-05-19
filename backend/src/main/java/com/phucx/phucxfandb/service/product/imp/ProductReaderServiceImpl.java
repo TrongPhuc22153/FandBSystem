@@ -63,14 +63,14 @@ public class ProductReaderServiceImpl implements ProductReaderService {
         }
         return product.map(this::setImageUrl)
                 .map(mapper::toProductDTO)
-                .orElseThrow(()-> new NotFoundException(Product.class.getName(), "id", String.valueOf(productId)));
+                .orElseThrow(()-> new NotFoundException(Product.class.getSimpleName(), "id", String.valueOf(productId)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Product getProductEntity(long productID) {
         return productRepository.findByProductIdAndIsDeletedFalse(productID)
-                .orElseThrow(() -> new NotFoundException(Product.class.getName(), productID));
+                .orElseThrow(() -> new NotFoundException(Product.class.getSimpleName(), productID));
     }
 
     @Override

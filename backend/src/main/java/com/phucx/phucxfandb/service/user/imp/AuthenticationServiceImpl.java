@@ -1,6 +1,8 @@
 package com.phucx.phucxfandb.service.user.imp;
 
+import com.phucx.phucxfandb.constant.EmailConstants;
 import com.phucx.phucxfandb.constant.EmailVerified;
+import com.phucx.phucxfandb.constant.JwtType;
 import com.phucx.phucxfandb.constant.RoleName;
 import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.LoginResponse;
@@ -8,9 +10,11 @@ import com.phucx.phucxfandb.dto.response.LogoutResponseDTO;
 import com.phucx.phucxfandb.dto.response.RegisteredUserDTO;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.exception.EntityExistsException;
+import com.phucx.phucxfandb.exception.InvalidTokenException;
 import com.phucx.phucxfandb.repository.UserRepository;
 import com.phucx.phucxfandb.service.email.EmailService;
 import com.phucx.phucxfandb.service.jwt.JwtAuthenticationService;
+import com.phucx.phucxfandb.service.jwt.JwtEmailService;
 import com.phucx.phucxfandb.service.role.RoleReaderService;
 import com.phucx.phucxfandb.service.user.AuthenticationService;
 import com.phucx.phucxfandb.utils.RandomStringGeneratorUtils;
@@ -40,6 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtAuthenticationService jwtAuthenticationService;
+    private final JwtEmailService jwtEmailService;
     private final RoleReaderService roleReaderService;
     private final EmailService emailService;
 
@@ -213,23 +218,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public Boolean updateUserPassword(UpdateForgetPassword UpdateForgetPassword) {
-        User user = userRepository.findById(UpdateForgetPassword.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("User does not found!"));
-        String hashedPassword = passwordEncoder.encode(UpdateForgetPassword.getPassword());
-        user.setPassword(hashedPassword);
-        User updatedUser = userRepository.save(user);
-        return passwordEncoder.matches(updatedUser.getPassword(), hashedPassword);
-    }
-
-    @Override
-    @Transactional
     public Boolean resetUserPasswordRandom(String userId) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(()-> new UsernameNotFoundException("User " + userId + " is not found!"));
         String password = RandomStringGeneratorUtils.generateRandomString(20);
         String text = "Your new password is: " + password;
-        emailService.sendMessage(existingUser.getEmail(), EmailService.PASSWORD_RESET_SUBJECT, text);
+        emailService.sendMessage(existingUser.getEmail(), EmailConstants.RESET_PASSWORD_SUBJECT, text);
 
         existingUser.setPassword(passwordEncoder.encode(password));
         User updatedUser = userRepository.save(existingUser);
@@ -237,23 +231,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    @Transactional
-    public void updateUserPassword(String username, UpdateUserPasswordDTO userChangePassword) {
-        User existingUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " is not found!"));
+    public void updateUserPassword(RequestForgotPasswordDTO requestForgotPasswordDTO) {
+        String token = requestForgotPasswordDTO.getToken();
 
-        String oldPassword = userChangePassword.getPassword();
-        String newPassword = userChangePassword.getNewPassword();
-
-        if (!passwordEncoder.matches(oldPassword, existingUser.getPassword())) {
-            throw new IllegalArgumentException("Old password is incorrect.");
+        if(!jwtEmailService.validateToken(token, JwtType.RESET_PASSWORD)){
+            throw new InvalidTokenException("Invalid reset token");
         }
 
-        if (passwordEncoder.matches(newPassword, existingUser.getPassword())) {
-            throw new IllegalArgumentException("New password must be different from the old password.");
-        }
+        String email = jwtEmailService.extractEmail(token);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email %s not found", email)));
 
-        existingUser.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(existingUser);
+        String hashedPassword = passwordEncoder.encode(requestForgotPasswordDTO.getNewPassword());
+        user.setPassword(hashedPassword);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void forgotPassword(RequestForgotPasswordDTO requestForgotPasswordDTO) {
+        emailService.sendResetPassword(requestForgotPasswordDTO.getEmail());
+    }
+
+
+    @Override
+    public void validateTokenPassword(RequestForgotPasswordDTO requestForgotPasswordDTO) {
+        String token = requestForgotPasswordDTO.getToken();
+
+        if(!jwtEmailService.validateToken(token, JwtType.RESET_PASSWORD)){
+            throw new InvalidTokenException("Invalid reset token");
+        }
     }
 }

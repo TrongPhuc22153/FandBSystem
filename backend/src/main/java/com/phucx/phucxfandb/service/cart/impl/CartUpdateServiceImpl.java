@@ -35,7 +35,7 @@ public class CartUpdateServiceImpl implements CartUpdateService {
     @Transactional
     public CartDTO updateCartItemQuantity(String username, RequestCartItemDTO requestCartItemDTO) {
         Cart cart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getSimpleName(), "username", username));
         Product product = productReaderService.getProductEntity(requestCartItemDTO.getProductId());
 
         CartItem existingItem = cart.getCartItems().stream()
@@ -58,7 +58,7 @@ public class CartUpdateServiceImpl implements CartUpdateService {
     @EnsureCartExists
     public CartDTO updateCart(String username, RequestCartDTO requestCartDTO) {
         Cart existingCart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getSimpleName(), "username", username));
         existingCart.getCartItems().clear();
 
         List<CartItem> newItems = requestCartDTO.getCartItems().stream()
@@ -80,7 +80,7 @@ public class CartUpdateServiceImpl implements CartUpdateService {
     @EnsureCartExists
     public CartDTO addCartItem(String username, RequestCartItemDTO requestCartItemDTO) {
         Cart cart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getSimpleName(), "username", username));
         Product product = productReaderService.getProductEntity(requestCartItemDTO.getProductId());
 
         CartItem existingItem = cart.getCartItems().stream()
@@ -115,7 +115,7 @@ public class CartUpdateServiceImpl implements CartUpdateService {
     @Transactional
     public void removeCartItems(String username, List<Long> productIds) {
         Cart existingCart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getSimpleName(), "username", username));
 
         List<CartItem> cartItemsToRemove = existingCart.getCartItems().stream()
                 .filter(item -> productIds.contains(item.getProduct().getProductId()))
@@ -131,7 +131,7 @@ public class CartUpdateServiceImpl implements CartUpdateService {
     @Transactional
     public void removeCartItems(String username) {
         Cart existingCart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getSimpleName(), "username", username));
         existingCart.getCartItems().clear();
         existingCart.setTotalPrice(BigDecimal.ZERO);
         cartRepository.save(existingCart);
@@ -141,7 +141,7 @@ public class CartUpdateServiceImpl implements CartUpdateService {
     @Transactional
     public CartDTO removeCartItem(String username, long productId) {
         Cart existingCart = cartRepository.findByCustomerProfileUserUsername(username)
-                .orElseThrow(()-> new NotFoundException(Cart.class.getName(), "username", username));
+                .orElseThrow(()-> new NotFoundException(Cart.class.getSimpleName(), "username", username));
         CartItem cartItemToRemove = existingCart.getCartItems().stream()
                 .filter(item -> item.getProduct().getProductId().equals(productId))
                 .findFirst()

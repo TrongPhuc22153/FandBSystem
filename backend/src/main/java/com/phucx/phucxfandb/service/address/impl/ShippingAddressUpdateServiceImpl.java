@@ -27,7 +27,7 @@ public class ShippingAddressUpdateServiceImpl implements ShippingAddressUpdateSe
     @Transactional
     public ShippingAddressDTO updateShippingAddress(long id, RequestShippingAddressDTO requestShippingAddressDTO) {
         ShippingAddress existingShippingAddress = shippingAddressRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(()-> new NotFoundException(ShippingAddress.class.getName(), id));
+                .orElseThrow(()-> new NotFoundException(ShippingAddress.class.getSimpleName(), id));
 
         Customer customer = existingShippingAddress.getCustomer();
 
@@ -46,7 +46,7 @@ public class ShippingAddressUpdateServiceImpl implements ShippingAddressUpdateSe
     @Transactional
     public ShippingAddressDTO updateShippingAddressByUsername(String username, long shippingId, RequestShippingAddressDTO requestShippingAddressDTO) {
         ShippingAddress existingShippingAddress = shippingAddressRepository.findByIdAndIsDeletedFalse(shippingId)
-                .orElseThrow(()-> new NotFoundException(ShippingAddress.class.getName(), shippingId));
+                .orElseThrow(()-> new NotFoundException(ShippingAddress.class.getSimpleName(), shippingId));
 
         Customer customer = existingShippingAddress.getCustomer();
 
@@ -105,7 +105,7 @@ public class ShippingAddressUpdateServiceImpl implements ShippingAddressUpdateSe
         ShippingAddress existingShippingAddress = shippingAddressRepository
             .findByCustomerProfileUserUsernameAndIdAndIsDeletedFalse(username, id)
                 .orElseThrow(()-> new NotFoundException(
-                        ShippingAddress.class.getName(),
+                        ShippingAddress.class.getSimpleName(),
                         "id",
                         String.valueOf(id)));
         existingShippingAddress.setIsDeleted(true);

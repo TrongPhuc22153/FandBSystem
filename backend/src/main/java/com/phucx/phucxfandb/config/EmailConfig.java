@@ -31,7 +31,7 @@ public class EmailConfig {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(mailHost);
         mailSender.setPort(port);
-        
+
         mailSender.setUsername(username);
         mailSender.setPassword(password);
         
@@ -39,8 +39,6 @@ public class EmailConfig {
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        // props.put("mail.debug", "true");
-
 
         return mailSender;
     }

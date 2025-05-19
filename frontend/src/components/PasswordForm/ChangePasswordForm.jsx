@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useModal } from "../../context/ModalContext";
 import styles from "./PasswordForm.module.css";
-import { useAuthActions } from "../../hooks/authHooks";
+import { useUserActions } from "../../hooks/userHook";
 
 function ChangePasswordForm() {
   const [fieldErrors, setFieldErrors] = useState({});
@@ -11,7 +11,7 @@ function ChangePasswordForm() {
     changePasswordError,
     changePasswordSuccess,
     resetChangePassword,
-  } = useAuthActions();
+  } = useUserActions();
 
   const [passwordInfo, setPasswordInfo] = useState({
     oldPassword: "",

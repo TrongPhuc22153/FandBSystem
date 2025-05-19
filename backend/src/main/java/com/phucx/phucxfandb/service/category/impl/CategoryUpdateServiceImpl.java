@@ -35,7 +35,7 @@ public class CategoryUpdateServiceImpl implements CategoryUpdateService {
     public CategoryDTO updateCategory(Long categoryId, RequestCategoryDTO requestCategoryDTO){
         log.info("updateCategory(id={}, requestCategoryDTO={})", categoryId, requestCategoryDTO);
         Category existingCategory = categoryRepository.findByCategoryIdAndIsDeletedFalse(categoryId)
-                .orElseThrow(() -> new NotFoundException("Category", categoryId));
+                .orElseThrow(() -> new NotFoundException(Category.class.getSimpleName(), categoryId));
         // upload new image
         if(requestCategoryDTO.getPicture()!=null && !requestCategoryDTO.getPicture().isEmpty()){
             String newImageName = ImageUtils.extractImageNameFromUrl(requestCategoryDTO.getPicture());
@@ -98,7 +98,7 @@ public class CategoryUpdateServiceImpl implements CategoryUpdateService {
     public CategoryDTO updateCategoryIsDeleted(long id, RequestCategoryDTO requestCategoryDTO) {
         log.info("updateCategoryIsDeleted(id={}, requestCategory={})", id, requestCategoryDTO);
         Category existingCategory = categoryRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException("Category", id));
+                .orElseThrow(()-> new NotFoundException(Category.class.getSimpleName(), id));
         if(!existingCategory.getIsDeleted()){
             if(productRepository.existsByCategoryCategoryIdAndIsDeletedFalse(id)){
                 throw new IllegalArgumentException(String.format("Cannot delete category with id %d because it has associated products", id));

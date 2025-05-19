@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.exception;
 
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
+import com.phucx.phucxfandb.dto.response.ValidatedTokenResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,9 +24,8 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        log.warn("handleMethodArgumentNotValid({})", ex.getMessage());
+        log.error("handleMethodArgumentNotValid({})", ex.getMessage());
         Map<String, List<String>> fieldErrors = new HashMap<>();
-        // Group all error messages by field to support multiple errors per field
         for (FieldError error : ex.getFieldErrors()) {
             fieldErrors.computeIfAbsent(error.getField(), k -> new ArrayList<>())
                     .add(error.getDefaultMessage());
@@ -67,7 +67,7 @@ public class GlobalExceptionController {
         log.error("handleIllegalArgumentException: {}", exception.getMessage());
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
-                .error("Illegal argument")
+                .error("ILLEGAL_ARGUMENT")
                 .build();
         return ResponseEntity.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +79,7 @@ public class GlobalExceptionController {
         log.error("handleNullPointerException: {}", exception.getMessage());
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
-                .error("Null pointer")
+                .error("NULL_POINTER")
                 .build();
         return ResponseEntity.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -100,10 +100,10 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(NotFoundException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleNotFoundException(NotFoundException exception) {
-        log.error("handleNotFoundException ", exception);
+        log.error("handleNotFoundException: {}", exception.getMessage());
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
-                .error("Resource not found")
+                .error("NOT_FOUND")
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -115,7 +115,7 @@ public class GlobalExceptionController {
         log.error("handleEntityExistsException: {}", exception.getMessage());
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
-                .error("Entity already exists")
+                .error("ENTITY_EXISTED")
                 .build();
         return ResponseEntity.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -139,9 +139,26 @@ public class GlobalExceptionController {
         log.error("handleIOException: {}", exception.getMessage());
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
-                .error("IO error")
+                .error("IO_EXCEPTION")
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    protected ResponseEntity<ResponseDTO<ValidatedTokenResponseDTO>> handleInvalidTokenException(InvalidTokenException exception) {
+        log.error("handleInvalidTokenException: {}", exception.getMessage());
+        ValidatedTokenResponseDTO validatedTokenResponseDTO = ValidatedTokenResponseDTO.builder()
+                .status(Boolean.FALSE)
+                .build();
+
+        ResponseDTO<ValidatedTokenResponseDTO> response = ResponseDTO.<ValidatedTokenResponseDTO>builder()
+                .message(exception.getMessage())
+                .error("INVALID_TOKEN")
+                .data(validatedTokenResponseDTO)
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(response);
     }

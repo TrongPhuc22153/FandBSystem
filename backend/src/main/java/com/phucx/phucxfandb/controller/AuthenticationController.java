@@ -1,12 +1,10 @@
 package com.phucx.phucxfandb.controller;
 
-import com.phucx.phucxfandb.dto.request.LoginUserDTO;
-import com.phucx.phucxfandb.dto.request.RegisterUserDTO;
-import com.phucx.phucxfandb.dto.request.UpdateUserPasswordDTO;
-import com.phucx.phucxfandb.dto.response.LoginResponse;
-import com.phucx.phucxfandb.dto.response.LogoutResponseDTO;
-import com.phucx.phucxfandb.dto.response.RegisteredUserDTO;
-import com.phucx.phucxfandb.dto.response.ResponseDTO;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.phucx.phucxfandb.constant.ValidationGroups;
+import com.phucx.phucxfandb.constant.Views;
+import com.phucx.phucxfandb.dto.request.*;
+import com.phucx.phucxfandb.dto.response.*;
 import com.phucx.phucxfandb.service.user.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -71,13 +70,43 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(responseDTO);
     }
 
-    @PatchMapping(value = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Change password endpoint", description = "Authenticated access")
-    public ResponseEntity<ResponseDTO<Void>> changePassword(
-            Authentication authentication,
-            @Valid @RequestBody UpdateUserPasswordDTO updateUserPasswordDTO){
-        authenticationService.updateUserPassword(authentication.getName(), updateUserPasswordDTO);
+    @PostMapping(value = "/forgot")
+    @JsonView(Views.ForgetPassword.class)
+    @Operation(summary = "Forgot password endpoint", description = "Public access")
+    public ResponseEntity<ResponseDTO<Void>> forgotPassword(
+            @Validated(ValidationGroups.ForgetPassword.class) @RequestBody RequestForgotPasswordDTO requestForgotPasswordDTO){
+        authenticationService.forgotPassword(requestForgotPasswordDTO);
 
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message("An email is sent to your mail")
+                .build();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping(value = "/validate")
+    @JsonView(Views.ValidateToken.class)
+    @Operation(summary = "Validate token endpoint", description = "Public access")
+    public ResponseEntity<ResponseDTO<ValidatedTokenResponseDTO>> validateToken(
+            @Validated(ValidationGroups.ValidateToken.class) @RequestBody RequestForgotPasswordDTO requestForgotPasswordDTO){
+        authenticationService.validateTokenPassword(requestForgotPasswordDTO);
+
+        ValidatedTokenResponseDTO validatedTokenResponseDTO = ValidatedTokenResponseDTO.builder()
+                .status(Boolean.TRUE)
+                .build();
+
+        ResponseDTO<ValidatedTokenResponseDTO> response = ResponseDTO.<ValidatedTokenResponseDTO>builder()
+                .message("Your token is valid")
+                .data(validatedTokenResponseDTO)
+                .build();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping(value = "/reset")
+    @JsonView(Views.ResetPassword.class)
+    @Operation(summary = "Reset password endpoint", description = "Public access")
+    public ResponseEntity<ResponseDTO<Void>> resetPassword(
+            @Validated(ValidationGroups.ResetPassword.class) @RequestBody RequestForgotPasswordDTO requestForgotPasswordDTO){
+        authenticationService.updateUserPassword(requestForgotPasswordDTO);
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message("Your password updated successfully")
                 .build();

@@ -17,7 +17,8 @@ public interface AuthenticationService {
     LoginResponse signIn(LoginUserDTO loginUserDTO);
     LogoutResponseDTO signOut(HttpServletRequest request, HttpServletResponse response, Authentication authentication);
 
-    Boolean updateUserPassword(UpdateForgetPassword UpdateForgetPassword);
+    void validateTokenPassword(RequestForgotPasswordDTO requestForgotPasswordDTO);
+    void forgotPassword(RequestForgotPasswordDTO requestForgotPasswordDTO);
+    void updateUserPassword(RequestForgotPasswordDTO requestForgotPasswordDTO);
     Boolean resetUserPasswordRandom(String userID);
-    void updateUserPassword(String username, UpdateUserPasswordDTO userChangePassword);
 }

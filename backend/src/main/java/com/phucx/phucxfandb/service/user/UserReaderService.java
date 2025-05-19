@@ -6,6 +6,7 @@ import com.phucx.phucxfandb.entity.User;
 import org.springframework.data.domain.Page;
 
 public interface UserReaderService {
+    User getUserEntityByEmail(String email);
     User getUserEntityByUserId(String userId);
     User getUserEntityByUsername(String username);
     UserDTO getUserByUserId(String userId);

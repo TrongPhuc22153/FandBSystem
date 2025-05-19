@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.constant;
 
 public class ApiEndpoint {
+    private ApiEndpoint() {}
 
     public static final String ORDER_BY_ID_ENDPOINT = "/api/v1/orders/{orderId}";
 
@@ -37,6 +38,9 @@ public class ApiEndpoint {
     public static final String[] AUTH_API = {
             "/api/v1/auth/login",
             "/api/v1/auth/register",
+            "/api/v1/auth/forgot",
+            "/api/v1/auth/validate",
+            "/api/v1/auth/reset",
             IMAGES_ENDPOINT
     };
 

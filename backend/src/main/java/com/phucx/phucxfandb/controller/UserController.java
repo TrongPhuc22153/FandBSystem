@@ -1,6 +1,10 @@
 package com.phucx.phucxfandb.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.phucx.phucxfandb.constant.ValidationGroups;
+import com.phucx.phucxfandb.constant.Views;
 import com.phucx.phucxfandb.dto.request.RequestUserDTO;
+import com.phucx.phucxfandb.dto.request.UpdateUserPasswordDTO;
 import com.phucx.phucxfandb.dto.request.UserRequestParamDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.dto.response.UserDTO;
@@ -14,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -65,10 +71,11 @@ public class UserController {
     }
 
     @PatchMapping("{userId}")
+    @JsonView(Views.UpdateUserEnabledStatus.class)
     @Operation(summary = "Update user enabled status", description = "Admin access")
     public ResponseEntity<ResponseDTO<UserDTO>> updateUserEnabledStatus(
             @PathVariable String userId,
-            @RequestBody RequestUserDTO requestUserDTO
+            @Validated(ValidationGroups.UpdateUserEnabledStatus.class) @RequestBody RequestUserDTO requestUserDTO
     ){
         var data = userUpdateService.updateUserEnabledStatus(userId, requestUserDTO);
         ResponseDTO<UserDTO> responseDTO = ResponseDTO.<UserDTO>builder()
@@ -78,17 +85,16 @@ public class UserController {
         return ResponseEntity.ok(responseDTO);
     }
 
+    @PatchMapping(value = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Change password endpoint", description = "Authenticated access")
+    public ResponseEntity<ResponseDTO<Void>> changePassword(
+            Authentication authentication,
+            @Valid @RequestBody UpdateUserPasswordDTO updateUserPasswordDTO){
+        userUpdateService.updateUserPassword(authentication, updateUserPasswordDTO);
 
-//    @Operation(summary = "Update user password", description = "User access")
-//    @PatchMapping(value = "/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ResponseDTO<Boolean>> changePassword(
-//            @Valid @RequestBody UserChangePasswordDTO userChangePassword
-//    ) throws UserPasswordException {
-//        boolean result = userPasswordService.changePassword(userChangePassword);
-//        ResponseDTO<Boolean> responseDTO = ResponseDTO.<Boolean>builder()
-//                .message("Password updated successfully")
-//                .data(result)
-//                .build();
-//        return ResponseEntity.ok().body(responseDTO);
-//    }
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message("Your password updated successfully")
+                .build();
+        return ResponseEntity.ok().body(response);
+    }
 }

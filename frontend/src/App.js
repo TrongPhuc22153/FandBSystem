@@ -55,6 +55,7 @@ import CustomerProfilePage from "./pages/CustomerProfilePage/CustomerProfilePage
 import EmployeeProfilePage from "./pages/EmployeeProfilePage/EmployeeProfilePage";
 import UserChangePassword from "./pages/UserChangePassword/UserChangePassword";
 import EmployeeChangePassword from "./pages/EmployeeChangePassword/EmployeeChangePassword";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
 
 function App() {
   return (
@@ -130,6 +131,7 @@ function App() {
                 <Route element={<AuthLayoutPage />}>
                   <Route path="login" element={<LoginPage />} />
                   <Route path="register" element={<RegisterPage />} />
+                  <Route path="forgot" element={<ForgotPasswordPage/>}/>
                 </Route>
               </Routes>
             </ModalProvider>

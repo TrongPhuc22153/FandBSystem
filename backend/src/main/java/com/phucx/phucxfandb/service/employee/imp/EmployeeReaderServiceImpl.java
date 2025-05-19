@@ -26,14 +26,14 @@ public class EmployeeReaderServiceImpl implements EmployeeReaderService {
         return employeeRepository.findByProfileUserUsernameAndIsDeletedFalse(username)
                 .map(this::setImageUrl)
                 .map(mapper::toEmployeeDTO)
-                .orElseThrow(()-> new NotFoundException(Employee.class.getName(), "username", username));
+                .orElseThrow(()-> new NotFoundException(Employee.class.getSimpleName(), "username", username));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Employee getEmployeeEntityByUsername(String username) {
         return employeeRepository.findByProfileUserUsernameAndIsDeletedFalse(username)
-                .orElseThrow(()-> new NotFoundException(Employee.class.getName(), "username", username));
+                .orElseThrow(()-> new NotFoundException(Employee.class.getSimpleName(), "username", username));
     }
 
     private Employee setImageUrl(Employee employee){

@@ -25,7 +25,7 @@ public class EmployeeUpdateServiceImpl implements EmployeeUpdateService {
     @Transactional
     public EmployeeDTO updateEmployeeByUsername(String username, RequestEmployeeDTO requestEmployeeDTO) {
         Employee existingEmployee = employeeRepository.findByProfileUserUsernameAndIsDeletedFalse(username)
-                .orElseThrow(() -> new NotFoundException(Employee.class.getName(), username));
+                .orElseThrow(() -> new NotFoundException(Employee.class.getSimpleName(), username));
 
         userProfileUpdateService.updateUserProfile(username, requestEmployeeDTO.getProfile());
 

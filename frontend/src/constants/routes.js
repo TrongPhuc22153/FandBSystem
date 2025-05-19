@@ -2,6 +2,7 @@ export const HOME_URI = "/";
 export const SHOP_URI = "/shop";
 export const ABOUT_URI = "/about";
 export const LOGIN_URI = "/login";
+export const FORGOT_URI = "/forgot";
 
 export const REGISTER_URI = "/register";
 export const RESERVATION_URI = "/reservation";

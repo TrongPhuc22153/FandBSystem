@@ -1,10 +1,10 @@
 package com.phucx.phucxfandb.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.phucx.phucxfandb.constant.RoleName;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import com.phucx.phucxfandb.constant.ValidationGroups;
+import com.phucx.phucxfandb.constant.Views;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,11 +30,14 @@ public class RequestUserDTO {
     private String firstName;
 
     @NotBlank(message = "Last name is required")
-    @Size(min = 2, max = 20, message = "Last name must be between 2 and 20 characters")
+    @Size(min = 2, max = 30, message = "Last name must be between 2 and 30 characters")
     private String lastName;
 
     private String password;
 
+    @NotNull(message = "Enabled Status cannot be null",
+            groups = ValidationGroups.UpdateUserEnabledStatus.class)
+    @JsonView(Views.UpdateUserEnabledStatus.class)
     private Boolean enabled = false;
 
     @NotEmpty(message = "Roles cannot be empty")

@@ -31,7 +31,7 @@ public class CustomerUpdateServiceImpl implements CustomerUpdateService {
     @Transactional
     public CustomerDTO updateCustomerByUsername(String username, RequestCustomerDTO requestCustomerDTO) {
         Customer existingCustomer = customerRepository.findByProfileUserUsername(username)
-                .orElseThrow(() -> new NotFoundException(Customer.class.getName(), username));
+                .orElseThrow(() -> new NotFoundException(Customer.class.getSimpleName(), username));
 
         userProfileUpdateService.updateUserProfile(username, requestCustomerDTO.getProfile());
 

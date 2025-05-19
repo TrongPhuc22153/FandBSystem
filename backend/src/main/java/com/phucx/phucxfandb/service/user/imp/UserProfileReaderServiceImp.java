@@ -27,7 +27,7 @@ public class UserProfileReaderServiceImp implements UserProfileReaderService {
         return userProfileRepository.findByUserUserId(userID)
                 .map(this::setImageUrl)
                 .map(mapper::toUserProfileDTO)
-                .orElseThrow(() -> new NotFoundException("User", "id", userID));
+                .orElseThrow(() -> new NotFoundException(UserProfile.class.getSimpleName(), "id", userID));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class UserProfileReaderServiceImp implements UserProfileReaderService {
         return userProfileRepository.findByUserUsername(username)
                 .map(this::setImageUrl)
                 .map(mapper::toUserProfileDTO)
-                .orElseThrow(() -> new NotFoundException("User", "username", username));
+                .orElseThrow(() -> new NotFoundException(UserProfile.class.getSimpleName(), "username", username));
     }
 
     private UserProfile setImageUrl(UserProfile profile){

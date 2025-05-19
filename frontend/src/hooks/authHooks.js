@@ -1,16 +1,10 @@
-import { changePassword, register } from "../api/authenticatoinApi"
+import { forgotPassword, register, resetPassword, validateResetToken } from "../api/authenticatoinApi"
 import { useCallback, useState } from "react"
-import { useAuth } from "../context/AuthContext";
 
 export const useAuthActions = () => {
-    const { token, user } = useAuth();
     const [registerError, setRegisterError] = useState(null);
     const [loadingRegister, setLoadingRegister] = useState(false);
     const [registerSuccess, setRegisterSuccess] = useState(null);
-
-    const [changePasswordError, setChangePasswordError] = useState(null);
-    const [loadingChangePassword, setLoadingChangePassword] = useState(false);
-    const [changePasswordSuccess, setChangePasswordSuccess] = useState(null);
 
     const handleRegisterUser = useCallback(async (registerData) => {
         setLoadingRegister(true)
@@ -34,27 +28,6 @@ export const useAuthActions = () => {
         }
     }, [register])
 
-    const handleChangePassword = useCallback(async (passwordData) => {
-        setLoadingChangePassword(true);
-        setChangePasswordError(null);
-        setChangePasswordSuccess(null);
-        try {
-            const response = await changePassword({
-                userId: user.userId,
-                oldPassword: passwordData.oldPassword,
-                newPassword: passwordData.newPassword,
-                token: token
-            });
-            setChangePasswordSuccess(response?.message || "Password updated successfully");
-            return response;
-        } catch (error) {
-            setChangePasswordError(error);
-            return null;
-        } finally {
-            setLoadingChangePassword(false);
-        }
-    }, [changePassword]);
-
     return {
         handleRegisterUser,
         loadingRegister,
@@ -64,15 +37,99 @@ export const useAuthActions = () => {
             setRegisterError(null);
             setRegisterSuccess(null);
         }, []),
-        
-        handleChangePassword,
-        loadingChangePassword,
-        changePasswordError,
-        changePasswordSuccess,
-        resetChangePassword: useCallback(() => {
-            setChangePasswordError(null);
-            setChangePasswordSuccess(null);
-        }, []),
     }
-
 }
+
+export const useForgotPasswordActions = () => {
+    const [forgotPasswordError, setForgotPasswordError] = useState(null);
+    const [loadingForgotPassword, setLoadingForgotPassword] = useState(false);
+    const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState(null);
+
+    const [validateTokenError, setValidateTokenError] = useState(null);
+    const [loadingValidateToken, setLoadingValidateToken] = useState(false);
+    const [validateTokenSuccess, setValidateTokenSuccess] = useState(null);
+
+    const [resetPasswordError, setResetPasswordError] = useState(null);
+    const [loadingResetPassword, setLoadingResetPassword] = useState(false);
+    const [resetPasswordSuccess, setResetPasswordSuccess] = useState(null);
+
+    const handleForgotPassword = useCallback(async (email) => {
+        setLoadingForgotPassword(true);
+        setForgotPasswordError(null);
+        setForgotPasswordSuccess(null);
+        try {
+            const response = await forgotPassword({ email });
+            setForgotPasswordSuccess(response?.message || "Password reset link sent successfully.");
+            return response;
+        } catch (error) {
+            setForgotPasswordError(error);
+            return null;
+        } finally {
+            setLoadingForgotPassword(false);
+        }
+    }, [forgotPassword]);
+
+    const handleValidateToken = useCallback(async (token) => {
+        setLoadingValidateToken(true);
+        setValidateTokenError(null);
+        setValidateTokenSuccess(null);
+        try {
+            const response = await validateResetToken({ token });
+            setValidateTokenSuccess(response?.message || "Token is valid.");
+            return response;
+        } catch (error) {
+            setValidateTokenError(error);
+            return null;
+        } finally {
+            setLoadingValidateToken(false);
+        }
+    }, [validateResetToken]);
+
+    const handleResetPassword = useCallback(async (resetData) => {
+        setLoadingResetPassword(true);
+        setResetPasswordError(null);
+        setResetPasswordSuccess(null);
+        try {
+            const response = await resetPassword({
+                token: resetData.token,
+                newPassword: resetData.newPassword,
+            });
+            setResetPasswordSuccess(response?.message || "Password reset successfully.");
+            return response;
+        } catch (error) {
+            setResetPasswordError(error);
+            return null;
+        } finally {
+            setLoadingResetPassword(false);
+        }
+    }, [resetPassword]);
+
+    return {
+        handleForgotPassword,
+        loadingForgotPassword,
+        forgotPasswordError,
+        forgotPasswordSuccess,
+        resetForgotPasswordState: useCallback(() => {
+            setForgotPasswordError(null);
+            setForgotPasswordSuccess(null);
+        }, []),
+
+        handleValidateToken,
+        loadingValidateToken,
+        validateTokenError,
+        validateTokenSuccess,
+        resetValidateTokenState: useCallback(() => {
+            setValidateTokenError(null);
+            setValidateTokenSuccess(null);
+        }, []),
+
+        handleResetPassword,
+        loadingResetPassword,
+        resetPasswordError,
+        resetPasswordSuccess,
+        resetResetPasswordState: useCallback(() => {
+            setResetPasswordError(null);
+            setResetPasswordSuccess(null);
+        }, []),
+    };
+};

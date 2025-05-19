@@ -46,7 +46,7 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     @Transactional
     public OrderDTO updateOrderStatusAndEmployee(String username, String orderID, OrderType type, OrderStatus status) {
         Order order = orderRepository.findByOrderIdAndType(orderID, type)
-                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderID));
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderID));
         Employee employee = employeeReaderService.getEmployeeEntityByUsername(username);
         order.setEmployee(employee);
         order.setStatus(status);
@@ -58,7 +58,7 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     @Transactional
     public OrderDTO updateOrderStatusByEmployee(String username, String orderID, OrderType type, OrderStatus status) {
         Order order = orderRepository.findByOrderIdAndEmployeeProfileUserUsername(orderID, username)
-                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderID));
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderID));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderDTO(updatedOrder);
@@ -68,7 +68,7 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     @Transactional
     public OrderDTO updateOrderStatusByCustomer(String username, String orderId, OrderType type, OrderStatus status) {
         Order order = orderRepository.findByOrderIdAndCustomerProfileUserUsername(orderId, username)
-                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderId));
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderDTO(updatedOrder);
@@ -78,7 +78,7 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     @Transactional
     public OrderDTO updateOrderStatus(String orderID, OrderType type, OrderStatus status) {
         Order order = orderRepository.findByOrderIdAndType(orderID, type)
-                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderID));
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderID));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderDTO(updatedOrder);
@@ -88,7 +88,7 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     @Transactional
     public OrderDTO updateOrderStatus(String orderID, OrderStatus status) {
         Order order = orderRepository.findById(orderID)
-                .orElseThrow(()-> new NotFoundException(Order.class.getName(), "id", orderID));
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderID));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderDTO(updatedOrder);

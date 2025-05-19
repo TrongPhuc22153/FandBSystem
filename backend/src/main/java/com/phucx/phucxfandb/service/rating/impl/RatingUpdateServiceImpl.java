@@ -29,7 +29,7 @@ public class RatingUpdateServiceImpl implements RatingUpdateService {
     @Transactional
     public RatingDTO updateRating(String username, String ratingId, RequestRatingDTO requestRatingDTO) {
         Rating existingRating = ratingRepository.findByIdAndCustomerProfileUserUsername(ratingId, username)
-                .orElseThrow(() -> new NotFoundException(Rating.class.getName(), "id", ratingId));
+                .orElseThrow(() -> new NotFoundException(Rating.class.getSimpleName(), "id", ratingId));
 
         ratingMapper.updateRating(requestRatingDTO, existingRating);
         Rating updatedRating = ratingRepository.save(existingRating);
@@ -64,7 +64,7 @@ public class RatingUpdateServiceImpl implements RatingUpdateService {
     @Transactional
     public void deleteRating(String username, String ratingId) {
         Rating existingRating = ratingRepository.findByIdAndCustomerProfileUserUsername(ratingId, username)
-                .orElseThrow(() -> new NotFoundException(Rating.class.getName(), "id", ratingId));
+                .orElseThrow(() -> new NotFoundException(Rating.class.getSimpleName(), "id", ratingId));
         ratingRepository.delete(existingRating);
     }
 }

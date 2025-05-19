@@ -31,44 +31,46 @@ public class UserReaderServiceImp implements UserReaderService {
 
     @Override
     @Transactional(readOnly = true)
+    public User getUserEntityByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), "email", email));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public User getUserEntityByUserId(String userId) {
-        log.info("getUserEntityByUserId(userId={})", userId);
         return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User", "id", userId));
+                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), "id", userId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public User getUserEntityByUsername(String username) {
-        log.info("getUserEntityByUsername(username={})", username);
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("User", "username", username));
+                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), "username", username));
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserDTO getUserByUserId(String userId) {
-        log.info("getUserByUserId(userId={})", userId);
         return userRepository.findById(userId)
                 .map(this::setUserImage)
                 .map(mapper::toUserDTO)
-                .orElseThrow(() -> new NotFoundException("User", "id", userId));
+                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), "id", userId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserDTO getUserByUsername(String username) {
-        log.info("getUserByUsername(username={})", username);
         return userRepository.findByUsername(username)
                 .map(this::setUserImage)
                 .map(mapper::toUserDTO)
-                .orElseThrow(() -> new NotFoundException("User", "username", username));
+                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), "username", username));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserDTO> getUsers(UserRequestParamDTO params) {
-        log.info("getUsers(params={})", params);
         Pageable pageable = PageRequest.of(params.getPage(), params.getSize(), Sort.by(params.getDirection(), params.getField()));
         Specification<User> spec = Specification.where(UserSpecification.hasRole(params.getRoleName()))
                 .and(UserSpecification.hasUsername(params.getUsername()))

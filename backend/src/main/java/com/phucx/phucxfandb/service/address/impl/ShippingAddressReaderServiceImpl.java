@@ -25,7 +25,7 @@ public class ShippingAddressReaderServiceImpl implements ShippingAddressReaderSe
     @Transactional(readOnly = true)
     public ShippingAddress getShippingAddressEntity(long id) {
         return shippingAddressRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(()-> new NotFoundException(ShippingAddress.class.getName(), id));
+                .orElseThrow(()-> new NotFoundException(ShippingAddress.class.getSimpleName(), id));
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.phucx.phucxfandb.repository;
 
-import com.phucx.phucxfandb.constant.RoleName;
 import com.phucx.phucxfandb.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,9 +25,6 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
-
-    @EntityGraph(attributePaths = {"roles"})
-    Page<User> findByRolesRoleName(RoleName roleName, Pageable pageable);
 
     @NonNull
     @EntityGraph(attributePaths = {"roles"})

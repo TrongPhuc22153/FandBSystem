@@ -1,4 +1,4 @@
-import { USER_ENDPOINT, USERS_ENDPOINT } from "../constants/api";
+import { USER_ENDPOINT, USER_PASSWORD_ENDPOINT, USERS_ENDPOINT } from "../constants/api";
 
 export const fetchUser = async ({ token }) => {
   const response = await fetch(USER_ENDPOINT, {
@@ -72,5 +72,32 @@ export const deleteUser = async ({ id, enabled, token }) => {
   if (!response.ok) {
     throw await response.json()
   }
+  return response.json();
+};
+
+export const changePassword = async ({
+  userId,
+  oldPassword,
+  newPassword,
+  token,
+}) => {
+  const response = await fetch(USER_PASSWORD_ENDPOINT, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      userId: userId,
+      password: oldPassword,
+      newPassword: newPassword,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw error;
+  }
+
   return response.json();
 };

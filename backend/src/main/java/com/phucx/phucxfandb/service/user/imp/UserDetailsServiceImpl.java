@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return userRepository.findByUsername(username)
                 .map(this::fromUser)
                 .orElseThrow(()->
-                        new UsernameNotFoundException("User does not found!")
+                        new UsernameNotFoundException(String.format("User with %s not found", username))
                 );
     }
 

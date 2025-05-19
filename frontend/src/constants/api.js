@@ -13,10 +13,13 @@ const AUTH_PATH = `${API_BASE_URL}/api/v1/auth`
 export const REGISTER_ENDPOINT = `${AUTH_PATH}/register`;
 export const LOGIN_ENDPOINT = `${AUTH_PATH}/login`;
 export const LOGOUT_ENDPOINT = `${AUTH_PATH}/logout`;
-export const PASSWORD_ENDPOINT = `${AUTH_PATH}/password`;
+export const FORGOT_PASSWORD_ENDPOINT = `${AUTH_PATH}/forgot`;
+export const VALIDATE_TOKEN_ENDPOINT = `${AUTH_PATH}/validate`;
+export const RESET_PASSWORD_ENDPOINT = `${AUTH_PATH}/reset`;
 
 export const USER_ENDPOINT = `${API_BASE_URL}/api/v1/users/me`;
 export const USERS_ENDPOINT = `${API_BASE_URL}/api/v1/users`;
+export const USER_PASSWORD_ENDPOINT = `${API_BASE_URL}/api/v1/users/password`;
 
 export const USER_CART_ENDPOINT = `${API_BASE_URL}/api/v1/carts/me`;
 export const USER_CART_ITEMS_ENDPOINT = `${API_BASE_URL}/api/v1/carts/me/items`;

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { REGISTER_URI } from "../../constants/routes";
+import { REGISTER_URI, FORGOT_URI } from "../../constants/routes";
 import { useAuth } from "../../context/AuthContext";
 import Loading from "../../components/Loading/Loading";
 import styles from "./Login.module.css";
@@ -78,6 +78,9 @@ export default function LoginPage() {
                 {error}
               </div>
             ))}
+        </div>
+        <div className={styles.forgot_password}>
+          <Link to={FORGOT_URI}>Forgot Password?</Link>
         </div>
         <input type="submit" value="Login" />
         <div className={styles.signup_link}>
