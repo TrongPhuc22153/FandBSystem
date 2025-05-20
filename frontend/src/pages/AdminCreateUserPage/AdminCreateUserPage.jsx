@@ -25,7 +25,6 @@ function AdminCreateUserPage() {
     confirmPassword: "",
     roles: [],
   });
-  const [passwordMatchError, setPasswordMatchError] = useState("");
 
   const { data: rolesData, isLoading: loadingRole } = useRoles();
 
@@ -53,19 +52,6 @@ function AdminCreateUserPage() {
     }
   }, [createSuccess]);
 
-  useEffect(() => {
-    const { password, confirmPassword } = registerInfo;
-
-    if (!password || !confirmPassword) {
-      setPasswordMatchError("");
-      return;
-    }
-
-    setPasswordMatchError(
-      password !== confirmPassword ? "Passwords do not match" : ""
-    );
-  }, [registerInfo.password, registerInfo.confirmPassword]);
-
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     onOpen({
@@ -81,7 +67,6 @@ function AdminCreateUserPage() {
       firstName: registerInfo.firstName,
       lastName: registerInfo.lastName,
       email: registerInfo.email,
-      password: registerInfo.password,
       roles: registerInfo.roles.map((role) => role.value),
     };
 
@@ -198,40 +183,6 @@ function AdminCreateUserPage() {
                 </div>
               ))}
           </div>
-
-          <div className={styles["txt_field"]}>
-            <input
-              type="password"
-              name="password"
-              required
-              onChange={onChange}
-              value={registerInfo.password}
-            />
-            <span></span>
-            <label htmlFor="password">Password</label>
-            {fieldErrors.password &&
-              fieldErrors.password.map((error, index) => (
-                <div key={index} className="invalid-feedback d-block">
-                  {error}
-                </div>
-              ))}
-          </div>
-          <div className={styles["txt_field"]}>
-            <input
-              type="password"
-              name="confirmPassword"
-              required
-              onChange={onChange}
-              value={registerInfo.confirmPassword}
-            />
-            <span></span>
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            {passwordMatchError && (
-              <div className="invalid-feedback d-block">
-                {passwordMatchError}
-              </div>
-            )}
-          </div>
           <div className="txt_field border-0">
             <Select
               isMulti
@@ -254,7 +205,7 @@ function AdminCreateUserPage() {
             type="submit"
             className="my-3"
             value={createLoading ? "Registering..." : "Add user"}
-            disabled={createLoading || passwordMatchError.length > 0}
+            disabled={createLoading}
           />
         </form>
       </div>

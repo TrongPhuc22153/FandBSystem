@@ -8,6 +8,7 @@ import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.LoginResponse;
 import com.phucx.phucxfandb.dto.response.LogoutResponseDTO;
 import com.phucx.phucxfandb.dto.response.RegisteredUserDTO;
+import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.exception.EntityExistsException;
 import com.phucx.phucxfandb.exception.InvalidTokenException;
@@ -147,7 +148,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.findByUsername(loginUserDTO.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Username " + loginUserDTO.getUsername() + " not found!"));
 
-        String accessToken = jwtAuthenticationService.generateAuthToken(user);
+        String accessToken;
+        if(!user.getResetPassword()){
+            accessToken = jwtAuthenticationService.generateAuthToken(user);
+        }else{
+            accessToken = jwtAuthenticationService.generateResetPasswordToken(user);
+        }
 
         return LoginResponse.builder()
                 .email(user.getEmail())
@@ -231,21 +237,54 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void updateUserPassword(RequestForgotPasswordDTO requestForgotPasswordDTO) {
+    @Transactional
+    public ResponseDTO<Object> updateUserPassword(RequestForgotPasswordDTO requestForgotPasswordDTO) {
         String token = requestForgotPasswordDTO.getToken();
 
-        if(!jwtEmailService.validateToken(token, JwtType.RESET_PASSWORD)){
-            throw new InvalidTokenException("Invalid reset token");
+        JwtType type = jwtAuthenticationService.extractType(token);
+
+        User user;
+        switch (type){
+            case RESET_PASSWORD_EMAIL -> {
+                jwtEmailService.validateToken(token, JwtType.RESET_PASSWORD_EMAIL);
+                String email = jwtEmailService.extractEmail(token);
+                user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email %s not found", email)));
+                String hashedPassword = passwordEncoder.encode(requestForgotPasswordDTO.getNewPassword());
+                user.setPassword(hashedPassword);
+                userRepository.save(user);
+
+                return ResponseDTO.builder()
+                        .message("Your password updated successfully")
+                        .build();
+            }
+
+            case RESET_PASSWORD -> {
+                jwtAuthenticationService.validateResetToken(token);
+                String username = jwtAuthenticationService.extractUsername(token);
+                user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(String.format("User with username %s not found", username)));
+                user.setResetPassword(Boolean.FALSE);
+                String hashedPassword = passwordEncoder.encode(requestForgotPasswordDTO.getNewPassword());
+                user.setPassword(hashedPassword);
+                User savedUser = userRepository.save(user);
+
+                String accessToken = jwtAuthenticationService.generateAuthToken(savedUser);
+                LoginResponse tokenResponse = LoginResponse.builder()
+                        .username(username)
+                        .accessToken(accessToken)
+                        .build();
+
+                return ResponseDTO.builder()
+                        .message("Your password updated successfully")
+                        .data(tokenResponse)
+                        .build();
+            }
+
+            default ->{
+                throw new InvalidTokenException("Invalid token");
+            }
         }
-
-        String email = jwtEmailService.extractEmail(token);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email %s not found", email)));
-
-        String hashedPassword = passwordEncoder.encode(requestForgotPasswordDTO.getNewPassword());
-        user.setPassword(hashedPassword);
-
-        userRepository.save(user);
     }
 
     @Override
@@ -257,9 +296,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void validateTokenPassword(RequestForgotPasswordDTO requestForgotPasswordDTO) {
         String token = requestForgotPasswordDTO.getToken();
-
-        if(!jwtEmailService.validateToken(token, JwtType.RESET_PASSWORD)){
-            throw new InvalidTokenException("Invalid reset token");
-        }
+        jwtEmailService.validateToken(token, JwtType.RESET_PASSWORD_EMAIL);
     }
 }

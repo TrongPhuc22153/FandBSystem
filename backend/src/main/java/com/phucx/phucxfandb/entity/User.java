@@ -42,6 +42,9 @@ public class User extends Auditable{
     @Column(name = "last_name", length = 30, nullable = false)
     private String lastName;
 
+    @Column(name = "reset_password", nullable = false)
+    private Boolean resetPassword = false;
+
     @ManyToMany
     @JoinTable(
             name = "users_roles",

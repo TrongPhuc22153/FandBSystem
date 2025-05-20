@@ -71,10 +71,11 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/forgot")
-    @JsonView(Views.ForgetPassword.class)
     @Operation(summary = "Forgot password endpoint", description = "Public access")
     public ResponseEntity<ResponseDTO<Void>> forgotPassword(
-            @Validated(ValidationGroups.ForgetPassword.class) @RequestBody RequestForgotPasswordDTO requestForgotPasswordDTO){
+            @JsonView(Views.ForgetPassword.class)
+            @Validated(ValidationGroups.ForgetPassword.class)
+            @RequestBody RequestForgotPasswordDTO requestForgotPasswordDTO){
         authenticationService.forgotPassword(requestForgotPasswordDTO);
 
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
@@ -84,10 +85,11 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/validate")
-    @JsonView(Views.ValidateToken.class)
     @Operation(summary = "Validate token endpoint", description = "Public access")
     public ResponseEntity<ResponseDTO<ValidatedTokenResponseDTO>> validateToken(
-            @Validated(ValidationGroups.ValidateToken.class) @RequestBody RequestForgotPasswordDTO requestForgotPasswordDTO){
+            @JsonView(Views.ValidateToken.class)
+            @Validated(ValidationGroups.ValidateToken.class)
+            @RequestBody RequestForgotPasswordDTO requestForgotPasswordDTO){
         authenticationService.validateTokenPassword(requestForgotPasswordDTO);
 
         ValidatedTokenResponseDTO validatedTokenResponseDTO = ValidatedTokenResponseDTO.builder()
@@ -102,14 +104,13 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/reset")
-    @JsonView(Views.ResetPassword.class)
     @Operation(summary = "Reset password endpoint", description = "Public access")
-    public ResponseEntity<ResponseDTO<Void>> resetPassword(
-            @Validated(ValidationGroups.ResetPassword.class) @RequestBody RequestForgotPasswordDTO requestForgotPasswordDTO){
-        authenticationService.updateUserPassword(requestForgotPasswordDTO);
-        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
-                .message("Your password updated successfully")
-                .build();
+    public ResponseEntity<ResponseDTO<Object>> resetPassword(
+            @JsonView(Views.ResetPassword.class)
+            @Validated(ValidationGroups.ResetPassword.class)
+            @RequestBody RequestForgotPasswordDTO requestForgotPasswordDTO){
+        ResponseDTO<Object> response = authenticationService
+                .updateUserPassword(requestForgotPasswordDTO);
         return ResponseEntity.ok().body(response);
     }
 }

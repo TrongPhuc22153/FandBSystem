@@ -2,11 +2,14 @@ package com.phucx.phucxfandb.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.phucx.phucxfandb.constant.JwtType;
 import com.phucx.phucxfandb.constant.RoleName;
 import com.phucx.phucxfandb.service.jwt.JwtAuthenticationService;
 import com.phucx.phucxfandb.utils.RoleUtils;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +33,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.phucx.phucxfandb.constant.WebConstant.AUTHORIZATION_HEADER;
@@ -76,21 +80,34 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureClientInboundChannel(ChannelRegistration registration){
         registration.interceptors(new ChannelInterceptor(){
             @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
+            public Message<?> preSend(@NotNull Message<?> message, @NotNull MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                if(accessor==null) return null;
+
                 if(StompCommand.CONNECT.equals(accessor.getCommand())){
                     String token = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER);
                     if(token!=null){
                         token = token.substring(BEARER_PREFIX.length());
-                        if(jwtAuthenticationService.validateToken(token)){
-                            String username = jwtAuthenticationService.extractUsername(token);
-                            Set<RoleName> roles = jwtAuthenticationService.extractRoles(token);
-                            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                                    username,
-                                    null,
-                                    RoleUtils.getAuthorities(roles)
-                            );
-                            accessor.setUser(authenticationToken);
+                        if(!token.isBlank()){
+                            JwtType jwtType;
+                            try {
+                                jwtType = jwtAuthenticationService.validateToken(token);
+                            } catch (JwtException e) {
+                                return message;
+                            }
+
+                            if (Objects.requireNonNull(jwtType) == JwtType.BEARER) {
+                                String username = jwtAuthenticationService.extractUsername(token);
+                                Set<RoleName> roles = jwtAuthenticationService.extractRoles(token);
+                                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                                        username,
+                                        null,
+                                        RoleUtils.getAuthorities(roles)
+                                );
+                                accessor.setUser(authenticationToken);
+                            } else {
+                                return null;
+                            }
                         }
                     }
                 }

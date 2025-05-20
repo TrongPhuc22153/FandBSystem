@@ -9,7 +9,6 @@ import com.phucx.phucxfandb.repository.RoleRepository;
 import com.phucx.phucxfandb.service.role.RoleUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,6 @@ public class RoleUpdateServiceImpl implements RoleUpdateService {
     private final RoleMapper mapper;
 
     @Override
-    @Modifying
     @Transactional
     public RoleDTO createRole(RequestRoleDTO requestRoleDTO) {
         log.info("createRole(requestRoleDTO={})", requestRoleDTO);
@@ -38,7 +36,6 @@ public class RoleUpdateServiceImpl implements RoleUpdateService {
     }
 
     @Override
-    @Modifying
     @Transactional
     public Set<RoleDTO> createRoles(Set<RequestRoleDTO> requestRoleDTOs) {
         log.info("createRoles(requestRoleDTOs={})", requestRoleDTOs);
@@ -46,7 +43,6 @@ public class RoleUpdateServiceImpl implements RoleUpdateService {
             throw new EntityExistsException("Roles already exists");
         }
         Collection<Role> newRoles = requestRoleDTOs.stream().map(mapper::toRole).toList();
-
 
         newRoles = roleRepository.saveAll(newRoles);
         return newRoles.stream().map(mapper::toRoleDTO)

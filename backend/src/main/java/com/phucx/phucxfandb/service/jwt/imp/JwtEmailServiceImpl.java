@@ -2,6 +2,7 @@ package com.phucx.phucxfandb.service.jwt.imp;
 
 import com.phucx.phucxfandb.constant.JwtType;
 import com.phucx.phucxfandb.entity.User;
+import com.phucx.phucxfandb.exception.InvalidTokenException;
 import com.phucx.phucxfandb.service.jwt.JwtEmailService;
 import com.phucx.phucxfandb.service.user.UserReaderService;
 import com.phucx.phucxfandb.utils.JwtUtils;
@@ -53,20 +54,17 @@ public class JwtEmailServiceImpl implements JwtEmailService {
     }
 
     @Override
-    public boolean validateToken(String token, JwtType type) {
-        try {
-            Claims claims = JwtUtils.extractAllClaims(token, JwtUtils.getSecretKey(jwtSecretKey));
+    public void validateToken(String token, JwtType type) {
+        Claims claims = JwtUtils.extractAllClaims(token, JwtUtils.getSecretKey(jwtSecretKey));
 
-            JwtType jwtType = JwtType.valueOf(claims.get(TYPE_CLAIM, String.class));
-            if (!jwtType.equals(type)) {
-                return false;
-            }
+        Date expiration = claims.getExpiration();
+        if(expiration.after(new Date())){
+            throw new InvalidTokenException("Token is expired");
+        }
 
-            Date expiration = claims.getExpiration();
-            return expiration.after(new Date());
-        } catch (Exception e) {
-            log.warn("Token validation failed: {}", e.getMessage());
-            return false;
+        JwtType jwtType = JwtType.valueOf(claims.get(TYPE_CLAIM, String.class));
+        if (!jwtType.equals(type)) {
+            throw new InvalidTokenException("Invalid token type");
         }
     }
 }

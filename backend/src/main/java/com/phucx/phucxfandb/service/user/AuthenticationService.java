@@ -4,6 +4,7 @@ import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.LoginResponse;
 import com.phucx.phucxfandb.dto.response.LogoutResponseDTO;
 import com.phucx.phucxfandb.dto.response.RegisteredUserDTO;
+import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,6 @@ public interface AuthenticationService {
 
     void validateTokenPassword(RequestForgotPasswordDTO requestForgotPasswordDTO);
     void forgotPassword(RequestForgotPasswordDTO requestForgotPasswordDTO);
-    void updateUserPassword(RequestForgotPasswordDTO requestForgotPasswordDTO);
+    ResponseDTO<Object> updateUserPassword(RequestForgotPasswordDTO requestForgotPasswordDTO);
     Boolean resetUserPasswordRandom(String userID);
 }

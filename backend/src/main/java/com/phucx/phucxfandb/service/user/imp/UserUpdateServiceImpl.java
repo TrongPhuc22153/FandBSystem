@@ -8,8 +8,10 @@ import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.mapper.UserMapper;
 import com.phucx.phucxfandb.repository.UserRepository;
+import com.phucx.phucxfandb.service.email.EmailService;
 import com.phucx.phucxfandb.service.role.RoleReaderService;
 import com.phucx.phucxfandb.service.user.UserUpdateService;
+import com.phucx.phucxfandb.utils.PasswordGeneratorUtils;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ public class UserUpdateServiceImpl implements UserUpdateService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleReaderService roleReaderService;
+    private final EmailService emailService;
     private final UserMapper mapper;
 
     @Override
@@ -45,12 +48,15 @@ public class UserUpdateServiceImpl implements UserUpdateService {
         String lastName = requestUserDTO.getLastName();
 
         User newUser = new User();
+        newUser.setResetPassword(Boolean.TRUE);
         newUser.setUsername(username);
         newUser.setEnabled(true);
-        newUser.setPassword(passwordEncoder.encode(requestUserDTO.getPassword()));
         newUser.setEmail(email);
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
+
+        String randomPassword = PasswordGeneratorUtils.generatePassword(PasswordGeneratorUtils.DEFAULT_PASSWORD_LENGTH);
+        newUser.setPassword(passwordEncoder.encode(randomPassword));
 
         Set<RoleName> roles = Set.copyOf(requestUserDTO.getRoles());
         Set<Role> roleEntities = roleReaderService.getRoleEntitiesByName(roles);
@@ -72,6 +78,9 @@ public class UserUpdateServiceImpl implements UserUpdateService {
         }
 
         User savedUser = userRepository.save(newUser);
+        if(savedUser.getUserId()!=null){
+            emailService.sendPassword(email, firstName, lastName, username, randomPassword);
+        }
         return mapper.toUserDTO(savedUser);
     }
 

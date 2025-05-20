@@ -46,4 +46,10 @@ public class EmailServiceImpl implements EmailService {
         String message = String.format(EmailConstants.RESET_PASSWORD_TEXT_TEMPLATE, toEmail, resetPasswordUrl);
         this.sendMessage(toEmail, EmailConstants.RESET_PASSWORD_SUBJECT, message);
     }
+
+    @Override
+    public void sendPassword(String toEmail, String firstname, String lastname, String username, String password) {
+        String message = String.format(EmailConstants.PASSWORD_TEXT_TEMPLATE, firstname + " " + lastname, username, password);
+        this.sendMessage(toEmail, EmailConstants.PASSWORD_SUBJECT, message);
+    }
 }

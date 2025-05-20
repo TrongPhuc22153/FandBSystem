@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { REGISTER_URI, FORGOT_URI } from "../../constants/routes";
+import { REGISTER_URI, FORGOT_URI, HOME_URI } from "../../constants/routes";
 import { useAuth } from "../../context/AuthContext";
 import Loading from "../../components/Loading/Loading";
 import styles from "./Login.module.css";
+import RequiredResetPasswordForm from "../../components/PasswordForm/RequiredResetPasswordForm";
 
 export default function LoginPage() {
   const [input, setInput] = useState({
@@ -11,8 +12,7 @@ export default function LoginPage() {
     password: "",
   });
   const [fieldErrors, setFieldErrors] = useState({});
-
-  const { loginAction, loginError, loginLoading } = useAuth();
+  const { user, loginAction, loginError, loginLoading, isResetPassword } = useAuth();
 
   useEffect(() => {
     setFieldErrors(loginError?.fields ?? {});
@@ -34,7 +34,15 @@ export default function LoginPage() {
     }
   };
 
+  if(user){
+    return <Navigate to={HOME_URI}/>
+  }
+
   if (loginLoading) return <Loading />;
+
+  if(isResetPassword){
+    return <RequiredResetPasswordForm />
+  }
 
   return (
     <div className={styles.center} id="login-page">

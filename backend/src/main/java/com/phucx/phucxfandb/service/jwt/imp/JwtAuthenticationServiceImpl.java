@@ -3,10 +3,12 @@ package com.phucx.phucxfandb.service.jwt.imp;
 import com.phucx.phucxfandb.constant.JwtType;
 import com.phucx.phucxfandb.constant.RoleName;
 import com.phucx.phucxfandb.entity.User;
+import com.phucx.phucxfandb.exception.InvalidTokenException;
 import com.phucx.phucxfandb.service.jwt.JwtAuthenticationService;
 import com.phucx.phucxfandb.utils.JwtUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,22 @@ public class JwtAuthenticationServiceImpl implements JwtAuthenticationService {
     }
 
     @Override
+    public String generateResetPasswordToken(User user) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_TIME);
+        return Jwts.builder()
+                .signWith(JwtUtils.getSecretKey(jwtSecretKey))
+                .subject(user.getUserId())
+                .issuedAt(now)
+                .expiration(expiry)
+                .claim(USERNAME_CLAIM, user.getUsername())
+                .claim(EMAIL_CLAIM, user.getEmail())
+                .claim(TYPE_CLAIM, JwtType.RESET_PASSWORD)
+                .claim(RESET_PASSWORD_CLAIM, Boolean.TRUE)
+                .compact();
+    }
+
+    @Override
     public String extractUsername(String token) {
         return JwtUtils.extractAllClaims(token, JwtUtils.getSecretKey(jwtSecretKey))
                 .get(USERNAME_CLAIM, String.class);
@@ -58,7 +76,8 @@ public class JwtAuthenticationServiceImpl implements JwtAuthenticationService {
     @Override
     public Set<RoleName> extractRoles(String token) {
         try {
-            Collection<?> roles = JwtUtils.extractAllClaims(token, JwtUtils.getSecretKey(jwtSecretKey)).get(ROLE_CLAIM, Collection.class);
+            Collection<?> roles = JwtUtils.extractAllClaims(token, JwtUtils.getSecretKey(jwtSecretKey))
+                    .get(ROLE_CLAIM, Collection.class);
             if (roles != null) {
                 return roles.stream()
                         .map(Object::toString)
@@ -80,20 +99,57 @@ public class JwtAuthenticationServiceImpl implements JwtAuthenticationService {
     }
 
     @Override
-    public Boolean validateToken(String token) {
-        try {
-            Claims claims = JwtUtils.extractAllClaims(token, JwtUtils.getSecretKey(jwtSecretKey));
-
-            JwtType jwtType = JwtType.valueOf(claims.get(TYPE_CLAIM, String.class));
-            if (!jwtType.equals(JwtType.BEARER)) {
-                throw new IllegalArgumentException("Invalid action type");
-            }
-
-            Date expiration = claims.getExpiration();
-            return expiration.after(new Date());
+    public JwtType validateToken(String token) {
+        Claims claims;
+        try{
+            claims = JwtUtils.extractAllClaims(
+                    token,
+                    JwtUtils.getSecretKey(jwtSecretKey));
         } catch (Exception e) {
-            log.warn("Token validation failed: {}", e.getMessage());
-            return false;
+            throw new JwtException("Invalid token");
         }
+
+        JwtType jwtType = JwtType.valueOf(claims.get(TYPE_CLAIM, String.class));
+
+        Date expiration = claims.getExpiration();
+        if(!expiration.after(new Date())){
+            throw new JwtException("Token is expired");
+        }
+
+        if(jwtType.equals(JwtType.RESET_PASSWORD)){
+            Boolean resetPassword = claims.get(RESET_PASSWORD_CLAIM, Boolean.class);
+            if(resetPassword==null || !resetPassword){
+                throw new JwtException("Invalid reset token");
+            }
+        }
+
+        return jwtType;
+    }
+
+    @Override
+    public void validateResetToken(String token) {
+        Claims claims = JwtUtils.extractAllClaims(token, JwtUtils.getSecretKey(jwtSecretKey));
+
+        Date expiration = claims.getExpiration();
+        if(!expiration.after(new Date())){
+            throw new InvalidTokenException("Token is expired");
+        }
+
+        JwtType jwtType = JwtType.valueOf(claims.get(TYPE_CLAIM, String.class));
+        if(jwtType.equals(JwtType.RESET_PASSWORD)){
+            Boolean resetPassword = claims.get(RESET_PASSWORD_CLAIM, Boolean.class);
+            if(resetPassword==null || !resetPassword){
+                throw new InvalidTokenException("Invalid reset token");
+            }
+        }else{
+            throw new InvalidTokenException("Invalid reset token");
+        }
+    }
+
+    @Override
+    public JwtType extractType(String token) {
+        String type = JwtUtils.extractAllClaims(token, JwtUtils.getSecretKey(jwtSecretKey))
+                .get(TYPE_CLAIM, String.class);
+        return JwtType.valueOf(type);
     }
 }

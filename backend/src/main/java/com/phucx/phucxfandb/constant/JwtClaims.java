@@ -7,4 +7,5 @@ public class JwtClaims {
     public static final String EMAIL_CLAIM = "email";
     public static final String ROLE_CLAIM = "role";
     public static final String TYPE_CLAIM = "type";
+    public static final String RESET_PASSWORD_CLAIM = "reset-password";
 }

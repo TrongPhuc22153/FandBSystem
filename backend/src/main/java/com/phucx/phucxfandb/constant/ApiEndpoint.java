@@ -14,6 +14,9 @@ public class ApiEndpoint {
 
     public static final String IMAGES_ENDPOINT = "/api/v1/images";
     public static final String IMAGE_BY_NAME_ENDPOINT = "/api/v1/images/{imageName}";
+
+    public static final String RESET_PASSWORD_AUTH_ENDPOINT = "/api/v1/auth/reset";
+    public static final String LOGIN_AUTH_ENDPOINT = "/api/v1/auth/login";
     /**
      * Public APIs accessible to everyone without authentication.
      */
@@ -36,11 +39,11 @@ public class ApiEndpoint {
     };
 
     public static final String[] AUTH_API = {
-            "/api/v1/auth/login",
             "/api/v1/auth/register",
             "/api/v1/auth/forgot",
             "/api/v1/auth/validate",
-            "/api/v1/auth/reset",
+            LOGIN_AUTH_ENDPOINT,
+            RESET_PASSWORD_AUTH_ENDPOINT,
             IMAGES_ENDPOINT
     };
 

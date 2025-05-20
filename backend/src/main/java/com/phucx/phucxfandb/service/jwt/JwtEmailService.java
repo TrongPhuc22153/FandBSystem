@@ -8,5 +8,5 @@ public interface JwtEmailService {
 
     String generateToken(String email, JwtType type);
 
-    boolean validateToken(String token, JwtType type);
+    void validateToken(String token, JwtType type);
 }
