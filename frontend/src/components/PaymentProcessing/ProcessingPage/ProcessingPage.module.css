@@ -1,0 +1,101 @@
+/* ProcessingPage.module.css */
+.card {
+    padding: 2rem;
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    /* shadow-2xl */
+    max-width: 28rem;
+    /* max-w-md */
+    width: 100%;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe);
+    /* Light blue gradient */
+    border: 2px solid #3b82f6;
+    /* Blue border */
+    animation: fade-in 0.6s ease-out forwards;
+}
+
+.heading-primary {
+    font-size: 1.875rem;
+    /* text-3xl */
+    font-weight: 800;
+    /* font-extrabold */
+    margin-bottom: 1rem;
+    /* mb-4 */
+    color: #1e40af;
+    /* Darker blue text */
+}
+
+@media (min-width: 1024px) {
+
+    /* lg breakpoint */
+    .heading-primary {
+        font-size: 2.25rem;
+        /* lg:text-4xl */
+    }
+}
+
+.status-paragraph {
+    color: #374151;
+    /* text-gray-700 */
+    font-size: 1rem;
+    /* text-base */
+    margin-bottom: 1.5rem;
+    /* mb-6 */
+}
+
+@media (min-width: 1024px) {
+
+    /* lg breakpoint */
+    .status-paragraph {
+        font-size: 1.125rem;
+        /* lg:text-lg */
+    }
+}
+
+.icon-container {
+    margin-bottom: 1.5rem;
+    /* mb-6 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5rem;
+    /* h-20 */
+}
+
+/* Spinner Styles */
+.spinner {
+    border: 8px solid #f3f3f3;
+    /* Light grey */
+    border-top: 8px solid #3b82f6;
+    /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Keyframe Animations (copied for consistency, but fade-in is used) */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

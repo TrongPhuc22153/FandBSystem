@@ -8,4 +8,7 @@ public class Views {
     public interface ForgetPassword {}
 
     public interface UpdateUserEnabledStatus{}
+
+    public interface CreateOrderPayment{}
+    public interface CaptureOrderPayment{}
 }

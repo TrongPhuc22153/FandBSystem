@@ -56,6 +56,7 @@ import EmployeeProfilePage from "./pages/EmployeeProfilePage/EmployeeProfilePage
 import UserChangePassword from "./pages/UserChangePassword/UserChangePassword";
 import EmployeeChangePassword from "./pages/EmployeeChangePassword/EmployeeChangePassword";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
+import PaymentProcessingPage from "./pages/PaymentProcessingPage/PaymentProcessingPage";
 
 function App() {
   return (
@@ -69,6 +70,7 @@ function App() {
                   <Route path="" element={<HomePage />} />
                   <Route path="shop" element={<ShopPage />} />
                   <Route path="shop/:foodname" element={<SingleProduct />} />
+                  <Route path="payment" element={<PaymentProcessingPage/>} />
                   <Route element={<PrivateRoute />}>
                     <Route element={<Authorization roles={[ROLES.CUSTOMER]} />}>
                       <Route path="cart" element={<ShoppingCart />} />

@@ -10,6 +10,5 @@ import java.util.List;
 public interface PaymentMethodReaderService {
     List<PaymentMethodDTO> getPaymentMethods();
     PaymentMethod getPaymentMethodEntity(String id);
-    Page<PaymentMethodDTO> getPaymentMethods(int pageNumber, int pageSize);
     PaymentMethodDTO getPaymentMethod(String methodId);
 }

@@ -49,6 +49,18 @@ public class GlobalExceptionController {
                 .body(response);
     }
 
+    @ExceptionHandler(value = PaymentException.class)
+    protected ResponseEntity<ResponseDTO<Void>> handlePaymentException(PaymentException exception) {
+        log.error("handlePaymentException: {}", exception.getMessage());
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message(exception.getMessage())
+                .error("PAYMENT_EXCEPTION")
+                .build();
+        return ResponseEntity.badRequest()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
 
     @ExceptionHandler(value = InSufficientInventoryException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleInSufficientInventoryException(InSufficientInventoryException exception) {
@@ -141,7 +153,7 @@ public class GlobalExceptionController {
                 .message(exception.getMessage())
                 .error("IO_EXCEPTION")
                 .build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(response);
     }

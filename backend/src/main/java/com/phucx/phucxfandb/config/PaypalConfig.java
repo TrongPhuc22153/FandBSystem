@@ -1,13 +1,10 @@
 package com.phucx.phucxfandb.config;
 
-import com.paypal.base.rest.APIContext;
-import com.paypal.base.rest.OAuthTokenCredential;
+import com.paypal.core.PayPalEnvironment;
+import com.paypal.core.PayPalHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 public class PaypalConfig {
@@ -19,21 +16,16 @@ public class PaypalConfig {
     private String mode;
 
     @Bean
-    public Map<String, String> paypalModeConfig(){
-        Map<String, String> config = new HashMap<>();
-        config.put("mode", mode);
-        return config;
-    }
-
-    // @Bean
-    public OAuthTokenCredential oAuthTokenCredential(){
-        return new OAuthTokenCredential(clientId, clientSecret, paypalModeConfig());
+    public PayPalEnvironment payPalEnvironment() {
+        return "sandbox".equals(mode) ?
+                new PayPalEnvironment.Sandbox(clientId, clientSecret) :
+                new PayPalEnvironment.Live(clientId, clientSecret);
     }
 
     @Bean
-    public APIContext apiContext(){
-        APIContext context = new APIContext(clientId, clientSecret, mode);
-        context.setConfigurationMap(paypalModeConfig());
-        return context;
+    public PayPalHttpClient payPalHttpClient(PayPalEnvironment environment) {
+        PayPalHttpClient client = new PayPalHttpClient(environment);
+        client.setConnectTimeout(900000);
+        return client;
     }
 }

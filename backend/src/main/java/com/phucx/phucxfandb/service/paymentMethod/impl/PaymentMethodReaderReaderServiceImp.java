@@ -25,7 +25,6 @@ public class PaymentMethodReaderReaderServiceImp implements PaymentMethodReaderS
 
     @Override
     public List<PaymentMethodDTO> getPaymentMethods() {
-        log.info("getPaymentMethods()");
         return paymentMethodRepository.findAll()
                 .stream().map(mapper::toPaymentMethodDTO)
                 .collect(Collectors.toList());
@@ -33,24 +32,14 @@ public class PaymentMethodReaderReaderServiceImp implements PaymentMethodReaderS
 
     @Override
     public PaymentMethod getPaymentMethodEntity(String id) {
-        log.info("getPaymentMethodEntity(id={})", id);
         return paymentMethodRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("PaymentMethod", id));
+                .orElseThrow(() -> new NotFoundException(PaymentMethod.class.getSimpleName(), "id", id));
     }
 
     @Override
-    public Page<PaymentMethodDTO> getPaymentMethods(int pageNumber, int pageSize) {
-        log.info("getPaymentMethods(pageNumber={}, pageSize={})", pageNumber, pageSize);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return paymentMethodRepository.findAll(pageable)
-                .map(mapper::toPaymentMethodDTO);
-    }
-
-    @Override
-    public PaymentMethodDTO getPaymentMethod(String methodId) {
-        log.info("getPaymentMethod(methodId={})", methodId);
-        PaymentMethod paymentMethod = paymentMethodRepository.findById(methodId)
-                .orElseThrow(() -> new NotFoundException("PaymentMethod", methodId));
-        return mapper.toPaymentMethodDTO(paymentMethod);
+    public PaymentMethodDTO getPaymentMethod(String id) {
+        return paymentMethodRepository.findById(id)
+                .map(mapper::toPaymentMethodDTO)
+                .orElseThrow(() -> new NotFoundException(PaymentMethod.class.getSimpleName(), "id", id));
     }
 }

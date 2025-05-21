@@ -8,4 +8,7 @@ public class ValidationGroups {
     public interface ForgetPassword {}
 
     public interface UpdateUserEnabledStatus{}
+
+    public interface CreateOrderPayment{}
+    public interface CaptureOrderPayment{}
 }

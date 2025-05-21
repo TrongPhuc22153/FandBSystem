@@ -54,17 +54,15 @@ public class WebSecurityConfig {
         http.addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeHttpRequests(request -> request
-                .requestMatchers(HttpMethod.GET, PUBLIC_API).permitAll()
-                .requestMatchers(AUTH_API).permitAll()
-                .requestMatchers(AUTHENTICATED_USER_API).authenticated()
-                .requestMatchers(HttpMethod.PATCH, ORDER_BY_ID_ENDPOINT).hasRole(RoleName.EMPLOYEE.name())
-                .requestMatchers(HttpMethod.PATCH, RESERVATION_BY_ID_ENDPOINT).hasRole(RoleName.EMPLOYEE.name())
-                .requestMatchers(CUSTOMER_API).hasRole(RoleName.CUSTOMER.name())
-                .requestMatchers(EMPLOYEE_API).hasRole(RoleName.EMPLOYEE.name())
-                .requestMatchers(WAITER_API).hasRole(RoleName.WAITER.name())
-                .requestMatchers(CHEF_API).hasRole(RoleName.CHEF.name())
-                .requestMatchers(RECEPTIONIST_API).hasRole(RoleName.RECEPTIONIST.name())
-                .requestMatchers(ADMIN_API).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.GET, Public.GET).permitAll()
+                .requestMatchers(Auth.ALL).permitAll()
+                .requestMatchers(Authenticated.ALL).authenticated()
+                .requestMatchers(Customer.ALL).hasRole(RoleName.CUSTOMER.name())
+                .requestMatchers(Employee.ALL).hasRole(RoleName.EMPLOYEE.name())
+                .requestMatchers(HttpMethod.PATCH, Employee.PATCH).hasRole(RoleName.EMPLOYEE.name())
+                .requestMatchers(Admin.ALL).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.POST, Admin.POST).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.PATCH, Admin.PATCH).hasRole(RoleName.ADMIN.name())
                 .anyRequest().denyAll());
 
         http.exceptionHandling(ex -> ex

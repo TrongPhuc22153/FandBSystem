@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   useShippingAddressActions,
   useShippingAddresses,
@@ -13,8 +13,12 @@ import { useAlert } from "../../context/AlertContext";
 import { Link } from "react-router-dom";
 import { HOME_URI } from "../../constants/routes";
 import { CHECKOUT_ITEMS, ORDER_TYPES } from "../../constants/webConstant";
+import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
+import PaymentMethodOptions from "../../components/PaymentMethodOptions/PaymentMethodOptions";
 
 const CheckoutPage = () => {
+  const [selectedPayment, setSelectedPayment] = useState(null);
+
   const {
     data: addresses,
     isLoading: loadingAddresses,
@@ -26,6 +30,34 @@ const CheckoutPage = () => {
     isLoading: loadingCartData,
     error: cartError,
   } = useCart();
+
+  const {
+    data: paymentMethodsData,
+    isLoading: loadingPaymentMethods,
+    error: paymentMethodsError,
+  } = usePaymentMethods();
+
+  const paymentMethods = useMemo(
+    () => paymentMethodsData || [],
+    [paymentMethodsData]
+  );
+
+  const handlePaymentMethodChange = useCallback((id) => {
+    setSelectedPayment(id);
+  }, []);
+
+  useEffect(() => {
+    if (paymentMethods.length > 0 && selectedPayment === null) {
+      const codMethod = paymentMethods.find(
+        (method) => method.methodName.toLowerCase() === "cod"
+      );
+      if (codMethod) {
+        setSelectedPayment(codMethod.methodId);
+      } else if (paymentMethods.length > 0) {
+        setSelectedPayment(paymentMethods[0].methodId);
+      }
+    }
+  }, [paymentMethods, selectedPayment]);
 
   const getItemsFromLocalStorage = (key) => {
     try {
@@ -174,7 +206,10 @@ const CheckoutPage = () => {
         }
       }
 
-      const resp = await handlePlaceOrder(requestOrderDTO, ORDER_TYPES.TAKE_AWAY);
+      const resp = await handlePlaceOrder(
+        requestOrderDTO,
+        ORDER_TYPES.TAKE_AWAY
+      );
       if (resp) {
         setIsOpenPopUp(true);
         setFieldErrors({});
@@ -185,7 +220,7 @@ const CheckoutPage = () => {
         variant: "danger",
       });
     }
-  }, [handlePlaceOrder, address, selectedAddressId, cartData]);
+  }, [handleCreateShippingAddress, handlePlaceOrder, showNewAlert, cartItems, address, selectedAddressId, cartData]);
 
   const showConfirmModal = () => {
     if (validateForm()) {
@@ -230,13 +265,19 @@ const CheckoutPage = () => {
     }
   };
 
-  if (loadingAddresses || loadingCartData) {
+  if (loadingAddresses || loadingCartData || loadingPaymentMethods) {
     return <Loading />;
   }
 
-  if (addressesError || cartError) {
+  if (addressesError || cartError || paymentMethodsError) {
     return (
-      <ErrorDisplay message={addressesError?.message || cartError?.message} />
+      <ErrorDisplay
+        message={
+          addressesError?.message ||
+          cartError?.message ||
+          paymentMethodsError?.message
+        }
+      />
     );
   }
 
@@ -273,30 +314,11 @@ const CheckoutPage = () => {
                 </div>
               </div>
 
-              <div className="row mb-3">
-                <div className="col-lg-4 mb-3">
-                  <div className="form-check h-100 border rounded-3">
-                    <div className="p-3">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="flexRadioDefault1"
-                        defaultChecked
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flexRadioDefault1"
-                      >
-                        COD <br />
-                        <small className="text-muted">
-                          3-4 days deliverance
-                        </small>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <PaymentMethodOptions
+                paymentMethods={paymentMethods}
+                selectedPaymentMethod={selectedPayment}
+                onPaymentMethodChange={handlePaymentMethodChange}
+              />
 
               <div className="mb-3">
                 <p className="mb-0">Name</p>

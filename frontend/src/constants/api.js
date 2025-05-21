@@ -27,6 +27,12 @@ export const USER_CART_ITEMS_ENDPOINT = `${API_BASE_URL}/api/v1/carts/me/items`;
 export const USER_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/profiles/me`;
 export const USER_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/profiles`;
 
+const PAYPAL_ENDPOINT = `${API_BASE_URL}/api/v1/paypal`;
+export const CREATE_PAYPAL_ORDER = `${PAYPAL_ENDPOINT}/create`;
+export const CAPTURE_PAYPAL_ORDER = `${PAYPAL_ENDPOINT}/capture`; 
+
+export const PAYMENT_METHODS_ENDPOINT = `${API_BASE_URL}/api/v1/payment-methods`;
+
 export const USER_NOTIFICATIONS_ENDPOINT = `${API_BASE_URL}/api/v1/notifications/me`;
 export const USER_NOTIFICATION_ENDPOINT = (id) => `${API_BASE_URL}/api/v1/notifications/${id}/me`;
 
