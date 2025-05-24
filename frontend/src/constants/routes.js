@@ -49,5 +49,10 @@ export const ADMIN_KITCHEN_URI = `${ADMIN_PATH}/kitchen`;
 
 export const ADMIN_NOTIFICATIONS_URI = `${ADMIN_PATH}/notifications`;
 
+const PAYMENT_URI = ''
+export const SUCCESS_PAYMENT_URI = `${PAYMENT_URI}/success`;
+export const CANCEL_PAYMENT_URI = `${PAYMENT_URI}/cancel`;
+export const ERROR_PAYMENT_URI = `${PAYMENT_URI}/error`;
+
 
 

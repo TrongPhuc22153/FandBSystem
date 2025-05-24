@@ -11,4 +11,5 @@ public interface PaymentMethodReaderService {
     List<PaymentMethodDTO> getPaymentMethods();
     PaymentMethod getPaymentMethodEntity(String id);
     PaymentMethodDTO getPaymentMethod(String methodId);
+    PaymentMethod getPaymentMethodEntityByName(String methodName);
 }

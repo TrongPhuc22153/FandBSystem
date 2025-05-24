@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './PaymentCancelled.module.css'; // Import CSS Module
+import styles from './PaymentCancelled.module.css';
 import { Link } from 'react-router-dom';
 import { HOME_URI } from '../../../constants/routes';
 

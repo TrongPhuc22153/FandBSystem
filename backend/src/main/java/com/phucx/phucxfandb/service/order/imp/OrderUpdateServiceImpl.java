@@ -4,6 +4,7 @@ import com.phucx.phucxfandb.constant.OrderStatus;
 import com.phucx.phucxfandb.constant.OrderType;
 import com.phucx.phucxfandb.constant.TableStatus;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
+import com.phucx.phucxfandb.dto.request.RequestPaymentDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.exception.NotFoundException;
@@ -14,10 +15,12 @@ import com.phucx.phucxfandb.service.address.ShippingAddressReaderService;
 import com.phucx.phucxfandb.service.customer.CustomerReaderService;
 import com.phucx.phucxfandb.service.employee.EmployeeReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
+import com.phucx.phucxfandb.service.payment.PaymentUpdateService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
 import com.phucx.phucxfandb.service.product.ProductUpdateService;
 import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
 import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
+import com.phucx.phucxfandb.utils.PriceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,7 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     private final ReservationTableReaderService reservationTableReaderService;
     private final ReservationTableUpdateService reservationTableUpdateService;
     private final ShippingAddressReaderService shippingAddressReaderService;
+    private final PaymentUpdateService paymentUpdateService;
     private final CustomerReaderService customerReaderService;
     private final EmployeeReaderService employeeReaderService;
     private final ProductReaderService productReaderService;
@@ -41,18 +45,6 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     private final OrderRepository orderRepository;
     private final OrderDetailsMapper orderDetailsMapper;
     private final OrderMapper orderMapper;
-
-    @Override
-    @Transactional
-    public OrderDTO updateOrderStatusAndEmployee(String username, String orderID, OrderType type, OrderStatus status) {
-        Order order = orderRepository.findByOrderIdAndType(orderID, type)
-                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderID));
-        Employee employee = employeeReaderService.getEmployeeEntityByUsername(username);
-        order.setEmployee(employee);
-        order.setStatus(status);
-        Order updatedOrder = orderRepository.save(order);
-        return orderMapper.toOrderDTO(updatedOrder);
-    }
 
     @Override
     @Transactional
@@ -78,16 +70,6 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     @Transactional
     public OrderDTO updateOrderStatus(String orderID, OrderType type, OrderStatus status) {
         Order order = orderRepository.findByOrderIdAndType(orderID, type)
-                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderID));
-        order.setStatus(status);
-        Order updatedOrder = orderRepository.save(order);
-        return orderMapper.toOrderDTO(updatedOrder);
-    }
-
-    @Override
-    @Transactional
-    public OrderDTO updateOrderStatus(String orderID, OrderStatus status) {
-        Order order = orderRepository.findById(orderID)
                 .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderID));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
@@ -124,9 +106,19 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
                 })
                 .collect(Collectors.toList());
 
-        newOrder.setOrderDetails(newOrderDetails);
-        newOrder.setTotalPrice(calculateTotalPrice(newOrderDetails));
+        BigDecimal totalPrice = PriceUtils.calculateOrderTotalPrice(newOrderDetails);
+
+        RequestPaymentDTO requestPaymentDTO = requestOrderDTO.getPayment();
+        Payment payment = paymentUpdateService.createCustomerPayment(
+                requestPaymentDTO.getPaymentMethod(),
+                totalPrice,
+                customer.getCustomerId()
+        );
+
+        newOrder.setPayment(payment);
+        newOrder.setTotalPrice(totalPrice);
         newOrder.setStatus(OrderStatus.PENDING);
+        newOrder.setOrderDetails(newOrderDetails);
 
         Order savedOrder = orderRepository.save(newOrder);
         return orderMapper.toOrderDTO(savedOrder);
@@ -136,17 +128,17 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     @Transactional
     public OrderDTO createOrderEmployee(String username, RequestOrderDTO requestOrderDTO) {
         Employee employee = employeeReaderService.getEmployeeEntityByUsername(username);
-        // Get table
         ReservationTable table = reservationTableReaderService
                 .getReservationTableEntity(requestOrderDTO.getTableId());
 
         if(table.getStatus().equals(TableStatus.UNOCCUPIED)){
             reservationTableUpdateService.updateTableStatus(table.getTableId(), TableStatus.OCCUPIED);
         }
-        // Create new order
+
         Order newOrder = orderMapper.toEmployeeOrder(
                 requestOrderDTO,
-                employee, table
+                employee,
+                table
         );
         newOrder.setStatus(OrderStatus.PENDING);
 
@@ -156,18 +148,21 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
                     return orderDetailsMapper.toOrderDetail(requestOrderDetail, product, newOrder);
                 }).collect(Collectors.toList());
 
+        BigDecimal totalPrice = PriceUtils.calculateOrderTotalPrice(newOrderDetails);
+
+        RequestPaymentDTO requestPaymentDTO = requestOrderDTO.getPayment();
+        Payment payment = paymentUpdateService.createEmployeePayment(
+                requestPaymentDTO.getPaymentMethod(),
+                totalPrice,
+                employee.getEmployeeId()
+        );
+
+        newOrder.setPayment(payment);
         newOrder.setOrderDetails(newOrderDetails);
-        newOrder.setTotalPrice(calculateTotalPrice(newOrderDetails));
+        newOrder.setTotalPrice(totalPrice);
+        newOrder.setStatus(OrderStatus.PENDING);
 
         Order savedOrder = orderRepository.save(newOrder);
         return orderMapper.toOrderDTO(savedOrder);
-    }
-
-    private BigDecimal calculateTotalPrice(List<OrderDetail> orderDetails) {
-        BigDecimal totalPrice = BigDecimal.ZERO;
-        for (OrderDetail orderDetail : orderDetails) {
-            totalPrice = totalPrice.add(orderDetail.getUnitPrice().multiply(BigDecimal.valueOf(orderDetail.getQuantity())));
-        }
-        return totalPrice;
     }
 }

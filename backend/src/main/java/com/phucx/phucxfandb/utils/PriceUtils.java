@@ -1,0 +1,25 @@
+package com.phucx.phucxfandb.utils;
+
+import com.phucx.phucxfandb.entity.MenuItem;
+import com.phucx.phucxfandb.entity.OrderDetail;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+public class PriceUtils {
+    public static BigDecimal calculateReservationTotalPrice(List<MenuItem> menuItems) {
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (MenuItem item : menuItems) {
+            totalPrice = totalPrice.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+        }
+        return totalPrice;
+    }
+
+    public static BigDecimal calculateOrderTotalPrice(List<OrderDetail> orderDetails) {
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (OrderDetail orderDetail : orderDetails) {
+            totalPrice = totalPrice.add(orderDetail.getUnitPrice().multiply(BigDecimal.valueOf(orderDetail.getQuantity())));
+        }
+        return totalPrice;
+    }
+}

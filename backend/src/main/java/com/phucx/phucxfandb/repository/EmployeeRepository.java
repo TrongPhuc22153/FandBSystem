@@ -12,13 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, String>{
-    
-    @EntityGraph(attributePaths = {"profile"})
-    Optional<Employee> findByEmployeeIdAndIsDeletedFalse(String employeeId);
-    
-    @EntityGraph(attributePaths = {"profile"})
-    Optional<Employee> findByProfileUserUserIdAndIsDeletedFalse(String userId);
-    
+
     @EntityGraph(attributePaths = {"profile"})
     Optional<Employee> findByProfileUserUsernameAndIsDeletedFalse(String username);
     

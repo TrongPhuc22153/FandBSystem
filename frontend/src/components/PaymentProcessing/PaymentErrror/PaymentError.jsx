@@ -1,5 +1,6 @@
-import React from 'react';
 import styles from './PaymentError.module.css'; 
+import { Link } from 'react-router-dom';
+import { CHECKOUT_URI } from '../../../constants/routes';
 
 function PaymentError() {
   return (
@@ -24,12 +25,12 @@ function PaymentError() {
       <p className={styles['status-paragraph']}>
         There was an issue processing your payment. Please try again or contact support.
       </p>
-      <button
-        onClick={() => (window.location.hash = '')}
+      <Link
+        to={CHECKOUT_URI}
         className={`${styles.btn} ${styles['btn-blue']}`}
       >
-        Try Again
-      </button>
+        Try again
+      </Link>
     </div>
   );
 }

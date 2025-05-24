@@ -2,10 +2,13 @@ package com.phucx.phucxfandb.service.reservation.imp;
 
 import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
+import com.phucx.phucxfandb.dto.request.RequestPaymentDTO;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
+import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.ReservationTable;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
+import com.phucx.phucxfandb.service.payment.PaymentProcessService;
 import com.phucx.phucxfandb.service.reservation.ReservationProcessingService;
 import com.phucx.phucxfandb.service.reservation.ReservationReaderService;
 import com.phucx.phucxfandb.service.reservation.ReservationUpdateService;
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,7 +33,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     private final ReservationTableUpdateService reservationTableUpdateService;
     private final ReservationTableReaderService reservationTableReaderService;
     private final SendReservationNotificationService sendReservationNotificationService;
-
+    private final PaymentProcessService paymentProcessService;
 
     @Override
     public ReservationDTO cancelReservation(Authentication authentication, String reservationId) {
@@ -82,25 +86,28 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     @Override
-    public ReservationDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication) {
+    @Transactional
+    public PaymentProcessingDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication) {
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
-        ReservationDTO result;
+        RequestPaymentDTO requestPaymentDTO = requestReservationDTO.getPayment();
+        PaymentProcessingDTO paymentProcessingDTO;
+        ReservationDTO newReservation;
 
         if(roleNames.contains(RoleName.CUSTOMER)){
-            result = this.placeCustomerReservation(authentication.getName(), requestReservationDTO);
+            newReservation = this.placeCustomerReservation(authentication.getName(), requestReservationDTO);
         }else if(roleNames.contains(RoleName.EMPLOYEE)){
-            result = this.placeEmployeeReservation(authentication.getName(), requestReservationDTO);
+            newReservation = this.placeEmployeeReservation(authentication.getName(), requestReservationDTO);
+            requestPaymentDTO.setPaymentMethod(PaymentMethodConstants.COD);
         } else{
             throw new IllegalArgumentException("Invalid reservation");
         }
 
-        sendReservationNotificationService.sendPlaceReservationNotification(
-                authentication,
-                result.getReservationId(),
-                result
-        );
+        requestPaymentDTO.setReservationId(newReservation.getReservationId());
+        requestPaymentDTO.setAmount(newReservation.getTotalPrice());
+        requestPaymentDTO.setPaymentId(newReservation.getPayment().getPaymentId());
+        paymentProcessingDTO = paymentProcessService.processPayment(authentication, requestPaymentDTO);
 
-        return result;
+        return paymentProcessingDTO;
     }
 
     @Override

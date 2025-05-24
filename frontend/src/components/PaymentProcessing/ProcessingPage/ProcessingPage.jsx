@@ -2,7 +2,7 @@ import styles from './ProcessingPage.module.css';
 
 function ProcessingPage() {
   return (
-    <div className={`center ${styles.card} ${styles['processing-card']}`}>
+    <div className={`${styles.card} ${styles['processing-card']}`}>
       <div className={styles['icon-container']}>
         <div className={styles.spinner}></div>
       </div>

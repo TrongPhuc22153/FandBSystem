@@ -1,4 +1,4 @@
-package com.phucx.phucxfandb.service.notification.imps;
+package com.phucx.phucxfandb.service.notification.impl;
 
 import com.phucx.phucxfandb.constant.SenderType;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;

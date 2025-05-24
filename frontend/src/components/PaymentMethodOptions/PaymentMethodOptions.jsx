@@ -6,7 +6,7 @@ const PaymentMethodOptions = ({
   return (
     <div className="row mb-3">
       {paymentMethods.map((method) => (
-        <div className="col-lg-4 mb-3">
+        <div className="col-lg-4 mb-3" key={method.methodId}>
           <div
             className="form-check h-100 border rounded-3"
             key={method.methodId}
@@ -17,8 +17,8 @@ const PaymentMethodOptions = ({
                 type="radio"
                 name="paymentMethodRadio"
                 id={method.methodId}
-                checked={selectedPaymentMethod === method.methodId}
-                onChange={() => onPaymentMethodChange(method.methodId)}
+                checked={selectedPaymentMethod === method.methodName}
+                onChange={() => onPaymentMethodChange(method.methodName)}
               />
               <label className="form-check-label" htmlFor={method.methodId}>
                 {method.methodName.toUpperCase()} <br />

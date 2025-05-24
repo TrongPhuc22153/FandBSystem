@@ -11,7 +11,7 @@ public class ImageUtils {
 
     public static String getCurrentUrl(String baseUrl) {
         String normalizedBaseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length()-1) : baseUrl;
-        return normalizedBaseUrl + ApiEndpoint.IMAGES_ENDPOINT;
+        return normalizedBaseUrl + ApiEndpoint.IMAGES_ENDPOINT + "/";
     }
 
     public static String extractImageNameFromUrl(String url) {

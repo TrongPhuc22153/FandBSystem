@@ -15,6 +15,7 @@ import { HOME_URI } from "../../constants/routes";
 import { CHECKOUT_ITEMS, ORDER_TYPES } from "../../constants/webConstant";
 import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
 import PaymentMethodOptions from "../../components/PaymentMethodOptions/PaymentMethodOptions";
+import { CANCEL_PAYMENT_URL, SUCCESS_PAYMENT_URL } from "../../constants/paymentConstants";
 
 const CheckoutPage = () => {
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -52,9 +53,9 @@ const CheckoutPage = () => {
         (method) => method.methodName.toLowerCase() === "cod"
       );
       if (codMethod) {
-        setSelectedPayment(codMethod.methodId);
+        setSelectedPayment(codMethod.methodName);
       } else if (paymentMethods.length > 0) {
-        setSelectedPayment(paymentMethods[0].methodId);
+        setSelectedPayment(paymentMethods[0].methodName);
       }
     }
   }, [paymentMethods, selectedPayment]);
@@ -206,13 +207,25 @@ const CheckoutPage = () => {
         }
       }
 
-      const resp = await handlePlaceOrder(
-        requestOrderDTO,
+      const requestPayment = {
+        paymentMethod: selectedPayment,
+        returnUrl: SUCCESS_PAYMENT_URL,
+        cancelUrl: CANCEL_PAYMENT_URL
+      }
+
+      const res = await handlePlaceOrder(
+        {
+          ...requestOrderDTO,
+          payment: requestPayment
+        },
         ORDER_TYPES.TAKE_AWAY
       );
-      if (resp) {
+      if (res) {
         setIsOpenPopUp(true);
         setFieldErrors({});
+        if(res.data.link){
+          window.location.href = res.data.link
+        }
       }
     } else {
       showNewAlert({

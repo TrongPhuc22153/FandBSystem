@@ -19,7 +19,8 @@ public class PaymentDTO {
     BigDecimal amount;
     PaymentStatus status;
     CustomerDTO customer;
-    PaymentMethodDTO method;
+    EmployeeDTO employee;
+    String method;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

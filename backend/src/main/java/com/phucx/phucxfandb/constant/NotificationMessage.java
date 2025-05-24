@@ -1,6 +1,8 @@
 package com.phucx.phucxfandb.constant;
 
 public class NotificationMessage {
+    private NotificationMessage(){}
+
     // Order-related
     public static String NEW_ORDER_MESSAGE = "A new order has been placed";
     public static String PREPARING_ORDER_MESSAGE = "Your order is preparing";

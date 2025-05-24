@@ -20,7 +20,7 @@ public class PaymentController {
 //    ) throws PayPalRESTException, IOException, NotFoundException{
 //        String baseUrl = ServerUrlUtils.getBaseUrl(request);
 //        payment.setBaseUrl(baseUrl);
-//        PaymentResponse paymentResponse = paymentProcessorService.createPayment(payment);
+//        PaymentResponse paymentResponse = paymentProcessorService.createCustomerPayment(payment);
 //        return ResponseEntity.ok().body(paymentResponse);
 //    }
 //

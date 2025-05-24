@@ -45,6 +45,8 @@ public class RequestReservationDTO {
     @Size(min = 3, max = 36, message = "Table ID must be between 3 and 36 characters")
     private String tableId;
 
+    private RequestPaymentDTO payment;
+
     private ReservationAction action;
 
     private ReservationStatus status;

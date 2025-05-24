@@ -7,12 +7,12 @@ export const ORDER_STATUS_CLASSES = {
     DEFAULT: "primary"
 }
 export const ROLE_CLASSES = {
-    "ADMIN": "success",
-    "CUSTOMER": "info"
+    ADMIN: "success",
+    CUSTOMER: "info"
 }
 export const TABLE_STATUS_CLASSES = {
-    "OCCUPIED": "danger",
-    "UNOCCUPIED": "success",
+    OCCUPIED: "danger",
+    UNOCCUPIED: "success",
 }
 export const TABLE_STATUSES = {
     OCCUPIED: "OCCUPIED",

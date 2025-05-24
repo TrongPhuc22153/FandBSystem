@@ -8,10 +8,8 @@ import com.phucx.phucxfandb.repository.PaymentMethodRepository;
 import com.phucx.phucxfandb.service.paymentMethod.PaymentMethodReaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +22,7 @@ public class PaymentMethodReaderReaderServiceImp implements PaymentMethodReaderS
     private final PaymentMethodMapper mapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<PaymentMethodDTO> getPaymentMethods() {
         return paymentMethodRepository.findAll()
                 .stream().map(mapper::toPaymentMethodDTO)
@@ -31,15 +30,25 @@ public class PaymentMethodReaderReaderServiceImp implements PaymentMethodReaderS
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public PaymentMethodDTO getPaymentMethod(String id) {
+        return paymentMethodRepository.findById(id)
+                .map(mapper::toPaymentMethodDTO)
+                .orElseThrow(() -> new NotFoundException(PaymentMethod.class.getSimpleName(), "id", id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public PaymentMethod getPaymentMethodEntity(String id) {
         return paymentMethodRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(PaymentMethod.class.getSimpleName(), "id", id));
     }
 
+
     @Override
-    public PaymentMethodDTO getPaymentMethod(String id) {
-        return paymentMethodRepository.findById(id)
-                .map(mapper::toPaymentMethodDTO)
-                .orElseThrow(() -> new NotFoundException(PaymentMethod.class.getSimpleName(), "id", id));
+    @Transactional(readOnly = true)
+    public PaymentMethod getPaymentMethodEntityByName(String methodName) {
+        return paymentMethodRepository.findByMethodName(methodName)
+                .orElseThrow(() -> new NotFoundException(PaymentMethod.class.getSimpleName(), "name", methodName));
     }
 }

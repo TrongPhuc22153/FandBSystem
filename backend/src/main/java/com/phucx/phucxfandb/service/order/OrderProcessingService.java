@@ -4,6 +4,7 @@ import com.phucx.phucxfandb.constant.OrderAction;
 import com.phucx.phucxfandb.constant.OrderType;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
+import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import org.springframework.security.core.Authentication;
 
 public interface OrderProcessingService {
@@ -14,7 +15,7 @@ public interface OrderProcessingService {
 
     OrderDTO placeOrderByCustomer(String username, RequestOrderDTO requestOrderDTO);
     OrderDTO placeOrderByEmployee(String username, RequestOrderDTO requestOrderDTO);
-    OrderDTO placeOrder(RequestOrderDTO requestOrderDTO, Authentication authentication);
+    PaymentProcessingDTO placeOrder(RequestOrderDTO requestOrderDTO, Authentication authentication);
 
     OrderDTO completeOrder(String username, String orderId, OrderType type);
     OrderDTO completeTakeAwayOrder(String username, String orderId);

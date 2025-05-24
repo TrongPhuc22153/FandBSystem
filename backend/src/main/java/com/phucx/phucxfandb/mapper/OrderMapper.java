@@ -5,18 +5,19 @@ import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring", uses = {OrderDetailsMapper.class})
+@Mapper(componentModel = "spring", uses = {OrderDetailsMapper.class, UserMapper.class, PaymentMapper.class})
 public interface OrderMapper {
 
-    @Mapping(target = "customer.profile.user.roles", ignore = true)
-    @Mapping(target = "employee.profile.user.roles", ignore = true)
+    @Mapping(target = "payment", qualifiedByName = "toPaymentDTO")
+    @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
+    @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")
     OrderDTO toOrderDTO(Order order);
 
+    @Mapping(target = "payment", ignore = true)
     @Mapping(target = "orderDetails", qualifiedByName = {"toOrderDetailsDTO"})
-    @Mapping(target = "employee.profile.user.roles", ignore = true)
-    @Mapping(target = "customer.profile.user.roles", ignore = true)
+    @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
+    @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "shippingAddress", ignore = true)
     OrderDTO toOrderListEntryDTO(Order order);
 
@@ -33,6 +34,7 @@ public interface OrderMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "shippingAddress", source = "shippingAddress")
+    @Mapping(target = "payment", ignore = true)
     Order toCustomerOrder(RequestOrderDTO order, Customer customer, ShippingAddress shippingAddress);
 
     @Mapping(target = "table", source = "table")
@@ -47,17 +49,6 @@ public interface OrderMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "payment", ignore = true)
     Order toEmployeeOrder(RequestOrderDTO orderDTO, Employee employee, ReservationTable table);
-
-    @Mapping(target = "totalPrice", ignore = true)
-    @Mapping(target = "table", ignore = true)
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "employee", ignore = true)
-    @Mapping(target = "customer", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "orderDate", expression = "java(java.time.LocalDateTime.now())")
-    void updateOrder(RequestOrderDTO requestOrderDTO, @MappingTarget Order order);
-
 }

@@ -1,10 +1,9 @@
 package com.phucx.phucxfandb.service.order.imp;
 
 import com.phucx.phucxfandb.constant.*;
-import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
-import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
-import com.phucx.phucxfandb.dto.request.RequestOrderDetailsDTO;
+import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
+import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.entity.Order;
 import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.service.cart.CartUpdateService;
@@ -12,12 +11,14 @@ import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
+import com.phucx.phucxfandb.service.payment.PaymentProcessService;
 import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     private final OrderReaderService orderReaderService;
     private final SendOrderNotificationService sendOrderNotificationService;
     private final ReservationTableUpdateService reservationTableUpdateService;
+    private final PaymentProcessService paymentProcessService;
 
     @Override
     public OrderDTO cancelOrderByEmployee(String username, String orderId, OrderType type) {
@@ -93,26 +95,29 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     }
 
     @Override
-    public OrderDTO placeOrder(RequestOrderDTO requestOrderDTO, Authentication authentication) {
+    @Transactional
+    public PaymentProcessingDTO placeOrder(RequestOrderDTO requestOrderDTO, Authentication authentication) {
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
-        OrderDTO result;
+        RequestPaymentDTO requestPaymentDTO = requestOrderDTO.getPayment();
+        PaymentProcessingDTO paymentProcessingDTO;
+        OrderDTO newOrder;
 
         if(roleNames.contains(RoleName.CUSTOMER) && requestOrderDTO.getType().equals(OrderType.TAKE_AWAY)){
-            result = this.placeOrderByCustomer(authentication.getName(), requestOrderDTO);
+            newOrder = this.placeOrderByCustomer(authentication.getName(), requestOrderDTO);
+            requestPaymentDTO.setCustomerId(newOrder.getCustomer().getCustomerId());
         }else if(roleNames.contains(RoleName.EMPLOYEE) && requestOrderDTO.getType().equals(OrderType.DINE_IN)){
-            result = this.placeOrderByEmployee(authentication.getName(), requestOrderDTO);
+            newOrder = this.placeOrderByEmployee(authentication.getName(), requestOrderDTO);
+            requestPaymentDTO.setPaymentMethod(PaymentMethodConstants.COD);
         }else{
             throw new IllegalArgumentException("Invalid order type");
         }
 
-        sendOrderNotificationService.sendPlaceOrderNotification(
-                authentication,
-                result.getOrderId(),
-                result.getType(),
-                result
-        );
+        requestPaymentDTO.setOrderId(newOrder.getOrderId());
+        requestPaymentDTO.setAmount(newOrder.getTotalPrice());
+        requestPaymentDTO.setPaymentId(newOrder.getPayment().getPaymentId());
+        paymentProcessingDTO = paymentProcessService.processPayment(authentication, requestPaymentDTO);
 
-        return result;
+        return paymentProcessingDTO;
     }
 
     @Override
@@ -121,7 +126,10 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
                 .map(RequestOrderDetailsDTO::getProductId)
                 .toList();
         OrderDTO newOrder = orderUpdateService.createOrderCustomer(username, requestOrderDTO);
-        cartUpdateService.removeCartItems(username, productIds);
+
+        if(newOrder.getPayment().getStatus().equals(PaymentStatus.SUCCESSFUL)){
+            cartUpdateService.removeCartItems(username, productIds);
+        }
         return newOrder;
     }
 

@@ -24,6 +24,7 @@ public class OrderDTO {
     ReservationTableDTO table;
     CustomerDTO customer;
     EmployeeDTO employee;
+    PaymentDTO payment;
     ShippingAddressDTO shippingAddress;
     OrderType type;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

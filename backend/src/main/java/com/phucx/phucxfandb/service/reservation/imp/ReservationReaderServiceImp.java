@@ -31,6 +31,7 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
     private final ReservationMapper reservationMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ReservationDTO> getReservations(ReservationRequestParamDTO params, Authentication authentication) {
         List<RoleName> roles = RoleUtils.getRoles(authentication.getAuthorities());
         if(roles.contains(RoleName.ADMIN)){
@@ -40,7 +41,6 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
         }
     }
 
-    @Transactional(readOnly = true)
     public Page<ReservationDTO> getCustomerReservations(String username, ReservationRequestParamDTO params){
         Pageable pageable = PageRequest.of(
                 params.getPage(),
@@ -54,7 +54,6 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
                 .map(reservationMapper::toReservationListEntryDTO);
     }
 
-    @Transactional(readOnly = true)
     public Page<ReservationDTO> getAdminReservations(ReservationRequestParamDTO params){
         Pageable pageable = PageRequest.of(
                 params.getPage(),
@@ -70,15 +69,15 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
     @Override
     @Transactional(readOnly = true)
     public ReservationDTO getReservation(String reservationId) {
-        var reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new NotFoundException("Reservation", reservationId));
-        return reservationMapper.toReservationDTO(reservation);
+        return reservationRepository.findById(reservationId)
+                .map(reservationMapper::toReservationDTO)
+                .orElseThrow(() -> new NotFoundException(Reservation.class.getSimpleName(), "id", reservationId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Reservation getReservationEntity(String reservationId) {
         return reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new NotFoundException("Reservation", reservationId));
+                .orElseThrow(() -> new NotFoundException(Reservation.class.getSimpleName(), "id", reservationId));
     }
 }

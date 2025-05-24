@@ -54,6 +54,10 @@ public class Order extends Auditable{
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
     @ManyToOne
     private ShippingAddress shippingAddress;
 

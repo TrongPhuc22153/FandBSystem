@@ -1,6 +1,8 @@
 package com.phucx.phucxfandb.constant;
 
 public class WebSocketEndpoint {
+    private WebSocketEndpoint(){}
+
     public final static String REGISTER_ENDPOINT = "/chat";
     public final static String APPLICATION_ENDPOINT = "/app";
     public final static String QUEUE_MESSAGES = "/queue/messages";

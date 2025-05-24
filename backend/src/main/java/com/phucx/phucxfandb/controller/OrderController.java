@@ -3,6 +3,7 @@ package com.phucx.phucxfandb.controller;
 import com.phucx.phucxfandb.dto.request.OrderRequestParamDTO;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
+import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
@@ -67,14 +68,16 @@ public class OrderController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create a new order", description = "Authenticated access")
-    public ResponseEntity<ResponseDTO<OrderDTO>> createOrder(
+    public ResponseEntity<ResponseDTO<PaymentProcessingDTO>> createOrder(
             Authentication authentication,
             @Valid @RequestBody RequestOrderDTO requestOrderDTO
     ) {
-        OrderDTO orderDTO = orderProcessingService.placeOrder(requestOrderDTO, authentication);
-        ResponseDTO<OrderDTO> response = ResponseDTO.<OrderDTO>builder()
+        PaymentProcessingDTO paymentProcessingDTO = orderProcessingService
+                .placeOrder(requestOrderDTO, authentication);
+
+        ResponseDTO<PaymentProcessingDTO> response = ResponseDTO.<PaymentProcessingDTO>builder()
                 .message("Order placed successfully")
-                .data(orderDTO)
+                .data(paymentProcessingDTO)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

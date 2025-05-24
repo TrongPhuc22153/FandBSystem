@@ -34,6 +34,8 @@ public class RequestOrderDTO {
 
     private OrderStatus status;
 
+    private RequestPaymentDTO payment;
+
     private OrderAction action;
 
     @NotEmpty(message = "Order must have at least one order detail")

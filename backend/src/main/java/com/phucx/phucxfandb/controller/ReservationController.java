@@ -2,6 +2,7 @@ package com.phucx.phucxfandb.controller;
 
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.request.ReservationRequestParamDTO;
+import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.service.reservation.ReservationProcessingService;
@@ -67,14 +68,14 @@ public class ReservationController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create a new reservation", description = "Authenticated access")
-    public ResponseEntity<ResponseDTO<ReservationDTO>> createReservation(
+    public ResponseEntity<ResponseDTO<PaymentProcessingDTO>> createReservation(
             Authentication authentication,
-            @Valid @RequestBody RequestReservationDTO requestReservationDTO // Changed RequestOrderDTO
+            @Valid @RequestBody RequestReservationDTO requestReservationDTO
     ) {
-        ReservationDTO reservationDTO = reservationProcessingService.placeReservation(requestReservationDTO, authentication);
-        ResponseDTO<ReservationDTO> response = ResponseDTO.<ReservationDTO>builder()
+        PaymentProcessingDTO paymentProcessingDTO = reservationProcessingService.placeReservation(requestReservationDTO, authentication);
+        ResponseDTO<PaymentProcessingDTO> response = ResponseDTO.<PaymentProcessingDTO>builder()
                 .message("Reservation placed successfully")
-                .data(reservationDTO)
+                .data(paymentProcessingDTO)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

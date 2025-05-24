@@ -2,6 +2,7 @@ package com.phucx.phucxfandb.service.notification;
 
 import com.phucx.phucxfandb.constant.OrderAction;
 import com.phucx.phucxfandb.constant.OrderType;
+import com.phucx.phucxfandb.constant.PaymentStatus;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import org.springframework.security.core.Authentication;
@@ -14,7 +15,7 @@ public interface SendOrderNotificationService {
 
     void sendNotificationForOrderAction(Authentication authentication, String orderId, OrderAction action, OrderType type, OrderDTO order);
 
-    void sendPlaceOrderNotification(Authentication authentication, String orderId, OrderType type, OrderDTO order);
+    void sendPlaceOrderNotification(Authentication authentication, String orderId, OrderType type, String paymentMethod, PaymentStatus paymentStatus);
 
     void sendPreparingNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order);
 

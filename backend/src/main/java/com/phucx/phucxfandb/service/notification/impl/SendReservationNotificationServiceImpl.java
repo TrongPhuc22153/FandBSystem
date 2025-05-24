@@ -1,4 +1,4 @@
-package com.phucx.phucxfandb.service.notification.imps;
+package com.phucx.phucxfandb.service.notification.impl;
 
 import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
@@ -8,12 +8,16 @@ import com.phucx.phucxfandb.service.notification.NotificationUpdateService;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 import static com.phucx.phucxfandb.constant.WebSocketEndpoint.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SendReservationNotificationServiceImpl implements SendReservationNotificationService {
@@ -56,17 +60,24 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
     }
 
     @Override
-    public void sendPlaceReservationNotification(Authentication authentication, String reservationId, ReservationDTO reservation) {
+    public void sendPlaceReservationNotification(Authentication authentication, String reservationId, LocalDateTime reservationStartTime, String paymentMethod, PaymentStatus paymentStatus) {
+        if (paymentStatus != PaymentStatus.SUCCESSFUL) {
+            log.warn("Reservation {} notification skipped due to payment status: {}", reservationId, paymentStatus);
+            return;
+        }
         String username = authentication.getName();
 
+        String startTime = reservationStartTime != null ? reservationStartTime.toString() : "a specified time";
         RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
                 username,
                 RoleName.EMPLOYEE,
                 NotificationTopic.RESERVATION,
                 NotificationTitle.RESERVATION_PLACED,
-                String.format("New reservation #%s has been placed by customer %s",
+                String.format("New reservation #%s (Payment: %s) has been placed by customer %s for %s",
                         reservationId,
-                        username)
+                        paymentStatus,
+                        username,
+                        startTime)
         );
         this.sendNotificationToGroup(reservationId, TOPIC_KITCHEN, employeeNotification);
 
@@ -74,9 +85,9 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
                 username,
                 NotificationTopic.RESERVATION,
                 NotificationTitle.RESERVATION_CONFIRMED,
-                String.format("Your reservation #%s has been confirmed for %s",
+                String.format("Your reservation #%s has been confirmed and paid for %s",
                         reservationId,
-                        reservation.getStartTime() != null ? reservation.getStartTime().toString() : "a specified time")
+                        startTime)
         );
         this.sendNotificationToUser(reservationId, customerNotification);
     }

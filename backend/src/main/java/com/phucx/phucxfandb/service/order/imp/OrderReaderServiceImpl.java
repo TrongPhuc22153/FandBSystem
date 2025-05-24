@@ -34,38 +34,35 @@ public class OrderReaderServiceImpl implements OrderReaderService {
     @Override
     @Transactional(readOnly = true)
     public OrderDTO getOrder(String orderId) {
-        log.info("getOrder(orderId={})", orderId);
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new NotFoundException("Order", "id", orderId));
-        return orderMapper.toOrderDTO(order);
+        return orderRepository.findById(orderId)
+                .map(orderMapper::toOrderDTO)
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public OrderDTO getOrder(String orderId, OrderType type) {
-        log.info("getOrder(orderId={}, type={})", orderId, type);
-        Order order = orderRepository.findByOrderIdAndType(orderId, type)
-                .orElseThrow(()-> new NotFoundException("Order", "id", orderId));
-        return orderMapper.toOrderDTO(order);
+        return orderRepository.findByOrderIdAndType(orderId, type)
+                .map(orderMapper::toOrderDTO)
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Order getOrderEntity(String orderId) {
-        log.info("getOrderEntity(orderId={})", orderId);
         return orderRepository.findById(orderId)
-                .orElseThrow(()-> new NotFoundException("Order", "id", orderId));
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Order getOrderEntity(String orderId, OrderType type) {
-        log.info("getOrderEntity(orderId={}, type={})", orderId, type);
         return orderRepository.findByOrderIdAndType(orderId, type)
-                .orElseThrow(()-> new NotFoundException("Order", "id", orderId));
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<OrderDTO> getOrders(OrderRequestParamDTO params, Authentication authentication) {
         List<RoleName> roles = RoleUtils.getRoles(authentication.getAuthorities());
         if (roles.contains(RoleName.ADMIN)) {
@@ -75,8 +72,7 @@ public class OrderReaderServiceImpl implements OrderReaderService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public Page<OrderDTO> getCustomerOrders(String username, OrderRequestParamDTO params) {
+    private Page<OrderDTO> getCustomerOrders(String username, OrderRequestParamDTO params) {
         Pageable pageable = PageRequest.of(
                 params.getPage(),
                 params.getSize(),
@@ -90,8 +86,7 @@ public class OrderReaderServiceImpl implements OrderReaderService {
                 .map(orderMapper::toOrderListEntryDTO);
     }
 
-    @Transactional(readOnly = true)
-    public Page<OrderDTO> getAdminOrders(OrderRequestParamDTO params) {
+    private Page<OrderDTO> getAdminOrders(OrderRequestParamDTO params) {
         Pageable pageable = PageRequest.of(
                 params.getPage(),
                 params.getSize(),

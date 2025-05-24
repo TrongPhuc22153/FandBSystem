@@ -6,11 +6,8 @@ import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 
 public interface OrderUpdateService {
-    // update order status
-    OrderDTO updateOrderStatusAndEmployee(String username, String orderID, OrderType type, OrderStatus status);
     OrderDTO updateOrderStatusByEmployee(String username, String orderID, OrderType type, OrderStatus status);
     OrderDTO updateOrderStatusByCustomer(String username, String orderId, OrderType type, OrderStatus status);
-    OrderDTO updateOrderStatus(String orderID, OrderStatus status);
     OrderDTO updateOrderStatus(String orderID, OrderType type, OrderStatus status);
 
     OrderDTO createOrderCustomer(String username, RequestOrderDTO requestOrderDTO);

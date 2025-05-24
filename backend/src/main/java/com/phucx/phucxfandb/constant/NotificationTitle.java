@@ -1,6 +1,8 @@
 package com.phucx.phucxfandb.constant;
 
 public class NotificationTitle {
+    private NotificationTitle(){}
+
     // Order-related
     public static final String ORDER_PLACED = "Order placed";
     public static final String ORDER_PREPARING = "Order preparing";

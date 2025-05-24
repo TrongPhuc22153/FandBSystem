@@ -1,4 +1,4 @@
-package com.phucx.phucxfandb.service.notification.imps;
+package com.phucx.phucxfandb.service.notification.impl;
 
 import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
@@ -8,12 +8,14 @@ import com.phucx.phucxfandb.service.notification.NotificationUpdateService;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import static com.phucx.phucxfandb.constant.WebSocketEndpoint.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SendOrderNotificationServiceImp implements SendOrderNotificationService {
@@ -54,32 +56,45 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
     }
 
     @Override
-    public void sendPlaceOrderNotification(Authentication authentication, String orderId, OrderType type, OrderDTO order) {
-        String username = authentication.getName();
-
-        if (type == OrderType.TAKE_AWAY) {
-            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
-                    order.getCustomer().getProfile().getUser().getUsername(),
-                    NotificationTopic.ORDER,
-                    NotificationTitle.ORDER_PLACED,
-                    String.format("Your order #%s has been successfully placed. We'll notify you when it's ready!", orderId)
-            );
-
-            this.sendNotificationToUser(orderId, customerNotification);
+    public void sendPlaceOrderNotification(Authentication authentication, String orderId, OrderType type, String paymentMethod, PaymentStatus paymentStatus) {
+        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL) && paymentStatus != PaymentStatus.SUCCESSFUL) {
+            log.warn("Order {} notification skipped due to payment status: {}", orderId, paymentStatus);
+            return;
+        } else if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.COD) && paymentStatus != PaymentStatus.PENDING) {
+            log.warn("Order {} notification skipped due to payment status: {}", orderId, paymentStatus);
+            return;
         }
 
+        String username = authentication.getName();
+        String readableOrderType = type.name().toLowerCase().replace('_', ' ');
+        if (type == OrderType.TAKE_AWAY) {
+            String customerMessage = paymentMethod.equalsIgnoreCase(PaymentMethodConstants.COD)
+                    ? String.format("Your %s order #%s has been placed. We'll notify you when it's ready!", readableOrderType, orderId)
+                    : String.format("Your %s order #%s has been successfully placed and paid. We'll notify you when it's ready!", readableOrderType, orderId);
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    username,
+                    NotificationTopic.ORDER,
+                    NotificationTitle.ORDER_PLACED,
+                    customerMessage
+            );
+            sendNotificationToUser(orderId, customerNotification);
+        }
+
+        String paymentMessage = paymentMethod.equalsIgnoreCase(PaymentMethodConstants.COD)
+                ? "(Payment: PENDING - COD)"
+                : "(Payment: SUCCESS)";
         RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
                 username,
                 RoleName.EMPLOYEE,
                 NotificationTopic.ORDER,
                 NotificationTitle.ORDER_PLACED,
-                String.format("New %s order #%s has been placed by %s",
-                        type.toString().toLowerCase().replace('_', ' '),
+                String.format("New %s order #%s %s has been placed by %s",
+                        readableOrderType,
                         orderId,
+                        paymentMessage,
                         type == OrderType.TAKE_AWAY ? "customer " + username : username)
         );
-
-        this.sendNotificationToGroup(orderId, TOPIC_KITCHEN, employeeNotification);
+        sendNotificationToGroup(orderId, TOPIC_KITCHEN, employeeNotification);
     }
 
     @Override

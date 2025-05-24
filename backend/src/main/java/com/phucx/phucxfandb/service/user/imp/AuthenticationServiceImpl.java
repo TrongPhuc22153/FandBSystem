@@ -1,7 +1,6 @@
 package com.phucx.phucxfandb.service.user.imp;
 
 import com.phucx.phucxfandb.constant.EmailConstants;
-import com.phucx.phucxfandb.constant.EmailVerified;
 import com.phucx.phucxfandb.constant.JwtType;
 import com.phucx.phucxfandb.constant.RoleName;
 import com.phucx.phucxfandb.dto.request.*;
@@ -72,7 +71,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEnabled(Boolean.TRUE);
-        user.setEmailVerified(EmailVerified.YES.getValue());
+        user.setEmailVerified(Boolean.TRUE);
         Role role = roleReaderService.getRoleEntityByName(RoleName.EMPLOYEE);
         user.getRoles().add(role);
         UserProfile profile = new UserProfile();
@@ -116,7 +115,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEnabled(Boolean.TRUE);
-        user.setEmailVerified(EmailVerified.YES.getValue());
+        user.setEmailVerified(Boolean.TRUE);
         List<Role> roles = roleReaderService.getRoleEntitiesByName(
                 List.of(RoleName.EMPLOYEE, RoleName.ADMIN)
         );
@@ -201,7 +200,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEnabled(Boolean.TRUE);
-        user.setEmailVerified(EmailVerified.YES.getValue());
+        user.setEmailVerified(Boolean.TRUE);
         Role role = roleReaderService.getRoleEntityByName(RoleName.CUSTOMER);
         user.getRoles().add(role);
         UserProfile profile = new UserProfile();

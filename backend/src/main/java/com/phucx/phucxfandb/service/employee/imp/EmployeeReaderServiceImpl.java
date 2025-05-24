@@ -31,6 +31,13 @@ public class EmployeeReaderServiceImpl implements EmployeeReaderService {
 
     @Override
     @Transactional(readOnly = true)
+    public Employee getEmployeeEntityById(String employeeId) {
+        return employeeRepository.findById(employeeId)
+                .orElseThrow(()-> new NotFoundException(Employee.class.getSimpleName(), "id", employeeId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Employee getEmployeeEntityByUsername(String username) {
         return employeeRepository.findByProfileUserUsernameAndIsDeletedFalse(username)
                 .orElseThrow(()-> new NotFoundException(Employee.class.getSimpleName(), "username", username));
