@@ -86,13 +86,13 @@ const AdminUserProfilePage = () => {
             <div className="row">
               <div className="col-lg-6">
                 <div className="form-group">
-                  <label>User Created On:</label>
+                  <label htmlFor="user-createAt">User Created On:</label>
                   <input
                     type="text"
-                    id="user-createdon"
-                    name="user-createdon"
+                    id="user-createAt"
+                    name="user-createAt"
                     className="form-control"
-                    value={formatDate(profile.user?.createdOn)}
+                    value={formatDate(profile.user?.createdAt)}
                     disabled
                   />
                 </div>
@@ -103,10 +103,10 @@ const AdminUserProfilePage = () => {
                     <label>User Last Updated On:</label>
                     <input
                       type="text"
-                      id="user-lastUpdatedOn"
-                      name="user-lastUpdatedOn"
+                      id="user-lastModifiedAt"
+                      name="user-lastModifiedAt"
                       className="form-control"
-                      value={formatDate(profile.user?.lastUpdatedOn)}
+                      value={formatDate(profile.user?.lastModifiedAt)}
                       disabled
                     />
                   </div>
@@ -191,13 +191,13 @@ const AdminUserProfilePage = () => {
             <div className="row">
               <div className="col-lg-6">
                 <div className="form-group">
-                  <label>Profile Created On:</label>
+                  <label htmlFor="profile-createdAt">Profile Created On:</label>
                   <input
                     type="text"
-                    id="profile-createdon"
-                    name="profile-createdon"
+                    id="profile-createdAt"
+                    name="profile-createdAt"
                     className="form-control"
-                    value={formatDate(profile.createdOn)}
+                    value={formatDate(profile.createdAt)}
                     disabled
                   />
                 </div>
@@ -205,13 +205,13 @@ const AdminUserProfilePage = () => {
               <div className="col-lg-6">
                 <div className="form-group">
                   <div className="form-group">
-                    <label>Profile Last Updated On:</label>
+                    <label htmlFor="profile-lastModifiedAt">Profile Last Updated On:</label>
                     <input
                       type="text"
-                      id="profile-lastUpdatedOn"
-                      name="profile-lastUpdatedOn"
+                      id="profile-lastModifiedAt"
+                      name="profile-lastModifiedAt"
                       className="form-control"
-                      value={formatDate(profile.lastUpdatedOn)}
+                      value={formatDate(profile.lastModifiedAt)}
                       disabled
                     />
                   </div>

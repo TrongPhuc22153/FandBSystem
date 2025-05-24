@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.service.discount.impl;
 
+import com.phucx.phucxfandb.dto.request.DiscountRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.DiscountDTO;
 import com.phucx.phucxfandb.entity.Discount;
 import com.phucx.phucxfandb.exception.NotFoundException;
@@ -11,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -21,24 +24,16 @@ public class DiscountReaderServiceImp implements DiscountReaderService {
     private final DiscountMapper mapper;
 
     @Override
-    public Page<DiscountDTO> getDiscounts(int pageNumber, int pageSize) {
-        log.info("getDiscounts(pageNumber={}, pageSize={})", pageNumber, pageSize);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return discountRepository.findByIsDeletedFalse(pageable)
-                .map(mapper::toDiscountDTO);
-    }
-
-    @Override
-    public Page<DiscountDTO> getDiscountsByProductId(long productId, int pageNumber, int pageSize) {
-        log.info("getDiscountsByProductId(productId={}, pageNumber={}, pageSize={})", productId, pageNumber, pageSize);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    @Transactional(readOnly = true)
+    public Page<DiscountDTO> getDiscountsByProductId(long productId, DiscountRequestParamsDTO params) {
+        Pageable pageable = PageRequest.of(params.getPage(), params.getSize(), Sort.by(params.getDirection(), params.getField()));
         return discountRepository.findByProductsProductIdAndIsDeletedFalse(productId, pageable)
                 .map(mapper::toDiscountDTO);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DiscountDTO getDiscount(String discountID) {
-        log.info("getDiscount(discountID={})", discountID);
         Discount discount = discountRepository.findById(discountID)
                 .orElseThrow(() -> new NotFoundException("Discount", discountID));
         return mapper.toDiscountDTO(discount);

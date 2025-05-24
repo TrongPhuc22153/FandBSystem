@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.controller;
 
-import com.phucx.phucxfandb.dto.request.ProductRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.ProductRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestProductDTO;
 import com.phucx.phucxfandb.dto.response.ProductDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
@@ -27,7 +27,7 @@ public class ProductController {
 
     @GetMapping
     @Operation(summary = "Get products", description = "Public access")
-    public ResponseEntity<Page<ProductDTO>> getProducts(@ModelAttribute ProductRequestParamDTO params) {
+    public ResponseEntity<Page<ProductDTO>> getProducts(@ModelAttribute ProductRequestParamsDTO params) {
         Page<ProductDTO> productDTOS = productReaderService.getProducts(params);
         return ResponseEntity.ok(productDTOS);
     }

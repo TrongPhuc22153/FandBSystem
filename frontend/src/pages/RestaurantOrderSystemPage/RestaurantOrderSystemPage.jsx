@@ -15,6 +15,8 @@ import { useOrderActions } from "../../hooks/orderHooks";
 import { useAlert } from "../../context/AlertContext";
 import { useModal } from "../../context/ModalContext";
 import { ORDER_TYPES } from "../../constants/webConstant";
+import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import { CANCEL_PAYMENT_URL, PAYMENT_METHODS, SUCCESS_PAYMENT_URL } from "../../constants/paymentConstants";
 
 export default function RestaurantOrderSystem() {
   const navigate = useNavigate();
@@ -64,7 +66,7 @@ export default function RestaurantOrderSystem() {
     isLoading: loadingTablesData,
     error: tablesDataError,
   } = useReservationTables();
-  const tables = useMemo(() =>tablesData?.content || [], [tablesData]);
+  const tables = useMemo(() => tablesData?.content || [], [tablesData]);
 
   // products
   const {
@@ -83,9 +85,12 @@ export default function RestaurantOrderSystem() {
   const {
     data: categoriesData,
     isLoading: loadingCategoriesData,
-    error: categoriesError,
+    error: categoriesDataError,
   } = useCategories();
-  const categories = useMemo(() => categoriesData?.content || [], [categoriesData]);
+  const categories = useMemo(
+    () => categoriesData?.content || [],
+    [categoriesData]
+  );
 
   const addToOrder = useCallback(
     (food) => {
@@ -129,7 +134,7 @@ export default function RestaurantOrderSystem() {
   }, []);
 
   const showPlaceOrderModal = () => {
-    if (!selectedTable) {
+    if (!selectedTable?.tableId) {
       showNewAlert({
         message: "Please select a table first!",
       });
@@ -150,14 +155,21 @@ export default function RestaurantOrderSystem() {
   };
 
   const placeOrder = useCallback(async () => {
+    const requestPayment = {
+      paymentMethod: PAYMENT_METHODS.COD,
+      returnUrl: SUCCESS_PAYMENT_URL,
+      cancelUrl: CANCEL_PAYMENT_URL
+    }
     const order = {
-      tableId: selectedTable,
+      tableId: selectedTable.tableId,
+      payment: requestPayment,
       orderDetails: orderItems.map((item) => {
         return {
           productId: item.food.productId,
           quantity: item.quantity,
         };
       }),
+
     };
 
     const response = await handlePlaceOrder(order, ORDER_TYPES.DINE_IN);
@@ -188,8 +200,25 @@ export default function RestaurantOrderSystem() {
     loadingProductsData ||
     !tablesData ||
     loadingTablesData
-  )
+  ) {
     return <Loading />;
+  }
+
+  if (
+    categoriesDataError?.message ||
+    tablesDataError?.message ||
+    productsDataError?.message
+  ) {
+    return (
+      <ErrorDisplay
+        message={
+          categoriesDataError?.message ||
+          tablesDataError?.message ||
+          productsDataError?.message
+        }
+      />
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -241,7 +270,7 @@ export default function RestaurantOrderSystem() {
           <div className={styles.card}>
             <div className={styles.cardHeader}>
               <h4>
-                Order Summary {selectedTable ? `- Table ${selectedTable}` : ""}
+                Order Summary {selectedTable ? `- Table ${selectedTable.tableNumber}` : ""}
               </h4>
             </div>
             <div className={styles.cardBody}>

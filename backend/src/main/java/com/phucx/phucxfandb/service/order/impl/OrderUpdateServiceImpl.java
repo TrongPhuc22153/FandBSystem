@@ -8,6 +8,7 @@ import com.phucx.phucxfandb.dto.request.RequestPaymentDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.exception.NotFoundException;
+import com.phucx.phucxfandb.exception.TableException;
 import com.phucx.phucxfandb.mapper.OrderDetailsMapper;
 import com.phucx.phucxfandb.mapper.OrderMapper;
 import com.phucx.phucxfandb.repository.OrderRepository;
@@ -131,9 +132,10 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
         ReservationTable table = reservationTableReaderService
                 .getReservationTableEntity(requestOrderDTO.getTableId());
 
-        if(table.getStatus().equals(TableStatus.UNOCCUPIED)){
-            reservationTableUpdateService.updateTableStatus(table.getTableId(), TableStatus.OCCUPIED);
+        if(!table.getStatus().equals(TableStatus.UNOCCUPIED)){
+            throw new TableException(String.format("Table %s is not available", table.getTableNumber()));
         }
+        reservationTableUpdateService.updateTableStatus(table.getTableId(), TableStatus.OCCUPIED);
 
         Order newOrder = orderMapper.toEmployeeOrder(
                 requestOrderDTO,

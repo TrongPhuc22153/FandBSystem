@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.utils;
 
+import com.phucx.phucxfandb.entity.CartItem;
 import com.phucx.phucxfandb.entity.MenuItem;
 import com.phucx.phucxfandb.entity.OrderDetail;
 
@@ -21,5 +22,13 @@ public class PriceUtils {
             totalPrice = totalPrice.add(orderDetail.getUnitPrice().multiply(BigDecimal.valueOf(orderDetail.getQuantity())));
         }
         return totalPrice;
+    }
+
+    public static BigDecimal calculateTotalPrice(List<CartItem> cartItems){
+        return cartItems.stream()
+                .map(item -> item
+                        .getUnitPrice()
+                        .multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

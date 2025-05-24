@@ -7,17 +7,19 @@ import {
 } from "../api/usersApi";
 import { useCallback, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { USERS_ENDPOINT } from "../constants/api";
 
 export const useUsers = ({
   username,
   email,
   role,
+  search,
   page = 0,
   size = 10,
 } = {}) => {
   const { token } = useAuth();
-  return useSWR(["users", username, email, role, page, size], () =>
-    fetchUsers({ username, email, role, page, size, token })
+  return useSWR([USERS_ENDPOINT, username, email, role, page, size, search], () =>
+    fetchUsers({ username, email, role, page, size, search, token })
   );
 };
 

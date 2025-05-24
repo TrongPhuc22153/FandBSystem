@@ -244,26 +244,26 @@ function AdminUpdateProductPage() {
               <div className="row">
                 <div className="col-lg-6">
                   <div className="form-group">
-                    <label htmlFor="createdOn">Created On</label>
+                    <label htmlFor="createdAt">Created On</label>
                     <input
                       type="text"
-                      id="createdOn"
-                      name="createdOn"
+                      id="createdAt"
+                      name="createdAt"
                       className="form-control"
-                      value={formatDate(productData.createdOn)}
+                      value={formatDate(productData.createdAt)}
                       disabled
                     />
                   </div>
                 </div>
                 <div className="col-lg-6">
                   <div className="form-group">
-                    <label htmlFor="lastUpdatedOn">Updated On</label>
+                    <label htmlFor="lastModifiedAt">Updated On</label>
                     <input
                       type="text"
-                      id="lastUpdatedOn"
-                      name="lastUpdatedOn"
+                      id="lastModifiedAt"
+                      name="lastModifiedAt"
                       className="form-control"
-                      value={formatDate(productData.lastUpdatedOn)}
+                      value={formatDate(productData.lastModifiedAt)}
                       disabled
                     />
                   </div>

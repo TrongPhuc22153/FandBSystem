@@ -37,12 +37,24 @@ public class GlobalExceptionController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler(value = EmailNotVerifiedException.class)
-    protected ResponseEntity<ResponseDTO<Void>> handleEmailNotVerified(EmailNotVerifiedException exception) {
-        log.error("handleEmailNotVerified: {}", exception.getMessage());
+    @ExceptionHandler(value = TableException.class)
+    protected ResponseEntity<ResponseDTO<Void>> handleTableException(TableException exception) {
+        log.error("handleTableException: {}", exception.getMessage());
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
-                .error("Email not verified")
+                .error(exception.getMessage())
+                .build();
+        return ResponseEntity.badRequest()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    @ExceptionHandler(value = ImageException.class)
+    protected ResponseEntity<ResponseDTO<Void>> handleImageException(ImageException exception) {
+        log.error("handleImageException: {}", exception.getMessage());
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message(exception.getMessage())
+                .error(exception.getMessage())
                 .build();
         return ResponseEntity.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -61,49 +73,12 @@ public class GlobalExceptionController {
                 .body(response);
     }
 
-
-    @ExceptionHandler(value = InSufficientInventoryException.class)
-    protected ResponseEntity<ResponseDTO<Void>> handleInSufficientInventoryException(InSufficientInventoryException exception) {
-        log.error("handleInSufficientInventoryException: {}", exception.getMessage());
-        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
-                .message(exception.getMessage())
-                .error("Insufficient inventory")
-                .build();
-        return ResponseEntity.badRequest()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(response);
-    }
-
     @ExceptionHandler(value = IllegalArgumentException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleIllegalArgumentException(IllegalArgumentException exception) {
         log.error("handleIllegalArgumentException: {}", exception.getMessage());
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("ILLEGAL_ARGUMENT")
-                .build();
-        return ResponseEntity.badRequest()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(response);
-    }
-
-    @ExceptionHandler(value = NullPointerException.class)
-    protected ResponseEntity<ResponseDTO<Void>> handleNullPointerException(NullPointerException exception) {
-        log.error("handleNullPointerException: {}", exception.getMessage());
-        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
-                .message(exception.getMessage())
-                .error("NULL_POINTER")
-                .build();
-        return ResponseEntity.badRequest()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(response);
-    }
-
-    @ExceptionHandler(EmptyCartException.class)
-    protected ResponseEntity<ResponseDTO<Void>> handleEmptyCartException(EmptyCartException exception) {
-        log.error("handleEmptyCartException: {}", exception.getMessage());
-        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
-                .message(exception.getMessage())
-                .error("Empty cart")
                 .build();
         return ResponseEntity.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)

@@ -37,8 +37,6 @@ import AdminCreateTablePage from "./pages/AdminCreateTablePage/AdminCreateTableP
 import AdminUpdateTablePage from "./pages/AdminUpdateTablePage/AdminUpdateTablePage";
 import AdminReservationsPage from "./pages/AdminReservationsPage/AdminReservationsPage";
 import AdminReservationPage from "./pages/AdminReservationPage/AdminReservationPage";
-import AdminKitChenPage from "./pages/AdminKitchenPage/AdminKitchenPage";
-import WaiterOrderPage from "./pages/WaiterOrderPage/WaiterOrderPage";
 import AdminLayout from "./pages/ProfileLayout/AdminLayout";
 import CustomerLayout from "./pages/ProfileLayout/CustomerLayout";
 import EmployeeLayout from "./pages/ProfileLayout/EmployeeLayout";
@@ -105,8 +103,6 @@ function App() {
                       <Route path="tables/:id" element={<AdminUpdateTablePage />}/>
                       <Route path="reservations" element={<AdminReservationsPage />} />
                       <Route path="reservations/:id" element={<AdminReservationPage />}/>
-                      <Route path="kitchen" element={<AdminKitChenPage />} />
-                      <Route path="waiter/orders" element={<WaiterOrderPage />} />
                     </Route>
                   </Route>
 

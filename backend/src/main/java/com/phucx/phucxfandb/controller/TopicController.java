@@ -1,12 +1,12 @@
 package com.phucx.phucxfandb.controller;
 
 import com.phucx.phucxfandb.dto.request.RequestTopicDTO;
+import com.phucx.phucxfandb.dto.request.TopicRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.dto.response.TopicDTO;
 import com.phucx.phucxfandb.service.topic.TopicReaderService;
 import com.phucx.phucxfandb.service.topic.TopicUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,34 +29,16 @@ public class TopicController {
 
     @Operation(summary = "Get all topics", description = "Public access")
     @GetMapping
-    public ResponseEntity<Page<TopicDTO>> getTopics(
-            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "size", defaultValue = "10") Integer pageSize
-    ) {
-        Page<TopicDTO> data = topicReaderService.getTopics(pageNumber, pageSize);
+    public ResponseEntity<Page<TopicDTO>> getTopics(@ModelAttribute TopicRequestParamsDTO params) {
+        Page<TopicDTO> data = topicReaderService.getTopics(params);
         return ResponseEntity.ok().body(data);
     }
 
-    @Operation(summary = "Get topic by ID or name", description = "Public access")
-    @GetMapping(value = "/topic")
-    public ResponseEntity<TopicDTO> getTopic(
-            @Parameter(description = "Topic ID to retrieve a single topic", required = false)
-            @RequestParam(name = "id", required = false) Long id,
-            @Parameter(description = "Topic name to retrieve a single topic", required = false)
-            @RequestParam(name = "name", required = false) String name
-    ) {
-        if (id != null && name != null && !name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Cannot provide both id and name");
-        }
-        if (id != null) {
-            TopicDTO data = topicReaderService.getTopic(id);
-            return ResponseEntity.ok().body(data);
-        }
-        if (name != null && !name.trim().isEmpty()) {
-            TopicDTO data = topicReaderService.getTopic(name);
-            return ResponseEntity.ok().body(data);
-        }
-        throw new IllegalArgumentException("Either id or name must be provided");
+    @GetMapping(value = "/{id}")
+    @Operation(summary = "Get topic by Id", description = "Public access")
+    public ResponseEntity<TopicDTO> getTopic(@PathVariable Long id) {
+        TopicDTO data = topicReaderService.getTopic(id);
+        return ResponseEntity.ok().body(data);
     }
 
     @Operation(summary = "Update topic", description = "Admin access")

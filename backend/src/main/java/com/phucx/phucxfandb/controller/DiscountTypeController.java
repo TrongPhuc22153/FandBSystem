@@ -1,12 +1,12 @@
 package com.phucx.phucxfandb.controller;
 
+import com.phucx.phucxfandb.dto.request.DiscountTypeParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestDiscountTypeDTO;
 import com.phucx.phucxfandb.dto.response.DiscountTypeDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.service.discountType.DiscountTypeReaderService;
 import com.phucx.phucxfandb.service.discountType.DiscountTypeUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,34 +29,16 @@ public class DiscountTypeController {
 
     @GetMapping
     @Operation(summary = "Get all discount types", description = "Public access")
-    public ResponseEntity<Page<DiscountTypeDTO>> getDiscountTypes(
-            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
-    ) {
-        Page<DiscountTypeDTO> data = discountTypeReaderService.getDiscountTypes(pageNumber, pageSize);
+    public ResponseEntity<Page<DiscountTypeDTO>> getDiscountTypes(@ModelAttribute DiscountTypeParamsDTO params) {
+        Page<DiscountTypeDTO> data = discountTypeReaderService.getDiscountTypes(params);
         return ResponseEntity.ok().body(data);
     }
 
-    @Operation(summary = "Get discount type by ID or name", description = "Public access")
-    @GetMapping(value = "/discount-type")
-    public ResponseEntity<DiscountTypeDTO> getDiscountType(
-            @Parameter(description = "Discount type ID to retrieve a single discount type", required = false)
-            @RequestParam(name = "id", required = false) Long id, // Changed ID type to Long
-            @Parameter(description = "Discount type name to retrieve a single discount type", required = false)
-            @RequestParam(name = "name", required = false) String name
-    ) {
-        if (id != null && name != null && !name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Cannot provide both id and name");
-        }
-        if (id != null) {
-            DiscountTypeDTO data = discountTypeReaderService.getDiscountType(id);
-            return ResponseEntity.ok().body(data);
-        }
-        if (name != null && !name.trim().isEmpty()) {
-            DiscountTypeDTO data = discountTypeReaderService.getDiscountType(name);
-            return ResponseEntity.ok().body(data);
-        }
-        throw new IllegalArgumentException("Either id or name must be provided");
+    @Operation(summary = "Get discount type by Id", description = "Public access")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<DiscountTypeDTO> getDiscountType(@PathVariable Long id) {
+        DiscountTypeDTO data = discountTypeReaderService.getDiscountType(id);
+        return ResponseEntity.ok().body(data);
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -2,7 +2,7 @@ import { RESERVATION_TABLES_ENDPOINT } from "../constants/api";
 import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
 // Get all reservation tables with pagination
-export const fetchReservationTables = async ({ page = 0, size = 10, direction = SORTING_DIRECTIONS.ASC, field = "tableNumber", isDeleted = false, status, tableNumber }) => {
+export const fetchReservationTables = async ({ page = 0, size = 10, direction = SORTING_DIRECTIONS.ASC, field = "tableNumber", isDeleted = false, search, status, tableNumber }) => {
     const params = new URLSearchParams();
     params.append("page", page.toString())
     params.append("size", size.toString())
@@ -17,6 +17,9 @@ export const fetchReservationTables = async ({ page = 0, size = 10, direction = 
     if (tableNumber != null && tableNumber != undefined) {
         params.append("tableNumber", tableNumber.toString())
     }
+    if (search != null && search != undefined) {
+        params.append("search", search.toString())
+    }
     const response = await fetch(
         `${RESERVATION_TABLES_ENDPOINT}?${params.toString()}`,);
     if (!response.ok) {
@@ -27,16 +30,7 @@ export const fetchReservationTables = async ({ page = 0, size = 10, direction = 
 
 // Get reservation table by ID
 export const fetchReservationTableById = async ({ id }) => {
-    const response = await fetch(`${RESERVATION_TABLES_ENDPOINT}/table?id=${id}`);
-    if (!response.ok) {
-        throw await response.json();
-    }
-    return response.json();
-};
-
-// Get reservation table by name
-export const fetchReservationTableByName = async ({ name }) => {
-    const response = await fetch(`${RESERVATION_TABLES_ENDPOINT}/table?name=${name}`);
+    const response = await fetch(`${RESERVATION_TABLES_ENDPOINT}/${id}`);
     if (!response.ok) {
         throw await response.json();
     }

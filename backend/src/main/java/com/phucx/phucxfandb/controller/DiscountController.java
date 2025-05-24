@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.controller;
 
+import com.phucx.phucxfandb.dto.request.DiscountRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestDiscountDTO;
 import com.phucx.phucxfandb.dto.response.DiscountDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
@@ -50,24 +51,22 @@ public class DiscountController {
     }
 
 
-    @GetMapping("/product/{productID}")
+    @GetMapping("/products/{id}")
     @Operation(summary = "Get discounts of a product", description = "Admin access")
     public ResponseEntity<Page<DiscountDTO>> getDiscountsByProductID(
-            @PathVariable(name = "productID") Integer productID,
-            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "size", defaultValue = "10") Integer pageSize
-    ){
+            @PathVariable(name = "id") Long id,
+            @ModelAttribute DiscountRequestParamsDTO params){
         Page<DiscountDTO> discounts = discountReaderService
-                .getDiscountsByProductId(productID, pageNumber, pageSize);
+                .getDiscountsByProductId(id, params);
         return ResponseEntity.ok().body(discounts);
     }
 
     @Operation(summary = "Get discount by ID", description = "Public access")
-    @GetMapping("/{discountID}")
+    @GetMapping("/{id}")
     public ResponseEntity<DiscountDTO> getDiscount(
-            @PathVariable(name = "discountID") String discountID
+            @PathVariable(name = "id") String id
     ){
-        DiscountDTO discount = discountReaderService.getDiscount(discountID);
+        DiscountDTO discount = discountReaderService.getDiscount(id);
         return ResponseEntity.ok().body(discount);
     }
 }

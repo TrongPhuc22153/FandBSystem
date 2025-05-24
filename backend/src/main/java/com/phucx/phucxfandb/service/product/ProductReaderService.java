@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.product;
 
 import com.phucx.phucxfandb.constant.ProductRatingStatus;
-import com.phucx.phucxfandb.dto.request.ProductRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.ProductRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.ProductDTO;
 import com.phucx.phucxfandb.entity.Product;
 import org.springframework.data.domain.Page;
@@ -16,7 +16,7 @@ public interface ProductReaderService {
 
     Product getProductEntity(long productID);
 
-    Page<ProductDTO> getProducts(ProductRequestParamDTO requestParamDTO);
+    Page<ProductDTO> getProducts(ProductRequestParamsDTO requestParamDTO);
 
     Optional<Product> getRatingProductEntity(String username, long productId);
 

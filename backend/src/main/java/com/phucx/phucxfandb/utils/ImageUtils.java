@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.utils;
 
 import com.phucx.phucxfandb.constant.ApiEndpoint;
+import com.phucx.phucxfandb.exception.ImageException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -21,11 +22,11 @@ public class ImageUtils {
 
             String imageName = path.substring(path.lastIndexOf('/') + 1);
             if (imageName.isEmpty()) {
-                throw new IllegalArgumentException("No image name found in URL");
+                throw new ImageException("No image name found in URL");
             }
             return imageName;
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid URL format: " + url, e);
+            throw new ImageException("Invalid URL format: " + url);
         }
     }
 }

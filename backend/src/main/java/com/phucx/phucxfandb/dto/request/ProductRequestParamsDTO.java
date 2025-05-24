@@ -5,13 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Sort;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class RatingRequestParamsDTO extends PaginationParamsDTO {
-    private String field = "lastModifiedAt";
-    private Sort.Direction direction = Sort.Direction.DESC;
+@AllArgsConstructor
+public class ProductRequestParamsDTO extends PaginationParamsDTO {
+    private String field = "productName";
+    private String search;
+    private Long categoryId;
+    private Boolean isFeatured;
+    private Boolean isDeleted;
 }

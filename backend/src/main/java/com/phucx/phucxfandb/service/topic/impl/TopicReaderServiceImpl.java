@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.service.topic.impl;
 
 import com.phucx.phucxfandb.constant.NotificationTopic;
+import com.phucx.phucxfandb.dto.request.TopicRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.TopicDTO;
 import com.phucx.phucxfandb.entity.Topic;
 import com.phucx.phucxfandb.exception.NotFoundException;
@@ -12,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -22,33 +25,25 @@ public class TopicReaderServiceImpl implements TopicReaderService {
     private final TopicMapper mapper;
 
     @Override
-    public Page<TopicDTO> getTopics(int pageNumber, int pageSize) {
-        log.info("getTopics(pageNumber={}, pageSize={})", pageNumber, pageSize);
-        Pageable page = PageRequest.of(pageNumber, pageSize);
+    @Transactional(readOnly = true)
+    public Page<TopicDTO> getTopics(TopicRequestParamsDTO params) {
+        Pageable page = PageRequest.of(params.getPage(), params.getSize(), Sort.by(params.getDirection(), params.getField()));
         Page<Topic> topics = topicRepository.findByIsDeletedFalse(page);
         return topics.map(mapper::toTopicDTO);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TopicDTO getTopic(long topicId) {
-        log.info("getTopic(topicId={})", topicId);
         Topic topic = topicRepository.findByTopicIdAndIsDeletedFalse(topicId)
-                .orElseThrow(() -> new NotFoundException("Topic", topicId));
+                .orElseThrow(() -> new NotFoundException(Topic.class.getSimpleName(), topicId));
         return mapper.toTopicDTO(topic);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Topic getTopicEntity(NotificationTopic topic) {
-        log.info("getTopic(topic={})", topic);
         return topicRepository.findByTopicNameAndIsDeletedFalse(topic.name())
-                .orElseThrow(() -> new NotFoundException("Topic", "name", topic.name()));
-    }
-
-    @Override
-    public TopicDTO getTopic(String topicName) {
-        log.info("getTopic(topicName={})", topicName);
-        Topic topic = topicRepository.findByTopicNameAndIsDeletedFalse(topicName)
-                .orElseThrow(() -> new NotFoundException("Topic", topicName));
-        return mapper.toTopicDTO(topic);
+                .orElseThrow(() -> new NotFoundException(Topic.class.getSimpleName(), "name", topic.name()));
     }
 }

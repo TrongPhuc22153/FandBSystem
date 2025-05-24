@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.controller;
 
-import com.phucx.phucxfandb.dto.request.OrderRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.OrderRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
@@ -32,31 +32,31 @@ public class OrderController {
     @Operation(summary = "Get orders", description = "Authenticated access")
     public ResponseEntity<Page<OrderDTO>> getOrders(
             Authentication authentication,
-            @ModelAttribute OrderRequestParamDTO params
+            @ModelAttribute OrderRequestParamsDTO params
     ) {
         Page<OrderDTO> orders = orderReaderService.getOrders(params, authentication);
         return ResponseEntity.ok(orders);
     }
 
-    @GetMapping("/{orderId}")
+    @GetMapping("/{id}")
     @Operation(summary = "Get order", description = "Authenticated access")
     public ResponseEntity<OrderDTO> getOrder(
-            @PathVariable(name = "orderId") String orderId
+            @PathVariable(name = "id") String id
     ) {
-        OrderDTO order = orderReaderService.getOrder(orderId);
+        OrderDTO order = orderReaderService.getOrder(id);
         return ResponseEntity.ok(order);
     }
 
-    @PatchMapping("/{orderId}")
+    @PatchMapping("/{id}")
     @Operation(summary = "Process order", description = "Employee access")
     public ResponseEntity<ResponseDTO<OrderDTO>> updateOrderStatus(
             Authentication authentication,
-            @PathVariable String orderId,
+            @PathVariable String id,
             @RequestBody RequestOrderDTO requestOrderDTO
     ) {
         OrderDTO updatedOrder = orderProcessingService.processOrder(
                 authentication,
-                orderId,
+                id,
                 requestOrderDTO.getAction(),
                 requestOrderDTO.getType());
         ResponseDTO<OrderDTO> response = ResponseDTO.<OrderDTO>builder()

@@ -3,7 +3,7 @@ package com.phucx.phucxfandb.service.product.impl;
 import com.phucx.phucxfandb.constant.OrderStatus;
 import com.phucx.phucxfandb.constant.ProductRatingStatus;
 import com.phucx.phucxfandb.constant.ReservationStatus;
-import com.phucx.phucxfandb.dto.request.ProductRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.ProductRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.ProductDTO;
 import com.phucx.phucxfandb.entity.Product;
 import com.phucx.phucxfandb.exception.NotFoundException;
@@ -81,7 +81,7 @@ public class ProductReaderServiceImpl implements ProductReaderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProductDTO> getProducts(ProductRequestParamDTO requestParamDTO) {
+    public Page<ProductDTO> getProducts(ProductRequestParamsDTO requestParamDTO) {
         Pageable pageable = PageRequest.of(
                 requestParamDTO.getPage(),
                 requestParamDTO.getSize(),
@@ -92,7 +92,7 @@ public class ProductReaderServiceImpl implements ProductReaderService {
                 .where(ProductSpecification.hasCategoryId(requestParamDTO.getCategoryId()))
                 .and(ProductSpecification.hasIsDeleted(requestParamDTO.getIsDeleted()))
                 .and(ProductSpecification.isFeatured(requestParamDTO.getIsFeatured()))
-                .and(ProductSpecification.hasSearchValue(requestParamDTO.getSearchValue()));
+                .and(ProductSpecification.hasSearchValue(requestParamDTO.getSearch()));
 
         return productRepository.findAll(spec, pageable)
                 .map(this::setImageUrl)

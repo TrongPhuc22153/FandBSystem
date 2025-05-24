@@ -16,11 +16,12 @@ export const fetchUser = async ({ token }) => {
   return response.json();
 };
 
-export const fetchUsers = async ({ username, email, role, page = 0, size = 10, token }) => {
+export const fetchUsers = async ({ username, email, role, page = 0, size = 10, search, token }) => {
   const queryParams = new URLSearchParams({
     ...(username && { username }),
     ...(email && { email }),
     ...(role && { role }),
+    ...(search && { search }),
     page,
     size,
   }).toString();

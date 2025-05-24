@@ -20,8 +20,8 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Employee Profile API", description = "Employee endpoint")
-@RequestMapping(value = "/api/v1/employees/profile", produces = MediaType.APPLICATION_JSON_VALUE)
-public class EmployeeProfileController {
+@RequestMapping(value = "/api/v1/employees", produces = MediaType.APPLICATION_JSON_VALUE)
+public class EmployeeController {
     private final EmployeeReaderService employeeReaderService;
     private final EmployeeUpdateService employeeUpdateService;
 

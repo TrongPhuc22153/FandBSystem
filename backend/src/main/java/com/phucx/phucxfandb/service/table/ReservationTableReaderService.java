@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.table;
 
 import com.phucx.phucxfandb.constant.TableStatus;
-import com.phucx.phucxfandb.dto.request.TableRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.TableRequestParamsDTODTO;
 import com.phucx.phucxfandb.dto.response.ReservationTableDTO;
 import com.phucx.phucxfandb.entity.ReservationTable;
 import org.springframework.data.domain.Page;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationTableReaderService {
-    Page<ReservationTableDTO> getReservationTables(TableRequestParamDTO params);
+    Page<ReservationTableDTO> getReservationTables(TableRequestParamsDTODTO params);
     ReservationTableDTO getReservationTable(String tableId);
     ReservationTable getReservationTableEntity(String tableId);
     ReservationTable getAvailableTable(int numberOfGuests, LocalDateTime requestedStartTime, LocalDateTime requestedEndTime);

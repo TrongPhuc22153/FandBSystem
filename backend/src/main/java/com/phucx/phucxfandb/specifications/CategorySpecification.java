@@ -5,16 +5,16 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class CategorySpecification {
     public static Specification<Category> hasIsDeleted(Boolean isDeleted) {
-        return (root, query, cb) -> {
-            if (isDeleted == null) return null;
-            return cb.equal(root.get("isDeleted"), isDeleted);
-        };
+        if (isDeleted == null) return null;
+        return (root, query, cb) -> cb.equal(root.get("isDeleted"), isDeleted);
     }
 
-    public static Specification<Category> hasCategoryId(Long categoryId) {
-        return (root, query, cb) -> {
-            if (categoryId == null) return null;
-            return cb.equal(root.get("categoryId"), categoryId);
-        };
+    public static Specification<Category> hasSearch(String search) {
+        if(search == null || search.trim().isEmpty()) return null;
+        String searchTerm = "%" + search.toLowerCase() + "%";
+        return (root, query, cb) -> cb.or(
+                cb.like(cb.lower(root.get("categoryName")), searchTerm),
+                cb.like(cb.lower(root.get("description")), searchTerm)
+        );
     }
 }

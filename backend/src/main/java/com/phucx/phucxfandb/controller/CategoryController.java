@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.controller;
 
+import com.phucx.phucxfandb.dto.request.CategoryRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestCategoryDTO;
 import com.phucx.phucxfandb.dto.response.CategoryDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +29,8 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "Get all categories", description = "Public access")
-    public ResponseEntity<Page<CategoryDTO>> getCategories(
-            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "size", defaultValue = "10") Integer size,
-            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction,
-            @RequestParam(name = "field", defaultValue = "categoryName") String field,
-            @RequestParam(name = "isDeleted", required = false) Boolean isDeleted
-            ){
-        Page<CategoryDTO> data = categoryReaderService.getCategories(pageNumber, size, field, direction, isDeleted);
+    public ResponseEntity<Page<CategoryDTO>> getCategories(@ModelAttribute CategoryRequestParamsDTO params){
+        Page<CategoryDTO> data = categoryReaderService.getCategories(params);
         return ResponseEntity.ok().body(data);
     }
 

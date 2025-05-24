@@ -49,14 +49,8 @@ export const RESERVATION_TABLES_ENDPOINT = `${API_BASE_URL}/api/v1/tables`;
 
 export const RESERVATIONS_ENDPOINT = `${API_BASE_URL}/api/v1/reservations`;
 
-export const CUSTOMER_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/customers/profile`;
-export const CUSTOMER_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/customers/profile/me`;
+export const CUSTOMER_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/customers`;
+export const CUSTOMER_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/customers/me`;
 
-export const EMPLOYEE_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/employees/profile`;
-export const EMPLOYEE_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/employees/profile/me`;
-
-export const DINE_IN_ENDPOINT = `${API_BASE_URL}/api/v1/dine-in`
-
-export const KITCHEN_ENPOINT = `${API_BASE_URL}/api/v1/kitchen`
-export const KITCHEN_ORDERS_ENPOINT = `${KITCHEN_ENPOINT}/orders`
-export const KITCHEN_RESERVATIONS_ENDPOINT = `${KITCHEN_ENPOINT}/reservations`;
+export const EMPLOYEE_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/employees`;
+export const EMPLOYEE_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/employees/me`;

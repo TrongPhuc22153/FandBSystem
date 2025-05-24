@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.user.impl;
 
 
-import com.phucx.phucxfandb.dto.request.UserRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.UserRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.UserDTO;
 import com.phucx.phucxfandb.entity.User;
 import com.phucx.phucxfandb.entity.UserProfile;
@@ -70,12 +70,13 @@ public class UserReaderServiceImp implements UserReaderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<UserDTO> getUsers(UserRequestParamDTO params) {
+    public Page<UserDTO> getUsers(UserRequestParamsDTO params) {
         Pageable pageable = PageRequest.of(params.getPage(), params.getSize(), Sort.by(params.getDirection(), params.getField()));
         Specification<User> spec = Specification.where(UserSpecification.hasRole(params.getRoleName()))
                 .and(UserSpecification.hasUsername(params.getUsername()))
                 .and(UserSpecification.isEnabled(params.getEnabled()))
-                .and(UserSpecification.hasEmail(params.getEmail()));
+                .and(UserSpecification.hasEmail(params.getEmail()))
+                .and(UserSpecification.hasSearch(params.getSearch()));
         return userRepository.findAll(spec, pageable)
                 .map(this::setUserImage)
                 .map(mapper::toUserDTO);

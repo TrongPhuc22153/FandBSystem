@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.controller;
 
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
-import com.phucx.phucxfandb.dto.request.ReservationRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.ReservationRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
@@ -32,32 +32,32 @@ public class ReservationController {
     @Operation(summary = "Get reservations", description = "Authenticated access")
     public ResponseEntity<Page<ReservationDTO>> getReservations(
             Authentication authentication,
-            @ModelAttribute ReservationRequestParamDTO params
+            @ModelAttribute ReservationRequestParamsDTO params
     ) {
         Page<ReservationDTO> reservations = reservationReaderService
                 .getReservations(params, authentication);
         return ResponseEntity.ok(reservations);
     }
 
-    @GetMapping("/{reservationId}")
+    @GetMapping("/{id}")
     @Operation(summary = "Get reservation", description = "Authenticated access")
     public ResponseEntity<ReservationDTO> getReservation(
-            @PathVariable(name = "reservationId") String reservationId
+            @PathVariable(name = "id") String id
     ) {
-        ReservationDTO reservation = reservationReaderService.getReservation(reservationId);
+        ReservationDTO reservation = reservationReaderService.getReservation(id);
         return ResponseEntity.ok(reservation);
     }
 
-    @PatchMapping("/{reservationId}")
-    @Operation(summary = "Update reservation status", description = "Employee access")
-    public ResponseEntity<ResponseDTO<ReservationDTO>> updateReservationStatus(
+    @PatchMapping("/{id}")
+    @Operation(summary = "Process reservation", description = "Employee access")
+    public ResponseEntity<ResponseDTO<ReservationDTO>> processReservation(
             Authentication authentication,
-            @PathVariable String reservationId,
+            @PathVariable String id,
             @RequestBody RequestReservationDTO requestReservationDTO
     ) {
         ReservationDTO updatedReservation = reservationProcessingService.processReservation(
                 authentication,
-                reservationId,
+                id,
                 requestReservationDTO.getAction());
         ResponseDTO<ReservationDTO> response = ResponseDTO.<ReservationDTO>builder()
                 .message("Reservation updated successfully")

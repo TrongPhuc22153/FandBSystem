@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.phucx.phucxfandb.utils.PriceUtils.calculateTotalPrice;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -150,13 +152,5 @@ public class CartUpdateServiceImpl implements CartUpdateService {
         existingCart.setTotalPrice(calculateTotalPrice(existingCart.getCartItems()));
         Cart updatedCart = cartRepository.save(existingCart);
         return cartMapper.toCartDTO(updatedCart);
-    }
-
-    private BigDecimal calculateTotalPrice(List<CartItem> cartItems){
-        return cartItems.stream()
-                .map(item -> item
-                        .getUnitPrice()
-                        .multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

@@ -25,10 +25,10 @@ public class UserProfileController {
     private final UserProfileReaderService userProfileReaderService;
     private final UserProfileUpdateService userProfileUpdateService;
 
-    @GetMapping("{userId}")
+    @GetMapping("{id}")
     @Operation(summary = "Get user profile", description = "Admin access")
-    public ResponseEntity<UserProfileDTO> getProfile(@PathVariable String userId){
-        var profileDTO = userProfileReaderService.getUserProfileByUserId(userId);
+    public ResponseEntity<UserProfileDTO> getProfile(@PathVariable String id){
+        var profileDTO = userProfileReaderService.getUserProfileByUserId(id);
         return ResponseEntity.ok(profileDTO);
     }
 

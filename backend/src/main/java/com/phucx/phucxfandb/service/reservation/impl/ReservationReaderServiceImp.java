@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.reservation.impl;
 
 import com.phucx.phucxfandb.constant.RoleName;
-import com.phucx.phucxfandb.dto.request.ReservationRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.ReservationRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.Reservation;
 import com.phucx.phucxfandb.exception.NotFoundException;
@@ -32,7 +32,7 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ReservationDTO> getReservations(ReservationRequestParamDTO params, Authentication authentication) {
+    public Page<ReservationDTO> getReservations(ReservationRequestParamsDTO params, Authentication authentication) {
         List<RoleName> roles = RoleUtils.getRoles(authentication.getAuthorities());
         if(roles.contains(RoleName.ADMIN)){
             return getAdminReservations(params);
@@ -41,7 +41,7 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
         }
     }
 
-    public Page<ReservationDTO> getCustomerReservations(String username, ReservationRequestParamDTO params){
+    public Page<ReservationDTO> getCustomerReservations(String username, ReservationRequestParamsDTO params){
         Pageable pageable = PageRequest.of(
                 params.getPage(),
                 params.getSize(),
@@ -54,7 +54,7 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
                 .map(reservationMapper::toReservationListEntryDTO);
     }
 
-    public Page<ReservationDTO> getAdminReservations(ReservationRequestParamDTO params){
+    public Page<ReservationDTO> getAdminReservations(ReservationRequestParamsDTO params){
         Pageable pageable = PageRequest.of(
                 params.getPage(),
                 params.getSize(),

@@ -207,26 +207,26 @@ function AdminUpdateCategoryPage() {
               <div className="row">
                 <div className="col-lg-6">
                   <div className="form-group">
-                    <label htmlFor="categoryName">Created On</label>
+                    <label htmlFor="createdAt">Created On</label>
                     <input
                       type="text"
-                      id="createdOn"
-                      name="createdOn"
+                      id="createdAt"
+                      name="createdAt"
                       className="form-control"
-                      value={formatDate(categoryData.createdOn)}
+                      value={formatDate(categoryData.createdAt)}
                       disabled
                     />
                   </div>
                 </div>
                 <div className="col-lg-6">
                   <div className="form-group">
-                    <label htmlFor="categoryName">Updated On</label>
+                    <label htmlFor="lastModifiedAt">Updated On</label>
                     <input
                       type="text"
-                      id="createdOn"
-                      name="createdOn"
+                      id="lastModifiedAt"
+                      name="lastModifiedAt"
                       className="form-control"
-                      value={formatDate(categoryData.lastUpdatedOn)}
+                      value={formatDate(categoryData.lastModifiedAt)}
                       disabled
                     />
                   </div>

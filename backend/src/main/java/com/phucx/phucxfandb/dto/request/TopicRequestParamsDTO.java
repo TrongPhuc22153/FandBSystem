@@ -5,13 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Sort;
 
-@Getter
 @Setter
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
-public class RatingRequestParamsDTO extends PaginationParamsDTO {
-    private String field = "lastModifiedAt";
-    private Sort.Direction direction = Sort.Direction.DESC;
+@AllArgsConstructor
+public class TopicRequestParamsDTO extends PaginationParamsDTO {
+    private String field = "topicName";
 }

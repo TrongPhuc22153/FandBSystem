@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.notification.impl;
 
 import com.phucx.phucxfandb.constant.RoleName;
-import com.phucx.phucxfandb.dto.request.NotificationRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.NotificationRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;
 import com.phucx.phucxfandb.entity.NotificationUser;
 import com.phucx.phucxfandb.mapper.NotificationUserMapper;
@@ -31,7 +31,7 @@ public class NotificationReaderServiceImpl implements NotificationReaderService 
 
     @Override
     @Transactional(readOnly = true)
-    public Page<NotificationUserDTO> getNotifications(Authentication authentication, NotificationRequestParamDTO params) {
+    public Page<NotificationUserDTO> getNotifications(Authentication authentication, NotificationRequestParamsDTO params) {
         String username = authentication.getName();
         Pageable pageable = PageRequest.of(
                 params.getPage(),

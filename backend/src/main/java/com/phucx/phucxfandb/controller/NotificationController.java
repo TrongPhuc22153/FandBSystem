@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.controller;
 
-import com.phucx.phucxfandb.dto.request.NotificationRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.NotificationRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestNotificationUserDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
@@ -30,7 +30,7 @@ public class NotificationController {
     @GetMapping("/me")
     @Operation(summary = "Get notifications", description = "Authenticated access")
     public ResponseEntity<Page<NotificationUserDTO>> getNotifications(
-            @ModelAttribute NotificationRequestParamDTO params,
+            @ModelAttribute NotificationRequestParamsDTO params,
             Authentication authentication
     ) {
         Page<NotificationUserDTO> notifications = notificationReaderService

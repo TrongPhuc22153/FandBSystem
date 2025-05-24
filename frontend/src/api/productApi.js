@@ -17,7 +17,7 @@ export const fetchProducts = async ({
   params.append("direction", direction.toString());
   params.append("sortBy", sortBy.toString());
   if (search) {
-    params.append("searchValue", search.toString());
+    params.append("search", search.toString());
   }
   if (isFeatured !== undefined && isFeatured !== null) {
     params.append("isFeature", isFeatured.toString())

@@ -1,18 +1,27 @@
 import { CATEGORIES_ENDPOINT } from "../constants/api";
+import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
 // GET all categories (paginated)
-export const fetchCategories = async ({ page = 0, size = 10, direction = "ASC", field = "categoryName", isDeleted = false }) => {
+export const fetchCategories = async ({
+  page = 0,
+  size = 10,
+  direction = SORTING_DIRECTIONS.ASC,
+  field = "categoryName",
+  search,
+  isDeleted = false,
+}) => {
   const params = new URLSearchParams();
-  params.append("page", page.toString())
-  params.append("size", size.toString())
-  params.append("direction", direction.toString())
-  params.append("field", field.toString())
+  params.append("page", page.toString());
+  params.append("size", size.toString());
+  params.append("direction", direction.toString());
+  params.append("field", field.toString());
   if (isDeleted != null && isDeleted != undefined) {
-    params.append("isDeleted", isDeleted.toString())
+    params.append("isDeleted", isDeleted.toString());
   }
-  const response = await fetch(
-    `${CATEGORIES_ENDPOINT}?${params.toString()}`
-  );
+  if(search!=null && search !=undefined){
+    params.append("search", search.toString());
+  }
+  const response = await fetch(`${CATEGORIES_ENDPOINT}?${params.toString()}`);
   if (!response.ok) {
     throw await response.json();
   }
@@ -21,11 +30,13 @@ export const fetchCategories = async ({ page = 0, size = 10, direction = "ASC", 
 
 // GET category by ID
 export const fetchCategoryById = async (id, isDeleted = false) => {
-    const params = new URLSearchParams();
-    if(isDeleted!=null && isDeleted!=undefined){
-      params.append("isDeleted", isDeleted.toString())
-    }
-    const response = await fetch(`${CATEGORIES_ENDPOINT}/${id}?${params.toString()}`);
+  const params = new URLSearchParams();
+  if (isDeleted != null && isDeleted != undefined) {
+    params.append("isDeleted", isDeleted.toString());
+  }
+  const response = await fetch(
+    `${CATEGORIES_ENDPOINT}/${id}?${params.toString()}`
+  );
   if (!response.ok) {
     throw await response.json();
   }
@@ -35,10 +46,10 @@ export const fetchCategoryById = async (id, isDeleted = false) => {
 // POST create new category
 export const createCategory = async (categoryData, token) => {
   const response = await fetch(CATEGORIES_ENDPOINT, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(categoryData),
   });
@@ -51,10 +62,10 @@ export const createCategory = async (categoryData, token) => {
 // PUT update category by ID
 export const updateCategory = async (id, categoryData, token) => {
   const response = await fetch(`${CATEGORIES_ENDPOINT}/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(categoryData),
   });
@@ -67,12 +78,12 @@ export const updateCategory = async (id, categoryData, token) => {
 // DELETE category by ID
 export const deleteCategory = async (id, isDeleted, token) => {
   const response = await fetch(`${CATEGORIES_ENDPOINT}/${id}`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ isDeleted })
+    body: JSON.stringify({ isDeleted }),
   });
   if (!response.ok) {
     throw await response.json();

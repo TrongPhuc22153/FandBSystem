@@ -20,8 +20,8 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Customer Profile API", description = "Customer endpoint")
-@RequestMapping(value = "/api/v1/customers/profile", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CustomerProfileController {
+@RequestMapping(value = "/api/v1/customers", produces = MediaType.APPLICATION_JSON_VALUE)
+public class CustomerController {
     private final CustomerReaderService customerReaderService;
     private final CustomerUpdateService customerUpdateService;
 

@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.table.impl;
 
 import com.phucx.phucxfandb.constant.TableStatus;
-import com.phucx.phucxfandb.dto.request.TableRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.TableRequestParamsDTODTO;
 import com.phucx.phucxfandb.dto.response.ReservationTableDTO;
 import com.phucx.phucxfandb.entity.ReservationTable;
 import com.phucx.phucxfandb.exception.NotFoundException;
@@ -31,11 +31,11 @@ public class ReservationTableReaderServiceImpl implements ReservationTableReader
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ReservationTableDTO> getReservationTables(TableRequestParamDTO params) {
-        log.info("getReservationTables(params={})", params);
+    public Page<ReservationTableDTO> getReservationTables(TableRequestParamsDTODTO params) {
         Pageable page = PageRequest.of(params.getPage(), params.getSize(), Sort.by(params.getDirection(), params.getField()));
         Specification<ReservationTable> spec = Specification
                 .where(TableSpecification.hasIsDeleted(params.getIsDeleted()))
+                .and(TableSpecification.hasSearch(params.getSearch()))
                 .and(TableSpecification.hasTableNumber(params.getTableNumber()))
                 .and(TableSpecification.hasStatus(params.getStatus()));
         return reservationTableRepository.findAll(spec, page)
@@ -45,18 +45,16 @@ public class ReservationTableReaderServiceImpl implements ReservationTableReader
     @Override
     @Transactional(readOnly = true)
     public ReservationTableDTO getReservationTable(String tableId) {
-        log.info("getReservationTable(tableId={})", tableId);
         ReservationTable reservationTable = reservationTableRepository.findByTableIdAndIsDeletedFalse(tableId)
-                .orElseThrow(() -> new NotFoundException("ReservationTable", tableId));
+                .orElseThrow(() -> new NotFoundException(ReservationTable.class.getSimpleName(), "id", tableId));
         return mapper.toReservationTableDTO(reservationTable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public ReservationTable getReservationTableEntity(String tableId) {
-        log.info("getReservationTableEntity(tableId={})", tableId);
         return reservationTableRepository.findByTableIdAndIsDeletedFalse(tableId)
-                .orElseThrow(() -> new NotFoundException("ReservationTable", tableId));
+                .orElseThrow(() -> new NotFoundException(ReservationTable.class.getSimpleName(), "id", tableId));
     }
 
     @Override
@@ -70,7 +68,6 @@ public class ReservationTableReaderServiceImpl implements ReservationTableReader
     @Override
     @Transactional(readOnly = true)
     public ReservationTable getAvailableTable(int numberOfGuests, LocalDateTime requestedStartTime, LocalDateTime requestedEndTime) {
-        log.info("getAvailableTable(numberOfGuests={}, requestedStartTime={}, requestedEndTime={})", numberOfGuests, requestedStartTime, requestedEndTime);
         List<ReservationTable> tables = reservationTableRepository
                 .findFirstAvailableTableWithLeastCapacity(numberOfGuests, Boolean.FALSE, requestedStartTime, requestedEndTime);
         if(tables.isEmpty()) throw new NotFoundException("No available table found for the requested time and number of guests.");

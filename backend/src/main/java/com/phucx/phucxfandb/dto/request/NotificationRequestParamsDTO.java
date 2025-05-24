@@ -9,9 +9,10 @@ import org.springframework.data.domain.Sort;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class RatingRequestParamsDTO extends PaginationParamsDTO {
-    private String field = "lastModifiedAt";
+@AllArgsConstructor
+public class NotificationRequestParamsDTO extends PaginationParamsDTO {
+    private String field = "createdAt";
     private Sort.Direction direction = Sort.Direction.DESC;
+    private Boolean isRead;
 }

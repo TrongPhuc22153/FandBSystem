@@ -6,8 +6,8 @@ export default function TableSelection({ tables, selectedTable, onSelectTable })
       {tables.map((table) => (
         <button
           key={table.tableId}
-          className={`${styles.tableButton} ${selectedTable === table.tableId ? styles.selected : ""}`}
-          onClick={() => onSelectTable(table.tableId)}
+          className={`${styles.tableButton} ${selectedTable?.tableId === table.tableId ? styles.selected : ""}`}
+          onClick={() => onSelectTable(table)}
         >
           Table {table.tableNumber}
           {table.capacity && (

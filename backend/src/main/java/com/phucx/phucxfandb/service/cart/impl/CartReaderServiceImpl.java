@@ -22,18 +22,8 @@ public class CartReaderServiceImpl implements CartReaderService {
     private final CartMapper mapper;
 
     @Override
-    public CartDTO getCart(String cartId) {
-        log.info("getCart(cartId={})", cartId);
-        Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(()-> new NotFoundException(Cart.class.getSimpleName(), "id", cartId));
-        cart.getCartItems().forEach(this::setImageUrl);
-        return mapper.toCartDTO(cart);
-    }
-
-    @Override
     @EnsureCartExists
     public CartDTO getCartByUsername(String username) {
-        log.info("getCartByUsername(username={})", username);
         Cart cart = cartRepository.findByCustomerProfileUserUsername(username)
                 .orElseThrow(()-> new NotFoundException(Cart.class.getSimpleName(), "user", username));
         cart.getCartItems().forEach(this::setImageUrl);

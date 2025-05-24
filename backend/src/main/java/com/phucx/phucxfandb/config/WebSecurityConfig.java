@@ -55,14 +55,18 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests(request -> request
                 .requestMatchers(HttpMethod.GET, Public.GET).permitAll()
-                .requestMatchers(Auth.ALL).permitAll()
+                .requestMatchers(HttpMethod.POST, Public.POST).permitAll()
                 .requestMatchers(Authenticated.ALL).authenticated()
+                .requestMatchers(HttpMethod.GET, Authenticated.GET).authenticated()
+                .requestMatchers(HttpMethod.POST, Authenticated.POST).authenticated()
                 .requestMatchers(Customer.ALL).hasRole(RoleName.CUSTOMER.name())
                 .requestMatchers(Employee.ALL).hasRole(RoleName.EMPLOYEE.name())
                 .requestMatchers(HttpMethod.PATCH, Employee.PATCH).hasRole(RoleName.EMPLOYEE.name())
                 .requestMatchers(Admin.ALL).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.GET, Admin.GET).hasRole(RoleName.ADMIN.name())
                 .requestMatchers(HttpMethod.POST, Admin.POST).hasRole(RoleName.ADMIN.name())
                 .requestMatchers(HttpMethod.PATCH, Admin.PATCH).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT, Admin.PUT).hasRole(RoleName.ADMIN.name())
                 .anyRequest().denyAll());
 
         http.exceptionHandling(ex -> ex

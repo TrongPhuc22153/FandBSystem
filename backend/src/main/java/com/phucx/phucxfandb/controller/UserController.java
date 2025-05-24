@@ -5,7 +5,7 @@ import com.phucx.phucxfandb.constant.ValidationGroups;
 import com.phucx.phucxfandb.constant.Views;
 import com.phucx.phucxfandb.dto.request.RequestUserDTO;
 import com.phucx.phucxfandb.dto.request.UpdateUserPasswordDTO;
-import com.phucx.phucxfandb.dto.request.UserRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.UserRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.dto.response.UserDTO;
 import com.phucx.phucxfandb.service.user.UserReaderService;
@@ -43,17 +43,17 @@ public class UserController {
 
     @GetMapping
     @Operation(summary = "Get users", description = "Admin access")
-    public ResponseEntity<Page<UserDTO>> getUsers(@ModelAttribute UserRequestParamDTO params){
+    public ResponseEntity<Page<UserDTO>> getUsers(@ModelAttribute UserRequestParamsDTO params){
         Page<UserDTO> users = userReaderService.getUsers(params);
         return ResponseEntity.ok().body(users);
     }
 
-    @GetMapping("{userId}")
+    @GetMapping("{id}")
     @Operation(summary = "Get user information", description = "Admin access")
     public ResponseEntity<UserDTO> getUser(
-            @PathVariable String userId
+            @PathVariable String id
     ){
-        UserDTO user = userReaderService.getUserByUserId(userId);
+        UserDTO user = userReaderService.getUserByUserId(id);
         return ResponseEntity.ok().body(user);
     }
 
@@ -70,14 +70,14 @@ public class UserController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @PatchMapping("{userId}")
-    @JsonView(Views.UpdateUserEnabledStatus.class)
+    @PatchMapping("{id}")
     @Operation(summary = "Update user enabled status", description = "Admin access")
     public ResponseEntity<ResponseDTO<UserDTO>> updateUserEnabledStatus(
-            @PathVariable String userId,
+            @PathVariable String id,
+            @JsonView(Views.UpdateUserEnabledStatus.class)
             @Validated(ValidationGroups.UpdateUserEnabledStatus.class) @RequestBody RequestUserDTO requestUserDTO
     ){
-        var data = userUpdateService.updateUserEnabledStatus(userId, requestUserDTO);
+        var data = userUpdateService.updateUserEnabledStatus(id, requestUserDTO);
         ResponseDTO<UserDTO> responseDTO = ResponseDTO.<UserDTO>builder()
                 .message("User updated successfully")
                 .data(data)

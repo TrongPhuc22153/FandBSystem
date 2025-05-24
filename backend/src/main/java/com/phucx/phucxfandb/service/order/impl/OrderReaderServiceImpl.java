@@ -2,7 +2,7 @@ package com.phucx.phucxfandb.service.order.impl;
 
 import com.phucx.phucxfandb.constant.OrderType;
 import com.phucx.phucxfandb.constant.RoleName;
-import com.phucx.phucxfandb.dto.request.OrderRequestParamDTO;
+import com.phucx.phucxfandb.dto.request.OrderRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.Order;
 import com.phucx.phucxfandb.exception.NotFoundException;
@@ -63,7 +63,7 @@ public class OrderReaderServiceImpl implements OrderReaderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderDTO> getOrders(OrderRequestParamDTO params, Authentication authentication) {
+    public Page<OrderDTO> getOrders(OrderRequestParamsDTO params, Authentication authentication) {
         List<RoleName> roles = RoleUtils.getRoles(authentication.getAuthorities());
         if (roles.contains(RoleName.ADMIN)) {
             return getAdminOrders(params);
@@ -72,7 +72,7 @@ public class OrderReaderServiceImpl implements OrderReaderService {
         }
     }
 
-    private Page<OrderDTO> getCustomerOrders(String username, OrderRequestParamDTO params) {
+    private Page<OrderDTO> getCustomerOrders(String username, OrderRequestParamsDTO params) {
         Pageable pageable = PageRequest.of(
                 params.getPage(),
                 params.getSize(),
@@ -86,7 +86,7 @@ public class OrderReaderServiceImpl implements OrderReaderService {
                 .map(orderMapper::toOrderListEntryDTO);
     }
 
-    private Page<OrderDTO> getAdminOrders(OrderRequestParamDTO params) {
+    private Page<OrderDTO> getAdminOrders(OrderRequestParamsDTO params) {
         Pageable pageable = PageRequest.of(
                 params.getPage(),
                 params.getSize(),

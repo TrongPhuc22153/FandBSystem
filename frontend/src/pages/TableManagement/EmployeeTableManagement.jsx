@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Clock, Search } from "lucide-react";
 import { TableGrid } from "../../components/TableGrid/TableGrid";
 import styles from "./EmployeeTableManagement.module.css";
@@ -9,13 +9,11 @@ import {
 import { TABLE_STATUSES } from "../../constants/webConstant";
 import { useAlert } from "../../context/AlertContext";
 import Pagination from "../../components/Pagination/Pagination";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 export default function EmployeeTableManagement() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
-  const [selectedItems, setSelectedItems] = useState([]);
   const [searchValue, setSearchValue] = useState(
     searchParams.get("searchValue") || ""
   );
@@ -29,9 +27,10 @@ export default function EmployeeTableManagement() {
 
   const { data: tablesData, mutate } = useReservationTables({
     page: currentPage,
+    search: searchValue
   });
   const totalPages = tablesData?.totalPages || 0;
-  const tables = tablesData?.content || [];
+  const tables = useMemo(() => tablesData?.content || [], [tablesData]);
 
   const {
     handleUpdateReservationTableStatus,
@@ -72,6 +71,20 @@ export default function EmployeeTableManagement() {
     },
     [handleUpdateReservationTableStatus, mutate]
   );
+
+  const debouncedSearch = useCallback(
+    (newSearchValue) => {
+      searchParams.set("searchValue", newSearchValue);
+      setSearchParams(searchParams);
+    },
+    [setSearchParams]
+  );
+
+  const handleSearchInputChange = (e) => {
+    const newSearchValue = e.target.value;
+    setSearchValue(newSearchValue);
+    debouncedSearch(newSearchValue);
+  };
 
   // Calculate statistics
   const availableTables = tables.filter(
@@ -134,6 +147,18 @@ export default function EmployeeTableManagement() {
           </div>
           <div className={styles.statCard}>
             <div className={styles.statHeader}>
+              <h3 className={styles.statTitle}>Cleaing Tables</h3>
+              <span className={`${styles.badge} ${styles.badgePrimary}`}>
+                {cleaningTables}
+              </span>
+            </div>
+            <div className={styles.statValue}>
+              {Math.round((occupiedTables / tables.length) * 100)}%
+            </div>
+            <p className={styles.statDescription}>of total capacity</p>
+          </div>
+          <div className={styles.statCard}>
+            <div className={styles.statHeader}>
               <h3 className={styles.statTitle}>Reserved Tables</h3>
               <span className={`${styles.badge} ${styles.badgeWarning}`}>
                 {reservedTables}
@@ -154,6 +179,8 @@ export default function EmployeeTableManagement() {
                     type="text"
                     placeholder="Search tables..."
                     className={styles.searchInput}
+                    value={searchValue}
+                    onChange={handleSearchInputChange}
                   />
                 </div>
               </div>
