@@ -28,6 +28,8 @@ function UserOrderDetailsPage() {
   const shippingAddress = orderData.shippingAddress;
   const orderItems = orderData.orderDetails;
   const total = orderData.totalPrice;
+  const paymentMethod = orderData.payment.method;
+  const paymentStatus = orderData.payment.status;
 
   return (
     <OrderDetail      
@@ -38,6 +40,8 @@ function UserOrderDetailsPage() {
       shippingCost={shippingCost}
       total={total}
       shippingAddress={shippingAddress}
+      paymentMethod={paymentMethod}
+      paymentStatus={paymentStatus}
     />
   );
 }

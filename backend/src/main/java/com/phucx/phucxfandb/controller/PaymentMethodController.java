@@ -27,7 +27,7 @@ public class PaymentMethodController {
     private final PaymentMethodUpdateService paymentMethodUpdateService;
 
     @GetMapping
-    @Operation(summary = "Get all payment methods", description = "Public access")
+    @Operation(summary = "Get payment methods", description = "Public access")
     public ResponseEntity<List<PaymentMethodDTO>> getPaymentMethods() {
         List<PaymentMethodDTO> data = paymentMethodReaderService.getPaymentMethods();
         return ResponseEntity.ok().body(data);

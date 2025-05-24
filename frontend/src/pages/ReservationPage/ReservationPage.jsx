@@ -39,7 +39,7 @@ function ReservationPage() {
   } = useReservationTables({ pageNumber: 0, pageSize: 10 });
 
   const { onOpen } = useModal();
-  const { showNewAlert} = useAlert();
+  const { showNewAlert } = useAlert();
 
   const tables = tablesData?.content || [];
   const menuItems = menuItemsData?.content || [];
@@ -216,9 +216,9 @@ function ReservationPage() {
         !formData.numberOfGuests
       ) {
         showNewAlert({
-            message: "Please fill in all required fields in Reservation Details.",
-            variant: "danger",
-        })
+          message: "Please fill in all required fields in Reservation Details.",
+          variant: "danger",
+        });
         return false;
       }
       if (
@@ -226,9 +226,9 @@ function ReservationPage() {
         !tables.some((table) => table.tableId === formData.tableId)
       ) {
         showNewAlert({
-            message: "Please select a valid table or choose Auto-Assign.",
-            variant: "danger",
-        })
+          message: "Please select a valid table or choose Auto-Assign.",
+          variant: "danger",
+        });
         return false;
       }
       if (!isNotPast(formData.startTime)) {
@@ -251,9 +251,9 @@ function ReservationPage() {
       // Cart: At least one item must have quantity > 0
       if (!formData.menuItems.some((item) => item.quantity > 0)) {
         showNewAlert({
-            message: "Please add at least one item to the menu.",
-            variant: "danger",
-        })
+          message: "Please add at least one item to the menu.",
+          variant: "danger",
+        });
         return false;
       }
     }
@@ -346,11 +346,9 @@ function ReservationPage() {
       // Note: If tableId is "AUTO", the API should assign an available table based on numberOfGuests, startTime, and endTime
       // Note: Customer information is assumed to be handled server-side via authentication
     };
-
-    console.log("Reservation JSON:", JSON.stringify(reservationJson, null, 2));
     showNewAlert({
-        message: "Reservation submitted successfully!",
-    })
+      message: "Reservation submitted successfully!",
+    });
   }, []);
 
   // Handle form submission

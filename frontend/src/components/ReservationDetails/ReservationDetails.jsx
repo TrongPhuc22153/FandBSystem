@@ -1,5 +1,6 @@
-import { Badge } from "react-bootstrap";
+import { Badge, Card } from "react-bootstrap";
 import {
+  PAYMENT_STATUS_CLASSES,
   RESERVATION_ACTIONS,
   RESERVATION_STATUS_CLASSES,
   RESERVATION_STATUSES,
@@ -125,14 +126,27 @@ export default function ReservationDetail({ reservation }) {
         </div>
       </div>
 
-      <div className="row">
+      <div className="row mb-4">
         <div className="col-md-6">
-          <h6>Special Requests</h6>
-          <div className="card">
-            <div className="card-body">
-              {reservation.specialRequests || "No special requests provided."}
-            </div>
-          </div>
+          <h6>Payment Details</h6>
+          <Card>
+            <Card.Body>
+              <p className="mb-1">
+                <strong>Method:</strong>{" "}
+                {reservation.payment.method.toUpperCase()}
+              </p>
+              <p className="mb-1">
+                <strong>Status:</strong>{" "}
+                <Badge
+                  bg={PAYMENT_STATUS_CLASSES[reservation.payment.status]}
+                  aria-label={`Payment status: ${reservation.payment.status}`}
+                >
+                  {reservation.payment.status.charAt(0).toUpperCase() +
+                    reservation.payment.status.slice(1)}
+                </Badge>
+              </p>
+            </Card.Body>
+          </Card>
         </div>
         <div className="col-md-6">
           <h6>Table Assignment</h6>
@@ -141,6 +155,17 @@ export default function ReservationDetail({ reservation }) {
               Table {reservation.table.tableNumber} - Capacity (
               {reservation.table.capacity} people) - Location{" "}
               {reservation.table.location}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="row mb-4">
+        <div className="col-md-12">
+          <h6>Special Requests</h6>
+          <div className="card">
+            <div className="card-body">
+              {reservation.notes || "No special requests provided."}
             </div>
           </div>
         </div>
@@ -178,15 +203,6 @@ export default function ReservationDetail({ reservation }) {
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <div className="mt-4">
-        {/* <h6>Staff Notes</h6>
-        <textarea
-          className="form-control"
-          rows={3}
-          placeholder="Add notes about this reservation..."
-        ></textarea> */}
       </div>
     </div>
   );

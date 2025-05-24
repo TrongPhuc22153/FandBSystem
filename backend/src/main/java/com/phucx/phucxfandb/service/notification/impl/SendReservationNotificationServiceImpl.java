@@ -61,35 +61,65 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
 
     @Override
     public void sendPlaceReservationNotification(Authentication authentication, String reservationId, LocalDateTime reservationStartTime, String paymentMethod, PaymentStatus paymentStatus) {
-        if (paymentStatus != PaymentStatus.SUCCESSFUL) {
+        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL) && paymentStatus != PaymentStatus.SUCCESSFUL) {
+            log.warn("Reservation {} notification skipped due to payment status: {}", reservationId, paymentStatus);
+            return;
+        } else if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.COD) && paymentStatus != PaymentStatus.PENDING) {
             log.warn("Reservation {} notification skipped due to payment status: {}", reservationId, paymentStatus);
             return;
         }
+
         String username = authentication.getName();
 
         String startTime = reservationStartTime != null ? reservationStartTime.toString() : "a specified time";
-        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
-                username,
-                RoleName.EMPLOYEE,
-                NotificationTopic.RESERVATION,
-                NotificationTitle.RESERVATION_PLACED,
-                String.format("New reservation #%s (Payment: %s) has been placed by customer %s for %s",
-                        reservationId,
-                        paymentStatus,
-                        username,
-                        startTime)
+        String paymentMessage = createPaymentMessage(paymentMethod, paymentStatus);
+        String employeeMessage = String.format(
+                "New reservation #%s %s has been placed by customer %s for %s",
+                reservationId, paymentMessage, username, startTime
         );
+        RequestNotificationDTO employeeNotification = NotificationUtils
+                .createRequestNotificationDTOForGroup(
+                        username,
+                        RoleName.EMPLOYEE,
+                        NotificationTopic.RESERVATION,
+                        NotificationTitle.RESERVATION_PLACED,
+                        employeeMessage
+                );
         this.sendNotificationToGroup(reservationId, TOPIC_KITCHEN, employeeNotification);
 
-        RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
-                username,
-                NotificationTopic.RESERVATION,
-                NotificationTitle.RESERVATION_CONFIRMED,
-                String.format("Your reservation #%s has been confirmed and paid for %s",
-                        reservationId,
-                        startTime)
-        );
+        String customerMessage = createCustomerMessage(paymentMethod, reservationId, startTime);
+        RequestNotificationDTO customerNotification = NotificationUtils
+                .createSystemRequestNotificationDTO(
+                        username,
+                        NotificationTopic.RESERVATION,
+                        NotificationTitle.RESERVATION_CONFIRMED,
+                        customerMessage
+                );
         this.sendNotificationToUser(reservationId, customerNotification);
+    }
+
+    private String createPaymentMessage(String paymentMethod, PaymentStatus paymentStatus) {
+        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL)) {
+            return "(Payment: SUCCESS - PayPal)";
+        } else if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.COD)) {
+            return "(Payment: PENDING - COD)";
+        } else {
+            return "(Payment: PENDING - Pay at restaurant)";
+        }
+    }
+
+    private String createCustomerMessage(String paymentMethod, String reservationId, String formattedStartTime) {
+        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL)) {
+            return String.format(
+                    "Your reservation #%s has been confirmed and paid. See you on %s!",
+                    reservationId, formattedStartTime
+            );
+        } else {
+            return String.format(
+                    "Your reservation #%s has been confirmed. Payment is due at the restaurant for %s",
+                    reservationId, formattedStartTime
+            );
+        }
     }
 
     @Override

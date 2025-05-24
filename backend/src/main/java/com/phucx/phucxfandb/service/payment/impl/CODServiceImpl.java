@@ -27,7 +27,6 @@ public class CODServiceImpl implements CODService {
 
     @Override
     public void createCODPayment(Authentication authentication, String paymentId, String orderId, String reservationId) {
-        String username = authentication.getName();
         Payment payment = paymentReaderService.getPaymentEntity(paymentId);
 
         if(orderId!=null){

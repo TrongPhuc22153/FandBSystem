@@ -96,10 +96,9 @@ function AdminOrderDetailsPage() {
   const table = orderData?.table || null;
   const orderItems = orderData?.orderDetails || [];
   const billingAddress = orderData?.customer;
-  const total = orderItems.reduce(
-    (sum, item) => sum + item.unitPrice * item.quantity,
-    0
-  );
+  const total = orderData.totalPrice;
+  const paymentMethod = orderData.payment.method;
+  const paymentStatus = orderData.payment.status;
 
   return (
     <div>
@@ -113,6 +112,8 @@ function AdminOrderDetailsPage() {
         total={total}
         billingAddress={billingAddress}
         shippingAddress={shippingAddress}
+        paymentMethod={paymentMethod}
+        paymentStatus={paymentStatus}
       />
       {orderData?.status === ORDER_STATUSES.PENDING && (
         <div

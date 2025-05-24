@@ -70,6 +70,13 @@ export const RESERVATION_STATUS_CLASSES = {
     COMPLETED: "secondary",
     DEFAULT: "primary"
 }
+export const PAYMENT_STATUS_CLASSES = {
+    PENDING: "info",
+    SUCCESSFUL: "success",
+    CANCELLED: "danger",
+    FAILED: "danger",
+    DEFAULT: "primary"
+}
 
 export const SORTING_DIRECTIONS = {
     ASC: "ASC",

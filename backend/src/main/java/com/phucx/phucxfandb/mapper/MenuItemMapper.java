@@ -20,6 +20,7 @@ public interface MenuItemMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "reservation", source = "reservation")
+    @Mapping(target = "price", source = "product.unitPrice")
     MenuItem toMenuItem(RequestMenuItemDTO requestMenuItemDTO, Reservation reservation, Product product);
 
     @Named("toMenuItemDTO")

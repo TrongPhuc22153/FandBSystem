@@ -1,45 +1,80 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./confirmation.module.css";
 import { useReservationActions } from "../../hooks/reservationHooks";
 import { useModal } from "../../context/ModalContext";
+import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
+import PaymentMethodOptions from "../PaymentMethodOptions/PaymentMethodOptions";
+import { CANCEL_PAYMENT_URL, SUCCESS_PAYMENT_URL } from "../../constants/paymentConstants";
+import { Link } from "react-router-dom";
+import { HOME_URI } from "../../constants/routes";
 
-export default function Confirmation({ reservationData, onPrevious }) {
+export default function Confirmation({ reservationData, onPrevious, onReset }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [confirmationNumber, setConfirmationNumber] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({})
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Format date for display
-  const formatDate = (date) => {
-    return new Date(date).toLocaleString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-  };
+  const [selectedPayment, setSelectedPayment] = useState(null);
 
-  // Calculate total price
-  const totalPrice = reservationData.selectedItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
+  const { data: paymentMethodsData } = usePaymentMethods();
+
+  const paymentMethods = useMemo(
+    () => paymentMethodsData || [],
+    [paymentMethodsData]
   );
 
-  const {
-    handleCreateReservation,
-    createError,
-  } = useReservationActions();
+  const handlePaymentMethodChange = useCallback((id) => {
+    setSelectedPayment(id);
+    setErrorMessage(""); // Clear error on selection
+  }, []);
 
+  // Format date to match backend (dd MMM yyyy, hh:mm a)
+  const formatDate = useCallback((date) => {
+    if (!date) return "a specified time";
+    return new Date(date).toLocaleString("en-US", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }, []);
+
+  // Calculate total price
+  const totalPrice = useMemo(
+    () =>
+      reservationData.selectedItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      ),
+    [reservationData.selectedItems]
+  );
+
+  const { handleCreateReservation, createError } = useReservationActions();
   const { onOpen } = useModal();
 
-  useEffect(() =>{
-    setFieldErrors(createError?.fields ?? {})
-  }, [createError])
+  useEffect(() => {
+    setFieldErrors(createError?.fields ?? {});
+    if (createError?.message) {
+      setErrorMessage(createError.message);
+    }
+  }, [createError]);
 
   const handlePlaceReservation = useCallback(async () => {
+    if (!selectedPayment) {
+      setErrorMessage("Please select a payment method");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const requestPayment = {
+      paymentMethod: selectedPayment,
+      returnUrl: SUCCESS_PAYMENT_URL,
+      cancelUrl: CANCEL_PAYMENT_URL,
+    };
+
     const data = {
       numberOfGuests: reservationData.numberOfGuests,
       startTime: reservationData.startDateTime,
@@ -47,36 +82,55 @@ export default function Confirmation({ reservationData, onPrevious }) {
       notes: reservationData.notes,
       menuItems: reservationData.selectedItems.map((item) => ({
         productId: item.id,
-        quantity: item.quantity
-      }))
+        quantity: item.quantity,
+      })),
+      payment: requestPayment,
+    };
+    if (reservationData.tableSelection) {
+      data.tableId = reservationData.tableSelection;
     }
-    if(reservationData.tableSelection){
-      data.tableId = reservationData.tableSelection
+
+    try {
+      const res = await handleCreateReservation(data);
+      if (res?.data) {
+        if (res.data.link) {
+          window.location.href = res.data.link;
+        } else {
+          setConfirmationNumber(res.data.reservationId);
+          setIsConfirmed(true);
+        }
+      } else {
+        setErrorMessage("Failed to create reservation. Please try again.");
+      }
+    } catch (error) {
+      setErrorMessage(
+        error.message || "An error occurred while processing your reservation."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    const res = await handleCreateReservation(data)
-    if(res){
-      setConfirmationNumber(res.data.reservationId);
-      setIsConfirmed(true);
-    }
-    setIsSubmitting(false);
-  }, [handleCreateReservation, reservationData])
+  }, [handleCreateReservation, reservationData, selectedPayment]);
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!selectedPayment) {
+      setErrorMessage("Please select a payment method");
+      return;
+    }
     setIsSubmitting(true);
     onOpen({
-      title: "Submit reservation",
-      message: "Do you want to continue?",
-      onYes: handlePlaceReservation
-    })
+      title: "Submit Reservation",
+      message: "Do you want to confirm your reservation?",
+      onYes: handlePlaceReservation,
+      onNo: () => setIsSubmitting(false),
+    });
   };
 
   if (isConfirmed) {
     return (
       <div className={styles.confirmation}>
-        <div className={styles.successIcon}>
+        <div className={styles.successIcon} aria-label="Reservation confirmed">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="64"
@@ -93,16 +147,18 @@ export default function Confirmation({ reservationData, onPrevious }) {
           Your confirmation number is: <strong>{confirmationNumber}</strong>
         </p>
         <p className="text-center">
-          We've sent a confirmation email with all the details.
+          A confirmation has been sent to your account.
         </p>
         <div className="text-center mt-4">
-          <button
+          <Link
+            to={HOME_URI}
             type="button"
             className="btn btn-primary"
-            onClick={() => window.location.reload()}
+            onClick={onReset}
+            aria-label="Back to home"
           >
-            Make Another Reservation
-          </button>
+            Back to home
+          </Link>
         </div>
       </div>
     );
@@ -112,35 +168,44 @@ export default function Confirmation({ reservationData, onPrevious }) {
     <form onSubmit={handleSubmit} className={styles.confirmationForm}>
       <h2 className="mb-4">Confirm Your Reservation</h2>
 
-      {createError?.message && 
+      {errorMessage && (
         <div className="alert alert-danger" role="alert">
-          {createError.message}
+          {errorMessage}
         </div>
-      }
+      )}
 
-      {fieldErrors?.startTime && (
+      {fieldErrors?.startTime &&
         fieldErrors.startTime.map((error, index) => (
-          <div key={`startTime-${index}`} className="alert alert-danger" role="alert">
+          <div
+            key={`startTime-${index}`}
+            className="alert alert-danger"
+            role="alert"
+          >
             {error}
           </div>
-        ))
-      )}
+        ))}
 
-      {fieldErrors?.endTime && (
+      {fieldErrors?.endTime &&
         fieldErrors.endTime.map((error, index) => (
-          <div key={`endTime-${index}`} className="alert alert-danger" role="alert">
+          <div
+            key={`endTime-${index}`}
+            className="alert alert-danger"
+            role="alert"
+          >
             {error}
           </div>
-        ))
-      )}
+        ))}
 
-      {fieldErrors?.numberOfGuests && (
+      {fieldErrors?.numberOfGuests &&
         fieldErrors.numberOfGuests.map((error, index) => (
-          <div key={`numberOfGuests-${index}`} className="alert alert-danger" role="alert">
+          <div
+            key={`numberOfGuests-${index}`}
+            className="alert alert-danger"
+            role="alert"
+          >
             {error}
           </div>
-        ))
-      )}
+        ))}
 
       <div className="card mb-4">
         <div className="card-header">
@@ -187,10 +252,10 @@ export default function Confirmation({ reservationData, onPrevious }) {
               <table className="table table-striped mb-0">
                 <thead>
                   <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th className="text-end">Price</th>
-                    <th className="text-end">Subtotal</th>
+                    <th scope="col">Item</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col" className="text-end">Price</th>
+                    <th scope="col" className="text-end">Subtotal</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -219,12 +284,26 @@ export default function Confirmation({ reservationData, onPrevious }) {
         </div>
       </div>
 
+      <div className="card mb-4">
+        <div className="card-header">
+          <h5 className="mb-0">Payment Method</h5>
+        </div>
+        <div className="card-body">
+          <PaymentMethodOptions
+            paymentMethods={paymentMethods}
+            selectedPaymentMethod={selectedPayment}
+            onPaymentMethodChange={handlePaymentMethodChange}
+          />
+        </div>
+      </div>
+
       <div className="d-flex justify-content-between">
         <button
           type="button"
           className="btn btn-outline-secondary"
           onClick={onPrevious}
           disabled={isSubmitting}
+          aria-label="Go back to menu selection"
         >
           Back to Menu Selection
         </button>
@@ -232,13 +311,14 @@ export default function Confirmation({ reservationData, onPrevious }) {
           type="submit"
           className="btn btn-success"
           disabled={isSubmitting}
+          aria-label="Confirm reservation"
         >
           {isSubmitting ? (
             <>
               <span
                 className="spinner-border spinner-border-sm me-2"
                 role="status"
-                aria-hidden="true"
+                aria-label="Processing"
               ></span>
               Processing...
             </>
