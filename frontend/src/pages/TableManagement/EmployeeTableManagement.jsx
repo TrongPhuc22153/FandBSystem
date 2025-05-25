@@ -1,15 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Clock, Search } from "lucide-react";
+import { Clock, Plus, Search } from "lucide-react";
 import { TableGrid } from "../../components/TableGrid/TableGrid";
+import { WaitingList } from "../../components/WaitingList/WaitingList";
 import styles from "./EmployeeTableManagement.module.css";
 import {
   useReservationTableActions,
   useReservationTables,
 } from "../../hooks/tableHooks";
-import { TABLE_STATUSES } from "../../constants/webConstant";
+import {
+  TABLE_STATUSES,
+  WAITING_LIST_STATUSES,
+} from "../../constants/webConstant";
 import { useAlert } from "../../context/AlertContext";
 import Pagination from "../../components/Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
+import { useWaitingLists } from "../../hooks/waitingListHooks";
+import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 
 export default function EmployeeTableManagement() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,12 +31,26 @@ export default function EmployeeTableManagement() {
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
-  const { data: tablesData, mutate } = useReservationTables({
+  const { data: tablesData, mutate: mutateTables } = useReservationTables({
     page: currentPage,
-    search: searchValue
+    search: searchValue,
   });
   const totalPages = tablesData?.totalPages || 0;
   const tables = useMemo(() => tablesData?.content || [], [tablesData]);
+
+  const {
+    data: waitingListsData,
+    error: waitingListsError,
+    mutate: mutateWatingList,
+  } = useWaitingLists({
+    page: 0,
+    size: 20,
+    status: WAITING_LIST_STATUSES.WAITING,
+  });
+  const waitingList = useMemo(
+    () => waitingListsData?.content || [],
+    [waitingListsData]
+  );
 
   const {
     handleUpdateReservationTableStatus,
@@ -66,10 +86,10 @@ export default function EmployeeTableManagement() {
         status: newStatus,
       });
       if (res) {
-        mutate();
+        mutateTables();
       }
     },
-    [handleUpdateReservationTableStatus, mutate]
+    [handleUpdateReservationTableStatus, mutateTables]
   );
 
   const debouncedSearch = useCallback(
@@ -153,7 +173,7 @@ export default function EmployeeTableManagement() {
               </span>
             </div>
             <div className={styles.statValue}>
-              {Math.round((occupiedTables / tables.length) * 100)}%
+              {Math.round((cleaningTables / tables.length) * 100)}%
             </div>
             <p className={styles.statDescription}>of total capacity</p>
           </div>
@@ -188,11 +208,39 @@ export default function EmployeeTableManagement() {
                 <TableGrid
                   tables={tables}
                   updateTableStatus={updateTableStatus}
+                  waitingList={waitingList}
+                  mutateWatingList={mutateWatingList}
+                  mutateTables={mutateTables}
                 />
                 <Pagination
                   currentPage={currentPage + 1}
                   totalPages={totalPages}
                 />
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.waitingListSection}>
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h2 className={styles.cardTitle}>Waiting List</h2>
+                <button className={styles.addButton}>
+                  <Plus size={16} />
+                  <span>Add</span>
+                </button>
+              </div>
+              <div className={styles.cardContent}>
+                <p className={styles.waitingCount}>
+                  {waitingList.length} parties waiting
+                </p>
+                {waitingListsError?.message ? (
+                  <ErrorDisplay message={waitingListsError.message} />
+                ) : (
+                  <WaitingList
+                    waitingList={waitingList}
+                    mutate={mutateWatingList}
+                  />
+                )}
               </div>
             </div>
           </div>

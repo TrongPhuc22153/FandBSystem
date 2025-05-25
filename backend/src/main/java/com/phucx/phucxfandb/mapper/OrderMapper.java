@@ -5,23 +5,27 @@ import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring", uses = {OrderDetailsMapper.class, UserMapper.class, PaymentMapper.class})
 public interface OrderMapper {
 
     @Mapping(target = "payment", qualifiedByName = "toPaymentDTO")
+    @Mapping(target = "waitList.order", ignore = true)
     @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")
     OrderDTO toOrderDTO(Order order);
 
+    @Named("toOrderListEntryDTO")
     @Mapping(target = "payment", ignore = true)
+    @Mapping(target = "waitList.order", ignore = true)
     @Mapping(target = "orderDetails", qualifiedByName = {"toOrderDetailsDTO"})
     @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "shippingAddress", ignore = true)
     OrderDTO toOrderListEntryDTO(Order order);
 
-    @Mapping(target = "table", ignore = true)
+    @Mapping(target = "waitList", ignore = true)
     @Mapping(target = "totalPrice", ignore = true)
     @Mapping(target = "orderId", ignore = true)
     @Mapping(target = "orderDate", expression = "java(java.time.LocalDateTime.now())")
@@ -37,7 +41,7 @@ public interface OrderMapper {
     @Mapping(target = "payment", ignore = true)
     Order toCustomerOrder(RequestOrderDTO order, Customer customer, ShippingAddress shippingAddress);
 
-    @Mapping(target = "table", source = "table")
+    @Mapping(target = "waitList", source = "waitList")
     @Mapping(target = "totalPrice", ignore = true)
     @Mapping(target = "orderId", ignore = true)
     @Mapping(target = "orderDate", expression = "java(java.time.LocalDateTime.now())")
@@ -50,5 +54,6 @@ public interface OrderMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "payment", ignore = true)
-    Order toEmployeeOrder(RequestOrderDTO orderDTO, Employee employee, ReservationTable table);
+    @Mapping(target = "shippingAddress", ignore = true)
+    Order toEmployeeOrder(RequestOrderDTO orderDTO, Employee employee, WaitList waitList);
 }

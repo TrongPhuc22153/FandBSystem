@@ -2,13 +2,12 @@ package com.phucx.phucxfandb.service.order.impl;
 
 import com.phucx.phucxfandb.constant.OrderStatus;
 import com.phucx.phucxfandb.constant.OrderType;
-import com.phucx.phucxfandb.constant.TableStatus;
+import com.phucx.phucxfandb.constant.WaitListStatus;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.request.RequestPaymentDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.exception.NotFoundException;
-import com.phucx.phucxfandb.exception.TableException;
 import com.phucx.phucxfandb.mapper.OrderDetailsMapper;
 import com.phucx.phucxfandb.mapper.OrderMapper;
 import com.phucx.phucxfandb.repository.OrderRepository;
@@ -19,8 +18,7 @@ import com.phucx.phucxfandb.service.order.OrderUpdateService;
 import com.phucx.phucxfandb.service.payment.PaymentUpdateService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
 import com.phucx.phucxfandb.service.product.ProductUpdateService;
-import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
-import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
+import com.phucx.phucxfandb.service.waitlist.WaitListReaderService;
 import com.phucx.phucxfandb.utils.PriceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +33,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OrderUpdateServiceImpl implements OrderUpdateService {
-    private final ReservationTableReaderService reservationTableReaderService;
-    private final ReservationTableUpdateService reservationTableUpdateService;
     private final ShippingAddressReaderService shippingAddressReaderService;
+    private final WaitListReaderService waitListReaderService;
     private final PaymentUpdateService paymentUpdateService;
     private final CustomerReaderService customerReaderService;
     private final EmployeeReaderService employeeReaderService;
@@ -129,18 +126,16 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     @Transactional
     public OrderDTO createOrderEmployee(String username, RequestOrderDTO requestOrderDTO) {
         Employee employee = employeeReaderService.getEmployeeEntityByUsername(username);
-        ReservationTable table = reservationTableReaderService
-                .getReservationTableEntity(requestOrderDTO.getTableId());
 
-        if(!table.getStatus().equals(TableStatus.UNOCCUPIED)){
-            throw new TableException(String.format("Table %s is not available", table.getTableNumber()));
+        WaitList waitList = waitListReaderService.getWaitListEntity(requestOrderDTO.getWaitingListId());
+        if(!waitList.getStatus().equals(WaitListStatus.SEATED)){
+            throw new IllegalStateException("Cannot perform operation: WaitList with ID " + requestOrderDTO.getWaitingListId() + " must be SEATED. Current status: " + waitList.getStatus());
         }
-        reservationTableUpdateService.updateTableStatus(table.getTableId(), TableStatus.OCCUPIED);
 
         Order newOrder = orderMapper.toEmployeeOrder(
                 requestOrderDTO,
                 employee,
-                table
+                waitList
         );
         newOrder.setStatus(OrderStatus.PENDING);
 

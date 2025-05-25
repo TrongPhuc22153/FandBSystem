@@ -50,7 +50,7 @@ const AdminOrdersPage = () => {
     {
       key: "customerName",
       title: "Customer Name",
-      render: (order) => order.customer?.contactName || "Anonymous",
+      render: (order) => order.customer?.contactName || order?.waitList.contactName ||"Anonymous",
     },
     {
       key: "orderDate",

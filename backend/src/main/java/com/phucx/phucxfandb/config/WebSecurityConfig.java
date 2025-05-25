@@ -62,6 +62,8 @@ public class WebSecurityConfig {
                 .requestMatchers(Customer.ALL).hasRole(RoleName.CUSTOMER.name())
                 .requestMatchers(Employee.ALL).hasRole(RoleName.EMPLOYEE.name())
                 .requestMatchers(HttpMethod.PATCH, Employee.PATCH).hasRole(RoleName.EMPLOYEE.name())
+                .requestMatchers(HttpMethod.PUT, Employee.PUT).hasRole(RoleName.EMPLOYEE.name())
+                .requestMatchers(HttpMethod.POST, Employee.POST).hasRole(RoleName.EMPLOYEE.name())
                 .requestMatchers(Admin.ALL).hasRole(RoleName.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, Admin.GET).hasRole(RoleName.ADMIN.name())
                 .requestMatchers(HttpMethod.POST, Admin.POST).hasRole(RoleName.ADMIN.name())

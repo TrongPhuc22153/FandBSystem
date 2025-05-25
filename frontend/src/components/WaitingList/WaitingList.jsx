@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Clock, Plus, Trash, User, Users } from "lucide-react";
+import { useModal } from "../../context/ModalContext";
 import styles from "./WaitingList.module.css";
+import { formatDate } from "../../utils/datetimeUtils";
+import { useWaitingListActions } from "../../hooks/waitingListHooks";
+import { useAlert } from "../../context/AlertContext";
+import { WAITING_LIST_STATUSES } from "../../constants/webConstant";
 
-export function WaitingList({
-  waitingList,
-  removeFromWaitingList,
-  addToWaitingList,
-}) {
+export function WaitingList({ waitingList, mutate }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newCustomer, setNewCustomer] = useState({
     name: "",
@@ -14,18 +15,146 @@ export function WaitingList({
     phone: "",
     notes: "",
   });
+  const [fieldErrors, setFieldErrors] = useState({});
 
-  const handleAddCustomer = () => {
-    if (newCustomer.name && newCustomer.size > 0 && newCustomer.phone) {
-      addToWaitingList(newCustomer);
-      setNewCustomer({
-        name: "",
-        size: 2,
-        phone: "",
-        notes: "",
+  const { onOpen } = useModal();
+  const { showNewAlert } = useAlert();
+
+  const {
+    handleCreateWaitingList,
+    createError,
+    createLoading,
+    createSuccess,
+    resetCreate,
+
+    handleUpdateWaitingListStatus,
+    updateStatusError,
+    updateStatusSuccess,
+    resetUpdateStatus,
+  } = useWaitingListActions();
+
+  useEffect(() => {
+    setFieldErrors(createError?.fields ?? {});
+    if (createError?.message || updateStatusError?.message) {
+      showNewAlert({
+        message: createError.message || updateStatusError.message,
+        variant: "danger",
       });
-      setIsDialogOpen(false);
     }
+  }, [createError, updateStatusError, showNewAlert]);
+
+  useEffect(() => {
+    if (updateStatusSuccess) {
+      showNewAlert({
+        message: updateStatusSuccess,
+        action: resetUpdateStatus,
+      });
+    }
+    if (createSuccess) {
+      showNewAlert({
+        message: createSuccess,
+        action: resetCreate,
+      });
+    }
+  }, [
+    createSuccess,
+    updateStatusSuccess,
+    showNewAlert,
+    resetCreate,
+    resetUpdateStatus,
+  ]);
+
+  const handleAddCustomer = useCallback(async () => {
+    const errors = {};
+    if (!newCustomer.name) {
+      errors.contactName = ["Customer name is required"];
+    }
+    if (newCustomer.size <= 0) {
+      errors.partySize = ["Party size must be greater than 0"];
+    }
+    if (!newCustomer.phone) {
+      errors.phone = ["Phone number is required"];
+    } else if (!/^[0-9\-+]{9,15}$/.test(newCustomer.phone)) {
+      errors.phone = [
+        "Phone number must be 9-15 characters and contain only digits, hyphens, or plus signs",
+      ];
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      showNewAlert({
+        message: "Please fix the errors in the form",
+        variant: "danger",
+      });
+      return;
+    }
+
+    const requestAddCustomer = {
+      contactName: newCustomer.name,
+      partySize: newCustomer.size,
+      phone: newCustomer.phone,
+      notes: newCustomer.notes,
+    };
+
+    try {
+      const res = await handleCreateWaitingList(requestAddCustomer);
+      if (res) {
+        mutate(
+          (prevData) => ({
+            ...prevData,
+            content: [...(prevData?.content || []), res],
+          }),
+          false
+        );
+        mutate();
+        setNewCustomer({ name: "", size: 2, phone: "", notes: "" });
+        setFieldErrors({});
+        setIsDialogOpen(false); 
+      }
+    } catch (error) {
+      showNewAlert({
+        message: "Failed to add customer. Please try again.",
+        variant: "danger",
+      });
+    }
+  }, [handleCreateWaitingList, newCustomer, showNewAlert, mutate]);
+
+  const showAddCustomerConfirmModal = () => {
+    onOpen({
+      title: "Add customer",
+      message: "Do you want to add new customer?",
+      onYes: handleAddCustomer,
+    });
+  };
+
+  const handleRemoveCustomer = useCallback(
+    async (idToDelete) => {
+      const res = await handleUpdateWaitingListStatus(
+        idToDelete,
+        { status: WAITING_LIST_STATUSES.CANCELLED }
+      );
+      if (res) {
+        mutate((prevData) => {
+          if (!prevData?.content) return prevData;
+          return {
+            ...prevData,
+            content: prevData.content.filter(
+              (waitingList) => waitingList.id !== idToDelete
+            ),
+          };
+        }, false);
+        mutate();
+      }
+    },
+    [handleUpdateWaitingListStatus]
+  );
+
+  const showRemoveCustomerConfirmModal = (id) => {
+    onOpen({
+      title: "Remove customer",
+      message: "Do you want to remove this customer?",
+      onYes: () => handleRemoveCustomer(id),
+    });
   };
 
   return (
@@ -46,15 +175,17 @@ export function WaitingList({
             <div key={customer.id} className={styles.customerCard}>
               <div className={styles.cardHeader}>
                 <div>
-                  <h4 className={styles.customerName}>{customer.name}</h4>
+                  <h4 className={styles.customerName}>
+                    {customer.contactName}
+                  </h4>
                   <div className={styles.partySize}>
                     <Users size={14} className={styles.icon} />
-                    <span>Party of {customer.size}</span>
+                    <span>Party of {customer.partySize}</span>
                   </div>
                 </div>
                 <button
                   className={styles.removeButton}
-                  onClick={() => removeFromWaitingList(customer.id)}
+                  onClick={() => showRemoveCustomerConfirmModal(customer.id)}
                 >
                   <Trash size={16} />
                   <span className={styles.srOnly}>Remove</span>
@@ -62,7 +193,7 @@ export function WaitingList({
               </div>
               <div className={styles.waitingTime}>
                 <Clock size={14} className={styles.icon} />
-                <span>Waiting since {customer.waitingSince}</span>
+                <span>Waiting since {formatDate(customer.createdAt)}</span>
               </div>
               <div className={styles.phoneNumber}>
                 <User size={14} className={styles.icon} />
@@ -93,19 +224,25 @@ export function WaitingList({
             </div>
             <div className={styles.modalBody}>
               <div className={styles.formGroup}>
-                <label htmlFor="customerName" className={styles.formLabel}>
+                <label htmlFor="contactName" className={styles.formLabel}>
                   Customer Name
                 </label>
                 <input
                   type="text"
-                  id="customerName"
+                  id="contactName"
                   className={styles.formInput}
-                  placeholder="Smith"
+                  placeholder="Customer name..."
                   value={newCustomer.name}
                   onChange={(e) =>
                     setNewCustomer({ ...newCustomer, name: e.target.value })
                   }
                 />
+                {fieldErrors?.contactName &&
+                  fieldErrors.contactName.map((error, index) => (
+                    <div key={index} className="error-message text-danger">
+                      {error}
+                    </div>
+                  ))}
               </div>
               <div className={styles.formGroup}>
                 <label htmlFor="partySize" className={styles.formLabel}>
@@ -124,21 +261,33 @@ export function WaitingList({
                     })
                   }
                 />
+                {fieldErrors?.partySize &&
+                  fieldErrors.partySize.map((error, index) => (
+                    <div key={index} className="error-message text-danger">
+                      {error}
+                    </div>
+                  ))}
               </div>
               <div className={styles.formGroup}>
-                <label htmlFor="phoneNumber" className={styles.formLabel}>
+                <label htmlFor="phone" className={styles.formLabel}>
                   Phone Number
                 </label>
                 <input
                   type="text"
-                  id="phoneNumber"
+                  id="phone"
                   className={styles.formInput}
-                  placeholder="555-1234"
+                  placeholder="e.g., +123456789 or 123-456-7890"
                   value={newCustomer.phone}
                   onChange={(e) =>
                     setNewCustomer({ ...newCustomer, phone: e.target.value })
                   }
                 />
+                {fieldErrors?.phone &&
+                  fieldErrors.phone.map((error, index) => (
+                    <div key={index} className="error-message text-danger">
+                      {error}
+                    </div>
+                  ))}
               </div>
               <div className={styles.formGroup}>
                 <label htmlFor="notes" className={styles.formLabel}>
@@ -154,6 +303,12 @@ export function WaitingList({
                     setNewCustomer({ ...newCustomer, notes: e.target.value })
                   }
                 ></textarea>
+                {fieldErrors?.notes &&
+                  fieldErrors.notes.map((error, index) => (
+                    <div key={index} className="error-message text-danger">
+                      {error}
+                    </div>
+                  ))}
               </div>
             </div>
             <div className={styles.modalFooter}>
@@ -165,7 +320,8 @@ export function WaitingList({
               </button>
               <button
                 className={styles.submitButton}
-                onClick={handleAddCustomer}
+                onClick={showAddCustomerConfirmModal}
+                disabled={createLoading}
               >
                 Add to List
               </button>

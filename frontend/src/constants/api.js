@@ -54,3 +54,5 @@ export const CUSTOMER_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/customers/me`;
 
 export const EMPLOYEE_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/employees`;
 export const EMPLOYEE_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/employees/me`;
+
+export const WAITLISTS_ENDPOINT = `${API_BASE_URL}/api/v1/waitlists`;

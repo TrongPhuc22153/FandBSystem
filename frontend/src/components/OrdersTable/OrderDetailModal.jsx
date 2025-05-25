@@ -48,10 +48,10 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus }) {
               <div className="col-md-6">
                 <h6>Customer Information</h6>
                 <p className="mb-1">
-                  <strong>Name:</strong> {order?.customer?.profile.user.username || "UNKNOW"}
+                  <strong>Name:</strong> {order?.customer?.profile.user.username || order?.waitList.contactName || "UNKNOW"}
                 </p>
                 <p className="mb-1">
-                  <strong>Table:</strong> {order?.table?.tableNumber}
+                  <strong>Table:</strong> {order?.waitList.table.tableNumber}
                 </p>
                 <p className="mb-1">
                   <strong>Order Time:</strong>{" "}

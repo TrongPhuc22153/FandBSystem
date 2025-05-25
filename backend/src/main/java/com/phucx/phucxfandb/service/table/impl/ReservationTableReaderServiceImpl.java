@@ -1,6 +1,5 @@
 package com.phucx.phucxfandb.service.table.impl;
 
-import com.phucx.phucxfandb.constant.TableStatus;
 import com.phucx.phucxfandb.dto.request.TableRequestParamsDTODTO;
 import com.phucx.phucxfandb.dto.response.ReservationTableDTO;
 import com.phucx.phucxfandb.entity.ReservationTable;
@@ -55,14 +54,6 @@ public class ReservationTableReaderServiceImpl implements ReservationTableReader
     public ReservationTable getReservationTableEntity(String tableId) {
         return reservationTableRepository.findByTableIdAndIsDeletedFalse(tableId)
                 .orElseThrow(() -> new NotFoundException(ReservationTable.class.getSimpleName(), "id", tableId));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<ReservationTable> getTablesEntities(TableStatus status, int numberOfGuests, LocalDateTime startTime, LocalDateTime endTime) {
-        return reservationTableRepository.findAvailableTablesForReservation(
-                status, numberOfGuests, startTime, endTime
-        );
     }
 
     @Override

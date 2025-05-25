@@ -5,7 +5,6 @@ import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", uses = {MenuItemMapper.class, UserMapper.class, PaymentMapper.class})
 public interface ReservationMapper {

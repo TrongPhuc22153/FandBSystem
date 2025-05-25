@@ -1,11 +1,37 @@
-import { useState } from "react";
-import { Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, ChevronDown, Users } from "lucide-react";
 import styles from "./TableGrid.module.css";
-import { TABLE_STATUSES } from "../../constants/webConstant";
+import {
+  TABLE_STATUSES,
+  WAITING_LIST_STATUSES,
+} from "../../constants/webConstant";
+import { formatDistanceToNow } from "date-fns";
+import { useWaitingListActions } from "../../hooks/waitingListHooks";
+import { useAlert } from "../../context/AlertContext";
 
-export function TableGrid({ tables, updateTableStatus }) {
+export function TableGrid({ tables, updateTableStatus, waitingList, mutateWaitingList, mutateTables }) {
   const [selectedTable, setSelectedTable] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  const { showNewAlert } = useAlert();
+
+  const {
+    handleUpdateWaitingListStatus,
+    updateStatusError,
+    resetUpdateStatus,
+  } = useWaitingListActions();
+
+  useEffect(() => {
+    if (updateStatusError?.message) {
+      showNewAlert({
+        message: updateStatusError.message,
+        variant: "danger",
+        action: resetUpdateStatus,
+      });
+    }
+  }, [updateStatusError]);
 
   const handleTableClick = (table) => {
     setSelectedTable(table);
@@ -14,7 +40,19 @@ export function TableGrid({ tables, updateTableStatus }) {
 
   const handleStatusChange = (status) => {
     if (selectedTable) {
-      updateTableStatus(selectedTable.tableId, status);
+      updateTableStatus?.(selectedTable.tableId, status);
+      setIsDialogOpen(false);
+    }
+  };
+
+  const handleSeatCustomer = async (status) => {
+    const res = await handleUpdateWaitingListStatus(selectedCustomer, {
+      status: status,
+      tableId: selectedTable.tableId,
+    });
+    if (res) {
+      mutateWaitingList?.();
+      mutateTables?.();
       setIsDialogOpen(false);
     }
   };
@@ -82,7 +120,7 @@ export function TableGrid({ tables, updateTableStatus }) {
           </div>
         ))}
       </div>
-      
+
       {isDialogOpen && (
         <div
           className={styles.modalOverlay}
@@ -165,18 +203,125 @@ export function TableGrid({ tables, updateTableStatus }) {
                   >
                     Cleaning
                   </button>
-                  <button
-                    className={`${styles.actionButton} ${
-                      selectedTable?.status === TABLE_STATUSES.OCCUPIED
-                        ? styles.activeButton
-                        : ""
-                    } ${styles.occupiedButton}`}
-                    onClick={() => handleStatusChange(TABLE_STATUSES.OCCUPIED)}
-                  >
-                    Occupied
-                  </button>
                 </div>
               </div>
+              {selectedTable?.status !== TABLE_STATUSES.OCCUPIED && (
+                <div className={styles.assignSection}>
+                  <h4 className={styles.sectionTitle}>
+                    Assign Server & Seat Customers
+                  </h4>
+                  <div className={styles.assignActions}>
+                    <div className={styles.dropdownContainer}>
+                      <button
+                        className={styles.dropdownButton}
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        aria-expanded={dropdownOpen}
+                        aria-label="Select customer to seat"
+                      >
+                        {selectedCustomer
+                          ? waitingList.find((s) => s.id === selectedCustomer)
+                              ?.contactName
+                          : "Select customer"}
+                        <ChevronDown
+                          size={16}
+                          className={styles.dropdownIcon}
+                        />
+                      </button>
+                      {dropdownOpen && (
+                        <div className={styles.dropdownMenu}>
+                          {waitingList
+                            .filter(
+                              (customer) =>
+                                customer.partySize <= selectedTable.capacity
+                            )
+                            .sort(
+                              (a, b) =>
+                                new Date(a.createdAt) - new Date(b.createdAt)
+                            )
+                            .map((customer) => (
+                              <div
+                                key={customer.id}
+                                className={styles.dropdownItem}
+                                onClick={() => {
+                                  setSelectedCustomer(customer.id);
+                                  setDropdownOpen(false);
+                                }}
+                                role="option"
+                                aria-selected={selectedCustomer === customer.id}
+                              >
+                                <div className={styles.customerInfo}>
+                                  <div className={styles.customerHeader}>
+                                    <span className={styles.customerName}>
+                                      {customer.contactName} (ID:{" "}
+                                      {customer.id.slice(-4)})
+                                    </span>
+                                    <br />
+                                    <span className={styles.partySize}>
+                                      <Users
+                                        size={14}
+                                        className={styles.usersIcon}
+                                      />
+                                      Party of {customer.partySize}
+                                    </span>
+                                  </div>
+                                  <div className={styles.customerDetails}>
+                                    <span className={styles.phone}>
+                                      {customer.phone}
+                                    </span>
+                                    <br />
+                                    <span className={styles.waitTime}>
+                                      Waiting:{" "}
+                                      {formatDistanceToNow(
+                                        new Date(customer.createdAt),
+                                        { addSuffix: true }
+                                      )}
+                                    </span>
+                                    {customer.notes && (
+                                      <span className={styles.notes}>
+                                        Notes:{" "}
+                                        {customer.notes.length > 20
+                                          ? `${customer.notes.slice(0, 20)}...`
+                                          : customer.notes}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                <Check
+                                  className={`${styles.checkIcon} ${
+                                    selectedCustomer === customer.id
+                                      ? styles.visible
+                                      : styles.hidden
+                                  }`}
+                                  size={16}
+                                />
+                              </div>
+                            ))}
+                          {waitingList.filter(
+                            (customer) =>
+                              customer.partySize <= selectedTable.capacity
+                          ).length === 0 && (
+                            <div className={styles.dropdownEmpty}>
+                              No suitable customers available
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      className={`${styles.primaryButton} ${
+                        !selectedCustomer ? styles.disabled : ""
+                      }`}
+                      onClick={() =>
+                        handleSeatCustomer(WAITING_LIST_STATUSES.SEATED)
+                      }
+                      disabled={!selectedCustomer}
+                    >
+                      Seat Customers
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <div className={styles.modalFooter}>
               <button

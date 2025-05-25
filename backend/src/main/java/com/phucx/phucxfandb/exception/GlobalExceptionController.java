@@ -39,7 +39,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(value = TableException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleTableException(TableException exception) {
-        log.error("handleTableException: {}", exception.getMessage());
+        log.error("handleTableException: {}", exception.getMessage(), exception);
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error(exception.getMessage())
@@ -51,7 +51,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(value = ImageException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleImageException(ImageException exception) {
-        log.error("handleImageException: {}", exception.getMessage());
+        log.error("handleImageException: {}", exception.getMessage(), exception);
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error(exception.getMessage())
@@ -63,7 +63,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(value = PaymentException.class)
     protected ResponseEntity<ResponseDTO<Void>> handlePaymentException(PaymentException exception) {
-        log.error("handlePaymentException: {}", exception.getMessage());
+        log.error("handlePaymentException: {}", exception.getMessage(), exception);
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("PAYMENT_EXCEPTION")
@@ -75,7 +75,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleIllegalArgumentException(IllegalArgumentException exception) {
-        log.error("handleIllegalArgumentException: {}", exception.getMessage());
+        log.error("handleIllegalArgumentException: {}", exception.getMessage(), exception);
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("ILLEGAL_ARGUMENT")
@@ -87,7 +87,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(NotFoundException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleNotFoundException(NotFoundException exception) {
-        log.error("handleNotFoundException: {}", exception.getMessage());
+        log.error("handleNotFoundException: {}", exception.getMessage(), exception);
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("NOT_FOUND")
@@ -97,9 +97,21 @@ public class GlobalExceptionController {
                 .body(response);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    protected ResponseEntity<ResponseDTO<Void>> handleIllegalStateException(IllegalStateException exception) {
+        log.error("handleIllegalStateException: {}", exception.getMessage(), exception);
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message(exception.getMessage())
+                .error("ILLEGAL_STATE")
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
     @ExceptionHandler(EntityExistsException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleEntityExistsException(EntityExistsException exception) {
-        log.error("handleEntityExistsException: {}", exception.getMessage());
+        log.error("handleEntityExistsException: {}", exception.getMessage(), exception);
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("ENTITY_EXISTED")
@@ -111,7 +123,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(InsufficientResourcesException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleInsufficientResourcesException(InsufficientResourcesException exception) {
-        log.error("handleInsufficientResourcesException: {}", exception.getMessage());
+        log.error("handleInsufficientResourcesException: {}", exception.getMessage(), exception);
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("Insufficient resources")
@@ -123,7 +135,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(IOException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleIOException(IOException exception) {
-        log.error("handleIOException: {}", exception.getMessage());
+        log.error("handleIOException: {}", exception.getMessage(), exception);
         ResponseDTO<Void> response = ResponseDTO.<Void>builder()
                 .message(exception.getMessage())
                 .error("IO_EXCEPTION")
@@ -135,7 +147,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(InvalidTokenException.class)
     protected ResponseEntity<ResponseDTO<ValidatedTokenResponseDTO>> handleInvalidTokenException(InvalidTokenException exception) {
-        log.error("handleInvalidTokenException: {}", exception.getMessage());
+        log.error("handleInvalidTokenException: {}", exception.getMessage(), exception);
         ValidatedTokenResponseDTO validatedTokenResponseDTO = ValidatedTokenResponseDTO.builder()
                 .status(Boolean.FALSE)
                 .build();

@@ -19,11 +19,11 @@ export default function OrderSummary({ items, onUpdateQuantity }) {
   return (
     <div>
       <div className={styles.orderList}>
-        {items.map((item) => (
-          <div key={item.food.productId} className={styles.orderItem}>
+        {items.map((item, index) => (
+          <div key={index} className={styles.orderItem}>
             <div className={styles.orderItemHeader}>
               <div>
-                <h6 className={styles.itemName}>{item.food.name}</h6>
+                <h6 className={styles.itemName}>{item.food.productName}</h6>
                 <small className={styles.itemPrice}>
                   ${item.food.unitPrice.toFixed(2)} each
                 </small>

@@ -21,24 +21,32 @@ function UserOrderDetailsPage() {
     return <ErrorDisplay message={orderError.message} />;
   }
 
-  const orderDate = formatDate(orderData.orderDate);
+  const orderDate = formatDate(orderData?.orderDate);
   const orderNumber = orderData.orderId;
-  const orderStatus = orderData.status.toLowerCase();
-  const shippingCost = orderData.shippingCost || 0;
-  const shippingAddress = orderData.shippingAddress;
-  const orderItems = orderData.orderDetails;
+  const orderStatus = orderData?.status?.toLowerCase();
+  const shippingCost = orderData?.shippingCost || 0;
+  const shippingAddress = orderData?.shippingAddress;
+  const table = orderData?.table || null;
+  const orderItems = orderData?.orderDetails || [];
+  const orderType = orderData.type;
+  const customer = orderData?.customer;
   const total = orderData.totalPrice;
+  const waitList = orderData?.waitList;
   const paymentMethod = orderData.payment.method;
   const paymentStatus = orderData.payment.status;
 
   return (
-    <OrderDetail      
+    <OrderDetail
       orderDate={orderDate}
       orderNumber={orderNumber}
       orderStatus={orderStatus}
       orderItems={orderItems}
+      orderType={orderType}
       shippingCost={shippingCost}
+      table={table}
       total={total}
+      waitList={waitList}
+      customer={customer}
       shippingAddress={shippingAddress}
       paymentMethod={paymentMethod}
       paymentStatus={paymentStatus}

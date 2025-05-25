@@ -9,4 +9,8 @@ public class Views {
     public interface ForgetPassword extends Default{}
 
     public interface UpdateUserEnabledStatus extends Default{}
+
+    public interface CreateWaitList extends Default{}
+    public interface UpdateWaitList extends Default{}
+    public interface UpdateWaitListStatus extends Default{}
 }

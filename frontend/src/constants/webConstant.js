@@ -83,3 +83,10 @@ export const SORTING_DIRECTIONS = {
     DESC: "DESC"
 }
 export const CHECKOUT_ITEMS = "checkoutItems";
+
+export const WAITING_LIST_STATUSES = {
+    SEATED: "SEATED",
+    NO_SHOW: "NO_SHOW",
+    CANCELLED: "CANCELLED",
+    WAITING: "WAITING"
+}

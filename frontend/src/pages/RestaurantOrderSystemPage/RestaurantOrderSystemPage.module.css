@@ -57,6 +57,10 @@
     padding: 1rem;
 }
 
+.cardContent {
+    padding: 1rem;
+}
+
 .cardFooter {
     padding: 1rem;
     border-top: 1px solid #dee2e6;
@@ -105,6 +109,13 @@
     margin: 1rem 0;
     border: 0;
     border-top: 1px solid #dee2e6;
+}
+
+.waitingCount {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-top: 0;
+    margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {

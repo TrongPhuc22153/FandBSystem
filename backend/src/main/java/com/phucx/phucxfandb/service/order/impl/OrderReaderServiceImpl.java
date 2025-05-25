@@ -65,10 +65,10 @@ public class OrderReaderServiceImpl implements OrderReaderService {
     @Transactional(readOnly = true)
     public Page<OrderDTO> getOrders(OrderRequestParamsDTO params, Authentication authentication) {
         List<RoleName> roles = RoleUtils.getRoles(authentication.getAuthorities());
-        if (roles.contains(RoleName.ADMIN)) {
-            return getAdminOrders(params);
-        } else {
+        if (roles.contains(RoleName.CUSTOMER)) {
             return getCustomerOrders(authentication.getName(), params);
+        } else {
+            return getUserOrder(params);
         }
     }
 
@@ -86,7 +86,7 @@ public class OrderReaderServiceImpl implements OrderReaderService {
                 .map(orderMapper::toOrderListEntryDTO);
     }
 
-    private Page<OrderDTO> getAdminOrders(OrderRequestParamsDTO params) {
+    private Page<OrderDTO> getUserOrder(OrderRequestParamsDTO params) {
         Pageable pageable = PageRequest.of(
                 params.getPage(),
                 params.getSize(),

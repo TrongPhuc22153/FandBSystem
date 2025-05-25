@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { Badge } from "react-bootstrap";
 import { getImageSrc } from "../../utils/imageUtils";
 import styles from "./OrderDetails.module.css";
 import { SHOP_URI } from "../../constants/routes";
-import { PAYMENT_STATUS_CLASSES } from "../../constants/webConstant";
+import {
+  ORDER_TYPES,
+} from "../../constants/webConstant";
 
 const OrderDetail = ({
   orderDate,
@@ -12,10 +13,11 @@ const OrderDetail = ({
   orderItems,
   shippingCost,
   total,
-  table,
+  orderType,
   shippingAddress,
+  waitList,
+  customer,
   paymentMethod,
-  paymentStatus,
 }) => {
   return (
     <div className="container py-3" style={{ maxWidth: "800px" }}>
@@ -50,9 +52,7 @@ const OrderDetail = ({
                 orderItems.map((item) => (
                   <tr key={item.id}>
                     <th scope="row">
-                      <div
-                        className="d-flex justify-content-start align-items-center list py-1"
-                      >
+                      <div className="d-flex justify-content-start align-items-center list py-1">
                         <div style={{ minWidth: "50px" }}>
                           <b>{item.quantity}x</b>
                         </div>
@@ -87,7 +87,15 @@ const OrderDetail = ({
           </table>
         </div>
         <div className="pt-2 border-bottom mb-3"></div>
-        {!table && (
+        <div className="d-flex justify-content-start align-items-center pl-3">
+          <div className="text-muted">Payment Method</div>
+          <div className="ms-auto">
+            <label className={styles.label}>
+              {paymentMethod.toUpperCase()}
+            </label>{" "}
+          </div>
+        </div>
+        {orderType === ORDER_TYPES.TAKE_AWAY && ( 
           <div className="d-flex justify-content-start align-items-center py-1 pl-3">
             <div className="text-muted">Shipping: </div>
             <div className="ms-auto">
@@ -96,7 +104,7 @@ const OrderDetail = ({
             </div>
           </div>
         )}
-        <div className="d-flex justify-content-start align-items-center pl-3 py-3 mb-4 border-bottom">
+        <div className="d-flex justify-content-start align-items-center pl-3 py-3 my-4 border-top border-bottom">
           <div className="text-muted">Today's Total</div>
           <div className={`ms-auto h5 ${styles.price}`}>
             ${total.toFixed(2)}
@@ -104,55 +112,68 @@ const OrderDetail = ({
         </div>
         <div className="row border rounded p-1 my-3">
           <div className="col-md-6 py-3">
-            {table ? (
+            {orderType === ORDER_TYPES.DINE_IN && waitList ? (
               <div className="d-flex flex-column align-items-start">
-                <b>Table Information</b>
+                <b>Dine-in Details</b>
                 <p className="text-justify pt-2">
-                  Table Number: {table.tableNumber}
+                  Table Number: {waitList.table.tableNumber}
                 </p>
-                <p className="text-justify">Location: {table.location}</p>
-                <p className="text-justify">Capacity: {table.capacity}</p>
+                <p className="text-justify">
+                  Location: {waitList.table.location}
+                </p>
+                <p className="text-justify">Capacity: {waitList.table.capacity}</p>
+              </div>
+            ) : orderType === ORDER_TYPES.TAKE_AWAY && shippingAddress ? (
+              <div className="d-flex flex-column align-items-start">
+                <b>Shipping Address</b>
+                <p className="text-justify pt-2">
+                  {shippingAddress.shipName},
+                </p>
+                <p className="text-justify">{shippingAddress.shipAddress},</p>
+                <p className="text-justify">
+                  {shippingAddress.shipCity}, {shippingAddress.shipDistrict},{" "}
+                  {shippingAddress.shipWard}
+                </p>
+                <p className="text-justify">Phone: {shippingAddress.phone}</p>
               </div>
             ) : (
               <div className="d-flex flex-column align-items-start">
-                <b>Shipping Address</b>
-                {shippingAddress && (
-                  <>
-                    <p className="text-justify pt-2">
-                      {shippingAddress.shipName},
-                    </p>
-                    <p className="text-justify">
-                      {shippingAddress.shipAddress},
-                    </p>
-                    <p className="text-justify">
-                      {shippingAddress.shipCity}, {shippingAddress.shipDistrict}
-                      , {shippingAddress.shipWard}
-                    </p>
-                    <p className="text-justify">
-                      Phone: {shippingAddress.phone}
-                    </p>
-                  </>
-                )}
+                <b>Order Details</b>
+                <p className="text-justify pt-2">
+                  No specific details available for this order type.
+                </p>
               </div>
             )}
           </div>
           <div className="col-md-6 py-3">
             <div className="d-flex flex-column align-items-start">
-              <b>Payment Details</b>
-              <p className="text-justify pt-2">
-                <strong>Method:</strong>{" "}
-                {paymentMethod.toUpperCase()}
-              </p>
-              <p className="text-justify">
-                <strong>Status:</strong>{" "}
-                <Badge
-                  bg={PAYMENT_STATUS_CLASSES[paymentStatus]}
-                  aria-label={`Payment status: ${paymentStatus || "Unknown"}`}
-                >
-                  {(paymentStatus || "Unknown").charAt(0).toUpperCase() +
-                    (paymentStatus || "unknown").slice(1)}
-                </Badge>
-              </p>
+              <b>Customer Information</b>
+              {orderType === ORDER_TYPES.TAKE_AWAY && customer &&
+                <>
+                  <p className="text-justify pt-2">
+                    Name: {customer.contactName}
+                  </p>
+                  <p className="text-justify">
+                    Email: {customer.profile.user.email}
+                  </p>
+                  <p className="text-justify">
+                    Phone: {customer.profile.phone}
+                  </p>
+                </>
+              }
+              {orderType === ORDER_TYPES.DINE_IN && waitList && 
+                <>
+                  <p className="text-justify pt-2">
+                    Name: {waitList.contactName}
+                  </p>
+                  <p className="text-justify">
+                    Phone: {waitList.phone}
+                  </p>
+                  <p className="text-justify">
+                    Party size: {waitList.partySize}
+                  </p>
+                </>
+              }
             </div>
           </div>
         </div>
@@ -160,5 +181,4 @@ const OrderDetail = ({
     </div>
   );
 };
-
 export default OrderDetail;

@@ -21,9 +21,8 @@ public interface ReservationTableRepository extends JpaRepository<ReservationTab
 
     Page<ReservationTable> findByIsDeletedFalse(Pageable pageable);
 
-    Optional<ReservationTable> findByTableIdAndIsDeletedFalse(String tableId);
 
-    List<ReservationTable> findByStatusAndIsDeletedFalse(TableStatus status);
+    Optional<ReservationTable> findByTableIdAndIsDeletedFalse(String tableId);
 
     @Query("SELECT rt FROM ReservationTable rt " +
             "WHERE rt.status = :status " +
@@ -66,8 +65,4 @@ public interface ReservationTableRepository extends JpaRepository<ReservationTab
             @Param("numberOfGuests") int numberOfGuests,
             @Param("status") TableStatus status
     );
-
-    Optional<ReservationTable> findByTableNumberAndIsDeletedFalse(int tableNumber);
-
-
 }

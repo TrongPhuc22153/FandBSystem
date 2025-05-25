@@ -5,14 +5,14 @@ import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.entity.Order;
-import com.phucx.phucxfandb.exception.NotFoundException;
+import com.phucx.phucxfandb.entity.WaitList;
 import com.phucx.phucxfandb.service.cart.CartUpdateService;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
 import com.phucx.phucxfandb.service.payment.PaymentProcessService;
-import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
+import com.phucx.phucxfandb.service.waitlist.WaitListUpdateService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,8 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     private final OrderUpdateService orderUpdateService;
     private final OrderReaderService orderReaderService;
     private final SendOrderNotificationService sendOrderNotificationService;
-    private final ReservationTableUpdateService reservationTableUpdateService;
     private final PaymentProcessService paymentProcessService;
+    private final WaitListUpdateService waitListUpdateService;
 
     @Override
     public OrderDTO cancelOrderByEmployee(String username, String orderId, OrderType type) {
@@ -147,12 +147,16 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     }
 
     @Override
+    @Transactional
     public OrderDTO completeDineInOrder(String username, String orderId){
         Order order = orderReaderService.getOrderEntity(orderId, OrderType.DINE_IN);
-        if(!order.getOrderId().equals(orderId)){
-            throw new NotFoundException(String.format("Table with id %s and order with id %s not found", order.getTable().getTableId(), orderId));
-        }
-        reservationTableUpdateService.updateTableStatus(order.getTable().getTableId(), TableStatus.UNOCCUPIED);
+
+        WaitList waitList = order.getWaitList();
+        RequestWaitListDTO requestWaitListDTO = RequestWaitListDTO.builder()
+                .status(WaitListStatus.COMPLETED)
+                .tableId(waitList.getTable().getTableId())
+                .build();
+        waitListUpdateService.updateWaitListStatus(waitList.getId(), requestWaitListDTO);
         return orderUpdateService.updateOrderStatus(order.getOrderId(), OrderType.DINE_IN, OrderStatus.COMPLETED);
     }
 

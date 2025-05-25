@@ -27,7 +27,9 @@ public class ApiEndpoint {
                 PAYMENT_METHOD_BY_ID_ENDPOINT,
                 IMAGE_BY_NAME_ENDPOINT,
                 RATING_BY_PRODUCT_ID_ENDPOINT,
-                DISCOUNT_BY_ID_ENDPOINT
+                DISCOUNT_BY_ID_ENDPOINT,
+                WAIT_LISTS_ENDPOINT,
+                WAIT_LIST_BY_ID_ENDPOINT,
         };
 
         public static final String[] POST = {
@@ -144,7 +146,16 @@ public class ApiEndpoint {
         public static final String[] PATCH ={
                 ORDER_BY_ID_ENDPOINT,
                 RESERVATION_BY_ID_ENDPOINT,
-                TABLE_BY_ID_ENDPOINT
+                TABLE_BY_ID_ENDPOINT,
+                WAIT_LIST_BY_ID_ENDPOINT
+        };
+
+        public static final String[] POST = {
+                WAIT_LISTS_ENDPOINT,
+        };
+
+        public static final String[] PUT = {
+                WAIT_LIST_BY_ID_ENDPOINT
         };
     }
 
@@ -219,6 +230,9 @@ public class ApiEndpoint {
     public static final String TABLES_ENDPOINT = "/api/v1/tables";
     public static final String TABLE_BY_ID_ENDPOINT = "/api/v1/tables/{id}";
     public static final String TABLE_BULK_ENDPOINT = "/api/v1/tables/bulk";
+
+    public static final String WAIT_LISTS_ENDPOINT = "/api/v1/waitlists";
+    public static final String WAIT_LIST_BY_ID_ENDPOINT = "/api/v1/waitlists/{id}";
 
     public static final String PAYMENT_METHODS_ENDPOINT = "/api/v1/payment-methods";
     public static final String PAYMENT_METHOD_BY_ID_ENDPOINT = "/api/v1/payment-methods/{id}";

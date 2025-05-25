@@ -17,7 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "orders")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class Order extends Auditable{
     @Id
     @Column(name = "order_id", nullable = false, length = 36, updatable = false)
@@ -40,9 +40,9 @@ public class Order extends Auditable{
     @Column(name = "type", nullable = false)
     private OrderType type;
 
-    @ManyToOne
-    @JoinColumn(name = "table_id")
-    private ReservationTable table;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wait_list_id")
+    private WaitList waitList;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 10, nullable = false)

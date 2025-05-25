@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "tables")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class ReservationTable extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

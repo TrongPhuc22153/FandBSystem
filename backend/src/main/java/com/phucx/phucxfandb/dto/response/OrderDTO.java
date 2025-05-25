@@ -21,9 +21,9 @@ public class OrderDTO {
     BigDecimal totalPrice;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime orderDate;
-    ReservationTableDTO table;
     CustomerDTO customer;
     EmployeeDTO employee;
+    WaitListDTO waitList;
     PaymentDTO payment;
     ShippingAddressDTO shippingAddress;
     OrderType type;

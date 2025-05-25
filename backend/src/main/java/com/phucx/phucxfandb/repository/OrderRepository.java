@@ -31,7 +31,6 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
             "employee",
             "employee.profile",
             "employee.profile.user",
-            "table"
     })
     @NonNull
     Page<Order> findAll(@Nullable Specification<Order> spec, @NonNull Pageable pageable);

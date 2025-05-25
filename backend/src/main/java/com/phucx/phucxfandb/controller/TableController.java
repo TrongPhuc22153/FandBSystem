@@ -22,8 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/tables",
         produces = MediaType.APPLICATION_JSON_VALUE)
-@Tag(name = "Reservation Tables", description = "Public and Admin operations for tables")
-public class ReservationTableController {
+@Tag(name = "Tables API", description = "Public and Admin operations for tables")
+public class TableController {
     private final ReservationTableReaderService reservationTableReaderService;
     private final ReservationTableUpdateService reservationTableUpdateService;
 

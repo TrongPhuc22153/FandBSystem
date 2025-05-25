@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useOrder, useOrderActions } from "../../hooks/orderHooks";
 import { useParams } from "react-router-dom";
 import { formatDate } from "../../utils/datetimeUtils";
@@ -7,7 +7,7 @@ import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { useModal } from "../../context/ModalContext";
 import { ORDER_ACTIONS, ORDER_STATUSES } from "../../constants/webConstant";
 import { useAlert } from "../../context/AlertContext";
-import OrderDetails from "../../components/OrderDetails/OrderDetails";
+import OrderDetail from "../../components/OrderDetails/OrderDetails";
 
 function AdminOrderDetailsPage() {
   const { id } = useParams();
@@ -89,28 +89,32 @@ function AdminOrderDetailsPage() {
   }
 
   const orderDate = formatDate(orderData?.orderDate);
-  const orderNumber = orderData?.orderId;
+  const orderNumber = orderData.orderId;
   const orderStatus = orderData?.status?.toLowerCase();
   const shippingCost = orderData?.shippingCost || 0;
   const shippingAddress = orderData?.shippingAddress;
   const table = orderData?.table || null;
   const orderItems = orderData?.orderDetails || [];
-  const billingAddress = orderData?.customer;
+  const orderType = orderData.type;
+  const customer = orderData?.customer;
   const total = orderData.totalPrice;
+  const waitList = orderData?.waitList;
   const paymentMethod = orderData.payment.method;
   const paymentStatus = orderData.payment.status;
 
   return (
     <div>
-      <OrderDetails
+      <OrderDetail
         orderDate={orderDate}
         orderNumber={orderNumber}
         orderStatus={orderStatus}
         orderItems={orderItems}
+        orderType={orderType}
         shippingCost={shippingCost}
         table={table}
         total={total}
-        billingAddress={billingAddress}
+        waitList={waitList}
+        customer={customer}
         shippingAddress={shippingAddress}
         paymentMethod={paymentMethod}
         paymentStatus={paymentStatus}
