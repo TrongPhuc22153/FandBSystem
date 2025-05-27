@@ -54,7 +54,7 @@ public class PayPalServiceImpl implements PayPalService {
         HttpResponse<Order> response = client.execute(request);
         Order order = response.result();
 
-        paymentUpdateService.updatePaypalOrderId(paymentId, order.id());
+        paymentUpdateService.updatePayPalOrder(paymentId, order.id(), PaymentStatus.PENDING);
 
         return order.links().stream()
                 .filter(link -> link.rel().equals("approve"))

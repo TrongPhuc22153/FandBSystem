@@ -78,6 +78,13 @@ export const PAYMENT_STATUS_CLASSES = {
     DEFAULT: "primary"
 }
 
+export const PAYMENT_STATUSES = {
+    PENDING: "PENDING",
+    SUCCESSFUL: "SUCCESSFUL",
+    CANCELLED: "CANCELLED",
+    FAILED: "FAILED",
+}
+
 export const SORTING_DIRECTIONS = {
     ASC: "ASC",
     DESC: "DESC"

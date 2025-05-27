@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestReservationDTO {
-    private String reservationId;
 
     @NotNull(message = "Number of guests is required")
     @Min(value = 1, message = "Number of guests must be at least 1")
@@ -44,8 +43,6 @@ public class RequestReservationDTO {
 
     @Size(min = 3, max = 36, message = "Table ID must be between 3 and 36 characters")
     private String tableId;
-
-    private RequestPaymentDTO payment;
 
     private ReservationAction action;
 

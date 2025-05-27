@@ -3,10 +3,10 @@ package com.phucx.phucxfandb.controller;
 import com.phucx.phucxfandb.dto.request.OrderRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
-import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
+import com.phucx.phucxfandb.service.order.OrderUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Order API", description = "Order operation endpoints")
 public class OrderController {
     private final OrderReaderService orderReaderService;
+    private final OrderUpdateService orderUpdateService;
     private final OrderProcessingService orderProcessingService;
 
     @GetMapping
@@ -68,16 +69,33 @@ public class OrderController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create a new order", description = "Authenticated access")
-    public ResponseEntity<ResponseDTO<PaymentProcessingDTO>> createOrder(
+    public ResponseEntity<ResponseDTO<OrderDTO>> createOrder(
             Authentication authentication,
             @Valid @RequestBody RequestOrderDTO requestOrderDTO
     ) {
-        PaymentProcessingDTO paymentProcessingDTO = orderProcessingService
+        OrderDTO order = orderProcessingService
                 .placeOrder(requestOrderDTO, authentication);
 
-        ResponseDTO<PaymentProcessingDTO> response = ResponseDTO.<PaymentProcessingDTO>builder()
+        ResponseDTO<OrderDTO> response = ResponseDTO.<OrderDTO>builder()
                 .message("Order placed successfully")
-                .data(paymentProcessingDTO)
+                .data(order)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Update order", description = "Authenticated access")
+    public ResponseEntity<ResponseDTO<OrderDTO>> updateOrder(
+            @PathVariable String id,
+            Authentication authentication,
+            @Valid @RequestBody RequestOrderDTO requestOrderDTO
+    ) {
+        OrderDTO order = orderUpdateService
+                .updateOrder(authentication.getName(), id, requestOrderDTO);
+
+        ResponseDTO<OrderDTO> response = ResponseDTO.<OrderDTO>builder()
+                .message("Order updated successfully")
+                .data(order)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

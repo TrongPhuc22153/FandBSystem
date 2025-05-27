@@ -16,6 +16,7 @@ import { CHECKOUT_ITEMS, ORDER_TYPES } from "../../constants/webConstant";
 import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
 import PaymentMethodOptions from "../../components/PaymentMethodOptions/PaymentMethodOptions";
 import { CANCEL_PAYMENT_URL, SUCCESS_PAYMENT_URL } from "../../constants/paymentConstants";
+import { usePaymentActions } from "../../hooks/paymentHooks";
 
 const CheckoutPage = () => {
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -31,6 +32,12 @@ const CheckoutPage = () => {
     isLoading: loadingCartData,
     error: cartError,
   } = useCart();
+
+  const {
+    handleProcessPayment,
+    paymentError,
+    resetPayment
+  } = usePaymentActions()
 
   const {
     data: paymentMethodsData,
@@ -144,8 +151,15 @@ const CheckoutPage = () => {
   }, [addresses]);
 
   useEffect(() => {
+    if(paymentError?.message){
+      showNewAlert({
+        message: paymentError.message,
+        variant: "danger",
+        action: resetPayment
+      })
+    }
     setFieldErrors(placeError?.fields ?? {});
-  }, [placeError]);
+  }, [placeError, paymentError, resetPayment, showNewAlert]);
 
   useEffect(() => {
     setFieldErrors(createAddressMessageError?.fields ?? {});
@@ -207,24 +221,26 @@ const CheckoutPage = () => {
         }
       }
 
-      const requestPayment = {
-        paymentMethod: selectedPayment,
-        returnUrl: SUCCESS_PAYMENT_URL,
-        cancelUrl: CANCEL_PAYMENT_URL
-      }
-
-      const res = await handlePlaceOrder(
-        {
-          ...requestOrderDTO,
-          payment: requestPayment
-        },
-        ORDER_TYPES.TAKE_AWAY
-      );
+      const res = await handlePlaceOrder(requestOrderDTO, ORDER_TYPES.TAKE_AWAY);
       if (res) {
         setIsOpenPopUp(true);
         setFieldErrors({});
-        if(res.data.link){
-          window.location.href = res.data.link
+
+        const orderId = res.data.orderId;
+        const paymentId = res.data.payment.paymentId;
+
+        const paymentRes = await handleProcessPayment({
+          id: paymentId,
+          returnUrl: SUCCESS_PAYMENT_URL,
+          cancelUrl: CANCEL_PAYMENT_URL,
+          paymentMethod: selectedPayment,
+          orderId: orderId
+        })
+        if(paymentRes){
+          const link = paymentRes.data.link;
+          if(link){
+            window.location.href = link;
+          }
         }
       }
     } else {

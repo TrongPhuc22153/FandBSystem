@@ -1,7 +1,6 @@
 package com.phucx.phucxfandb.service.reservation.impl;
 
 import com.phucx.phucxfandb.constant.ReservationStatus;
-import com.phucx.phucxfandb.dto.request.RequestPaymentDTO;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.*;
@@ -11,7 +10,6 @@ import com.phucx.phucxfandb.mapper.ReservationMapper;
 import com.phucx.phucxfandb.repository.ReservationRepository;
 import com.phucx.phucxfandb.service.customer.CustomerReaderService;
 import com.phucx.phucxfandb.service.employee.EmployeeReaderService;
-import com.phucx.phucxfandb.service.payment.PaymentUpdateService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
 import com.phucx.phucxfandb.service.product.ProductUpdateService;
 import com.phucx.phucxfandb.service.reservation.ReservationUpdateService;
@@ -34,7 +32,6 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
     private final EmployeeReaderService employeeReaderService;
     private final ReservationRepository reservationRepository;
     private final ReservationTableReaderService reservationTableReaderService;
-    private final PaymentUpdateService paymentUpdateService;
     private final ProductReaderService productReaderService;
     private final ProductUpdateService productUpdateService;
     private final ReservationMapper reservationMapper;
@@ -64,17 +61,17 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
 
         BigDecimal totalPrice = PriceUtils.calculateReservationTotalPrice(newMenuItems);
 
-        RequestPaymentDTO requestPaymentDTO = requestReservationDTO.getPayment();
-        Payment payment = paymentUpdateService.createCustomerPayment(
-                requestPaymentDTO.getPaymentMethod(),
-                totalPrice,
-                customer.getCustomerId()
-        );
-
-        newReservation.setPayment(payment);
         newReservation.setTotalPrice(totalPrice);
         newReservation.setStatus(ReservationStatus.PENDING);
         newReservation.setMenuItems(newMenuItems);
+
+        Payment payment = Payment.builder()
+                .customer(customer)
+                .amount(totalPrice)
+                .reservation(newReservation)
+                .build();
+
+        newReservation.setPayment(payment);
 
         Reservation saved = reservationRepository.save(newReservation);
         return reservationMapper.toReservationDTO(saved);
@@ -104,18 +101,17 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
             return menuItemMapper.toMenuItem(requestMenuItem, newReservation, updatedProduct);
         }).collect(Collectors.toList());
         BigDecimal totalPrice = PriceUtils.calculateReservationTotalPrice(newMenuItems);
-
-        RequestPaymentDTO requestPaymentDTO = requestReservationDTO.getPayment();
-        Payment payment = paymentUpdateService.createEmployeePayment(
-                requestPaymentDTO.getPaymentMethod(),
-                totalPrice,
-                employee.getEmployeeId()
-        );
-
-        newReservation.setPayment(payment);
         newReservation.setTotalPrice(totalPrice);
         newReservation.setMenuItems(newMenuItems);
         newReservation.setStatus(ReservationStatus.PENDING);
+
+        Payment payment = Payment.builder()
+                .employee(employee)
+                .amount(totalPrice)
+                .reservation(newReservation)
+                .build();
+
+        newReservation.setPayment(payment);
 
         Reservation saved = reservationRepository.save(newReservation);
         return reservationMapper.toReservationDTO(saved);

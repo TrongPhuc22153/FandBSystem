@@ -1,0 +1,26 @@
+.staffPage {
+  background-color: #f0f2f5; /* Light grey background for staff page */
+  min-height: 100vh;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.pageTitle {
+  color: #2c3e50; /* Darker title for staff */
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.errorMessage {
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+@media (max-width: 767.98px) {
+  .staffPage {
+    padding: 15px;
+  }
+  .pageTitle {
+    font-size: 2rem;
+  }
+}

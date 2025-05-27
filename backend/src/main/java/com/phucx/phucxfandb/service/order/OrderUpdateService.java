@@ -10,6 +10,8 @@ public interface OrderUpdateService {
     OrderDTO updateOrderStatusByCustomer(String username, String orderId, OrderType type, OrderStatus status);
     OrderDTO updateOrderStatus(String orderID, OrderType type, OrderStatus status);
 
+    OrderDTO updateOrder(String username, String orderId, RequestOrderDTO requestOrderDTO);
+
     OrderDTO createOrderCustomer(String username, RequestOrderDTO requestOrderDTO);
     OrderDTO createOrderEmployee(String username, RequestOrderDTO requestOrderDTO);
 }

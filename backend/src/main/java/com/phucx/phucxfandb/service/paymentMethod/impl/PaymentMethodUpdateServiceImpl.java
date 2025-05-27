@@ -29,7 +29,7 @@ public class PaymentMethodUpdateServiceImpl implements PaymentMethodUpdateServic
     @Modifying
     @Transactional
     public PaymentMethodDTO updatePaymentMethod(String methodId, RequestPaymentMethodDTO requestPaymentMethodDTO) {
-        log.info("updatePaymentMethod(methodId={}, requestPaymentMethodDTO={})", methodId, requestPaymentMethodDTO);
+        log.info("updatePayment(methodId={}, requestPaymentMethodDTO={})", methodId, requestPaymentMethodDTO);
         PaymentMethod existingPaymentMethod = paymentMethodRepository.findById(methodId)
                 .orElseThrow(() -> new NotFoundException("PaymentMethod", methodId));
         mapper.updatePaymentMethodFromDTO(requestPaymentMethodDTO, existingPaymentMethod);

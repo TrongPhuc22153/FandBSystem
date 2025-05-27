@@ -7,6 +7,7 @@ import PaymentMethodOptions from "../PaymentMethodOptions/PaymentMethodOptions";
 import { CANCEL_PAYMENT_URL, SUCCESS_PAYMENT_URL } from "../../constants/paymentConstants";
 import { Link } from "react-router-dom";
 import { HOME_URI } from "../../constants/routes";
+import { usePaymentActions } from "../../hooks/paymentHooks";
 
 export default function Confirmation({ reservationData, onPrevious, onReset }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,6 +19,11 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
   const [selectedPayment, setSelectedPayment] = useState(null);
 
   const { data: paymentMethodsData } = usePaymentMethods();
+  const {
+    handleProcessPayment,
+    paymentError,
+    resetPayment
+  } = usePaymentActions()
 
   const paymentMethods = useMemo(
     () => paymentMethodsData || [],
@@ -57,10 +63,10 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
 
   useEffect(() => {
     setFieldErrors(createError?.fields ?? {});
-    if (createError?.message) {
-      setErrorMessage(createError.message);
+    if (createError?.message || paymentError?.message) {
+      setErrorMessage(createError?.message || paymentError?.message);
     }
-  }, [createError]);
+  }, [createError, paymentError]);
 
   const handlePlaceReservation = useCallback(async () => {
     if (!selectedPayment) {
@@ -68,12 +74,6 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
       setIsSubmitting(false);
       return;
     }
-
-    const requestPayment = {
-      paymentMethod: selectedPayment,
-      returnUrl: SUCCESS_PAYMENT_URL,
-      cancelUrl: CANCEL_PAYMENT_URL,
-    };
 
     const data = {
       numberOfGuests: reservationData.numberOfGuests,
@@ -84,7 +84,6 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
         productId: item.id,
         quantity: item.quantity,
       })),
-      payment: requestPayment,
     };
     if (reservationData.tableSelection) {
       data.tableId = reservationData.tableSelection;
@@ -92,13 +91,24 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
 
     try {
       const res = await handleCreateReservation(data);
-      if (res?.data) {
-        if (res.data.link) {
-          window.location.href = res.data.link;
-        } else {
-          setConfirmationNumber(res.data.reservationId);
+      if (res) {
+        const reservationId = res.data.reservationId;
+        const paymentId = res.data.payment.paymentId;
+        const paymentRes = await handleProcessPayment({
+          id: paymentId,
+          returnUrl: SUCCESS_PAYMENT_URL,
+          cancelUrl: CANCEL_PAYMENT_URL,
+          paymentMethod: selectedPayment,
+          reservationId: reservationId
+        })
+        if(paymentRes){
+          if (paymentRes.data.link) {
+            window.location.href = paymentRes.data.link;
+          }
+          setConfirmationNumber(reservationId);
           setIsConfirmed(true);
         }
+
       } else {
         setErrorMessage("Failed to create reservation. Please try again.");
       }

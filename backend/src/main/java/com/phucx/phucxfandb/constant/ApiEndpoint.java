@@ -66,6 +66,10 @@ public class ApiEndpoint {
                 ORDERS_ENDPOINT,
                 RESERVATIONS_ENDPOINT
         };
+
+        public static final String[] PATCH = {
+                PAYMENT_BY_ID_ENDPOINT
+        };
     }
     /**
      * APIs restricted to users with the ADMIN role.
@@ -131,6 +135,10 @@ public class ApiEndpoint {
                 RATINGS_ENDPOINT,
                 RATING_ID_ENDPOINT
         };
+
+        public static final String[] PATCH = {
+
+        };
     }
 
     /**
@@ -141,13 +149,18 @@ public class ApiEndpoint {
 
         public static final String[] ALL = {
                 EMPLOYEE_ME_ENDPOINT,
+                PAYMENTS_ENDPOINT,
+        };
+
+        public static final String[] GET = {
+                PAYMENT_BY_ID_ENDPOINT
         };
 
         public static final String[] PATCH ={
                 ORDER_BY_ID_ENDPOINT,
                 RESERVATION_BY_ID_ENDPOINT,
                 TABLE_BY_ID_ENDPOINT,
-                WAIT_LIST_BY_ID_ENDPOINT
+                WAIT_LIST_BY_ID_ENDPOINT,
         };
 
         public static final String[] POST = {
@@ -238,4 +251,6 @@ public class ApiEndpoint {
     public static final String PAYMENT_METHOD_BY_ID_ENDPOINT = "/api/v1/payment-methods/{id}";
     public static final String PAYMENT_METHODS_BULK_ENDPOINT = "/api/v1/payment-methods/bulk";
 
+    public static final String PAYMENTS_ENDPOINT = "/api/v1/payments";
+    public static final String PAYMENT_BY_ID_ENDPOINT = "/api/v1/payments/{id}";
 }

@@ -4,66 +4,51 @@ import com.phucx.phucxfandb.constant.Currency;
 import com.phucx.phucxfandb.constant.PaymentMethodConstants;
 import com.phucx.phucxfandb.dto.request.RequestPaymentDTO;
 import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
-import com.phucx.phucxfandb.entity.PaymentMethod;
-import com.phucx.phucxfandb.service.payment.CODService;
-import com.phucx.phucxfandb.service.payment.PaymentProcessService;
-import com.phucx.phucxfandb.service.paymentMethod.PaymentMethodReaderService;
-import com.phucx.phucxfandb.service.payment.PayPalService;
+import com.phucx.phucxfandb.entity.Payment;
+import com.phucx.phucxfandb.service.payment.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentProcessServiceImpl implements PaymentProcessService {
-    private final PaymentMethodReaderService paymentMethodReaderService;
+    private final PaymentReaderService paymentReaderService;
     private final PayPalService payPalService;
     private final CODService codService;
 
     @Override
-    public PaymentProcessingDTO processPayment(Authentication authentication, RequestPaymentDTO requestPaymentDTO) {
-        PaymentMethod method = paymentMethodReaderService.getPaymentMethodEntityByName(
-                requestPaymentDTO.getPaymentMethod());
-        String methodName = method.getMethodName().toLowerCase();
+    @Transactional
+    public PaymentProcessingDTO processPayment(Authentication authentication, String paymentId, RequestPaymentDTO requestPaymentDTO) throws IOException{
+        Payment payment = paymentReaderService.getPaymentEntity(paymentId);
+        String methodName = requestPaymentDTO.getPaymentMethod();
 
-        try {
-            return switch (methodName) {
-                case PaymentMethodConstants.PAY_PAL -> handlePaypal(authentication, requestPaymentDTO);
+        if(methodName.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL)) {
+            String approvedLink = payPalService.createOrder(
+                    paymentId,
+                    payment.getAmount(),
+                    Currency.USD.name(),
+                    requestPaymentDTO.getReturnUrl(),
+                    requestPaymentDTO.getCancelUrl());
 
-                case PaymentMethodConstants.COD -> handleCOD(authentication, requestPaymentDTO);
+            return PaymentProcessingDTO.builder()
+                    .method(methodName)
+                    .link(approvedLink)
+                    .build();
+        } else if(methodName.equalsIgnoreCase(PaymentMethodConstants.COD)) {
+            codService.createCODPayment(
+                    authentication,
+                    requestPaymentDTO.getOrderId(),
+                    requestPaymentDTO.getReservationId());
 
-                default -> throw new IllegalStateException("Unsupported payment method: " + method.getMethodName());
-            };
-        } catch (IOException ex) {
-            throw new RuntimeException("An error occurred during payment processing", ex);
+            return  PaymentProcessingDTO.builder()
+                    .method(PaymentMethodConstants.COD)
+                    .build();
+        }else{
+            throw new IllegalArgumentException("Unsupported payment method: " + methodName);
         }
-    }
-
-    private PaymentProcessingDTO handlePaypal(Authentication authentication, RequestPaymentDTO requestPaymentDTO) throws IOException {
-        String approvedLink = payPalService.createOrder(
-                requestPaymentDTO.getPaymentId(),
-                requestPaymentDTO.getAmount(),
-                Currency.USD.name(),
-                requestPaymentDTO.getReturnUrl(),
-                requestPaymentDTO.getCancelUrl());
-
-        return  PaymentProcessingDTO.builder()
-                .method(PaymentMethodConstants.PAY_PAL)
-                .link(approvedLink)
-                .build();
-    }
-
-    private PaymentProcessingDTO handleCOD(Authentication authentication, RequestPaymentDTO requestPaymentDTO){
-        codService.createCODPayment(
-                authentication,
-                requestPaymentDTO.getPaymentId(),
-                requestPaymentDTO.getOrderId(),
-                requestPaymentDTO.getReservationId());
-
-        return  PaymentProcessingDTO.builder()
-                .method(PaymentMethodConstants.COD)
-                .build();
     }
 }

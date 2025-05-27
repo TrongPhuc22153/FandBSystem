@@ -17,13 +17,9 @@ import {
   WAITING_LIST_STATUSES,
 } from "../../constants/webConstant";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import {
-  CANCEL_PAYMENT_URL,
-  PAYMENT_METHODS,
-  SUCCESS_PAYMENT_URL,
-} from "../../constants/paymentConstants";
 import { useWaitingList, useWaitingLists } from "../../hooks/waitingListHooks";
 import SelectableWaitingList from "../../components/WaitingList/SelectableWaitingList";
+import { usePaymentActions } from "../../hooks/paymentHooks";
 
 export default function RestaurantOrderSystem() {
   const navigate = useNavigate();
@@ -106,7 +102,7 @@ export default function RestaurantOrderSystem() {
 
   // Handle place order error
   useEffect(() => {
-    if (placeError) {
+    if (placeError?.message) {
       showNewAlert({
         message: placeError?.message,
         variant: "danger",
@@ -138,7 +134,7 @@ export default function RestaurantOrderSystem() {
 
   // Load order details when customer is selected
   useEffect(() => {
-    if (waitingListData?.order.orderDetails && selectedCustomer) {
+    if (waitingListData?.order?.orderDetails && selectedCustomer) {
       const loadedOrderItems = waitingListData.order.orderDetails.map(
         (detail) => ({
           food: {
@@ -153,7 +149,7 @@ export default function RestaurantOrderSystem() {
       setOrderItems(loadedOrderItems);
     } else if (
       waitingListData &&
-      !waitingListData.order.orderDetails &&
+      !waitingListData?.order?.orderDetails &&
       selectedCustomer
     ) {
       setOrderItems([]);
@@ -237,14 +233,8 @@ export default function RestaurantOrderSystem() {
 
   const placeOrder = useCallback(async () => {
     if (!selectedCustomer?.id || orderItems.length === 0) return;
-    const requestPayment = {
-      paymentMethod: PAYMENT_METHODS.COD,
-      returnUrl: SUCCESS_PAYMENT_URL,
-      cancelUrl: CANCEL_PAYMENT_URL,
-    };
     const order = {
       waitingListId: selectedCustomer.id,
-      payment: requestPayment,
       orderDetails: orderItems.map((item) => ({
         productId: item.food.productId,
         quantity: item.quantity,
@@ -253,7 +243,7 @@ export default function RestaurantOrderSystem() {
     const response = await handlePlaceOrder(order, ORDER_TYPES.DINE_IN);
     if (response) {
       clearOrder();
-      navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?page=1`);
+      navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?page=0`);
     }
   }, [selectedCustomer, orderItems, clearOrder, handlePlaceOrder, navigate]);
 
@@ -275,8 +265,7 @@ export default function RestaurantOrderSystem() {
   if (
     loadingCategoriesData ||
     loadingProductsData ||
-    loadingWaitingListsData ||
-    (selectedCustomer && loadingWaitingListData)
+    loadingWaitingListsData
   ) {
     return <Loading />;
   }

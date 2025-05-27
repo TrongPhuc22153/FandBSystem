@@ -1,0 +1,25 @@
+/* src/components/ConfirmPaymentButton/ConfirmPaymentButton.module.css */
+.confirmButtonContainer {
+    padding: 10px 0;
+    background-color: #ffffff;
+    /* Add a slight background to differentiate */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.confirmButton {
+    font-size: 1.4rem;
+    padding: 15px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.confirmButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.confirmButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}

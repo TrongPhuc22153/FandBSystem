@@ -1,0 +1,115 @@
+.orderListCard {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cardHeader {
+  background-color: #e9ecef;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 500;
+  color: #495057;
+  padding: 15px 20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.orderTable {
+  font-size: 0.95rem;
+}
+
+.tableHeader th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  padding: 12px 15px;
+  vertical-align: middle;
+}
+
+.tableRow td {
+  vertical-align: middle;
+  padding: 12px 15px;
+}
+
+.tableRow:hover {
+  background-color: #e2f0ff; /* Light blue on hover */
+}
+
+.totalAmount {
+  font-weight: bold;
+  color: #28a745; /* Green for total */
+}
+
+.statusBadge {
+  min-width: 90px;
+  padding: 0.5em 0.75em;
+  font-size: 0.85em;
+  border-radius: 5px;
+}
+
+.checkoutButton {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-weight: 500;
+  white-space: nowrap; /* Prevent button text from wrapping */
+}
+
+.noOrdersMessage {
+  padding: 20px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 767.98px) {
+  .orderTable thead {
+    display: none; /* Hide table header on small screens */
+  }
+
+  .orderTable tbody, .orderTable tr, .orderTable td {
+    display: block; /* Make table rows and cells behave like block elements */
+    width: 100%;
+  }
+
+  .orderTable tr {
+    margin-bottom: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    background-color: #fff;
+    padding: 10px;
+  }
+
+  .orderTable td {
+    text-align: right;
+    padding-left: 50%; /* Space for pseudo-element label */
+    position: relative;
+  }
+
+  .orderTable td::before {
+    content: attr(data-label); /* Use data-label for content */
+    position: absolute;
+    left: 15px;
+    width: calc(50% - 30px);
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+  }
+
+  /* Assign data-label to each td in JSX */
+  .orderTable td:nth-of-type(1)::before { content: "Order ID:"; }
+  .orderTable td:nth-of-type(2)::before { content: "Table:"; }
+  .orderTable td:nth-of-type(3)::before { content: "Time Placed:"; }
+  .orderTable td:nth-of-type(4)::before { content: "Total Due:"; }
+  .orderTable td:nth-of-type(5)::before { content: "Status:"; }
+  .orderTable td:nth-of-type(6)::before { content: "Actions:"; }
+
+  .checkoutButton {
+    width: 100%;
+    margin-top: 10px;
+  }
+}

@@ -48,7 +48,7 @@ public class Payment extends Auditable{
     private Employee employee;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "method_id", nullable = false)
+    @JoinColumn(name = "method_id")
     private PaymentMethod method;
 
     @OneToOne(mappedBy = "payment", fetch = FetchType.LAZY)

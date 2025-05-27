@@ -2,7 +2,6 @@ package com.phucx.phucxfandb.service.reservation;
 
 import com.phucx.phucxfandb.constant.ReservationAction;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
-import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import org.springframework.security.core.Authentication;
 
@@ -11,7 +10,7 @@ public interface ReservationProcessingService {
 
     ReservationDTO placeCustomerReservation(String username, RequestReservationDTO requestReservationDTO);
     ReservationDTO placeEmployeeReservation(String username, RequestReservationDTO requestReservationDTO);
-    PaymentProcessingDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication);
+    ReservationDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication);
 
     ReservationDTO completeReservation(String username, String reservationId);
 

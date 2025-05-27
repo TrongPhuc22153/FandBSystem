@@ -3,7 +3,6 @@ package com.phucx.phucxfandb.service.order.impl;
 import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
-import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.entity.Order;
 import com.phucx.phucxfandb.entity.WaitList;
 import com.phucx.phucxfandb.service.cart.CartUpdateService;
@@ -11,7 +10,6 @@ import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
-import com.phucx.phucxfandb.service.payment.PaymentProcessService;
 import com.phucx.phucxfandb.service.waitlist.WaitListUpdateService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
@@ -29,10 +27,10 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     private final OrderUpdateService orderUpdateService;
     private final OrderReaderService orderReaderService;
     private final SendOrderNotificationService sendOrderNotificationService;
-    private final PaymentProcessService paymentProcessService;
     private final WaitListUpdateService waitListUpdateService;
 
     @Override
+    @Transactional
     public OrderDTO cancelOrderByEmployee(String username, String orderId, OrderType type) {
         OrderDTO orderDTO = orderUpdateService.updateOrderStatusByEmployee(username, orderId, type, OrderStatus.CANCELLED);
 
@@ -53,6 +51,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     }
 
     @Override
+    @Transactional
     public OrderDTO cancelOrderByCustomer(String username, String orderId, OrderType type) {
         OrderDTO orderDTO = orderUpdateService.updateOrderStatusByCustomer(username, orderId, type, OrderStatus.CANCELLED);
 
@@ -96,28 +95,19 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
 
     @Override
     @Transactional
-    public PaymentProcessingDTO placeOrder(RequestOrderDTO requestOrderDTO, Authentication authentication) {
+    public OrderDTO placeOrder(RequestOrderDTO requestOrderDTO, Authentication authentication) {
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
-        RequestPaymentDTO requestPaymentDTO = requestOrderDTO.getPayment();
-        PaymentProcessingDTO paymentProcessingDTO;
         OrderDTO newOrder;
 
         if(roleNames.contains(RoleName.CUSTOMER) && requestOrderDTO.getType().equals(OrderType.TAKE_AWAY)){
             newOrder = this.placeOrderByCustomer(authentication.getName(), requestOrderDTO);
-            requestPaymentDTO.setCustomerId(newOrder.getCustomer().getCustomerId());
         }else if(roleNames.contains(RoleName.EMPLOYEE) && requestOrderDTO.getType().equals(OrderType.DINE_IN)){
             newOrder = this.placeOrderByEmployee(authentication.getName(), requestOrderDTO);
-            requestPaymentDTO.setPaymentMethod(PaymentMethodConstants.COD);
         }else{
             throw new IllegalArgumentException("Invalid order type");
         }
 
-        requestPaymentDTO.setOrderId(newOrder.getOrderId());
-        requestPaymentDTO.setAmount(newOrder.getTotalPrice());
-        requestPaymentDTO.setPaymentId(newOrder.getPayment().getPaymentId());
-        paymentProcessingDTO = paymentProcessService.processPayment(authentication, requestPaymentDTO);
-
-        return paymentProcessingDTO;
+        return newOrder;
     }
 
     @Override

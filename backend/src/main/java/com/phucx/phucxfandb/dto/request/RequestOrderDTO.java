@@ -15,8 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestOrderDTO {
-    @Size(min = 3, max = 36, message = "Order ID must be between 3 and 36 characters")
-    private String orderId;
 
     @Size(min = 3, max = 36, message = "Customer ID must be between 3 and 36 characters")
     private String customerId;
@@ -33,8 +31,6 @@ public class RequestOrderDTO {
     private Long shippingAddressId;
 
     private OrderStatus status;
-
-    private RequestPaymentDTO payment;
 
     private OrderAction action;
 

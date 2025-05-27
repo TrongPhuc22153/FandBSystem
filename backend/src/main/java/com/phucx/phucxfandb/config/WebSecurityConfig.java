@@ -54,22 +54,25 @@ public class WebSecurityConfig {
         http.addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeHttpRequests(request -> request
-                .requestMatchers(HttpMethod.GET, Public.GET).permitAll()
-                .requestMatchers(HttpMethod.POST, Public.POST).permitAll()
                 .requestMatchers(Authenticated.ALL).authenticated()
-                .requestMatchers(HttpMethod.GET, Authenticated.GET).authenticated()
-                .requestMatchers(HttpMethod.POST, Authenticated.POST).authenticated()
                 .requestMatchers(Customer.ALL).hasRole(RoleName.CUSTOMER.name())
                 .requestMatchers(Employee.ALL).hasRole(RoleName.EMPLOYEE.name())
-                .requestMatchers(HttpMethod.PATCH, Employee.PATCH).hasRole(RoleName.EMPLOYEE.name())
-                .requestMatchers(HttpMethod.PUT, Employee.PUT).hasRole(RoleName.EMPLOYEE.name())
-                .requestMatchers(HttpMethod.POST, Employee.POST).hasRole(RoleName.EMPLOYEE.name())
                 .requestMatchers(Admin.ALL).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.GET, Public.GET).permitAll()
+                .requestMatchers(HttpMethod.GET, Authenticated.GET).authenticated()
+                .requestMatchers(HttpMethod.GET, Employee.GET).hasRole(RoleName.EMPLOYEE.name())
                 .requestMatchers(HttpMethod.GET, Admin.GET).hasRole(RoleName.ADMIN.name())
-                .requestMatchers(HttpMethod.POST, Admin.POST).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.PATCH, Authenticated.PATCH).authenticated()
+                .requestMatchers(HttpMethod.PATCH, Customer.PATCH).hasRole(RoleName.CUSTOMER.name())
+                .requestMatchers(HttpMethod.PATCH, Employee.PATCH).hasRole(RoleName.EMPLOYEE.name())
                 .requestMatchers(HttpMethod.PATCH, Admin.PATCH).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.POST, Public.POST).permitAll()
+                .requestMatchers(HttpMethod.POST, Authenticated.POST).authenticated()
+                .requestMatchers(HttpMethod.POST, Employee.POST).hasRole(RoleName.EMPLOYEE.name())
+                .requestMatchers(HttpMethod.POST, Admin.POST).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT, Employee.PUT).hasRole(RoleName.EMPLOYEE.name())
                 .requestMatchers(HttpMethod.PUT, Admin.PUT).hasRole(RoleName.ADMIN.name())
-                .anyRequest().denyAll());
+                .anyRequest().authenticated());
 
         http.exceptionHandling(ex -> ex
                 .authenticationEntryPoint(authenticationEntryPoint)

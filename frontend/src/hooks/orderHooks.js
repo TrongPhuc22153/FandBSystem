@@ -24,7 +24,6 @@ export const useOrders = ({ page = 0, size = 10, sortField = "orderDate", sortDi
   );
 };
 
-
 // Hook for fetching a single order
 export const useOrder = ({ orderId, isRated } = {}) => {
   const { token } = useAuth();

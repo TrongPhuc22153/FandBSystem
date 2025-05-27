@@ -4,7 +4,6 @@ import com.phucx.phucxfandb.constant.OrderStatus;
 import com.phucx.phucxfandb.constant.OrderType;
 import com.phucx.phucxfandb.constant.WaitListStatus;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
-import com.phucx.phucxfandb.dto.request.RequestPaymentDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.exception.NotFoundException;
@@ -15,7 +14,6 @@ import com.phucx.phucxfandb.service.address.ShippingAddressReaderService;
 import com.phucx.phucxfandb.service.customer.CustomerReaderService;
 import com.phucx.phucxfandb.service.employee.EmployeeReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
-import com.phucx.phucxfandb.service.payment.PaymentUpdateService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
 import com.phucx.phucxfandb.service.product.ProductUpdateService;
 import com.phucx.phucxfandb.service.waitlist.WaitListReaderService;
@@ -35,7 +33,6 @@ import java.util.stream.Collectors;
 public class OrderUpdateServiceImpl implements OrderUpdateService {
     private final ShippingAddressReaderService shippingAddressReaderService;
     private final WaitListReaderService waitListReaderService;
-    private final PaymentUpdateService paymentUpdateService;
     private final CustomerReaderService customerReaderService;
     private final EmployeeReaderService employeeReaderService;
     private final ProductReaderService productReaderService;
@@ -76,6 +73,29 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
 
     @Override
     @Transactional
+    public OrderDTO updateOrder(String username, String orderId, RequestOrderDTO requestOrderDTO) {
+        Order order = orderRepository.findByOrderIdAndType(orderId, requestOrderDTO.getType())
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
+
+        order.setOrderDetails(requestOrderDTO.getOrderDetails().stream().map(item -> {
+            Product product = productReaderService.getProductEntity(item.getProductId());
+            if(product.getUnitsInStock()<item.getQuantity()){
+                throw new IllegalArgumentException("Insufficient stock for product ID: " + item.getProductId());
+            }
+            return orderDetailsMapper.toOrderDetail(item, product, order);
+        }).collect(Collectors.toList()));
+        order.setTotalPrice(PriceUtils.calculateOrderTotalPrice(order.getOrderDetails()));
+
+        Payment payment = order.getPayment();
+        payment.setAmount(order.getTotalPrice());
+        order.setPayment(payment);
+
+        Order updated = orderRepository.save(order);
+        return orderMapper.toOrderDTO(updated);
+    }
+
+    @Override
+    @Transactional
     public OrderDTO createOrderCustomer(String username, RequestOrderDTO requestOrderDTO) {
         Customer customer = customerReaderService.getCustomerEntityByUsername(username);
 
@@ -106,17 +126,17 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
 
         BigDecimal totalPrice = PriceUtils.calculateOrderTotalPrice(newOrderDetails);
 
-        RequestPaymentDTO requestPaymentDTO = requestOrderDTO.getPayment();
-        Payment payment = paymentUpdateService.createCustomerPayment(
-                requestPaymentDTO.getPaymentMethod(),
-                totalPrice,
-                customer.getCustomerId()
-        );
-
-        newOrder.setPayment(payment);
         newOrder.setTotalPrice(totalPrice);
         newOrder.setStatus(OrderStatus.PENDING);
         newOrder.setOrderDetails(newOrderDetails);
+
+        Payment payment = Payment.builder()
+                .order(newOrder)
+                .amount(totalPrice)
+                .customer(customer)
+                .build();
+
+        newOrder.setPayment(payment);
 
         Order savedOrder = orderRepository.save(newOrder);
         return orderMapper.toOrderDTO(savedOrder);
@@ -140,24 +160,26 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
         newOrder.setStatus(OrderStatus.PENDING);
 
         List<OrderDetail> newOrderDetails = requestOrderDTO.getOrderDetails().stream()
-                .map(requestOrderDetail -> {
-                    Product product = productReaderService.getProductEntity(requestOrderDetail.getProductId());
-                    return orderDetailsMapper.toOrderDetail(requestOrderDetail, product, newOrder);
+                .map(item -> {
+                    Product product = productReaderService.getProductEntity(item.getProductId());
+                    if(product.getUnitsInStock()<item.getQuantity()){
+                        throw new IllegalArgumentException("Insufficient stock for product ID: " + item.getProductId());
+                    }
+                    return orderDetailsMapper.toOrderDetail(item, product, newOrder);
                 }).collect(Collectors.toList());
 
         BigDecimal totalPrice = PriceUtils.calculateOrderTotalPrice(newOrderDetails);
-
-        RequestPaymentDTO requestPaymentDTO = requestOrderDTO.getPayment();
-        Payment payment = paymentUpdateService.createEmployeePayment(
-                requestPaymentDTO.getPaymentMethod(),
-                totalPrice,
-                employee.getEmployeeId()
-        );
-
-        newOrder.setPayment(payment);
         newOrder.setOrderDetails(newOrderDetails);
         newOrder.setTotalPrice(totalPrice);
         newOrder.setStatus(OrderStatus.PENDING);
+
+        Payment payment = Payment.builder()
+                .order(newOrder)
+                .amount(totalPrice)
+                .employee(employee)
+                .build();
+
+        newOrder.setPayment(payment);
 
         Order savedOrder = orderRepository.save(newOrder);
         return orderMapper.toOrderDTO(savedOrder);

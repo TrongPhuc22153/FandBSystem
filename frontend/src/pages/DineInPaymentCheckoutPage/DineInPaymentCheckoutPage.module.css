@@ -1,0 +1,21 @@
+/* src/App.module.css */
+.checkoutPage {
+  background-color: #f8f9fa;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pageTitle {
+  color: #343a40;
+  font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+  .checkoutPage {
+    padding: 20px;
+  }
+  .pageTitle {
+    font-size: 1.8rem;
+  }
+}

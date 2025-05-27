@@ -2,13 +2,10 @@ package com.phucx.phucxfandb.service.reservation.impl;
 
 import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
-import com.phucx.phucxfandb.dto.request.RequestPaymentDTO;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
-import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.ReservationTable;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
-import com.phucx.phucxfandb.service.payment.PaymentProcessService;
 import com.phucx.phucxfandb.service.reservation.ReservationProcessingService;
 import com.phucx.phucxfandb.service.reservation.ReservationReaderService;
 import com.phucx.phucxfandb.service.reservation.ReservationUpdateService;
@@ -33,7 +30,6 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     private final ReservationTableUpdateService reservationTableUpdateService;
     private final ReservationTableReaderService reservationTableReaderService;
     private final SendReservationNotificationService sendReservationNotificationService;
-    private final PaymentProcessService paymentProcessService;
 
     @Override
     public ReservationDTO cancelReservation(Authentication authentication, String reservationId) {
@@ -87,27 +83,18 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
     @Override
     @Transactional
-    public PaymentProcessingDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication) {
+    public ReservationDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication) {
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
-        RequestPaymentDTO requestPaymentDTO = requestReservationDTO.getPayment();
-        PaymentProcessingDTO paymentProcessingDTO;
         ReservationDTO newReservation;
 
         if(roleNames.contains(RoleName.CUSTOMER)){
             newReservation = this.placeCustomerReservation(authentication.getName(), requestReservationDTO);
         }else if(roleNames.contains(RoleName.EMPLOYEE)){
             newReservation = this.placeEmployeeReservation(authentication.getName(), requestReservationDTO);
-            requestPaymentDTO.setPaymentMethod(PaymentMethodConstants.COD);
         } else{
             throw new IllegalArgumentException("Invalid reservation");
         }
-
-        requestPaymentDTO.setReservationId(newReservation.getReservationId());
-        requestPaymentDTO.setAmount(newReservation.getTotalPrice());
-        requestPaymentDTO.setPaymentId(newReservation.getPayment().getPaymentId());
-        paymentProcessingDTO = paymentProcessService.processPayment(authentication, requestPaymentDTO);
-
-        return paymentProcessingDTO;
+        return newReservation;
     }
 
     @Override
