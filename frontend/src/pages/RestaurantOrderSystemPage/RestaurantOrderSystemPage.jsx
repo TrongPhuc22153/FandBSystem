@@ -19,17 +19,15 @@ import {
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { useWaitingList, useWaitingLists } from "../../hooks/waitingListHooks";
 import SelectableWaitingList from "../../components/WaitingList/SelectableWaitingList";
-import { usePaymentActions } from "../../hooks/paymentHooks";
 
 export default function RestaurantOrderSystem() {
   const navigate = useNavigate();
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [orderItems, setOrderItems] = useState([]);
   const [searchParams] = useSearchParams();
-  const currentPageFromURL = parseInt(searchParams.get("page")) || 1;
-  const categoryIdFromURL = searchParams.get("categoryId") || "";
-  const searchTermFromURL = searchParams.get("search") || "";
-  const [currentPage, setCurrentPage] = useState(currentPageFromURL - 1);
+  const currentPage = parseInt(searchParams.get("page")) || 1;
+  const categoryId = searchParams.get("categoryId") || "";
+  const searchTerm = searchParams.get("search") || "";
 
   const { showNewAlert } = useAlert();
   const { onOpen } = useModal();
@@ -37,8 +35,8 @@ export default function RestaurantOrderSystem() {
   // Fetch waiting lists
   const {
     data: waitingListsData,
-    isLoading: loadingWaitingListsData,
-    error: waitingListsDataError,
+    isLoading: loadingWaitingLists,
+    error: waitingListsError,
     mutate: mutateWaitingList,
   } = useWaitingLists({
     page: 0,
@@ -53,19 +51,19 @@ export default function RestaurantOrderSystem() {
   // Fetch customer-specific data only when a customer is selected
   const {
     data: waitingListData,
-    isLoading: loadingWaitingListData,
-    error: waitingListDataError,
+    isLoading: loadingWaitingList,
+    error: waitingListError,
   } = useWaitingList({ id: selectedCustomer?.id || null });
 
   // Fetch products
   const {
     data: productsData,
-    isLoading: loadingProductsData,
-    error: productsDataError,
+    isLoading: loadingProducts,
+    error: productsError,
   } = useProducts({
-    page: currentPage,
-    categoryId: categoryIdFromURL,
-    search: searchTermFromURL,
+    page: currentPage - 1,
+    categoryId,
+    search: searchTerm,
   });
   const menuItems = useMemo(() => productsData?.content || [], [productsData]);
   const totalPages = productsData?.totalPages || 0;
@@ -73,8 +71,8 @@ export default function RestaurantOrderSystem() {
   // Fetch categories
   const {
     data: categoriesData,
-    isLoading: loadingCategoriesData,
-    error: categoriesDataError,
+    isLoading: loadingCategories,
+    error: categoriesError,
   } = useCategories();
   const categories = useMemo(
     () => categoriesData?.content || [],
@@ -82,13 +80,17 @@ export default function RestaurantOrderSystem() {
   );
 
   // Order actions
-  const { handlePlaceOrder, placeSuccess, placeError, resetPlace } =
-    useOrderActions();
-
-  // Sync pagination with URL
-  useEffect(() => {
-    setCurrentPage(parseInt(searchParams.get("page")) || 1 - 1);
-  }, [searchParams]);
+  const {
+    handlePlaceOrder,
+    placeSuccess,
+    placeError,
+    resetPlace,
+    handleUpdateOrder,
+    updateError,
+    updateLoading,
+    updateSuccess,
+    resetUpdate,
+  } = useOrderActions();
 
   // Handle place order success
   useEffect(() => {
@@ -97,33 +99,57 @@ export default function RestaurantOrderSystem() {
         message: placeSuccess,
         action: resetPlace,
       });
+      clearOrder();
+      navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?page=1`);
     }
-  }, [placeSuccess, resetPlace, showNewAlert]);
+  }, [placeSuccess, resetPlace, showNewAlert, navigate]);
 
   // Handle place order error
   useEffect(() => {
     if (placeError?.message) {
       showNewAlert({
-        message: placeError?.message,
+        message: placeError.message,
         variant: "danger",
         action: resetPlace,
       });
     }
   }, [placeError, resetPlace, showNewAlert]);
 
+  // Handle update order success
+  useEffect(() => {
+    if (updateSuccess) {
+      showNewAlert({
+        message: updateSuccess,
+        action: resetUpdate,
+      });
+      clearOrder();
+      navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?page=1`);
+    }
+  }, [updateSuccess, resetUpdate, showNewAlert, navigate]);
+
+  // Handle update order error
+  useEffect(() => {
+    if (updateError?.message) {
+      showNewAlert({
+        message: updateError.message,
+        variant: "danger",
+        action: resetUpdate,
+      });
+    }
+  }, [updateError, resetUpdate, showNewAlert]);
+
   // Handle waiting list data error
   useEffect(() => {
-    if (waitingListDataError) {
+    if (waitingListError) {
       showNewAlert({
         message:
-          waitingListDataError.message ||
-          "Failed to load customer order details",
+          waitingListError.message || "Failed to load customer order details",
         variant: "danger",
       });
       setSelectedCustomer(null);
       setOrderItems([]);
     }
-  }, [waitingListDataError, showNewAlert]);
+  }, [waitingListError, showNewAlert]);
 
   // Clear order items when no customer is selected
   useEffect(() => {
@@ -137,11 +163,12 @@ export default function RestaurantOrderSystem() {
     if (waitingListData?.order?.orderDetails && selectedCustomer) {
       const loadedOrderItems = waitingListData.order.orderDetails.map(
         (detail) => ({
+          id: detail.id,
           food: {
             productId: detail.product.productId,
             ...(menuItems.find(
               (item) => item.productId === detail.product.productId
-            ) || {}),
+            ) || detail.product),
           },
           quantity: detail.quantity,
         })
@@ -194,11 +221,11 @@ export default function RestaurantOrderSystem() {
   const updateQuantity = useCallback(
     (foodId, quantity) => {
       if (quantity <= 0) {
-        setOrderItems(orderItems.filter((item) => item.food.id !== foodId));
+        setOrderItems(orderItems.filter((item) => item.food.productId !== foodId));
       } else {
         setOrderItems(
           orderItems.map((item) =>
-            item.food.id === foodId ? { ...item, quantity } : item
+            item.food.productId === foodId ? { ...item, quantity } : item
           )
         );
       }
@@ -224,32 +251,58 @@ export default function RestaurantOrderSystem() {
       });
       return;
     }
+    const isUpdate = !!waitingListData?.order?.orderId;
     onOpen({
-      title: "Place order",
-      message: "Do you want to place this order?",
+      title: isUpdate ? "Update Order" : "Place Order",
+      message: isUpdate
+        ? "Do you want to update this order?"
+        : "Do you want to place this order?",
       onYes: placeOrder,
     });
   };
 
   const placeOrder = useCallback(async () => {
     if (!selectedCustomer?.id || orderItems.length === 0) return;
+
     const order = {
       waitingListId: selectedCustomer.id,
       orderDetails: orderItems.map((item) => ({
+        id: item.id,
         productId: item.food.productId,
         quantity: item.quantity,
       })),
+      type: ORDER_TYPES.DINE_IN
     };
-    const response = await handlePlaceOrder(order, ORDER_TYPES.DINE_IN);
+
+    let response;
+    if (waitingListData?.order?.orderId) {
+      // Update existing order
+      response = await handleUpdateOrder({
+        orderId: waitingListData.order.orderId,
+        ...order,
+      });
+    } else {
+      // Place new order
+      response = await handlePlaceOrder(order, ORDER_TYPES.DINE_IN);
+    }
+
     if (response) {
       clearOrder();
-      navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?page=0`);
+      navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?page=1`);
     }
-  }, [selectedCustomer, orderItems, clearOrder, handlePlaceOrder, navigate]);
+  }, [
+    selectedCustomer,
+    orderItems,
+    waitingListData,
+    handlePlaceOrder,
+    handleUpdateOrder,
+    clearOrder,
+    navigate,
+  ]);
 
   const showClearModal = () => {
     onOpen({
-      title: "Clear order",
+      title: "Clear Order",
       message: "Do you want to clear this order?",
       onYes: clearOrder,
     });
@@ -262,31 +315,23 @@ export default function RestaurantOrderSystem() {
     [navigate]
   );
 
-  if (
-    loadingCategoriesData ||
-    loadingProductsData ||
-    loadingWaitingListsData
-  ) {
+  if (loadingCategories || loadingProducts || loadingWaitingLists) {
     return <Loading />;
   }
 
-  if (
-    categoriesDataError ||
-    waitingListsDataError ||
-    productsDataError ||
-    waitingListDataError
-  ) {
+  if (categoriesError || waitingListsError || productsError || waitingListError) {
+    const errors = [
+      { source: "Categories", message: categoriesError?.message },
+      { source: "Waiting List", message: waitingListsError?.message },
+      { source: "Products", message: productsError?.message },
+      { source: "Customer Order", message: waitingListError?.message },
+    ].filter((e) => e.message);
     return (
-      <ErrorDisplay
-        message={[
-          categoriesDataError?.message,
-          waitingListsDataError?.message,
-          productsDataError?.message,
-          waitingListDataError?.message,
-        ]
-          .filter(Boolean)
-          .join("; ")}
-      />
+      <div>
+        {errors.map((error, index) => (
+          <ErrorDisplay key={index} message={`${error.source}: ${error.message}`} />
+        ))}
+      </div>
     );
   }
 
@@ -303,20 +348,14 @@ export default function RestaurantOrderSystem() {
             </div>
             <div className={styles.cardBody}>
               <MenuCategories
-                categories={[
-                  { categoryId: "", categoryName: "All" },
-                  ...categories,
-                ]}
-                selectedCategoryId={categoryIdFromURL}
+                categories={[{ categoryId: "", categoryName: "All" }, ...categories]}
+                selectedCategoryId={categoryId}
                 onSelectCategory={handleSelectCategory}
               />
               <hr className={styles.divider} />
               <div>
                 <FoodItems items={menuItems} onAddToOrder={addToOrder} />
-                <Pagination
-                  currentPage={currentPage + 1}
-                  totalPages={totalPages}
-                />
+                <Pagination currentPage={currentPage} totalPages={totalPages} />
               </div>
             </div>
           </div>
@@ -332,23 +371,38 @@ export default function RestaurantOrderSystem() {
               </h4>
             </div>
             <div className={styles.cardBody}>
-              <OrderSummary
-                items={orderItems}
-                onUpdateQuantity={updateQuantity}
-              />
+              {updateLoading || loadingWaitingList ? (
+                <Loading />
+              ) : (
+                <OrderSummary
+                  items={orderItems}
+                  onUpdateQuantity={updateQuantity}
+                />
+              )}
             </div>
             <div className={styles.cardFooter}>
               <button
                 className={`${styles.button} ${styles.buttonSuccess}`}
                 onClick={showPlaceOrderModal}
-                disabled={!selectedCustomer || orderItems.length === 0}
+                disabled={
+                  !selectedCustomer ||
+                  orderItems.length === 0 ||
+                  updateLoading ||
+                  loadingWaitingList
+                }
+                aria-label={
+                  waitingListData?.order?.orderId
+                    ? "Update order for selected customer"
+                    : "Place order for selected customer"
+                }
               >
-                Place Order
+                {waitingListData?.order?.orderId ? "Update Order" : "Place Order"}
               </button>
               <button
                 className={`${styles.button} ${styles.buttonSecondary}`}
                 onClick={showClearModal}
-                disabled={orderItems.length === 0}
+                disabled={orderItems.length === 0 || updateLoading}
+                aria-label="Clear current order"
               >
                 Clear Order
               </button>
@@ -363,8 +417,8 @@ export default function RestaurantOrderSystem() {
                 <p className={styles.waitingCount}>
                   {waitingList.length} parties waiting
                 </p>
-                {waitingListsDataError?.message ? (
-                  <ErrorDisplay message={waitingListsDataError.message} />
+                {waitingList.length === 0 ? (
+                  <p>No customers in the waiting list</p>
                 ) : (
                   <SelectableWaitingList
                     waitingList={waitingList}

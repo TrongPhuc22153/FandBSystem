@@ -1,5 +1,5 @@
 import { Badge } from "react-bootstrap";
-import { ORDER_ACTIONS, ORDER_STATUS_CLASSES, ORDER_STATUSES } from "../../constants/webConstant";
+import { ORDER_ACTIONS, ORDER_ITEM_STATUS_CLASSES, ORDER_STATUS_CLASSES, ORDER_STATUSES } from "../../constants/webConstant";
 
 export default function OrderDetailModal({ order, onClose, onUpdateStatus }) {
   if (!order) return null;
@@ -131,7 +131,12 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus }) {
                 <tbody>
                   {order.orderDetails.map((item, index) => (
                     <tr key={index}>
-                      <td>{item.product?.productName}</td>
+                      <td>
+                        <div className="d-flex justify-content-between">
+                          <span>{item.product?.productName} </span>
+                          <Badge bg={ORDER_ITEM_STATUS_CLASSES[item.status]}>{item.status}</Badge>
+                        </div>
+                      </td>
                       <td>{item.quantity}</td>
                       <td>{item.specialInstructions || "-"}</td>
                       <td className="text-end">${item.quantity * item.product.unitPrice}</td>

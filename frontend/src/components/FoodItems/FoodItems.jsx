@@ -10,7 +10,6 @@ export default function FoodItems({ items, onAddToOrder }) {
             <img
               src={getPrimaryProductImage(food.image)}
               alt={food.productName}
-              fill
               style={{ objectFit: "cover" }}
             />
           </div>

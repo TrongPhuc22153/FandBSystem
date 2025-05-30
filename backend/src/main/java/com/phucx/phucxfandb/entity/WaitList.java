@@ -36,6 +36,7 @@ public class WaitList extends Auditable{
     @JoinColumn(name = "table_id")
     private ReservationTable table;
 
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "waitList", fetch = FetchType.LAZY)
     private Order order;
 

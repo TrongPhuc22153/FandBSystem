@@ -1,5 +1,3 @@
-"use client";
-
 import styles from "./OrderSummary.module.css";
 
 export default function OrderSummary({ items, onUpdateQuantity }) {
@@ -37,7 +35,7 @@ export default function OrderSummary({ items, onUpdateQuantity }) {
                 <button
                   className={styles.quantityButton}
                   onClick={() =>
-                    onUpdateQuantity(item.food.id, item.quantity - 1)
+                    onUpdateQuantity(item.food.productId, item.quantity - 1)
                   }
                 >
                   -
@@ -51,7 +49,7 @@ export default function OrderSummary({ items, onUpdateQuantity }) {
                 <button
                   className={styles.quantityButton}
                   onClick={() =>
-                    onUpdateQuantity(item.food.id, item.quantity + 1)
+                    onUpdateQuantity(item.food.productId, item.quantity + 1)
                   }
                 >
                   +
@@ -59,7 +57,7 @@ export default function OrderSummary({ items, onUpdateQuantity }) {
               </div>
               <button
                 className={styles.removeButton}
-                onClick={() => onUpdateQuantity(item.food.id, 0)}
+                onClick={() => onUpdateQuantity(item.food.productId, 0)}
               >
                 Remove
               </button>

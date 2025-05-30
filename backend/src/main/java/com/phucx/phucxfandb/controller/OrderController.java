@@ -2,8 +2,10 @@ package com.phucx.phucxfandb.controller;
 
 import com.phucx.phucxfandb.dto.request.OrderRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
+import com.phucx.phucxfandb.dto.request.RequestOrderDetailsDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
+import com.phucx.phucxfandb.service.order.OrderDetailService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final OrderReaderService orderReaderService;
     private final OrderUpdateService orderUpdateService;
+    private final OrderDetailService orderDetailService;
     private final OrderProcessingService orderProcessingService;
 
     @GetMapping
@@ -98,6 +101,35 @@ public class OrderController {
                 .data(order)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping(value = "/{id}/items", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Update order item", description = "Employee access")
+    public ResponseEntity<ResponseDTO<OrderDTO>> addOrderItem(
+            @PathVariable String id,
+            @RequestBody RequestOrderDetailsDTO request) {
+        OrderDTO updatedOrder = orderDetailService.addOrderItem(id, request);
+
+        ResponseDTO<OrderDTO> responseDTO = ResponseDTO.<OrderDTO>builder()
+                .message("Order item added successfully")
+                .data(updatedOrder)
+                .build();
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PutMapping("/{orderId}/items/{orderItemId}")
+    public ResponseEntity<ResponseDTO<OrderDTO>> updateOrderItemQuantity(
+            @PathVariable String orderId,
+            @PathVariable String orderItemId,
+            @RequestBody RequestOrderDetailsDTO request) {
+        OrderDTO updatedOrder = orderDetailService.updateOrderItemQuantity(orderId, orderItemId, request);
+
+        ResponseDTO<OrderDTO> responseDTO = ResponseDTO.<OrderDTO>builder()
+                .message("Order item updated successfully")
+                .data(updatedOrder)
+                .build();
+
+        return ResponseEntity.ok(responseDTO);
     }
 
 }

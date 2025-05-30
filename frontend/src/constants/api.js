@@ -44,6 +44,8 @@ export const IMAGE_ENDPOINT = `${API_BASE_URL}/api/v1/images`;
 export const ROLES_ENDPOINT = `${API_BASE_URL}/api/v1/roles`;
 
 export const ORDERS_ENDPOINT = `${API_BASE_URL}/api/v1/orders`;
+export const ORDER_ITEMS_ENDPOINT = (id) => `${API_BASE_URL}/api/v1/orders/${id}/items`;
+export const ORDER_ITEM_ENDPOINT = (orderId, orderItemId) => `${API_BASE_URL}/api/v1/orders/${orderId}/items/${orderItemId}`;
 
 export const RESERVATION_TABLES_ENDPOINT = `${API_BASE_URL}/api/v1/tables`;
 

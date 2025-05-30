@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Value
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDetailsDiscountDTO {
+    String id;
     LocalDateTime appliedDate;
     Integer discountPercent;
     DiscountDTO discount;

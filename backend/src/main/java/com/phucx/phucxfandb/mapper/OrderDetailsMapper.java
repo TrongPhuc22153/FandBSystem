@@ -15,10 +15,7 @@ public interface OrderDetailsMapper {
     @Mapping(target = "order", source = "order")
     @Mapping(target = "product", source = "product")
     @Mapping(target = "unitPrice", source = "product.unitPrice")
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "status", constant = "PENDING")
     OrderDetail toOrderDetail(RequestOrderDetailsDTO requestOrderDetailsDTO, Product product, Order order);
 
     @Named("toOrderDetailsDTO")

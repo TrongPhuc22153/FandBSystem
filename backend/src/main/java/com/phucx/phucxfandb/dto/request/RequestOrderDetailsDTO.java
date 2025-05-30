@@ -1,10 +1,7 @@
 package com.phucx.phucxfandb.dto.request;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -12,14 +9,19 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestOrderDetailsDTO {
-    @NotNull(message = "Product ID cannot be null")
-    @Positive(message = "Product ID must be a positive number")
-    private Long productId;
 
-    private List<@Valid RequestOrderDetailsDiscountDTO> orderDetailDiscounts;
+    @Size(max = 36, message = "Order detail Id cannot exceed 36 character")
+    private String id;
+
+    @NotNull(message = "Product Id cannot be null")
+    @Positive(message = "Product Id must be a positive number")
+    private Long productId;
 
     @Min(1)
     @NotNull(message = "Quantity cannot be null")
     @Positive(message = "Quantity must be a positive number")
     private Integer quantity;
+
+    @Size(max = 255, message = "Special instruction cannot exceed 255 character")
+    private String specialInstruction;
 }

@@ -165,10 +165,13 @@ public class ApiEndpoint {
 
         public static final String[] POST = {
                 WAIT_LISTS_ENDPOINT,
+                ORDER_BY_ID_ITEMS_ENDPOINT
         };
 
         public static final String[] PUT = {
-                WAIT_LIST_BY_ID_ENDPOINT
+                WAIT_LIST_BY_ID_ENDPOINT,
+                ORDER_BY_ID_ITEM_BY_ID_ENDPOINT,
+                ORDER_BY_ID_ENDPOINT
         };
     }
 
@@ -183,6 +186,8 @@ public class ApiEndpoint {
 
     public static final String ORDER_BY_ID_ENDPOINT = "/api/v1/orders/{id}";
     public static final String ORDERS_ENDPOINT = "/api/v1/orders";
+    public static final String ORDER_BY_ID_ITEMS_ENDPOINT = "/api/v1/orders/{id}/items";
+    public static final String ORDER_BY_ID_ITEM_BY_ID_ENDPOINT = "/api/v1/orders/{orderId}/items/{orderItemId}";
 
     public static final String RESERVATION_BY_ID_ENDPOINT = "/api/v1/reservations/{id}";
     public static final String RESERVATIONS_ENDPOINT = "/api/v1/reservations";

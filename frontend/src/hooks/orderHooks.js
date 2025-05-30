@@ -1,10 +1,13 @@
 import useSWR from "swr";
 import { useCallback, useState } from "react";
 import {
+  addOrderItem,
   fetchOrders,
   fetchUserOrder,
   placeOrder,
   processOrder,
+  updateOrder,
+  updateOrderItemQuantity,
 } from "../api/orderApi";
 import { useAuth } from "../context/AuthContext";
 import { ORDERS_ENDPOINT } from "../constants/api";
@@ -59,6 +62,16 @@ export const useOrderActions = () => {
     setProcessSuccess(null);
   }, []);
 
+  // --- State for updateOrder ---
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [updateError, setUpdateError] = useState(null);
+  const [updateSuccess, setUpdateSuccess] = useState(null);
+  const resetUpdate = useCallback(() => {
+    setUpdateError(null);
+    setUpdateSuccess(null);
+  }, []);
+
+
   // --- Action Handlers ---
   const handlePlaceOrder = useCallback(
     async (requestOrderDTO, type) => {
@@ -110,16 +123,138 @@ export const useOrderActions = () => {
     [token, authError]
   );
 
+  const handleUpdateOrder = useCallback(
+    async ({ orderId, type, waitingListId, orderDetails }) => {
+      if (!token) {
+        setUpdateError(authError?.message || "Authentication required");
+        return null;
+      }
+      setUpdateLoading(true);
+      setUpdateError(null);
+      setUpdateSuccess(null);
+      try {
+        const response = await updateOrder({
+          orderId,
+          type,
+          waitingListId,
+          orderDetails,
+          token
+        });
+        setUpdateSuccess(response?.message || "Order updated successfully");
+        return response;
+      } catch (err) {
+        setUpdateError(err);
+        return null;
+      } finally {
+        setUpdateLoading(false);
+      }
+    },
+    [token, authError]
+  );
+
   return {
     handlePlaceOrder,
     placeError,
     placeLoading,
     placeSuccess,
     resetPlace,
+
     handleProcessOrder,
     processError,
     processLoading,
     processSuccess,
     resetProcess,
+
+    handleUpdateOrder,
+    updateError,
+    updateLoading,
+    updateSuccess,
+    resetUpdate,
   };
 };
+
+export const useOrderItemActions = () => {
+  const { token, error: authError } = useAuth();
+
+  // --- State for addOrderItem ---
+  const [addLoading, setAddLoading] = useState(false);
+  const [addError, setAddError] = useState(null);
+  const [addSuccess, setAddSuccess] = useState(null);
+  const resetAdd = useCallback(() => {
+    setAddError(null);
+    setAddSuccess(null);
+  }, []);
+
+  // --- State for updateOrderItemQuantity ---
+  const [updateQuantityLoading, setUpdateQuantityLoading] = useState(false);
+  const [updateQuantityError, setUpdateQuantityError] = useState(null);
+  const [updateQuantitySuccess, setUpdateQuantitySuccess] = useState(null);
+  const resetUpdateQuantity = useCallback(() => {
+    setUpdateQuantityError(null);
+    setUpdateQuantitySuccess(null);
+  }, []);
+
+  const handleAddOrderItem = useCallback(
+    async ({ orderId, productId, quantity, specialInstruction }) => {
+      if (!token) {
+        setAddError(authError?.message || "Authentication required");
+        return null;
+      }
+      setAddLoading(true);
+      setAddError(null);
+      setAddSuccess(null);
+
+      try {
+        const response = await addOrderItem({ token, orderId, productId, quantity, specialInstruction });
+        setAddSuccess(response?.message || "Order item added successfully");
+        return response;
+      } catch (err) {
+        setAddError(err);
+        return null;
+      } finally {
+        setAddLoading(false);
+      }
+    },
+    [token, authError]
+  );
+
+  const handleUpdateOrderItemQuantity = useCallback(
+    async ({ orderId, orderItemId, productId, quantity, specialInstruction }) => {
+      if (!token) {
+        setUpdateQuantityError(authError?.message || "Authentication required");
+        return null;
+      }
+      setUpdateQuantityLoading(true);
+      setUpdateQuantityError(null);
+      setUpdateQuantitySuccess(null);
+
+      try {
+        const response = await updateOrderItemQuantity({ token, orderId, orderItemId, productId, quantity, specialInstruction });
+        setUpdateQuantitySuccess(response?.message || "Order item quantity updated successfully");
+        return response;
+      } catch (err) {
+        setUpdateQuantityError(err);
+        return null;
+      } finally {
+        setUpdateQuantityLoading(false);
+      }
+    },
+    [token, authError]
+  );
+
+  return {
+    handleAddOrderItem,
+    addError,
+    addLoading,
+    addSuccess,
+    resetAdd,
+
+    handleUpdateOrderItemQuantity,
+    updateQuantityError,
+    updateQuantityLoading,
+    updateQuantitySuccess,
+    resetUpdateQuantity,
+  };
+};
+
+

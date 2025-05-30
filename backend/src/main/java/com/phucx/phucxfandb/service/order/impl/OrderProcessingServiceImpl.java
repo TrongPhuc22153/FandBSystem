@@ -3,14 +3,11 @@ package com.phucx.phucxfandb.service.order.impl;
 import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
-import com.phucx.phucxfandb.entity.Order;
-import com.phucx.phucxfandb.entity.WaitList;
 import com.phucx.phucxfandb.service.cart.CartUpdateService;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
+import com.phucx.phucxfandb.service.order.OrderDetailService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
-import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
-import com.phucx.phucxfandb.service.waitlist.WaitListUpdateService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +22,14 @@ import java.util.List;
 public class OrderProcessingServiceImpl implements OrderProcessingService {
     private final CartUpdateService cartUpdateService;
     private final OrderUpdateService orderUpdateService;
-    private final OrderReaderService orderReaderService;
+    private final OrderDetailService orderDetailService;
     private final SendOrderNotificationService sendOrderNotificationService;
-    private final WaitListUpdateService waitListUpdateService;
 
     @Override
     @Transactional
     public OrderDTO cancelOrderByEmployee(String username, String orderId, OrderType type) {
         OrderDTO orderDTO = orderUpdateService.updateOrderStatusByEmployee(username, orderId, type, OrderStatus.CANCELLED);
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PENDING, OrderItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
                 username,
@@ -54,6 +51,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Transactional
     public OrderDTO cancelOrderByCustomer(String username, String orderId, OrderType type) {
         OrderDTO orderDTO = orderUpdateService.updateOrderStatusByCustomer(username, orderId, type, OrderStatus.CANCELLED);
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PENDING, OrderItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
                 username,
@@ -84,12 +82,16 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     }
 
     @Override
+    @Transactional
     public OrderDTO markOrderAsPrepared(String username, String orderId, OrderType type) {
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PREPARING, OrderItemStatus.PREPARED);
         return orderUpdateService.updateOrderStatus(orderId, type, OrderStatus.PREPARED);
     }
 
     @Override
+    @Transactional
     public OrderDTO preparingOrder(String username, String orderId, OrderType type) {
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PENDING, OrderItemStatus.PREPARING);
         return orderUpdateService.updateOrderStatus(orderId, type, OrderStatus.PREPARING);
     }
 
@@ -139,21 +141,15 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Override
     @Transactional
     public OrderDTO completeDineInOrder(String username, String orderId){
-        Order order = orderReaderService.getOrderEntity(orderId, OrderType.DINE_IN);
-
-        WaitList waitList = order.getWaitList();
-        RequestWaitListDTO requestWaitListDTO = RequestWaitListDTO.builder()
-                .status(WaitListStatus.COMPLETED)
-                .tableId(waitList.getTable().getTableId())
-                .build();
-        waitListUpdateService.updateWaitListStatus(waitList.getId(), requestWaitListDTO);
-        return orderUpdateService.updateOrderStatus(order.getOrderId(), OrderType.DINE_IN, OrderStatus.COMPLETED);
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PREPARED, OrderItemStatus.COMPLETED);
+        return orderUpdateService.updateOrderStatus(orderId, OrderType.DINE_IN, OrderStatus.COMPLETED);
     }
 
     @Override
+    @Transactional
     public OrderDTO completeTakeAwayOrder(String username, String orderId) {
-        OrderDTO orderDTO = orderReaderService.getOrder(orderId, OrderType.TAKE_AWAY);
-        return orderUpdateService.updateOrderStatus(orderDTO.getOrderId(), OrderType.TAKE_AWAY, OrderStatus.COMPLETED);
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PREPARED, OrderItemStatus.COMPLETED);
+        return orderUpdateService.updateOrderStatus(orderId, OrderType.TAKE_AWAY, OrderStatus.COMPLETED);
     }
 
     @Override
