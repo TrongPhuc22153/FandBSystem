@@ -4,10 +4,10 @@ import { createPaymentMethod, fetchPaymentMethods, updatePaymentMethod } from '.
 import { PAYMENT_METHODS_ENDPOINT } from '../constants/api';
 import { useAuth } from '../context/AuthContext';
 
-export const usePaymentMethods = () => {
+export const usePaymentMethods = (type) => {
     return useSWR(
-        [PAYMENT_METHODS_ENDPOINT],
-        () => fetchPaymentMethods()
+        [PAYMENT_METHODS_ENDPOINT, type],
+        () => fetchPaymentMethods(type)
     );
 };
 

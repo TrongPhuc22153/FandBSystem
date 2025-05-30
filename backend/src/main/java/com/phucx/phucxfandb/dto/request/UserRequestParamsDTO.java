@@ -1,13 +1,11 @@
 package com.phucx.phucxfandb.dto.request;
 
-import com.phucx.phucxfandb.constant.RoleName;
-import com.phucx.phucxfandb.constant.WebConstant;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.dto.request.shared.PaginationParamsDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Sort;
 
 @Getter
 @Setter

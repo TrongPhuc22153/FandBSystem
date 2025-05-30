@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.dto.request;
 
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.RoleName;
 import lombok.*;
 
 @Getter

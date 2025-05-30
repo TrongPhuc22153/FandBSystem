@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.table;
 
-import com.phucx.phucxfandb.constant.TableStatus;
+import com.phucx.phucxfandb.enums.TableStatus;
 import com.phucx.phucxfandb.dto.request.RequestReservationTableDTO;
 import com.phucx.phucxfandb.dto.response.ReservationTableDTO;
 import java.util.List;

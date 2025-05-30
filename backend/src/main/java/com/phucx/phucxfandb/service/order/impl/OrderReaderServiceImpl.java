@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.order.impl;
 
-import com.phucx.phucxfandb.constant.OrderType;
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.OrderType;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.dto.request.OrderRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.Order;

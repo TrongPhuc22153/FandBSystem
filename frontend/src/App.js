@@ -57,7 +57,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
 import PaymentSuccess from "./components/PaymentProcessing/PaymentSuccess/PaymentSuccess";
 import PaymentCancelled from "./components/PaymentProcessing/PaymentCancelled/PaymentCancelled";
 import PaymentLayout from "./pages/PaymentLayout/PaymentLayout";
-import DineInPaymentCheckoutPage from "./pages/DineInPaymentCheckoutPage/DineInPaymentCheckoutPage";
+import PaymentCheckoutPage from "./pages/PaymentCheckoutPage/PaymentCheckoutPage";
 import PaymentManagementPage from "./pages/PaymentManagementPage/PaymentManagementPage";
 
 function App() {
@@ -116,7 +116,7 @@ function App() {
                       <Route path="kitchen" element={<EmployeeKitchenPage/>}/>
                       <Route path="notifications" element={<EmployeeNotificationPage/>}/>
                       <Route path="payments" element={<PaymentManagementPage/>}/>
-                      <Route path="checkout" element={<DineInPaymentCheckoutPage/>}/>
+                      <Route path="payments/:id" element={<PaymentCheckoutPage/>}/>
                       <Route path="password" element={<EmployeeChangePassword/>}/>
                     </Route>
                   </Route>

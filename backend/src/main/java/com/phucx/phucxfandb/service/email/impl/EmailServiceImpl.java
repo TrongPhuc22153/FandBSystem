@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.email.impl;
 
 import com.phucx.phucxfandb.constant.EmailConstants;
-import com.phucx.phucxfandb.constant.JwtType;
+import com.phucx.phucxfandb.enums.JwtType;
 import com.phucx.phucxfandb.service.email.EmailService;
 import com.phucx.phucxfandb.service.jwt.JwtEmailService;
 import lombok.RequiredArgsConstructor;

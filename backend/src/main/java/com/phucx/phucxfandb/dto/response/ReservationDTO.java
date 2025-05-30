@@ -2,7 +2,7 @@ package com.phucx.phucxfandb.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.phucx.phucxfandb.constant.ReservationStatus;
+import com.phucx.phucxfandb.enums.ReservationStatus;
 import lombok.Builder;
 import lombok.Value;
 

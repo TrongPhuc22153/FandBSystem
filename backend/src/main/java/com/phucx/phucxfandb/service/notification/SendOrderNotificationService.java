@@ -1,8 +1,8 @@
 package com.phucx.phucxfandb.service.notification;
 
-import com.phucx.phucxfandb.constant.OrderAction;
-import com.phucx.phucxfandb.constant.OrderType;
-import com.phucx.phucxfandb.constant.PaymentStatus;
+import com.phucx.phucxfandb.enums.OrderAction;
+import com.phucx.phucxfandb.enums.OrderType;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import org.springframework.security.core.Authentication;

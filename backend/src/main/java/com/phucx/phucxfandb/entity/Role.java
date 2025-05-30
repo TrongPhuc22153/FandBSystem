@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.entity;
 
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.RoleName;
 import jakarta.persistence.*;
 import lombok.*;
 

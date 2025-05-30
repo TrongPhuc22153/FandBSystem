@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.jwt.impl;
 
-import com.phucx.phucxfandb.constant.JwtType;
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.JwtType;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.entity.User;
 import com.phucx.phucxfandb.exception.InvalidTokenException;
 import com.phucx.phucxfandb.service.jwt.JwtAuthenticationService;

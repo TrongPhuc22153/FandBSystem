@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.repository;
 
-import com.phucx.phucxfandb.constant.OrderType;
+import com.phucx.phucxfandb.enums.OrderType;
 import com.phucx.phucxfandb.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

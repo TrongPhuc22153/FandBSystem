@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.reservation.impl;
 
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.dto.request.ReservationRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.Reservation;

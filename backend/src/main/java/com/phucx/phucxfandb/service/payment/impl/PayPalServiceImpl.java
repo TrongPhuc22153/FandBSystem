@@ -4,7 +4,7 @@ import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
 import com.paypal.orders.*;
 import com.phucx.phucxfandb.constant.PayPalConstants;
-import com.phucx.phucxfandb.constant.PaymentStatus;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 import com.phucx.phucxfandb.entity.Payment;
 import com.phucx.phucxfandb.entity.Reservation;
 import com.phucx.phucxfandb.exception.PaymentException;

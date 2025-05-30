@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.dto.request;
 
-import com.phucx.phucxfandb.constant.ReservationAction;
-import com.phucx.phucxfandb.constant.ReservationStatus;
+import com.phucx.phucxfandb.enums.ReservationAction;
+import com.phucx.phucxfandb.enums.ReservationStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

@@ -16,6 +16,7 @@ export const EMPLOYEE_KITCHEN_URI = `${EMPLOYEE_PATH}/kitchen`;
 export const EMPLOYEE_TABLES_URI = `${EMPLOYEE_PATH}/tables`;
 export const EMPLOYEE_NOTIFICATIONS_URI = `${EMPLOYEE_PATH}/notifications`;
 export const EMPLOYEE_CHANGE_PASSWORD_URI = `${EMPLOYEE_PATH}/password`;
+export const PAYMENT_CHECKOUT_URI = `${EMPLOYEE_PATH}/payments`
 
 const USER_PATH = "/user"
 export const USER_PROFILE_URI = `${USER_PATH}/profile`;

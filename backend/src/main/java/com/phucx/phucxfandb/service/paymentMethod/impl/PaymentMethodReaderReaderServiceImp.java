@@ -23,8 +23,8 @@ public class PaymentMethodReaderReaderServiceImp implements PaymentMethodReaderS
 
     @Override
     @Transactional(readOnly = true)
-    public List<PaymentMethodDTO> getPaymentMethods() {
-        return paymentMethodRepository.findAll()
+    public List<PaymentMethodDTO> getPaymentMethods(String type) {
+        return paymentMethodRepository.findByTypesName(type)
                 .stream().map(mapper::toPaymentMethodDTO)
                 .collect(Collectors.toList());
     }
@@ -36,14 +36,6 @@ public class PaymentMethodReaderReaderServiceImp implements PaymentMethodReaderS
                 .map(mapper::toPaymentMethodDTO)
                 .orElseThrow(() -> new NotFoundException(PaymentMethod.class.getSimpleName(), "id", id));
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public PaymentMethod getPaymentMethodEntity(String id) {
-        return paymentMethodRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(PaymentMethod.class.getSimpleName(), "id", id));
-    }
-
 
     @Override
     @Transactional(readOnly = true)

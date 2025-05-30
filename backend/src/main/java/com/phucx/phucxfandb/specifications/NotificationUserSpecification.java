@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.specifications;
 
-import com.phucx.phucxfandb.constant.ReceiverType;
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.ReceiverType;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.entity.NotificationUser;
 import com.phucx.phucxfandb.entity.Role;
 import com.phucx.phucxfandb.entity.User;

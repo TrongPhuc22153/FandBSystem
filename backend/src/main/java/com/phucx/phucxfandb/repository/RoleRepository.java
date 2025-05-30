@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.repository;
 
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

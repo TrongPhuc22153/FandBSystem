@@ -5,4 +5,5 @@ public class PaymentMethodConstants {
 
     public final static String PAY_PAL = "paypal";
     public final static String COD = "cod";
+    public final static String CASH = "cash";
 }

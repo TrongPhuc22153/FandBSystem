@@ -1,7 +1,7 @@
 import { PAYMENT_METHODS_ENDPOINT } from "../constants/api";
 
-export const fetchPaymentMethods = async () => {
-    const response = await fetch(PAYMENT_METHODS_ENDPOINT);
+export const fetchPaymentMethods = async (type) => {
+    const response = await fetch(`${PAYMENT_METHODS_ENDPOINT}?type=${type}`);
 
     if (!response.ok) {
         throw await response.json();

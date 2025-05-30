@@ -1,8 +1,8 @@
 package com.phucx.phucxfandb.dto.request;
 
-import com.phucx.phucxfandb.constant.OrderAction;
-import com.phucx.phucxfandb.constant.OrderStatus;
-import com.phucx.phucxfandb.constant.OrderType;
+import com.phucx.phucxfandb.enums.OrderAction;
+import com.phucx.phucxfandb.enums.OrderStatus;
+import com.phucx.phucxfandb.enums.OrderType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;

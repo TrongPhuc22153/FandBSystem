@@ -1,7 +1,10 @@
 package com.phucx.phucxfandb.utils;
 
-import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
+import com.phucx.phucxfandb.enums.NotificationTopic;
+import com.phucx.phucxfandb.enums.ReceiverType;
+import com.phucx.phucxfandb.enums.RoleName;
+import com.phucx.phucxfandb.enums.SenderType;
 
 public class NotificationUtils {
 

@@ -2,7 +2,7 @@ package com.phucx.phucxfandb.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phucx.phucxfandb.constant.ApiEndpoint;
-import com.phucx.phucxfandb.constant.JwtType;
+import com.phucx.phucxfandb.enums.JwtType;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
 import com.phucx.phucxfandb.service.jwt.JwtAuthenticationService;
 import io.jsonwebtoken.JwtException;

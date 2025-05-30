@@ -15,7 +15,7 @@ import { HOME_URI } from "../../constants/routes";
 import { CHECKOUT_ITEMS, ORDER_TYPES } from "../../constants/webConstant";
 import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
 import PaymentMethodOptions from "../../components/PaymentMethodOptions/PaymentMethodOptions";
-import { CANCEL_PAYMENT_URL, SUCCESS_PAYMENT_URL } from "../../constants/paymentConstants";
+import { CANCEL_PAYMENT_URL, PAYMENT_METHODS, PAYMENT_TYPES, SUCCESS_PAYMENT_URL } from "../../constants/paymentConstants";
 import { usePaymentActions } from "../../hooks/paymentHooks";
 
 const CheckoutPage = () => {
@@ -43,7 +43,7 @@ const CheckoutPage = () => {
     data: paymentMethodsData,
     isLoading: loadingPaymentMethods,
     error: paymentMethodsError,
-  } = usePaymentMethods();
+  } = usePaymentMethods(PAYMENT_TYPES.TAKE_AWAY);
 
   const paymentMethods = useMemo(
     () => paymentMethodsData || [],
@@ -57,7 +57,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (paymentMethods.length > 0 && selectedPayment === null) {
       const codMethod = paymentMethods.find(
-        (method) => method.methodName.toLowerCase() === "cod"
+        (method) => method.methodName.toLowerCase() === PAYMENT_METHODS.COD
       );
       if (codMethod) {
         setSelectedPayment(codMethod.methodName);

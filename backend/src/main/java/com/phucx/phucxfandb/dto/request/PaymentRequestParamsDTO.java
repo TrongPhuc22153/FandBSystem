@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.dto.request;
 
-import com.phucx.phucxfandb.constant.PaymentStatus;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 import com.phucx.phucxfandb.dto.request.shared.PaginationParamsDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

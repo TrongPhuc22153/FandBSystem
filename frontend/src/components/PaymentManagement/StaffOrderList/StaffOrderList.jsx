@@ -1,4 +1,6 @@
+import { Badge } from 'react-bootstrap';
 import styles from './StaffOrderList.module.css';
+import { ORDER_TYPE_CLASSES } from '../../../constants/webConstant';
 
 const StaffOrderList = ({ payments = [], onProceedToCheckout }) => {
   if (!payments || payments.length === 0) {
@@ -19,10 +21,11 @@ const StaffOrderList = ({ payments = [], onProceedToCheckout }) => {
           <table className={`table table-hover mb-0 ${styles.orderTable}`}>
             <thead className={styles.tableHeader}>
               <tr>
-                <th scope="col">Order ID</th>
+                <th scope="col">Payment ID</th>
                 <th scope="col">Table</th>
                 <th scope="col">Time Placed</th>
                 <th scope="col">Total Due</th>
+                <th scope="col">Type</th>
                 <th scope="col">Status</th>
                 <th scope="col">Actions</th>
               </tr>
@@ -30,10 +33,11 @@ const StaffOrderList = ({ payments = [], onProceedToCheckout }) => {
             <tbody>
               {payments.map((payment, index) => (
                 <tr key={index} className={styles.tableRow}>
-                  <td>{payment.payementId}</td>
-                  <td>{payment.tableNumber || 'N/A'}</td>
+                  <td>{payment.paymentId}</td>
+                  <td>{payment?.order?.waitList?.table.tableNumber || 'N/A'}</td>
                   <td>{new Date(payment.paymentDate).toLocaleString()}</td>
                   <td className={styles.totalAmount}>${payment.amount.toFixed(2)}</td>
+                  <td><Badge bg={ORDER_TYPE_CLASSES[payment.order.type]}>{payment.order.type}</Badge></td>
                   <td>
                     <span className={`badge bg-warning text-dark ${styles.statusBadge}`}>
                       {payment.status}
@@ -42,7 +46,7 @@ const StaffOrderList = ({ payments = [], onProceedToCheckout }) => {
                   <td>
                     <button
                       className={`btn btn-sm btn-success ${styles.checkoutButton}`}
-                      onClick={() => onProceedToCheckout(payment.payementId)}
+                      onClick={() => onProceedToCheckout(payment.paymentId)}
                     >
                       Proceed to Checkout
                     </button>

@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.specifications;
 
-import com.phucx.phucxfandb.constant.WaitListStatus;
+import com.phucx.phucxfandb.enums.WaitListStatus;
 import com.phucx.phucxfandb.entity.WaitList;
 import org.springframework.data.jpa.domain.Specification;
 

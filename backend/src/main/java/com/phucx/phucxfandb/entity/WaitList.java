@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.entity;
 
-import com.phucx.phucxfandb.constant.WaitListStatus;
+import com.phucx.phucxfandb.enums.WaitListStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

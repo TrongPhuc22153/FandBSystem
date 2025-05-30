@@ -4,10 +4,15 @@ import { useReservationActions } from "../../hooks/reservationHooks";
 import { useModal } from "../../context/ModalContext";
 import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
 import PaymentMethodOptions from "../PaymentMethodOptions/PaymentMethodOptions";
-import { CANCEL_PAYMENT_URL, SUCCESS_PAYMENT_URL } from "../../constants/paymentConstants";
+import {
+  CANCEL_PAYMENT_URL,
+  PAYMENT_TYPES,
+  SUCCESS_PAYMENT_URL,
+} from "../../constants/paymentConstants";
 import { Link } from "react-router-dom";
 import { HOME_URI } from "../../constants/routes";
 import { usePaymentActions } from "../../hooks/paymentHooks";
+import ErrorDisplay from "../ErrorDisplay/ErrorDisplay";
 
 export default function Confirmation({ reservationData, onPrevious, onReset }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,13 +23,13 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
 
   const [selectedPayment, setSelectedPayment] = useState(null);
 
-  const { data: paymentMethodsData } = usePaymentMethods();
   const {
-    handleProcessPayment,
-    paymentError,
-    resetPayment
-  } = usePaymentActions()
+    data: paymentMethodsData,
+    isLoading: loadingMethods,
+    error: methodsError,
+  } = usePaymentMethods(PAYMENT_TYPES.RESERVATION);
 
+  const { handleProcessPayment, paymentError } = usePaymentActions();
   const paymentMethods = useMemo(
     () => paymentMethodsData || [],
     [paymentMethodsData]
@@ -32,7 +37,7 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
 
   const handlePaymentMethodChange = useCallback((id) => {
     setSelectedPayment(id);
-    setErrorMessage(""); // Clear error on selection
+    setErrorMessage("");
   }, []);
 
   // Format date to match backend (dd MMM yyyy, hh:mm a)
@@ -99,16 +104,15 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
           returnUrl: SUCCESS_PAYMENT_URL,
           cancelUrl: CANCEL_PAYMENT_URL,
           paymentMethod: selectedPayment,
-          reservationId: reservationId
-        })
-        if(paymentRes){
+          reservationId: reservationId,
+        });
+        if (paymentRes) {
           if (paymentRes.data.link) {
             window.location.href = paymentRes.data.link;
           }
           setConfirmationNumber(reservationId);
           setIsConfirmed(true);
         }
-
       } else {
         setErrorMessage("Failed to create reservation. Please try again.");
       }
@@ -136,6 +140,10 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
       onNo: () => setIsSubmitting(false),
     });
   };
+
+  if (methodsError?.message) {
+    return <ErrorDisplay message={methodsError.message} />;
+  }
 
   if (isConfirmed) {
     return (
@@ -264,8 +272,12 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
                   <tr>
                     <th scope="col">Item</th>
                     <th scope="col">Quantity</th>
-                    <th scope="col" className="text-end">Price</th>
-                    <th scope="col" className="text-end">Subtotal</th>
+                    <th scope="col" className="text-end">
+                      Price
+                    </th>
+                    <th scope="col" className="text-end">
+                      Subtotal
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -299,11 +311,13 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
           <h5 className="mb-0">Payment Method</h5>
         </div>
         <div className="card-body">
-          <PaymentMethodOptions
-            paymentMethods={paymentMethods}
-            selectedPaymentMethod={selectedPayment}
-            onPaymentMethodChange={handlePaymentMethodChange}
-          />
+          {!loadingMethods && (
+            <PaymentMethodOptions
+              paymentMethods={paymentMethods}
+              selectedPaymentMethod={selectedPayment}
+              onPaymentMethodChange={handlePaymentMethodChange}
+            />
+          )}
         </div>
       </div>
 

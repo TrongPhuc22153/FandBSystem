@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.dto.request;
 
-import com.phucx.phucxfandb.constant.RoleName;
-import com.phucx.phucxfandb.constant.SenderType;
+import com.phucx.phucxfandb.enums.RoleName;
+import com.phucx.phucxfandb.enums.SenderType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

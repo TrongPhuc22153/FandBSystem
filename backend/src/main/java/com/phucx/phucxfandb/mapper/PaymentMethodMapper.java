@@ -12,10 +12,6 @@ public interface PaymentMethodMapper {
 
     PaymentMethodDTO toPaymentMethodDTO(PaymentMethod paymentMethod);
 
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     PaymentMethod toPaymentMethod(RequestPaymentMethodDTO requestPaymentMethodDTO);
 
     @Mapping(target = "lastModifiedBy", ignore = true)

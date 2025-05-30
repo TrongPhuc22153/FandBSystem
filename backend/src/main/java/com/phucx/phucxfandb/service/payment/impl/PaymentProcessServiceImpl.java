@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.payment.impl;
 
-import com.phucx.phucxfandb.constant.Currency;
+import com.phucx.phucxfandb.enums.Currency;
 import com.phucx.phucxfandb.constant.PaymentMethodConstants;
 import com.phucx.phucxfandb.dto.request.RequestPaymentDTO;
 import com.phucx.phucxfandb.dto.response.PaymentProcessingDTO;
@@ -18,6 +18,7 @@ import java.io.IOException;
 public class PaymentProcessServiceImpl implements PaymentProcessService {
     private final PaymentReaderService paymentReaderService;
     private final PayPalService payPalService;
+    private final CashService cashService;
     private final CODService codService;
 
     @Override
@@ -47,7 +48,16 @@ public class PaymentProcessServiceImpl implements PaymentProcessService {
             return  PaymentProcessingDTO.builder()
                     .method(PaymentMethodConstants.COD)
                     .build();
-        }else{
+        } else if (methodName.equalsIgnoreCase(PaymentMethodConstants.CASH)) {
+            cashService.createCashPayment(
+                    authentication,
+                    requestPaymentDTO.getOrderId(),
+                    requestPaymentDTO.getReservationId());
+
+            return  PaymentProcessingDTO.builder()
+                    .method(PaymentMethodConstants.CASH)
+                    .build();
+        } else{
             throw new IllegalArgumentException("Unsupported payment method: " + methodName);
         }
     }

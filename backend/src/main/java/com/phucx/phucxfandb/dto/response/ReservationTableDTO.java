@@ -2,7 +2,7 @@ package com.phucx.phucxfandb.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.phucx.phucxfandb.constant.TableStatus;
+import com.phucx.phucxfandb.enums.TableStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;

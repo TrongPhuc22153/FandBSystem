@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.reservation;
 
-import com.phucx.phucxfandb.constant.ReservationAction;
+import com.phucx.phucxfandb.enums.ReservationAction;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import org.springframework.security.core.Authentication;

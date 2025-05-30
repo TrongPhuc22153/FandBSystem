@@ -28,8 +28,8 @@ public class PaymentMethodController {
 
     @GetMapping
     @Operation(summary = "Get payment methods", description = "Public access")
-    public ResponseEntity<List<PaymentMethodDTO>> getPaymentMethods() {
-        List<PaymentMethodDTO> data = paymentMethodReaderService.getPaymentMethods();
+    public ResponseEntity<List<PaymentMethodDTO>> getPaymentMethods(@RequestParam String type) {
+        List<PaymentMethodDTO> data = paymentMethodReaderService.getPaymentMethods(type);
         return ResponseEntity.ok().body(data);
     }
 

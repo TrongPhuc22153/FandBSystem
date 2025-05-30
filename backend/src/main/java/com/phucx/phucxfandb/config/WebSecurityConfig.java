@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.config;
 
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.filter.JwtValidationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

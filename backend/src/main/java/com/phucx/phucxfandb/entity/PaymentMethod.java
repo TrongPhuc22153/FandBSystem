@@ -3,13 +3,17 @@ package com.phucx.phucxfandb.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "payment_methods")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class PaymentMethod extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -18,6 +22,11 @@ public class PaymentMethod extends Auditable{
 
     @Column(name = "method_name", length = 20, nullable = false)
     private String methodName;
+
+    @Builder.Default
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "methods")
+    private Set<PaymentMethodType> types = new HashSet<>();
 
     @Column(name = "details", columnDefinition = "TEXT")
     private String details;

@@ -3,7 +3,7 @@ package com.phucx.phucxfandb.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.phucx.phucxfandb.constant.PaymentStatus;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

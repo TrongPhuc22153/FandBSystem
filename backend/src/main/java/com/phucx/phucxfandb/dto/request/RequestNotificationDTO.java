@@ -1,9 +1,9 @@
 package com.phucx.phucxfandb.dto.request;
 
-import com.phucx.phucxfandb.constant.NotificationTopic;
-import com.phucx.phucxfandb.constant.ReceiverType;
-import com.phucx.phucxfandb.constant.RoleName;
-import com.phucx.phucxfandb.constant.SenderType;
+import com.phucx.phucxfandb.enums.NotificationTopic;
+import com.phucx.phucxfandb.enums.ReceiverType;
+import com.phucx.phucxfandb.enums.RoleName;
+import com.phucx.phucxfandb.enums.SenderType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

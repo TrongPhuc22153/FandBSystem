@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.notification.impl;
 
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.dto.request.NotificationRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;
 import com.phucx.phucxfandb.entity.NotificationUser;

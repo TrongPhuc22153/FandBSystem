@@ -1,12 +1,11 @@
-// src/components/StaffSearchForm/StaffSearchForm.js
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './StaffSearchForm.module.css';
 
 const StaffSearchForm = ({ onSearch, onClearSearch, isSearching }) => {
   const [searchCriteria, setSearchCriteria] = useState({
     tableNumber: '',
     phoneNumber: '',
-    orderCode: '',
+    orderId: '',
   });
 
   const handleChange = (e) => {
@@ -20,15 +19,14 @@ const StaffSearchForm = ({ onSearch, onClearSearch, isSearching }) => {
   };
 
   const handleClear = () => {
-    setSearchCriteria({ tableNumber: '', phoneNumber: '', orderCode: '' });
+    setSearchCriteria({ tableNumber: '', phoneNumber: '', orderId: '' });
     onClearSearch();
   };
 
-  // Disable search button if all fields are empty AND not currently searching
   const isSearchButtonDisabled = isSearching || (
     !searchCriteria.tableNumber &&
     !searchCriteria.phoneNumber &&
-    !searchCriteria.orderCode
+    !searchCriteria.orderId
   );
 
   return (
@@ -42,13 +40,13 @@ const StaffSearchForm = ({ onSearch, onClearSearch, isSearching }) => {
             <div className="col-md-4">
               <label htmlFor="tableNumber" className="form-label">Table Number:</label>
               <input
-                type="text"
+                type="number"
                 className={`form-control ${styles.inputField}`}
                 id="tableNumber"
                 name="tableNumber"
                 value={searchCriteria.tableNumber}
                 onChange={handleChange}
-                placeholder="e.g., 5"
+                placeholder="Table number"
                 disabled={isSearching}
               />
             </div>
@@ -61,20 +59,20 @@ const StaffSearchForm = ({ onSearch, onClearSearch, isSearching }) => {
                 name="phoneNumber"
                 value={searchCriteria.phoneNumber}
                 onChange={handleChange}
-                placeholder="e.g., 1234567890"
+                placeholder="Customer phone number"
                 disabled={isSearching}
               />
             </div>
             <div className="col-md-4">
-              <label htmlFor="orderCode" className="form-label">Order Code:</label>
+              <label htmlFor="orderId" className="form-label">Order Id:</label>
               <input
                 type="text"
                 className={`form-control ${styles.inputField}`}
-                id="orderCode"
-                name="orderCode"
-                value={searchCriteria.orderCode}
+                id="orderId"
+                name="orderId"
+                value={searchCriteria.orderId}
                 onChange={handleChange}
-                placeholder="e.g., ORD1001"
+                placeholder="Order id"
                 disabled={isSearching}
               />
             </div>

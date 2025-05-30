@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.jwt;
 
-import com.phucx.phucxfandb.constant.JwtType;
+import com.phucx.phucxfandb.enums.JwtType;
 
 public interface JwtEmailService {
 

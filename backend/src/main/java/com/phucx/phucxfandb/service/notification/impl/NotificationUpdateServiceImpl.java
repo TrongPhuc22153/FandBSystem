@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.notification.impl;
 
-import com.phucx.phucxfandb.constant.SenderType;
+import com.phucx.phucxfandb.enums.SenderType;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.request.RequestNotificationUserDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;

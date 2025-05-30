@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.payment;
 
-import com.phucx.phucxfandb.constant.PaymentStatus;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 
 public interface PaymentUpdateService {
     void updatePaypalPaymentStatus(String id, PaymentStatus status);

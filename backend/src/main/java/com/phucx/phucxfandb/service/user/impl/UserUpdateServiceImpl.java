@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.user.impl;
 
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.dto.request.RequestUserDTO;
 import com.phucx.phucxfandb.dto.request.UpdateUserPasswordDTO;
 import com.phucx.phucxfandb.dto.response.UserDTO;

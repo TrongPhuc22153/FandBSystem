@@ -2,8 +2,8 @@ package com.phucx.phucxfandb.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.phucx.phucxfandb.constant.OrderStatus;
-import com.phucx.phucxfandb.constant.OrderType;
+import com.phucx.phucxfandb.enums.OrderStatus;
+import com.phucx.phucxfandb.enums.OrderType;
 import lombok.Builder;
 import lombok.Value;
 

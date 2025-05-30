@@ -10,10 +10,11 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "customers")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class Customer extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,9 +28,11 @@ public class Customer extends Auditable{
     @JoinColumn(name = "profile_id", referencedColumnName = "profile_id", nullable = false)
     private UserProfile profile;
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "customer")
     private List<ShippingAddress> shippingAddresses = new ArrayList<>();
 
+    @Builder.Default
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 }

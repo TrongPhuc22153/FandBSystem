@@ -1,4 +1,4 @@
-package com.phucx.phucxfandb.constant;
+package com.phucx.phucxfandb.enums;
 
 public enum ProductRatingStatus {
     NOT_PURCHASED,

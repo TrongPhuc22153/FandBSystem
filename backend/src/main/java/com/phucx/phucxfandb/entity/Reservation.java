@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.entity;
 
-import com.phucx.phucxfandb.constant.ReservationStatus;
+import com.phucx.phucxfandb.enums.ReservationStatus;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import lombok.*;

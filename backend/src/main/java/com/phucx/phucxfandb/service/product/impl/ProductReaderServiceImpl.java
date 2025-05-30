@@ -1,8 +1,8 @@
 package com.phucx.phucxfandb.service.product.impl;
 
-import com.phucx.phucxfandb.constant.OrderStatus;
-import com.phucx.phucxfandb.constant.ProductRatingStatus;
-import com.phucx.phucxfandb.constant.ReservationStatus;
+import com.phucx.phucxfandb.enums.OrderStatus;
+import com.phucx.phucxfandb.enums.ProductRatingStatus;
+import com.phucx.phucxfandb.enums.ReservationStatus;
 import com.phucx.phucxfandb.dto.request.ProductRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.ProductDTO;
 import com.phucx.phucxfandb.entity.Product;

@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.order;
 
-import com.phucx.phucxfandb.constant.OrderAction;
-import com.phucx.phucxfandb.constant.OrderType;
+import com.phucx.phucxfandb.enums.OrderAction;
+import com.phucx.phucxfandb.enums.OrderType;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import org.springframework.security.core.Authentication;

@@ -3,7 +3,7 @@ package com.phucx.phucxfandb.dto.request;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.phucx.phucxfandb.constant.ValidationGroups;
 import com.phucx.phucxfandb.constant.Views;
-import com.phucx.phucxfandb.constant.WaitListStatus;
+import com.phucx.phucxfandb.enums.WaitListStatus;
 import jakarta.validation.constraints.*;
 import lombok.*;
 

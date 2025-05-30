@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.payment.impl;
 
 import com.phucx.phucxfandb.constant.PaymentMethodConstants;
-import com.phucx.phucxfandb.constant.PaymentStatus;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.repository.PaymentRepository;

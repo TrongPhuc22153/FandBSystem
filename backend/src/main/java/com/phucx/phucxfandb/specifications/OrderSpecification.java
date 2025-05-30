@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.specifications;
 
-import com.phucx.phucxfandb.constant.OrderStatus;
-import com.phucx.phucxfandb.constant.OrderType;
+import com.phucx.phucxfandb.enums.OrderStatus;
+import com.phucx.phucxfandb.enums.OrderType;
 import com.phucx.phucxfandb.entity.Order;
 import org.springframework.data.jpa.domain.Specification;
 

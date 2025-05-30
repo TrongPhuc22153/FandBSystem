@@ -1,8 +1,8 @@
 package com.phucx.phucxfandb.service.user.impl;
 
 import com.phucx.phucxfandb.constant.EmailConstants;
-import com.phucx.phucxfandb.constant.JwtType;
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.JwtType;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.LoginResponse;
 import com.phucx.phucxfandb.dto.response.LogoutResponseDTO;

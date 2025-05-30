@@ -1,11 +1,10 @@
 package com.phucx.phucxfandb.service.jwt;
 
 
-import com.phucx.phucxfandb.constant.JwtType;
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.JwtType;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.entity.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Set;
 

@@ -2,7 +2,7 @@ package com.phucx.phucxfandb.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.phucx.phucxfandb.constant.PaymentStatus;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 import lombok.Builder;
 import lombok.Value;
 
@@ -20,6 +20,8 @@ public class PaymentDTO {
     PaymentStatus status;
     CustomerDTO customer;
     EmployeeDTO employee;
+    OrderDTO order;
+    ReservationDTO reservation;
     String method;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt;

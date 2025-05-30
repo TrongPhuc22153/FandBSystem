@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.order.impl;
 
-import com.phucx.phucxfandb.constant.OrderItemStatus;
-import com.phucx.phucxfandb.constant.OrderStatus;
+import com.phucx.phucxfandb.enums.OrderItemStatus;
+import com.phucx.phucxfandb.enums.OrderStatus;
 import com.phucx.phucxfandb.dto.request.RequestOrderDetailsDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.Order;

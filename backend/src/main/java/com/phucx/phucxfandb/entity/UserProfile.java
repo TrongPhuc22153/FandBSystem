@@ -6,10 +6,11 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user_profiles")
-@EqualsAndHashCode(callSuper = true, exclude = {"customer", "employee"})
+@EqualsAndHashCode(callSuper = false)
 public class UserProfile extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,9 +35,11 @@ public class UserProfile extends Auditable{
     @Column(name = "picture", length = 255)
     private String picture;
 
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private Customer customer;
 
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private Employee employee;
 
@@ -44,6 +47,7 @@ public class UserProfile extends Auditable{
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
 
+    @Builder.Default
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 }

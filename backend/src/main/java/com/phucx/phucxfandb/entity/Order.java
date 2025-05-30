@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.phucx.phucxfandb.constant.OrderStatus;
-import com.phucx.phucxfandb.constant.OrderType;
+import com.phucx.phucxfandb.enums.OrderStatus;
+import com.phucx.phucxfandb.enums.OrderType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -40,7 +40,7 @@ public class Order extends Auditable{
     @Column(name = "type", nullable = false)
     private OrderType type;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "wait_list_id")
     private WaitList waitList;
 

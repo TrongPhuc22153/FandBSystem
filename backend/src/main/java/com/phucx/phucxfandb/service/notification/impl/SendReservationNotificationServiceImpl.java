@@ -4,6 +4,10 @@ import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.response.NotificationUserDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
+import com.phucx.phucxfandb.enums.NotificationTopic;
+import com.phucx.phucxfandb.enums.PaymentStatus;
+import com.phucx.phucxfandb.enums.ReservationAction;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.service.notification.NotificationUpdateService;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
@@ -48,7 +52,7 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
 
     @Override
     public void sendNotificationForReservationAction(Authentication authentication, String reservationId,
-                                                      ReservationAction action, ReservationDTO reservation) {
+                                                     ReservationAction action, ReservationDTO reservation) {
         String username = authentication.getName();
 
         switch (action) {

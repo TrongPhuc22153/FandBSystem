@@ -47,21 +47,23 @@ public class PaymentReaderServiceImpl implements PaymentReaderService {
                 params.getSize(),
                 Sort.by(params.getDirection(), params.getField())
         );
+
         Specification<Payment> spec = Specification
                 .where(PaymentSpecification.hasStatus(params.getStatus()))
                 .and(PaymentSpecification.searchByOrderId(params.getOrderId()))
                 .and(PaymentSpecification.hasTableNumber(params.getTableNumber()))
+                .and(PaymentSpecification.searchByOrderPhone(params.getPhone()))
                 .and(PaymentSpecification.searchByOrderContactName(params.getContactName()));
 
         return paymentRepository.findAll(spec, pageable)
-                .map(paymentMapper::toPaymentDTO);
+                .map(paymentMapper::toPaymentEntryList);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PaymentDTO getPayment(String id) {
         return paymentRepository.findById(id)
-                .map(paymentMapper::toPaymentDTO)
+                .map(paymentMapper::toPaymentDetail)
                 .orElseThrow(() -> new NotFoundException(Payment.class.getSimpleName(), "id", id));
     }
 }

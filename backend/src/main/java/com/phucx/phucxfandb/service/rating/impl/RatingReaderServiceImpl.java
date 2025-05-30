@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.rating.impl;
 
-import com.phucx.phucxfandb.constant.ProductRatingStatus;
+import com.phucx.phucxfandb.enums.ProductRatingStatus;
 import com.phucx.phucxfandb.dto.request.RatingRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.ProductRatingsResponseDTO;
 import com.phucx.phucxfandb.dto.response.RatingDTO;

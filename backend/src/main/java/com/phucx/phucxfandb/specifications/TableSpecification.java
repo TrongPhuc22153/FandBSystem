@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.specifications;
 
-import com.phucx.phucxfandb.constant.TableStatus;
+import com.phucx.phucxfandb.enums.TableStatus;
 import com.phucx.phucxfandb.entity.ReservationTable;
 import org.springframework.data.jpa.domain.Specification;
 

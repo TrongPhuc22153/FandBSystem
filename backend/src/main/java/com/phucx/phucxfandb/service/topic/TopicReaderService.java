@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.topic;
 
-import com.phucx.phucxfandb.constant.NotificationTopic;
+import com.phucx.phucxfandb.enums.NotificationTopic;
 import com.phucx.phucxfandb.dto.request.TopicRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.TopicDTO;
 import com.phucx.phucxfandb.entity.Topic;

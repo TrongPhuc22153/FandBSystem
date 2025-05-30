@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import com.phucx.phucxfandb.constant.OrderItemStatus;
+import com.phucx.phucxfandb.enums.OrderItemStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

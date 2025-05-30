@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.reservation;
 
-import com.phucx.phucxfandb.constant.ReservationStatus;
+import com.phucx.phucxfandb.enums.ReservationStatus;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 

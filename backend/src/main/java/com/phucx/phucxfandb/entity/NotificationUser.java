@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.entity;
 
-import com.phucx.phucxfandb.constant.ReceiverType;
-import com.phucx.phucxfandb.constant.SenderType;
+import com.phucx.phucxfandb.enums.ReceiverType;
+import com.phucx.phucxfandb.enums.SenderType;
 import jakarta.persistence.*;
 import lombok.*;
 

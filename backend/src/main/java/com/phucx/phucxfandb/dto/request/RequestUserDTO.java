@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.constant.ValidationGroups;
 import com.phucx.phucxfandb.constant.Views;
 import jakarta.validation.constraints.*;

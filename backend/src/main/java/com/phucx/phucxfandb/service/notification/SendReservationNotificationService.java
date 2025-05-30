@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.service.notification;
 
-import com.phucx.phucxfandb.constant.PaymentStatus;
-import com.phucx.phucxfandb.constant.ReservationAction;
+import com.phucx.phucxfandb.enums.PaymentStatus;
+import com.phucx.phucxfandb.enums.ReservationAction;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import org.springframework.security.core.Authentication;

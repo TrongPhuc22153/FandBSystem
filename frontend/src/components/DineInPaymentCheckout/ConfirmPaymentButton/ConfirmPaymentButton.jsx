@@ -1,8 +1,6 @@
-// src/components/ConfirmPaymentButton/ConfirmPaymentButton.js
-import React from 'react';
 import styles from './ConfirmPaymentButton.module.css';
 
-const ConfirmPaymentButton = ({ onConfirm, isProcessing, total }) => {
+const ConfirmPaymentButton = ({ onConfirm, isProcessing }) => {
   return (
     <div className={`d-grid gap-2 ${styles.confirmButtonContainer}`}>
       <button
@@ -17,7 +15,7 @@ const ConfirmPaymentButton = ({ onConfirm, isProcessing, total }) => {
           </>
         ) : (
           <>
-            Confirm Payment - ${total.toFixed(2)}
+            Confirm Payment
           </>
         )}
       </button>

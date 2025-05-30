@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.service.role.impl;
 
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.dto.response.RoleDTO;
 import com.phucx.phucxfandb.entity.Role;
 import com.phucx.phucxfandb.exception.NotFoundException;

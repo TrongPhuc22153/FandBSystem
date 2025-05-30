@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.repository;
 
-import com.phucx.phucxfandb.constant.ReservationStatus;
+import com.phucx.phucxfandb.enums.ReservationStatus;
 import com.phucx.phucxfandb.entity.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

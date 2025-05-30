@@ -2,8 +2,8 @@ package com.phucx.phucxfandb.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.phucx.phucxfandb.constant.JwtType;
-import com.phucx.phucxfandb.constant.RoleName;
+import com.phucx.phucxfandb.enums.JwtType;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.service.jwt.JwtAuthenticationService;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import io.jsonwebtoken.JwtException;
