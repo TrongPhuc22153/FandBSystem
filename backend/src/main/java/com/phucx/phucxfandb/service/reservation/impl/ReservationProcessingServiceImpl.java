@@ -102,6 +102,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     public ReservationDTO placeCustomerReservation(String username, RequestReservationDTO requestReservationDTO) {
         ReservationTable table = reservationTableReaderService.getAvailableTable(
                 requestReservationDTO.getNumberOfGuests(),
+                requestReservationDTO.getDate(),
                 requestReservationDTO.getStartTime(),
                 requestReservationDTO.getEndTime()
         );
@@ -113,6 +114,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     public ReservationDTO placeEmployeeReservation(String username, RequestReservationDTO requestReservationDTO) {
         ReservationTable table = reservationTableReaderService.getAvailableTable(
                 requestReservationDTO.getNumberOfGuests(),
+                requestReservationDTO.getDate(),
                 requestReservationDTO.getStartTime(),
                 requestReservationDTO.getEndTime()
         );

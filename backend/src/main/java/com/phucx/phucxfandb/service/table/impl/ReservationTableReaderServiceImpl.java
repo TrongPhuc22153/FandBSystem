@@ -18,7 +18,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j
@@ -58,9 +59,13 @@ public class ReservationTableReaderServiceImpl implements ReservationTableReader
 
     @Override
     @Transactional(readOnly = true)
-    public ReservationTable getAvailableTable(int numberOfGuests, LocalDateTime requestedStartTime, LocalDateTime requestedEndTime) {
-        List<ReservationTable> tables = reservationTableRepository
-                .findFirstAvailableTableWithLeastCapacity(numberOfGuests, Boolean.FALSE, requestedStartTime, requestedEndTime);
+    public ReservationTable getAvailableTable(int numberOfGuests, LocalDate date, LocalTime requestedStartTime, LocalTime requestedEndTime) {
+        List<ReservationTable> tables = reservationTableRepository.findFirstAvailableTableWithLeastCapacity(
+                numberOfGuests,
+                Boolean.FALSE,
+                date,
+                requestedStartTime,
+                requestedEndTime);
         if(tables.isEmpty()) throw new NotFoundException("No available table found for the requested time and number of guests.");
         return tables.get(0);
     }

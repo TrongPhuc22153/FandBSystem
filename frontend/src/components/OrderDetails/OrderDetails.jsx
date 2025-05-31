@@ -2,9 +2,8 @@ import { Link } from "react-router-dom";
 import { getImageSrc } from "../../utils/imageUtils";
 import styles from "./OrderDetails.module.css";
 import { SHOP_URI } from "../../constants/routes";
-import {
-  ORDER_TYPES,
-} from "../../constants/webConstant";
+import { ORDER_TYPES, PAYMENT_STATUS_CLASSES } from "../../constants/webConstant";
+import { Badge } from "react-bootstrap";
 
 const OrderDetail = ({
   orderDate,
@@ -91,11 +90,11 @@ const OrderDetail = ({
           <div className="text-muted">Payment Method</div>
           <div className="ms-auto">
             <label className={styles.label}>
-              {paymentMethod.toUpperCase()}
+              {paymentMethod?.toUpperCase?.() || <Badge bg={PAYMENT_STATUS_CLASSES["PENDING"]}>Pending</Badge>}
             </label>{" "}
           </div>
         </div>
-        {orderType === ORDER_TYPES.TAKE_AWAY && ( 
+        {orderType === ORDER_TYPES.TAKE_AWAY && (
           <div className="d-flex justify-content-start align-items-center py-1 pl-3">
             <div className="text-muted">Shipping: </div>
             <div className="ms-auto">
@@ -121,14 +120,14 @@ const OrderDetail = ({
                 <p className="text-justify">
                   Location: {waitList.table.location}
                 </p>
-                <p className="text-justify">Capacity: {waitList.table.capacity}</p>
+                <p className="text-justify">
+                  Capacity: {waitList.table.capacity}
+                </p>
               </div>
             ) : orderType === ORDER_TYPES.TAKE_AWAY && shippingAddress ? (
               <div className="d-flex flex-column align-items-start">
                 <b>Shipping Address</b>
-                <p className="text-justify pt-2">
-                  {shippingAddress.shipName},
-                </p>
+                <p className="text-justify pt-2">{shippingAddress.shipName},</p>
                 <p className="text-justify">{shippingAddress.shipAddress},</p>
                 <p className="text-justify">
                   {shippingAddress.shipCity}, {shippingAddress.shipDistrict},{" "}
@@ -148,7 +147,7 @@ const OrderDetail = ({
           <div className="col-md-6 py-3">
             <div className="d-flex flex-column align-items-start">
               <b>Customer Information</b>
-              {orderType === ORDER_TYPES.TAKE_AWAY && customer &&
+              {orderType === ORDER_TYPES.TAKE_AWAY && customer && (
                 <>
                   <p className="text-justify pt-2">
                     Name: {customer.contactName}
@@ -160,20 +159,18 @@ const OrderDetail = ({
                     Phone: {customer.profile.phone}
                   </p>
                 </>
-              }
-              {orderType === ORDER_TYPES.DINE_IN && waitList && 
+              )}
+              {orderType === ORDER_TYPES.DINE_IN && waitList && (
                 <>
                   <p className="text-justify pt-2">
                     Name: {waitList.contactName}
                   </p>
-                  <p className="text-justify">
-                    Phone: {waitList.phone}
-                  </p>
+                  <p className="text-justify">Phone: {waitList.phone}</p>
                   <p className="text-justify">
                     Party size: {waitList.partySize}
                   </p>
                 </>
-              }
+              )}
             </div>
           </div>
         </div>

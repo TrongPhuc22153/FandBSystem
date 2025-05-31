@@ -5,11 +5,13 @@ import com.phucx.phucxfandb.dto.response.ReservationTableDTO;
 import com.phucx.phucxfandb.entity.ReservationTable;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public interface ReservationTableReaderService {
     Page<ReservationTableDTO> getReservationTables(TableRequestParamsDTODTO params);
     ReservationTableDTO getReservationTable(String tableId);
     ReservationTable getReservationTableEntity(String tableId);
-    ReservationTable getAvailableTable(int numberOfGuests, LocalDateTime requestedStartTime, LocalDateTime requestedEndTime);
+    ReservationTable getAvailableTable(int numberOfGuests, LocalDate date, LocalTime requestedStartTime, LocalTime requestedEndTime);
 }

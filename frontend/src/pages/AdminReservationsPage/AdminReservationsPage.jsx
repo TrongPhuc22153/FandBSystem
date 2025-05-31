@@ -55,14 +55,22 @@ const AdminReservationsPage = () => {
       render: (reservation) => reservation.table?.tableNumber || "N/A",
     },
     {
+      key:"date",
+      title: "Reservation date",
+      render: (reservation) => {
+        const date = new Date(reservation.date);
+        return date.toLocaleDateString()
+      }
+    },
+    {
       key: "startTime",
       title: "Start Time",
-      render: (reservation) => formatDate(reservation.startTime),
+      render: (reservation) => reservation.startTime
     },
     {
       key: "endTime",
       title: "End Time",
-      render: (reservation) => formatDate(reservation.endTime),
+      render: (reservation) => reservation.endTime
     },
     {
       key: "status",

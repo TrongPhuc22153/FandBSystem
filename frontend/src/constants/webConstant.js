@@ -78,6 +78,15 @@ export const RESERVATION_STATUS_CLASSES = {
     COMPLETED: "secondary",
     DEFAULT: "primary"
 }
+
+export const RESERVATION_TIME = {
+    DEFAULT_DURATION_HOURS: 2,
+    MIN_TIME: "10:00",
+    MAX_TIME: "21:00"
+}
+
+export const DEFAULT_RESERVATION_DURATION_HOURS = 2;
+
 export const PAYMENT_STATUS_CLASSES = {
     PENDING: "info",
     SUCCESSFUL: "success",

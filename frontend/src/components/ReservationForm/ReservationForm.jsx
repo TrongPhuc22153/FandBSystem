@@ -2,87 +2,183 @@ import { useState, useEffect } from "react";
 import styles from "./ReservationForm.module.css";
 import { useReservationTables } from "../../hooks/tableHooks";
 import { useAlert } from "../../context/AlertContext";
+import { RESERVATION_TIME } from "../../constants/webConstant";
 
 export default function ReservationDetails({
   reservationData,
   updateReservationData,
   onNext,
 }) {
-  const [startDate, setStartDate] = useState(
-    reservationData.startDateTime.toISOString().slice(0, 16)
+
+  // Initialize date, default to today if not set
+  const [date, setDate] = useState(
+    reservationData.date
+      ? reservationData.date.toISOString().slice(0, 10)
+      : new Date().toISOString().slice(0, 10)
   );
-  const [endDate, setEndDate] = useState(
-    reservationData.endDateTime.toISOString().slice(0, 16)
-  );
+
+  // Initialize startTime, default to 10:00 if not set or outside valid range
+  const [startTime, setStartTime] = useState(() => {
+    const storedTime = reservationData.startTime || RESERVATION_TIME.MIN_TIME;
+    return storedTime >= RESERVATION_TIME.MIN_TIME && storedTime <= RESERVATION_TIME.MAX_TIME
+      ? storedTime
+      : RESERVATION_TIME.MIN_TIME;
+  });
+
+  // Initialize endTime, default to startTime + 2 hours or 10:00 if not set
+  const [endTime, setEndTime] = useState(() => {
+    const storedEndTime = reservationData.endTime;
+    if (
+      storedEndTime &&
+      storedEndTime >= RESERVATION_TIME.MIN_TIME &&
+      storedEndTime <= RESERVATION_TIME.MAX_TIME
+    ) {
+      return storedEndTime;
+    }
+    const defaultEndDateTime = new Date(`${date}T${startTime}`);
+    defaultEndDateTime.setHours(
+      defaultEndDateTime.getHours() + RESERVATION_TIME.DEFAULT_DURATION_HOURS
+    );
+    const calculatedEndTime = defaultEndDateTime.toTimeString().slice(0, 5);
+    return calculatedEndTime <= RESERVATION_TIME.MAX_TIME ? calculatedEndTime : RESERVATION_TIME.MIN_TIME;
+  });
+
   const [formValid, setFormValid] = useState(false);
 
-  const { data: tablesData, isLoading: tablesLoading, error: tablesError } =
-    useReservationTables();
+  const {
+    data: tablesData,
+    isLoading: tablesLoading,
+    error: tablesError,
+  } = useReservationTables();
   const tables = tablesData?.content || [];
 
   const { showNewAlert } = useAlert();
-  
-  // Update end time to default (3 hours) only when startDate changes
+
+  // Update end time to default duration when date or start time changes
   useEffect(() => {
-    const startTime = new Date(startDate).getTime();
-    const currentStartTime = reservationData.startDateTime.getTime();
+    const startDateTime = new Date(`${date}T${startTime}`);
+    const currentStartDateTime =
+      reservationData.date && reservationData.startTime
+        ? new Date(
+            `${reservationData.date.toISOString().slice(0, 10)}T${
+              reservationData.startTime
+            }`
+          ).getTime()
+        : startDateTime.getTime();
 
-    // Only proceed if startDate has changed
-    if (startTime !== currentStartTime) {
-      const defaultEndTime = startTime + 3 * 60 * 60 * 1000; // 3 hours
-      const newEndDate = new Date(defaultEndTime).toISOString().slice(0, 16);
+    // Only proceed if date or start time has changed
+    if (startDateTime.getTime() !== currentStartDateTime) {
+      const defaultEndDateTime = new Date(
+        startDateTime.getTime() + RESERVATION_TIME.DEFAULT_DURATION_HOURS * 60 * 60 * 1000
+      );
+      const newEndTime = defaultEndDateTime.toTimeString().slice(0, 5);
 
-      // Only update endDate if endDateTime is the default (3 hours after startDateTime)
-      const currentEndTime = reservationData.endDateTime.getTime();
-      const defaultEndTimeForStart = currentStartTime + 3 * 60 * 60 * 1000;
+      // Ensure new end time is within allowed range
+      const finalEndTime = newEndTime <= RESERVATION_TIME.MAX_TIME ? newEndTime : RESERVATION_TIME.MIN_TIME;
 
-      if (currentEndTime === defaultEndTimeForStart) {
-        setEndDate(newEndDate);
+      // Only update endTime if current endTime is the default duration
+      const currentEndDateTime =
+        reservationData.date && reservationData.endTime
+          ? new Date(
+              `${reservationData.date.toISOString().slice(0, 10)}T${
+                reservationData.endTime
+              }`
+            ).getTime()
+          : startDateTime.getTime();
+      const defaultEndTimeForStart =
+        currentStartDateTime + RESERVATION_TIME.DEFAULT_DURATION_HOURS * 60 * 60 * 1000;
+
+      if (
+        currentEndDateTime === defaultEndTimeForStart ||
+        !reservationData.endTime
+      ) {
+        setEndTime(finalEndTime);
         updateReservationData({
-          startDateTime: new Date(startDate),
-          endDateTime: new Date(defaultEndTime),
+          date: new Date(date),
+          startTime,
+          endTime: finalEndTime,
         });
       } else {
         updateReservationData({
-          startDateTime: new Date(startDate),
+          date: new Date(date),
+          startTime,
         });
       }
     }
-  }, [startDate, updateReservationData]);
+  }, [
+    date,
+    startTime,
+    updateReservationData,
+    RESERVATION_TIME.DEFAULT_DURATION_HOURS,
+    reservationData.date,
+    reservationData.startTime,
+    reservationData.endTime,
+  ]);
 
   // Validate form
   useEffect(() => {
+    const startDateTime = new Date(`${date}T${startTime}`);
+    const endDateTime = new Date(`${date}T${endTime}`);
     const isValid =
       reservationData.numberOfGuests > 0 &&
-      (reservationData.autoSelectTable || reservationData.tableSelection !== "") &&
-      new Date(endDate) > new Date(startDate) &&
+      (reservationData.autoSelectTable ||
+        reservationData.tableSelection !== "") &&
+      endDateTime > startDateTime &&
+      startTime >= RESERVATION_TIME.MIN_TIME &&
+      startTime <= RESERVATION_TIME.MAX_TIME &&
+      endTime >= RESERVATION_TIME.MIN_TIME &&
+      endTime <= RESERVATION_TIME.MAX_TIME &&
       (!reservationData.autoSelectTable ? tables.length > 0 : true);
     setFormValid(isValid);
   }, [
     reservationData.numberOfGuests,
     reservationData.autoSelectTable,
     reservationData.tableSelection,
-    startDate,
-    endDate,
+    date,
+    startTime,
+    endTime,
     tables,
   ]);
 
-  // Handle start date change
-  const handleStartDateChange = (e) => {
-    setStartDate(e.target.value);
+  // Handle date change
+  const handleDateChange = (e) => {
+    setDate(e.target.value);
   };
 
-  // Handle end date change
-  const handleEndDateChange = (e) => {
-    const newEndDate = e.target.value;
-    if (new Date(newEndDate) > new Date(startDate)) {
-      setEndDate(newEndDate);
-      updateReservationData({ endDateTime: new Date(newEndDate) });
+  // Handle start time change
+  const handleStartTimeChange = (e) => {
+    const newStartTime = e.target.value;
+    if (newStartTime >= RESERVATION_TIME.MIN_TIME && newStartTime <= RESERVATION_TIME.MAX_TIME) {
+      setStartTime(newStartTime);
     } else {
       showNewAlert({
-        message: "End time must be after start time.",
-        variant: "danger"
-      })
+        message: "Start time must be between 10:00 AM and 9:00 PM.",
+        variant: "danger",
+      });
+    }
+  };
+
+  // Handle end time change
+  const handleEndTimeChange = (e) => {
+    const newEndTime = e.target.value;
+    const startDateTime = new Date(`${date}T${startTime}`);
+    const endDateTime = new Date(`${date}T${newEndTime}`);
+
+    if (
+      newEndTime >= RESERVATION_TIME.MIN_TIME &&
+      newEndTime <= RESERVATION_TIME.MAX_TIME &&
+      endDateTime > startDateTime
+    ) {
+      setEndTime(newEndTime);
+      updateReservationData({ endTime: newEndTime });
+    } else {
+      showNewAlert({
+        message:
+          newEndTime < RESERVATION_TIME.MIN_TIME || newEndTime > RESERVATION_TIME.MAX_TIME
+            ? "End time must be between 10:00 AM and 9:00 PM."
+            : "End time must be after start time.",
+        variant: "danger",
+      });
     }
   };
 
@@ -149,34 +245,53 @@ export default function ReservationDetails({
       <h2 className="mb-4">Reservation Details</h2>
 
       <div className="mb-3">
-        <label htmlFor="startDateTime" className="form-label">
-          Start Date & Time
+        <label htmlFor="reservationDate" className="form-label">
+          Reservation Date
         </label>
         <input
-          type="datetime-local"
+          type="date"
           className="form-control"
-          id="startDateTime"
-          value={startDate}
-          onChange={handleStartDateChange}
-          min={new Date().toISOString().slice(0, 16)}
+          id="reservationDate"
+          value={date}
+          onChange={handleDateChange}
+          min={new Date().toISOString().slice(0, 10)}
           required
         />
       </div>
 
       <div className="mb-3">
-        <label htmlFor="endDateTime" className="form-label">
-          End Date & Time
+        <label htmlFor="startTime" className="form-label">
+          Start Time
         </label>
         <input
-          type="datetime-local"
+          type="time"
           className="form-control"
-          id="endDateTime"
-          value={endDate}
-          onChange={handleEndDateChange}
-          min={startDate}
+          id="startTime"
+          value={startTime}
+          onChange={handleStartTimeChange}
+          min={RESERVATION_TIME.MIN_TIME}
+          max={RESERVATION_TIME.MAX_TIME}
           required
         />
-        <div className="form-text">Default duration is 3 hours</div>
+      </div>
+
+      <div className="mb-3">
+        <label htmlFor="endTime" className="form-label">
+          End Time
+        </label>
+        <input
+          type="time"
+          className="form-control"
+          id="endTime"
+          value={endTime}
+          onChange={handleEndTimeChange}
+          min={RESERVATION_TIME.MIN_TIME}
+          max={RESERVATION_TIME.MAX_TIME}
+          required
+        />
+        <div className="form-text">
+          Default duration is {RESERVATION_TIME.DEFAULT_DURATION_HOURS} hours
+        </div>
       </div>
 
       <div className="mb-3">
@@ -222,7 +337,9 @@ export default function ReservationDetails({
           >
             <option value="">Choose a table...</option>
             {tables
-              .filter((table) => table.capacity >= reservationData.numberOfGuests)
+              .filter(
+                (table) => table.capacity >= reservationData.numberOfGuests
+              )
               .map((table) => (
                 <option key={table.tableId} value={table.tableId}>
                   {table.tableNumber} (Seats {table.capacity})

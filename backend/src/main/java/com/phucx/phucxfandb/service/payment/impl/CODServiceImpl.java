@@ -58,7 +58,7 @@ public class CODServiceImpl implements CODService {
             sendReservationNotificationService.sendPlaceReservationNotification(
                     authentication,
                     reservation.getReservationId(),
-                    reservation.getStartTime(),
+                    reservation.getDate(),
                     PaymentMethodConstants.COD,
                     PaymentStatus.PENDING
             );

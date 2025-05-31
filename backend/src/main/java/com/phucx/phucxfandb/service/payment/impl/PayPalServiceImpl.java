@@ -106,7 +106,7 @@ public class PayPalServiceImpl implements PayPalService {
             sendReservationNotificationService.sendPlaceReservationNotification(
                     authentication,
                     reservation.getReservationId(),
-                    reservation.getStartTime(),
+                    reservation.getDate(),
                     payment.getMethod().getMethodName(),
                     payment.getStatus()
             );

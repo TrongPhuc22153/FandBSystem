@@ -6,7 +6,7 @@ import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import org.springframework.security.core.Authentication;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public interface SendReservationNotificationService {
 
@@ -16,7 +16,7 @@ public interface SendReservationNotificationService {
 
     void sendNotificationForReservationAction(Authentication authentication, String reservationId, ReservationAction action, ReservationDTO reservation);
 
-    void sendPlaceReservationNotification(Authentication authentication, String reservationId, LocalDateTime reservationStartTime, String paymentMethod, PaymentStatus paymentStatus);
+    void sendPlaceReservationNotification(Authentication authentication, String reservationId, LocalDate date, String paymentMethod, PaymentStatus paymentStatus);
 
     void sendPreparingNotification(String employeeUsername, String reservationId, ReservationDTO reservation);
 

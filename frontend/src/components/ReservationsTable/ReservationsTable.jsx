@@ -15,6 +15,7 @@ import { useAlert } from "../../context/AlertContext";
 import { Badge } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "../Pagination/Pagination";
+import { formatDate } from "../../utils/datetimeUtils";
 
 export default function ReservationsTable() {
   const [searchParams] = useSearchParams();
@@ -103,18 +104,19 @@ export default function ReservationsTable() {
   );
 
   // Calculate time until reservation
-  const getTimeUntil = (reservationTime) => {
+  const getTimeUntil = (reservation) => {
     const now = new Date();
-    const resTime = new Date(reservationTime);
-    const diffMs = resTime.getTime() - now.getTime();
 
-    if (diffMs < 0) return "Overdue";
+    const reservationDateTime = new Date(`${reservation.date}T${reservation.startTime}`);
+    if (isNaN(reservationDateTime)) return "Invalid time";
+
+    const diffMs = reservationDateTime - now;
+    if (diffMs <= 0) return "Overdue";
 
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 60) return `${diffMins} min`;
-
     const hours = Math.floor(diffMins / 60);
     const mins = diffMins % 60;
+
     return `${hours}h ${mins}m`;
   };
 
@@ -225,15 +227,12 @@ export default function ReservationsTable() {
                   </td>
                   <td>{reservation.numberOfGuests}</td>
                   <td>
-                    {new Date(reservation.startTime).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatDate(`${reservation.date}T${reservation.startTime}`)}
                   </td>
                   <td>
                     {reservation.status === RESERVATION_STATUSES.PENDING && (
                       <span className={styles.timeUntil}>
-                        {getTimeUntil(reservation.startTime)}
+                        {getTimeUntil(reservation)}
                       </span>
                     )}
                   </td>

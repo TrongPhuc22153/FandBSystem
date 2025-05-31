@@ -6,17 +6,19 @@ import jakarta.persistence.Entity;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "reservations")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class Reservation extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,21 +37,27 @@ public class Reservation extends Auditable{
     @JoinColumn(name = "table_id", nullable = false)
     private ReservationTable table;
 
+    @Builder.Default
     @Column(name = "number_of_guests", nullable = false)
     private Integer numberOfGuests = 1;
 
+    @Column(name = "date", nullable = false)
+    private LocalDate date;
+
     @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
     @Column(name = "end_time", nullable = false)
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Builder.Default
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuItem> menuItems = new ArrayList<>();
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ReservationStatus status = ReservationStatus.PENDING;

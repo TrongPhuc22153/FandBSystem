@@ -35,15 +35,19 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
     [paymentMethodsData]
   );
 
+  const { handleCreateReservation, createError } = useReservationActions();
+  const { onOpen } = useModal();
+
   const handlePaymentMethodChange = useCallback((id) => {
     setSelectedPayment(id);
     setErrorMessage("");
   }, []);
 
-  // Format date to match backend (dd MMM yyyy, hh:mm a)
-  const formatDate = useCallback((date) => {
-    if (!date) return "a specified time";
-    return new Date(date).toLocaleString("en-US", {
+  // Format date and time for display
+  const formatDateTime = useCallback((date, time) => {
+    if (!date || !time) return "a specified time";
+    const dateTime = new Date(`${date.toISOString().slice(0, 10)}T${time}`);
+    return dateTime.toLocaleString("en-US", {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -63,9 +67,6 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
     [reservationData.selectedItems]
   );
 
-  const { handleCreateReservation, createError } = useReservationActions();
-  const { onOpen } = useModal();
-
   useEffect(() => {
     setFieldErrors(createError?.fields ?? {});
     if (createError?.message || paymentError?.message) {
@@ -82,8 +83,9 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
 
     const data = {
       numberOfGuests: reservationData.numberOfGuests,
-      startTime: reservationData.startDateTime,
-      endTime: reservationData.endDateTime,
+      date: reservationData.date,
+      startTime: reservationData.startTime,
+      endTime: reservationData.endTime,
       notes: reservationData.notes,
       menuItems: reservationData.selectedItems.map((item) => ({
         productId: item.id,
@@ -123,7 +125,12 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [handleCreateReservation, reservationData, selectedPayment]);
+  }, [
+    handleCreateReservation,
+    handleProcessPayment,
+    reservationData,
+    selectedPayment,
+  ]);
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -233,8 +240,8 @@ export default function Confirmation({ reservationData, onPrevious, onReset }) {
           <div className="row mb-2">
             <div className="col-md-4 fw-bold">Date & Time:</div>
             <div className="col-md-8">
-              {formatDate(reservationData.startDateTime)} to{" "}
-              {formatDate(reservationData.endDateTime)}
+              {formatDateTime(reservationData.date, reservationData.startTime)}{" "}
+              to {formatDateTime(reservationData.date, reservationData.endTime)}
             </div>
           </div>
           <div className="row mb-2">

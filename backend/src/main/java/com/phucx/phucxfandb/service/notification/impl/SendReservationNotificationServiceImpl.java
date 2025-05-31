@@ -17,7 +17,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static com.phucx.phucxfandb.constant.WebSocketEndpoint.*;
 
@@ -64,7 +64,7 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
     }
 
     @Override
-    public void sendPlaceReservationNotification(Authentication authentication, String reservationId, LocalDateTime reservationStartTime, String paymentMethod, PaymentStatus paymentStatus) {
+    public void sendPlaceReservationNotification(Authentication authentication, String reservationId, LocalDate date, String paymentMethod, PaymentStatus paymentStatus) {
         if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL) && paymentStatus != PaymentStatus.SUCCESSFUL) {
             log.warn("Reservation {} notification skipped due to payment status: {}", reservationId, paymentStatus);
             return;
@@ -75,7 +75,7 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
 
         String username = authentication.getName();
 
-        String startTime = reservationStartTime != null ? reservationStartTime.toString() : "a specified time";
+        String startTime = date != null ? date.toString() : "a specified time";
         String paymentMessage = createPaymentMessage(paymentMethod, paymentStatus);
         String employeeMessage = String.format(
                 "New reservation #%s %s has been placed by customer %s for %s",

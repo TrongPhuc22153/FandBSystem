@@ -28,18 +28,21 @@ export default function ReservationDetailModal({
   const nextAction = getNextAction(reservation.status);
 
   // Calculate time until reservation
-  const getTimeUntil = (reservationTime) => {
+  const getTimeUntil = (reservation) => {
     const now = new Date();
-    const resTime = new Date(reservationTime);
-    const diffMs = resTime.getTime() - now.getTime();
 
-    if (diffMs < 0) return "Overdue";
+    const reservationDateTime = new Date(
+      `${reservation.date}T${reservation.startTime}`
+    );
+    if (isNaN(reservationDateTime)) return "Invalid time";
+
+    const diffMs = reservationDateTime - now;
+    if (diffMs <= 0) return "Overdue";
 
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 60) return `${diffMins} min`;
-
     const hours = Math.floor(diffMins / 60);
     const mins = diffMins % 60;
+
     return `${hours}h ${mins}m`;
   };
 
@@ -87,12 +90,14 @@ export default function ReservationDetailModal({
                 </p>
                 <p className="mb-1">
                   <strong>Reservation Time:</strong>{" "}
-                  {new Date(reservation.startTime).toLocaleString()}
+                  {new Date(
+                    `${reservation.date}T${reservation.startTime}`
+                  ).toLocaleString()}
                 </p>
                 {reservation.status === RESERVATION_STATUSES.PENDING && (
                   <p className="mb-1">
                     <strong>Time Until Arrival:</strong>{" "}
-                    {getTimeUntil(reservation.startTime)}
+                    {getTimeUntil(reservation)}
                   </p>
                 )}
               </div>
@@ -140,7 +145,8 @@ export default function ReservationDetailModal({
                       width:
                         reservation.status === RESERVATION_STATUSES.PENDING
                           ? "25%"
-                          : reservation.status === RESERVATION_STATUSES.PREPARING
+                          : reservation.status ===
+                            RESERVATION_STATUSES.PREPARING
                           ? "50%"
                           : reservation.status === RESERVATION_STATUSES.PREPARED
                           ? "75%"
@@ -181,15 +187,6 @@ export default function ReservationDetailModal({
                     {reservation.table.location}
                   </div>
                 </div>
-                {/* <select className="form-select mb-2">
-                  <option value="">Select a table</option>
-                  <option value="1">Table 1 (2-4 people)</option>
-                  <option value="2">Table 2 (2-4 people)</option>
-                  <option value="3">Table 3 (4-6 people)</option>
-                  <option value="4">Table 4 (6-8 people)</option>
-                  <option value="5">Table 5 (2 people)</option>
-                </select> */}
-                {/* <button className="btn btn-sm btn-outline-primary">Assign Table</button> */}
               </div>
             </div>
 

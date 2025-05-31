@@ -64,15 +64,18 @@ export default function ReservationDetail({ reservation }) {
             <strong>Party Size:</strong> {reservation.numberOfGuests} people
           </p>
           <p className="mb-1">
-            <strong>Reservation Time:</strong>{" "}
-            {new Date(reservation.startTime).toLocaleString()}
+            <strong>Reservation Date:</strong>{" "}
+            {new Date(reservation.date).toLocaleDateString()}
           </p>
-          {reservation.status === RESERVATION_STATUSES.PENDING && (
-            <p className="mb-1">
-              <strong>Time Until Arrival:</strong>{" "}
-              {getTimeUntil(reservation.startTime)}
-            </p>
-          )}
+          <p className="mb-1">
+            <strong>Start time:</strong>{" "}
+            {reservation.startTime}
+          </p>
+          <p className="mb-1">
+            <strong>End time:</strong>{" "}
+            {reservation.endTime}
+          </p>
+
         </div>
         <div className="col-md-6">
           <h6>Reservation Status</h6>

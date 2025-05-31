@@ -10,7 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,20 +42,23 @@ public interface ReservationTableRepository extends JpaRepository<ReservationTab
     );
 
     @Query("""
-            SELECT t FROM ReservationTable t \
-            WHERE t.capacity >= :numberOfGuests \
-            AND t.isDeleted = :isDeleted \
-            AND NOT EXISTS (SELECT r FROM Reservation r \
-                            WHERE r.table = t \
-                                AND (:startTime < r.endTime AND :endTime > r.startTime) \
-                                AND t.isDeleted = False) \
-            ORDER BY t.capacity ASC \
+            SELECT t FROM ReservationTable t
+            WHERE t.capacity >= :numberOfGuests
+              AND t.isDeleted = :isDeleted
+              AND NOT EXISTS (
+                  SELECT r FROM Reservation r
+                  WHERE r.table = t
+                    AND r.date = :date
+                    AND (:startTime < r.endTime AND :endTime > r.startTime)
+              )
+            ORDER BY t.capacity ASC
             """)
     List<ReservationTable> findFirstAvailableTableWithLeastCapacity(
             @Param("numberOfGuests") int numberOfGuests,
             @Param("isDeleted") boolean isDeleted,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime);
+            @Param("date") LocalDate date,
+            @Param("startTime") LocalTime startTime,
+            @Param("endTime") LocalTime endTime);
 
     @Query("""
             SELECT t FROM ReservationTable t \

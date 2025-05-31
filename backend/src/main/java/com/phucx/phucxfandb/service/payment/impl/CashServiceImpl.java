@@ -65,7 +65,7 @@ public class CashServiceImpl implements CashService {
             sendReservationNotificationService.sendPlaceReservationNotification(
                     authentication,
                     reservation.getReservationId(),
-                    reservation.getStartTime(),
+                    reservation.getDate(),
                     PaymentMethodConstants.CASH,
                     PaymentStatus.SUCCESSFUL
             );

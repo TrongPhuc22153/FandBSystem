@@ -1,6 +1,5 @@
 package com.phucx.phucxfandb.repository;
 
-import com.phucx.phucxfandb.enums.ReservationStatus;
 import com.phucx.phucxfandb.entity.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +15,6 @@ import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, String>, JpaSpecificationExecutor<Reservation> {
-    @EntityGraph(attributePaths = {"customer", "customer.profile", "customer.profile.user", "employee", "employee.profile", "employee.profile.user", "table"})
-    Page<Reservation> findByStatus(ReservationStatus status, Pageable pageable);
-
     @NonNull
     @EntityGraph(attributePaths = {"menuItems", "menuItems.product", "customer", "customer.profile", "customer.profile.user", "employee", "employee.profile", "employee.profile.user", "table"})
     Page<Reservation> findAll(@Nullable Specification<Reservation> spec, @NonNull Pageable pageable);

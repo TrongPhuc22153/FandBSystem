@@ -9,7 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -22,13 +23,15 @@ public class RequestReservationDTO {
     @Min(value = 1, message = "Number of guests must be at least 1")
     private Integer numberOfGuests;
 
+    @NotNull(message = "Date is required")
+    @FutureOrPresent(message = "Date must be today or in the future")
+    private LocalDate date;
+
     @NotNull(message = "Start time is required")
-    @Future(message = "Start time must be in the future")
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
     @NotNull(message = "End time is required")
-    @Future(message = "End time must be in the future")
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
     @NotEmpty(message = "Menu can not be null")
     private List<@Valid RequestMenuItemDTO> menuItems;

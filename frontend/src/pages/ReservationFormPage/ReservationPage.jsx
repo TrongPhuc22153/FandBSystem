@@ -1,8 +1,9 @@
 import { useState } from "react";
-import ReservationForm from "../../components/ReservationForm/ReservationForm";
 import MenuSelection from "../../components/MenuSelection/MenuSelection";
 import Confirmation from "../../components/Confirmation/Confirmation";
+import ReservationForm from "../../components/ReservationForm/ReservationForm"
 import styles from "./ReservationPage.module.css";
+import { RESERVATION_TIME } from "../../constants/webConstant";
 
 export default function ReservationFormPage() {
   // Current step in the reservation process
@@ -11,12 +12,24 @@ export default function ReservationFormPage() {
   // Initialize reservation data with defaults
   const [reservationData, setReservationData] = useState(() => {
     const now = new Date();
-    const endTime = new Date(now);
-    endTime.setHours(endTime.getHours() + 3); // Default 3 hours
+    const today = now.toISOString().slice(0, 10); // YYYY-MM-DD format
+
+    // Set default startTime to the next available hour within 10:00-21:00
+    let defaultStartHour = now.getHours() + 1;
+    if (defaultStartHour < 10) defaultStartHour = 10; // Enforce MIN_TIME
+    if (defaultStartHour > 21) defaultStartHour = 21; // Enforce RESERVATION_TIME.MAX_TIME
+    const defaultStartTime = `${defaultStartHour.toString().padStart(2, '0')}:00`;
+
+    // Set default endTime to 2 hours after startTime, capped at RESERVATION_TIME.MAX_TIME
+    const defaultEndDateTime = new Date(now);
+    defaultEndDateTime.setHours(defaultStartHour + RESERVATION_TIME.DEFAULT_DURATION_HOURS);
+    let defaultEndTime = defaultEndDateTime.toTimeString().slice(0, 5);
+    if (defaultEndTime > RESERVATION_TIME.MAX_TIME) defaultEndTime = RESERVATION_TIME.MAX_TIME;
 
     return {
-      startDateTime: now,
-      endDateTime: endTime,
+      date: new Date(today),
+      startTime: defaultStartTime,
+      endTime: defaultEndTime,
       numberOfGuests: 2,
       tableSelection: "",
       autoSelectTable: true,
