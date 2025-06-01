@@ -57,13 +57,6 @@ const AdminTablesPage = () => {
     { key: "tableId", title: "Table ID" },
     { key: "tableNumber", title: "Table Number" },
     { key: "location", title: "Location" },
-    {
-      key: "status",
-      title: "Status",
-      render: (table) => (
-        <Badge bg={TABLE_STATUS_CLASSES[table.status]}>{table.status}</Badge>
-      ),
-    },
     { key: "capacity", title: "Capacity" },
     {
       key: "isDeleted",

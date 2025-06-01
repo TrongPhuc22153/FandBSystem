@@ -3,7 +3,7 @@ package com.phucx.phucxfandb.service.order.impl;
 import com.phucx.phucxfandb.enums.OrderItemStatus;
 import com.phucx.phucxfandb.enums.OrderStatus;
 import com.phucx.phucxfandb.enums.OrderType;
-import com.phucx.phucxfandb.enums.WaitListStatus;
+import com.phucx.phucxfandb.enums.TableOccupancyStatus;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.request.RequestOrderDetailsDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
@@ -18,7 +18,7 @@ import com.phucx.phucxfandb.service.employee.EmployeeReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
 import com.phucx.phucxfandb.service.product.ProductUpdateService;
-import com.phucx.phucxfandb.service.waitlist.WaitListReaderService;
+import com.phucx.phucxfandb.service.table.TableOccupancyReaderService;
 import com.phucx.phucxfandb.utils.PriceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderUpdateServiceImpl implements OrderUpdateService {
     private final ShippingAddressReaderService shippingAddressReaderService;
-    private final WaitListReaderService waitListReaderService;
+    private final TableOccupancyReaderService tableOccupancyReaderService;
     private final CustomerReaderService customerReaderService;
     private final EmployeeReaderService employeeReaderService;
     private final ProductReaderService productReaderService;
@@ -253,15 +253,15 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     public OrderDTO createOrderEmployee(String username, RequestOrderDTO requestOrderDTO) {
         Employee employee = employeeReaderService.getEmployeeEntityByUsername(username);
 
-        WaitList waitList = waitListReaderService.getWaitListEntity(requestOrderDTO.getWaitingListId());
-        if(!waitList.getStatus().equals(WaitListStatus.SEATED)){
-            throw new IllegalStateException("Cannot perform operation: WaitList with ID " + requestOrderDTO.getWaitingListId() + " must be SEATED. Current status: " + waitList.getStatus());
+        TableOccupancy tableOccupancy = tableOccupancyReaderService.getTableOccupancyEntity(requestOrderDTO.getTableOccupancyId());
+        if(!tableOccupancy.getStatus().equals(TableOccupancyStatus.SEATED)){
+            throw new IllegalStateException("Cannot perform operation: TableOccupancy with ID " + requestOrderDTO.getTableOccupancyId() + " must be SEATED. Current status: " + tableOccupancy.getStatus());
         }
 
         Order newOrder = orderMapper.toEmployeeOrder(
                 requestOrderDTO,
                 employee,
-                waitList
+                tableOccupancy
         );
         newOrder.setStatus(OrderStatus.PENDING);
 

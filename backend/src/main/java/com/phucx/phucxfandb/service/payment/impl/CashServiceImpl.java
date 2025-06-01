@@ -1,8 +1,9 @@
 package com.phucx.phucxfandb.service.payment.impl;
 
 import com.phucx.phucxfandb.constant.PaymentMethodConstants;
+import com.phucx.phucxfandb.entity.TableOccupancy;
 import com.phucx.phucxfandb.enums.PaymentStatus;
-import com.phucx.phucxfandb.enums.WaitListStatus;
+import com.phucx.phucxfandb.enums.TableOccupancyStatus;
 import com.phucx.phucxfandb.entity.Order;
 import com.phucx.phucxfandb.entity.Reservation;
 import com.phucx.phucxfandb.exception.PaymentException;
@@ -12,7 +13,7 @@ import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.payment.CashService;
 import com.phucx.phucxfandb.service.payment.PaymentUpdateService;
 import com.phucx.phucxfandb.service.reservation.ReservationReaderService;
-import com.phucx.phucxfandb.service.waitlist.WaitListUpdateService;
+import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -28,7 +29,7 @@ public class CashServiceImpl implements CashService {
     private final ReservationReaderService reservationReaderService;
     private final PaymentUpdateService paymentUpdateService;
     private final OrderReaderService orderReaderService;
-    private final WaitListUpdateService waitListUpdateService;
+    private final TableOccupancyUpdateService tableOccupancyUpdateService;
 
     @Override
     @Transactional
@@ -36,10 +37,12 @@ public class CashServiceImpl implements CashService {
         if(orderId!=null){
             Order order = orderReaderService.getOrderEntity(orderId);
             String paymentId = order.getPayment().getPaymentId();
+            TableOccupancy tableOccupancy = order.getTableOccupancy();
 
-            waitListUpdateService.updateWaitListStatus(
-                    order.getWaitList().getId(),
-                    WaitListStatus.COMPLETED);
+            tableOccupancyUpdateService.updateTableOccupancyStatus(
+                    tableOccupancy.getId(),
+                    tableOccupancy.getTable().getTableId(),
+                    TableOccupancyStatus.CLEANING);
 
             paymentUpdateService.updatePayment(
                     paymentId,
@@ -56,6 +59,12 @@ public class CashServiceImpl implements CashService {
         }else if (reservationId!=null){
             Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
             String paymentId = reservation.getPayment().getPaymentId();
+            TableOccupancy tableOccupancy = reservation.getTableOccupancy();
+
+            tableOccupancyUpdateService.updateTableOccupancyStatus(
+                    tableOccupancy.getId(),
+                    tableOccupancy.getTable().getTableId(),
+                    TableOccupancyStatus.CLEANING);
 
             paymentUpdateService.updatePayment(
                     paymentId,

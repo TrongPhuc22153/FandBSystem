@@ -191,8 +191,8 @@ export default function OrdersTable() {
                   style={{ cursor: "pointer" }}
                 >
                   <td>{order.orderId}</td>
-                  <td>{order?.waitList?.table.tableNumber}</td>
-                  <td>{order?.customer?.profile.user.username || order?.waitList.contactName || "UNKNOW"}</td>
+                  <td>{order?.tableOccupancy?.table.tableNumber}</td>
+                  <td>{order?.customer?.profile.user.username || order?.tableOccupancy.contactName || "UNKNOW"}</td>
                   <td>
                     <ul className={styles.itemsList}>
                       {order.orderDetails.map((item, index) => (

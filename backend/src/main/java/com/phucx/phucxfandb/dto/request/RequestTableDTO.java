@@ -1,6 +1,6 @@
 package com.phucx.phucxfandb.dto.request;
 
-import com.phucx.phucxfandb.enums.TableStatus;
+import com.phucx.phucxfandb.constant.ValidationGroups;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestReservationTableDTO {
+public class RequestTableDTO {
     private String tableId;
 
     @NotNull(message = "Table number cannot be null")
@@ -24,13 +24,11 @@ public class RequestReservationTableDTO {
     @Size(max = 100, message = "Location cannot exceed 100 characters")
     private String location;
 
-    @NotNull(message = "Status cannot be null")
-    private TableStatus status;
-
     @Min(1)
     @NotNull(message = "Capacity cannot be null")
     @Positive(message = "Capacity must be positive")
     private Integer capacity;
 
-    private Boolean isDeleted = false;
+    @NotNull(message = "Is deleted cannot be null", groups = ValidationGroups.UpdateTableStatus.class)
+    private Boolean isDeleted;
 }

@@ -7,10 +7,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,8 +29,47 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
 
     Optional<Reservation> findByReservationIdAndEmployeeProfileUserUsername(String reservationId, String username);
 
+    @Query("""
+            SELECT r
+            FROM Reservation r
+            WHERE r.table.tableId = :tableId
+                AND r.date = :date
+                AND r.startTime <= :endTime AND r.endTime > :startTime
+                AND r.status NOT IN ('CANCELLED', 'COMPLETED')
+            """)
+    List<Reservation> findOverlappingReservations(
+            @Param("tableId") String tableId,
+            @Param("date") LocalDate date,
+            @Param("startTime") LocalTime startTime,
+            @Param("endTime") LocalTime endTime);
+
+    @Query("""
+            SELECT r
+            FROM Reservation r
+            WHERE r.date = :date
+                AND r.startTime <= :time
+                AND r.endTime > :time
+                AND r.table.tableId IN :tableIds
+                AND r.status <> 'COMPLETED'
+            """)
+    List<Reservation> findActiveReservations(
+            @Param("date") LocalDate date,
+            @Param("time") LocalTime time,
+            @Param("tableIds") Collection<String> tableIds);
 
 
-
-
+    @Query("""
+            SELECT r
+            FROM Reservation r
+            WHERE r.date = :date
+                AND r.startTime > :time
+                AND r.startTime <= :futureTime
+                AND r.table.tableId IN :tableIds
+                AND r.status NOT IN ('CANCELLED', 'COMPLETED')
+            """)
+    List<Reservation> findUpcomingReservations(
+            @Param("date") LocalDate date,
+            @Param("time") LocalTime time,
+            @Param("futureTime") LocalTime futureTime,
+            @Param("tableIds") Collection<String> tableIds);
 }

@@ -14,10 +14,10 @@ import { useAlert } from "../../context/AlertContext";
 import { useModal } from "../../context/ModalContext";
 import {
   ORDER_TYPES,
-  WAITING_LIST_STATUSES,
+  TABLE_OCCUPANCY_STATUSES,
 } from "../../constants/webConstant";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { useWaitingList, useWaitingLists } from "../../hooks/waitingListHooks";
+import { useTableOccupancies, useTableOccupancy } from "../../hooks/tableOccupancyHooks";
 import SelectableWaitingList from "../../components/WaitingList/SelectableWaitingList";
 
 export default function RestaurantOrderSystem() {
@@ -34,26 +34,26 @@ export default function RestaurantOrderSystem() {
 
   // Fetch waiting lists
   const {
-    data: waitingListsData,
-    isLoading: loadingWaitingLists,
-    error: waitingListsError,
-    mutate: mutateWaitingList,
-  } = useWaitingLists({
+    data: occupanciesData,
+    isLoading: loadingOccupancies,
+    error: occupanciesError,
+    mutate: mutateOccupancies,
+  } = useTableOccupancies({
     page: 0,
     size: 20,
-    status: WAITING_LIST_STATUSES.SEATED,
+    status: TABLE_OCCUPANCY_STATUSES.SEATED,
   });
   const waitingList = useMemo(
-    () => waitingListsData?.content || [],
-    [waitingListsData]
+    () => occupanciesData?.content || [],
+    [occupanciesData]
   );
 
   // Fetch customer-specific data only when a customer is selected
   const {
-    data: waitingListData,
-    isLoading: loadingWaitingList,
-    error: waitingListError,
-  } = useWaitingList({ id: selectedCustomer?.id || null });
+    data: occupancyData,
+    isLoading: loadingOccupancy,
+    error: occupancyError,
+  } = useTableOccupancy({ id: selectedCustomer?.id || null });
 
   // Fetch products
   const {
@@ -140,16 +140,16 @@ export default function RestaurantOrderSystem() {
 
   // Handle waiting list data error
   useEffect(() => {
-    if (waitingListError) {
+    if (occupancyError) {
       showNewAlert({
         message:
-          waitingListError.message || "Failed to load customer order details",
+          occupancyError.message || "Failed to load customer order details",
         variant: "danger",
       });
       setSelectedCustomer(null);
       setOrderItems([]);
     }
-  }, [waitingListError, showNewAlert]);
+  }, [occupancyError, showNewAlert]);
 
   // Clear order items when no customer is selected
   useEffect(() => {
@@ -160,8 +160,8 @@ export default function RestaurantOrderSystem() {
 
   // Load order details when customer is selected
   useEffect(() => {
-    if (waitingListData?.order?.orderDetails && selectedCustomer) {
-      const loadedOrderItems = waitingListData.order.orderDetails.map(
+    if (occupancyData?.order?.orderDetails && selectedCustomer) {
+      const loadedOrderItems = occupancyData.order.orderDetails.map(
         (detail) => ({
           id: detail.id,
           food: {
@@ -175,13 +175,13 @@ export default function RestaurantOrderSystem() {
       );
       setOrderItems(loadedOrderItems);
     } else if (
-      waitingListData &&
-      !waitingListData?.order?.orderDetails &&
+      occupancyData &&
+      !occupancyData?.order?.orderDetails &&
       selectedCustomer
     ) {
       setOrderItems([]);
     }
-  }, [waitingListData, menuItems, selectedCustomer]);
+  }, [occupancyData, menuItems, selectedCustomer]);
 
   // Validate selected customer
   useEffect(() => {
@@ -251,7 +251,7 @@ export default function RestaurantOrderSystem() {
       });
       return;
     }
-    const isUpdate = !!waitingListData?.order?.orderId;
+    const isUpdate = !!occupancyData?.order?.orderId;
     onOpen({
       title: isUpdate ? "Update Order" : "Place Order",
       message: isUpdate
@@ -265,7 +265,7 @@ export default function RestaurantOrderSystem() {
     if (!selectedCustomer?.id || orderItems.length === 0) return;
 
     const order = {
-      waitingListId: selectedCustomer.id,
+      tableOccupancyId: selectedCustomer.id,
       orderDetails: orderItems.map((item) => ({
         id: item.id,
         productId: item.food.productId,
@@ -275,10 +275,10 @@ export default function RestaurantOrderSystem() {
     };
 
     let response;
-    if (waitingListData?.order?.orderId) {
+    if (occupancyData?.order?.orderId) {
       // Update existing order
       response = await handleUpdateOrder({
-        orderId: waitingListData.order.orderId,
+        orderId: occupancyData.order.orderId,
         ...order,
       });
     } else {
@@ -293,7 +293,7 @@ export default function RestaurantOrderSystem() {
   }, [
     selectedCustomer,
     orderItems,
-    waitingListData,
+    occupancyData,
     handlePlaceOrder,
     handleUpdateOrder,
     clearOrder,
@@ -315,16 +315,16 @@ export default function RestaurantOrderSystem() {
     [navigate]
   );
 
-  if (loadingCategories || loadingProducts || loadingWaitingLists) {
+  if (loadingCategories || loadingProducts || loadingOccupancies) {
     return <Loading />;
   }
 
-  if (categoriesError || waitingListsError || productsError || waitingListError) {
+  if (categoriesError || occupanciesError || productsError || occupancyError) {
     const errors = [
       { source: "Categories", message: categoriesError?.message },
-      { source: "Waiting List", message: waitingListsError?.message },
+      { source: "Waiting List", message: occupanciesError?.message },
       { source: "Products", message: productsError?.message },
-      { source: "Customer Order", message: waitingListError?.message },
+      { source: "Customer Order", message: occupancyError?.message },
     ].filter((e) => e.message);
     return (
       <div>
@@ -371,7 +371,7 @@ export default function RestaurantOrderSystem() {
               </h4>
             </div>
             <div className={styles.cardBody}>
-              {updateLoading || loadingWaitingList ? (
+              {updateLoading || loadingOccupancy ? (
                 <Loading />
               ) : (
                 <OrderSummary
@@ -388,15 +388,15 @@ export default function RestaurantOrderSystem() {
                   !selectedCustomer ||
                   orderItems.length === 0 ||
                   updateLoading ||
-                  loadingWaitingList
+                  loadingOccupancy
                 }
                 aria-label={
-                  waitingListData?.order?.orderId
+                  occupancyData?.order?.orderId
                     ? "Update order for selected customer"
                     : "Place order for selected customer"
                 }
               >
-                {waitingListData?.order?.orderId ? "Update Order" : "Place Order"}
+                {occupancyData?.order?.orderId ? "Update Order" : "Place Order"}
               </button>
               <button
                 className={`${styles.button} ${styles.buttonSecondary}`}
@@ -422,7 +422,7 @@ export default function RestaurantOrderSystem() {
                 ) : (
                   <SelectableWaitingList
                     waitingList={waitingList}
-                    mutate={mutateWaitingList}
+                    mutate={mutateOccupancies}
                     selectedCustomer={selectedCustomer}
                     setSelectedCustomer={setSelectedCustomer}
                   />

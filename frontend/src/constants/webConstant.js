@@ -15,10 +15,10 @@ export const TABLE_STATUS_CLASSES = {
     UNOCCUPIED: "success",
 }
 export const TABLE_STATUSES = {
-    OCCUPIED: "OCCUPIED",
-    UNOCCUPIED: "UNOCCUPIED",
-    RESERVED: "RESERVED",
-    CLEANING: "CLEANING",
+    OCCUPIED: "Occupied",
+    UNOCCUPIED: "Unoccupied",
+    RESERVED: "Reserved",
+    CLEANING: "Cleaning",
 }
 export const ORDER_TYPES = {
     DINE_IN: "DINE_IN",
@@ -108,9 +108,14 @@ export const SORTING_DIRECTIONS = {
 }
 export const CHECKOUT_ITEMS = "checkoutItems";
 
-export const WAITING_LIST_STATUSES = {
+export const TABLE_OCCUPANCY_STATUSES = {
     SEATED: "SEATED",
-    NO_SHOW: "NO_SHOW",
+    COMPLETED: "COMPLETED",
     CANCELLED: "CANCELLED",
+    CLEANING: "CLEANING",
     WAITING: "WAITING"
+}
+export const TABLE_OCCUPANCY_TYPES = {
+    RESERVATION: "RESERVATION",
+    WALK_IN: "WALK_IN"
 }

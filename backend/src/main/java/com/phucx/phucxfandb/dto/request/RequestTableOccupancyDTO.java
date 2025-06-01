@@ -3,7 +3,8 @@ package com.phucx.phucxfandb.dto.request;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.phucx.phucxfandb.constant.ValidationGroups;
 import com.phucx.phucxfandb.constant.Views;
-import com.phucx.phucxfandb.enums.WaitListStatus;
+import com.phucx.phucxfandb.enums.OccupancyType;
+import com.phucx.phucxfandb.enums.TableOccupancyStatus;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonView(Views.Default.class)
-public class RequestWaitListDTO {
+public class RequestTableOccupancyDTO {
     @NotBlank(message = "Contact name is required")
     @Size(max = 30, message = "Contact name must not exceed 30 characters")
     private String contactName;
@@ -27,14 +28,17 @@ public class RequestWaitListDTO {
     private Integer partySize;
 
     @Size(max = 36, message = "Table ID must not exceed 36 characters", groups =
-            ValidationGroups.UpdateWaitListStatus.class)
-    @JsonView(Views.UpdateWaitListStatus.class)
+            ValidationGroups.UpdateTableOccupancyStatus.class)
+    @JsonView(Views.UpdateTableOccupancyStatus.class)
     private String tableId;
 
     @NotNull(message = "Status is required", groups =
-            ValidationGroups.UpdateWaitListStatus.class)
-    @JsonView(Views.UpdateWaitListStatus.class)
-    private WaitListStatus status;
+            ValidationGroups.UpdateTableOccupancyStatus.class)
+    @JsonView(Views.UpdateTableOccupancyStatus.class)
+    private TableOccupancyStatus status;
+
+    @NotNull(message = "Type cannot be null")
+    private OccupancyType type;
 
     @Size(max = 255, message = "Notes must not exceed 255 characters")
     private String notes;

@@ -37,6 +37,54 @@ public class GlobalExceptionController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(value = InsufficientPartySizeException.class)
+    protected ResponseEntity<ResponseDTO<Void>> handleInsufficientPartySizeException(InsufficientPartySizeException exception) {
+        log.error("handleInsufficientPartySizeException: {}", exception.getMessage(), exception);
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message(exception.getMessage())
+                .error(exception.getMessage())
+                .build();
+        return ResponseEntity.badRequest()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    @ExceptionHandler(value = InsufficientTimeException.class)
+    protected ResponseEntity<ResponseDTO<Void>> handleInsufficientTimeException(InsufficientTimeException exception) {
+        log.error("handleInsufficientTimeException: {}", exception.getMessage(), exception);
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message(exception.getMessage())
+                .error(exception.getMessage())
+                .build();
+        return ResponseEntity.badRequest()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    @ExceptionHandler(value = TableOccupiedException.class)
+    protected ResponseEntity<ResponseDTO<Void>> handleTableOccupiedException(TableOccupiedException exception) {
+        log.error("handleTableOccupiedException: {}", exception.getMessage(), exception);
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message(exception.getMessage())
+                .error(exception.getMessage())
+                .build();
+        return ResponseEntity.badRequest()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    @ExceptionHandler(value = TableNotAvailableException.class)
+    protected ResponseEntity<ResponseDTO<Void>> handleTableNotAvailableException(TableNotAvailableException exception) {
+        log.error("handleTableNotAvailableException: {}", exception.getMessage(), exception);
+        ResponseDTO<Void> response = ResponseDTO.<Void>builder()
+                .message(exception.getMessage())
+                .error(exception.getMessage())
+                .build();
+        return ResponseEntity.badRequest()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
     @ExceptionHandler(value = TableException.class)
     protected ResponseEntity<ResponseDTO<Void>> handleTableException(TableException exception) {
         log.error("handleTableException: {}", exception.getMessage(), exception);

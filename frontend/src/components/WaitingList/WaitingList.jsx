@@ -3,9 +3,9 @@ import { Clock, Plus, Trash, User, Users } from "lucide-react";
 import { useModal } from "../../context/ModalContext";
 import styles from "./WaitingList.module.css";
 import { formatDate } from "../../utils/datetimeUtils";
-import { useWaitingListActions } from "../../hooks/waitingListHooks";
+import { useTableOccupancyActions, useWaitingListActions } from "../../hooks/tableOccupancyHooks";
 import { useAlert } from "../../context/AlertContext";
-import { WAITING_LIST_STATUSES } from "../../constants/webConstant";
+import { TABLE_OCCUPANCY_STATUSES, TABLE_OCCUPANCY_TYPES } from "../../constants/webConstant";
 
 export function WaitingList({ waitingList, mutate }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -21,17 +21,17 @@ export function WaitingList({ waitingList, mutate }) {
   const { showNewAlert } = useAlert();
 
   const {
-    handleCreateWaitingList,
+    handleCreateTableOccupancy,
     createError,
     createLoading,
     createSuccess,
     resetCreate,
 
-    handleUpdateWaitingListStatus,
+    handleUpdateTableOccupancyStatus,
     updateStatusError,
     updateStatusSuccess,
     resetUpdateStatus,
-  } = useWaitingListActions();
+  } = useTableOccupancyActions();
 
   useEffect(() => {
     setFieldErrors(createError?.fields ?? {});
@@ -94,10 +94,11 @@ export function WaitingList({ waitingList, mutate }) {
       partySize: newCustomer.size,
       phone: newCustomer.phone,
       notes: newCustomer.notes,
+      type: TABLE_OCCUPANCY_TYPES.WALK_IN
     };
 
     try {
-      const res = await handleCreateWaitingList(requestAddCustomer);
+      const res = await handleCreateTableOccupancy(requestAddCustomer);
       if (res) {
         mutate(
           (prevData) => ({
@@ -117,7 +118,7 @@ export function WaitingList({ waitingList, mutate }) {
         variant: "danger",
       });
     }
-  }, [handleCreateWaitingList, newCustomer, showNewAlert, mutate]);
+  }, [handleCreateTableOccupancy, newCustomer, showNewAlert, mutate]);
 
   const showAddCustomerConfirmModal = () => {
     onOpen({
@@ -129,9 +130,9 @@ export function WaitingList({ waitingList, mutate }) {
 
   const handleRemoveCustomer = useCallback(
     async (idToDelete) => {
-      const res = await handleUpdateWaitingListStatus(
+      const res = await handleUpdateTableOccupancyStatus(
         idToDelete,
-        { status: WAITING_LIST_STATUSES.CANCELLED }
+        { status: TABLE_OCCUPANCY_STATUSES.CANCELLED }
       );
       if (res) {
         mutate((prevData) => {
@@ -146,7 +147,7 @@ export function WaitingList({ waitingList, mutate }) {
         mutate();
       }
     },
-    [handleUpdateWaitingListStatus]
+    [handleUpdateTableOccupancyStatus]
   );
 
   const showRemoveCustomerConfirmModal = (id) => {

@@ -9,8 +9,6 @@ public interface OrderDetailService {
 
     OrderDTO addOrderItem(String orderId, RequestOrderDetailsDTO request);
 
-    void updateOrderItemStatus(String orderId, OrderItemStatus status);
-
     void updateOrderItemStatus(String orderId, OrderItemStatus originalStatus, OrderItemStatus statusToUpdate);
 
 }

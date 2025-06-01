@@ -30,7 +30,7 @@ public class ReservationDTO {
     CustomerDTO customer;
     EmployeeDTO employee;
     PaymentDTO payment;
-    ReservationTableDTO table;
+    TableDTO table;
     List<MenuItemDTO> menuItems;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt;

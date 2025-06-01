@@ -105,15 +105,6 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     @Override
     @Transactional
-    public void updateOrderItemStatus(String orderId, OrderItemStatus status) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
-        order.getOrderDetails().forEach(item -> item.setStatus(status));
-        orderRepository.save(order);
-    }
-
-    @Override
-    @Transactional
     public void updateOrderItemStatus(String orderId, OrderItemStatus originalStatus, OrderItemStatus statusToUpdate) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException(Order.class.getSimpleName(), "id", orderId));

@@ -4,14 +4,14 @@ import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
-import com.phucx.phucxfandb.entity.ReservationTable;
+import com.phucx.phucxfandb.entity.TableEntity;
 import com.phucx.phucxfandb.enums.*;
+import com.phucx.phucxfandb.exception.TableNotAvailableException;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
 import com.phucx.phucxfandb.service.reservation.ReservationProcessingService;
-import com.phucx.phucxfandb.service.reservation.ReservationReaderService;
 import com.phucx.phucxfandb.service.reservation.ReservationUpdateService;
-import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
-import com.phucx.phucxfandb.service.table.ReservationTableUpdateService;
+import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
+import com.phucx.phucxfandb.service.table.TableReaderService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
@@ -20,19 +20,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationProcessingServiceImpl implements ReservationProcessingService {
-    private final ReservationReaderService reservationReaderService;
     private final ReservationUpdateService reservationUpdateService;
-    private final ReservationTableUpdateService reservationTableUpdateService;
-    private final ReservationTableReaderService reservationTableReaderService;
+    private final TableReaderService tableReaderService;
+    private final TableOccupancyUpdateService tableOccupancyUpdateService;
     private final SendReservationNotificationService sendReservationNotificationService;
 
     @Override
+    @Transactional
     public ReservationDTO cancelReservation(Authentication authentication, String reservationId) {
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
         if (roleNames.contains(RoleName.CUSTOMER)) {
@@ -84,14 +87,22 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
     @Override
     @Transactional
-    public ReservationDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication) {
+    public ReservationDTO placeReservation(RequestReservationDTO request, Authentication authentication) {
+
+        if (request.getDate().isEqual(LocalDate.now()) && request.getStartTime().isBefore(LocalTime.now())) {
+            throw new IllegalArgumentException("Reservation time cannot be in the past");
+        }
+        if (!request.getEndTime().isAfter(request.getStartTime())) {
+            throw new IllegalArgumentException("End time must be after start time");
+        }
+
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
         ReservationDTO newReservation;
 
         if(roleNames.contains(RoleName.CUSTOMER)){
-            newReservation = this.placeCustomerReservation(authentication.getName(), requestReservationDTO);
+            newReservation = this.placeCustomerReservation(authentication.getName(), request);
         }else if(roleNames.contains(RoleName.EMPLOYEE)){
-            newReservation = this.placeEmployeeReservation(authentication.getName(), requestReservationDTO);
+            newReservation = this.placeEmployeeReservation(authentication.getName(), request);
         } else{
             throw new IllegalArgumentException("Invalid reservation");
         }
@@ -99,38 +110,54 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     @Override
-    public ReservationDTO placeCustomerReservation(String username, RequestReservationDTO requestReservationDTO) {
-        ReservationTable table = reservationTableReaderService.getAvailableTable(
-                requestReservationDTO.getNumberOfGuests(),
-                requestReservationDTO.getDate(),
-                requestReservationDTO.getStartTime(),
-                requestReservationDTO.getEndTime()
-        );
-        requestReservationDTO.setTableId(table.getTableId());
-        return reservationUpdateService.createCustomerReservation(username, requestReservationDTO);
+    public ReservationDTO placeCustomerReservation(String username, RequestReservationDTO request) {
+        long durationMinutes = ChronoUnit.MINUTES.between(request.getStartTime(), request.getEndTime());
+
+        TableEntity table;
+        List<TableEntity> availableTables = tableReaderService.getAvailableTables(
+                request.getDate(), request.getStartTime(), request.getNumberOfGuests(), (int) durationMinutes);
+        if (request.getTableId() != null) {
+            table = availableTables.stream()
+                    .filter(t -> t.getTableId().equals(request.getTableId()))
+                    .findFirst()
+                    .orElseThrow(() -> new TableNotAvailableException("Specified table is not available"));
+        } else {
+            if (availableTables.isEmpty()) {
+                throw new TableNotAvailableException("No suitable table available for the requested time and party size");
+            }
+            table = availableTables.get(0);
+        }
+
+        request.setTableId(table.getTableId());
+        return reservationUpdateService.createCustomerReservation(username, request);
     }
 
     @Override
-    public ReservationDTO placeEmployeeReservation(String username, RequestReservationDTO requestReservationDTO) {
-        ReservationTable table = reservationTableReaderService.getAvailableTable(
-                requestReservationDTO.getNumberOfGuests(),
-                requestReservationDTO.getDate(),
-                requestReservationDTO.getStartTime(),
-                requestReservationDTO.getEndTime()
-        );
-        requestReservationDTO.setTableId(table.getTableId());
+    public ReservationDTO placeEmployeeReservation(String username, RequestReservationDTO request) {
+        long durationMinutes = ChronoUnit.MINUTES.between(request.getStartTime(), request.getEndTime());
 
-        return reservationUpdateService
-                .createEmployeeReservation(username, requestReservationDTO);
+        TableEntity table;
+        List<TableEntity> availableTables = tableReaderService.getAvailableTables(
+                request.getDate(), request.getStartTime(), request.getNumberOfGuests(), (int) durationMinutes);
+        if (request.getTableId() != null) {
+            table = availableTables.stream()
+                    .filter(t -> t.getTableId().equals(request.getTableId()))
+                    .findFirst()
+                    .orElseThrow(() -> new TableNotAvailableException("Specified table is not available"));
+        } else {
+            if (availableTables.isEmpty()) {
+                throw new TableNotAvailableException("No suitable table available for the requested time and party size");
+            }
+            table = availableTables.get(0);
+        }
+
+        request.setTableId(table.getTableId());
+
+        return reservationUpdateService.createEmployeeReservation(username, request);
     }
 
     @Override
     public ReservationDTO completeReservation(String username, String reservationId) {
-        ReservationDTO reservationDTO = reservationReaderService.getReservation(reservationId);
-        reservationTableUpdateService.updateTableStatus(
-                reservationDTO.getTable().getTableId(),
-                TableStatus.UNOCCUPIED
-        );
         return reservationUpdateService.updateReservationStatus(
                 reservationId,
                 ReservationStatus.COMPLETED

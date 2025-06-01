@@ -20,8 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/topics",
-        produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/topics", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Topics", description = "Public and Admin operations for topics")
 public class TopicController {
     private final TopicReaderService topicReaderService;

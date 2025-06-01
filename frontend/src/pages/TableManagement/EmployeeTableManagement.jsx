@@ -1,21 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Clock, Plus, Search } from "lucide-react";
 import { TableGrid } from "../../components/TableGrid/TableGrid";
-import { WaitingList } from "../../components/WaitingList/WaitingList";
 import styles from "./EmployeeTableManagement.module.css";
 import {
+  useAvailableTables,
   useReservationTableActions,
-  useReservationTables,
 } from "../../hooks/tableHooks";
 import {
   TABLE_STATUSES,
-  WAITING_LIST_STATUSES,
+  TABLE_OCCUPANCY_STATUSES,
 } from "../../constants/webConstant";
 import { useAlert } from "../../context/AlertContext";
 import Pagination from "../../components/Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
-import { useWaitingLists } from "../../hooks/waitingListHooks";
+import { useTableOccupancies, useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
+import { WaitingList } from "../../components/WaitingList/WaitingList";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import moment from "moment";
 
 export default function EmployeeTableManagement() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,33 +32,39 @@ export default function EmployeeTableManagement() {
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
-  const { data: tablesData, mutate: mutateTables } = useReservationTables({
+  const now = moment();
+  const currentDate = now.format("YYYY-MM-DD");
+  const currentTime = now.format("HH:mm");
+
+  const { data: tablesData, mutate: mutateTables } = useAvailableTables({
     page: currentPage,
-    search: searchValue,
+    size: 20,
+    date: currentDate,
+    time: currentTime,
   });
   const totalPages = tablesData?.totalPages || 0;
   const tables = useMemo(() => tablesData?.content || [], [tablesData]);
 
   const {
-    data: waitingListsData,
-    error: waitingListsError,
-    mutate: mutateWatingList,
-  } = useWaitingLists({
+    data: tableOccupanciesData,
+    error: tableOccupanciesError,
+    mutate: mutateTableOccupancies,
+  } = useTableOccupancies({
     page: 0,
     size: 20,
-    status: WAITING_LIST_STATUSES.WAITING,
+    status: TABLE_OCCUPANCY_STATUSES.WAITING,
   });
-  const waitingList = useMemo(
-    () => waitingListsData?.content || [],
-    [waitingListsData]
+  const tableOccupancies = useMemo(
+    () => tableOccupanciesData?.content || [],
+    [tableOccupanciesData]
   );
 
   const {
-    handleUpdateReservationTableStatus,
+    handleUpdateTableOccupancyStatus,
     updateStatusError,
     updateStatusSuccess,
     resetUpdateStatus,
-  } = useReservationTableActions();
+  } = useTableOccupancyActions();
 
   const { showNewAlert } = useAlert();
 
@@ -79,17 +86,27 @@ export default function EmployeeTableManagement() {
     }
   }, [updateStatusSuccess, resetUpdateStatus, showNewAlert]);
 
+  const mapStatus = (newStatus) => {
+    switch (newStatus) {
+      case TABLE_STATUSES.CLEANING:
+        return TABLE_OCCUPANCY_STATUSES.CLEANING;
+
+      case TABLE_STATUSES.UNOCCUPIED:
+        return TABLE_OCCUPANCY_STATUSES.COMPLETED;
+
+      default:
+        return null;
+    }
+  };
+
   const updateTableStatus = useCallback(
-    async (tableId, newStatus) => {
-      const res = await handleUpdateReservationTableStatus({
-        id: tableId,
-        status: newStatus,
-      });
+    async (id, tableId, newStatus) => {
+      const res = await handleUpdateTableOccupancyStatus(id, { tableId, status: mapStatus(newStatus) });
       if (res) {
         mutateTables();
       }
     },
-    [handleUpdateReservationTableStatus, mutateTables]
+    [handleUpdateTableOccupancyStatus, mutateTables]
   );
 
   const debouncedSearch = useCallback(
@@ -208,8 +225,8 @@ export default function EmployeeTableManagement() {
                 <TableGrid
                   tables={tables}
                   updateTableStatus={updateTableStatus}
-                  waitingList={waitingList}
-                  mutateWatingList={mutateWatingList}
+                  tableOccupancies={tableOccupancies}
+                  mutateTableOccupancies={mutateTableOccupancies}
                   mutateTables={mutateTables}
                 />
                 <Pagination
@@ -220,7 +237,7 @@ export default function EmployeeTableManagement() {
             </div>
           </div>
 
-          <div className={styles.waitingListSection}>
+          <div className={styles.tableOccupanciesSection}>
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <h2 className={styles.cardTitle}>Waiting List</h2>
@@ -231,14 +248,14 @@ export default function EmployeeTableManagement() {
               </div>
               <div className={styles.cardContent}>
                 <p className={styles.waitingCount}>
-                  {waitingList.length} parties waiting
+                  {tableOccupancies.length} parties waiting
                 </p>
-                {waitingListsError?.message ? (
-                  <ErrorDisplay message={waitingListsError.message} />
+                {tableOccupanciesError?.message ? (
+                  <ErrorDisplay message={tableOccupanciesError.message} />
                 ) : (
                   <WaitingList
-                    waitingList={waitingList}
-                    mutate={mutateWatingList}
+                    waitingList={tableOccupancies}
+                    mutate={mutateTableOccupancies}
                   />
                 )}
               </div>

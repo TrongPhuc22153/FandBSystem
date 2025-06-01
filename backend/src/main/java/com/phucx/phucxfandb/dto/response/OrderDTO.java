@@ -23,7 +23,7 @@ public class OrderDTO {
     LocalDateTime orderDate;
     CustomerDTO customer;
     EmployeeDTO employee;
-    WaitListDTO waitList;
+    TableOccupancyDTO tableOccupancy;
     PaymentDTO payment;
     ShippingAddressDTO shippingAddress;
     OrderType type;

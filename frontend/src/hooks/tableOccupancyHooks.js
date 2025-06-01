@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { createWaitList, fetchWaitListById, fetchWaitLists, updateWaitList, updateWaitListStatus } from "../api/waitingListApi";
-import { WAITLISTS_ENDPOINT } from "../constants/api";
+import { TABLE_OCCUPANCIES_ENDPOINT } from "../constants/api";
 import { SORTING_DIRECTIONS } from "../constants/webConstant";
 import useSWR from "swr";
+import { createTableOccupanncy, fetchTableOccupancies, fetchTableOccupancy, updateTableOccupancy, updateTableOccupancyStatus } from "../api/tableOccupanciesApi";
 
-export const useWaitingLists = ({
+export const useTableOccupancies = ({
   page = 0,
   size = 10,
   direction = SORTING_DIRECTIONS.ASC,
@@ -15,9 +15,9 @@ export const useWaitingLists = ({
   const { token } = useAuth();
 
   return useSWR(
-    token ? [WAITLISTS_ENDPOINT, page, size, direction, field, status, token] : null,
+    token ? [TABLE_OCCUPANCIES_ENDPOINT, page, size, direction, field, status, token] : null,
     () =>
-      fetchWaitLists({
+      fetchTableOccupancies({
         page,
         size,
         direction,
@@ -28,15 +28,15 @@ export const useWaitingLists = ({
   );
 };
 
-export const useWaitingList = ({ id }) => {
+export const useTableOccupancy = ({ id }) => {
   const { token } = useAuth();
 
-  return useSWR(id && token ? [WAITLISTS_ENDPOINT, id, token] : null, () =>
-    fetchWaitListById({ id, token })
+  return useSWR(id && token ? [TABLE_OCCUPANCIES_ENDPOINT, id, token] : null, () =>
+    fetchTableOccupancy({ id, token })
   );
 };
 
-export const useWaitingListActions = () => {
+export const useTableOccupancyActions = () => {
   const { token } = useAuth();
 
   const [createError, setCreateError] = useState(null);
@@ -51,14 +51,14 @@ export const useWaitingListActions = () => {
   const [updateStatusLoading, setUpdateStatusLoading] = useState(false);
   const [updateStatusSuccess, setUpdateStatusSuccess] = useState(null);
 
-  const handleCreateWaitingList = useCallback(
-    async ({ contactName, phone, partySize, notes }) => {
+  const handleCreateTableOccupancy = useCallback(
+    async ({ contactName, phone, partySize, notes, type}) => {
       setCreateError(null);
       setCreateSuccess(null);
       setCreateLoading(true);
       try {
-        const response = await createWaitList({ contactName, phone, partySize, notes, token });
-        setCreateSuccess(response?.message || "WaitingList created successfully");
+        const response = await createTableOccupanncy({ contactName, phone, partySize, notes, type, token });
+        setCreateSuccess(response?.message || "Table occupancy created successfully");
         return response;
       } catch (error) {
         setCreateError(error);
@@ -70,14 +70,14 @@ export const useWaitingListActions = () => {
     [token]
   );
 
-  const handleUpdateWaitingList = useCallback(
+  const handleUpdateTableOccupancy = useCallback(
     async (id, requestData) => {
       setUpdateError(null);
       setUpdateSuccess(null);
       setUpdateLoading(true);
       try {
-        const response = await updateWaitList({ id, requestWaitListDTO: requestData, token });
-        setUpdateSuccess(response?.message || "WaitingList updated successfully");
+        const response = await updateTableOccupancy({ id, data: requestData, token });
+        setUpdateSuccess(response?.message || "Table occupancy updated successfully");
         return response;
       } catch (error) {
         setUpdateError(error);
@@ -89,14 +89,14 @@ export const useWaitingListActions = () => {
     [token]
   );
 
-  const handleUpdateWaitingListStatus = useCallback(
+  const handleUpdateTableOccupancyStatus = useCallback(
     async (id, { status, tableId }) => {
       setUpdateStatusError(null);
       setUpdateStatusSuccess(null);
       setUpdateStatusLoading(true);
       try {
-        const response = await updateWaitListStatus({ id, status, tableId, token });
-        setUpdateStatusSuccess(response?.message || "WaitingList status updated successfully");
+        const response = await updateTableOccupancyStatus({ id, status, tableId, token });
+        setUpdateStatusSuccess(response?.message || "Table occupancy status updated successfully");
         return response;
       } catch (error) {
         setUpdateStatusError(error);
@@ -109,7 +109,7 @@ export const useWaitingListActions = () => {
   );
 
   return {
-    handleCreateWaitingList,
+    handleCreateTableOccupancy,
     createError,
     createLoading,
     createSuccess,
@@ -118,7 +118,7 @@ export const useWaitingListActions = () => {
       setCreateSuccess(null);
     }, []),
 
-    handleUpdateWaitingList,
+    handleUpdateTableOccupancy,
     updateError,
     updateLoading,
     updateSuccess,
@@ -127,7 +127,7 @@ export const useWaitingListActions = () => {
       setUpdateSuccess(null);
     }, []),
 
-    handleUpdateWaitingListStatus,
+    handleUpdateTableOccupancyStatus,
     updateStatusError,
     updateStatusLoading,
     updateStatusSuccess,

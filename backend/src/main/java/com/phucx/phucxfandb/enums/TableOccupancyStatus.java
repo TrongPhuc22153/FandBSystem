@@ -1,8 +1,9 @@
 package com.phucx.phucxfandb.enums;
 
-public enum WaitListStatus {
+public enum TableOccupancyStatus {
     WAITING,
     SEATED,
     COMPLETED,
+    CLEANING,
     CANCELLED
 }

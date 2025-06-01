@@ -4,18 +4,23 @@ import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
 import com.paypal.orders.*;
 import com.phucx.phucxfandb.constant.PayPalConstants;
+import com.phucx.phucxfandb.entity.TableOccupancy;
+import com.phucx.phucxfandb.enums.OrderType;
 import com.phucx.phucxfandb.enums.PaymentStatus;
 import com.phucx.phucxfandb.entity.Payment;
 import com.phucx.phucxfandb.entity.Reservation;
+import com.phucx.phucxfandb.enums.TableOccupancyStatus;
 import com.phucx.phucxfandb.exception.PaymentException;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
 import com.phucx.phucxfandb.service.payment.PaymentReaderService;
 import com.phucx.phucxfandb.service.payment.PaymentUpdateService;
 import com.phucx.phucxfandb.service.payment.PayPalService;
+import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -26,6 +31,7 @@ import java.util.Collections;
 public class PayPalServiceImpl implements PayPalService {
     private final SendReservationNotificationService sendReservationNotificationService;
     private final SendOrderNotificationService sendOrderNotificationService;
+    private final TableOccupancyUpdateService tableOccupancyUpdateService;
     private final PaymentUpdateService paymentUpdateService;
     private final PaymentReaderService paymentReaderService;
     private final PayPalHttpClient client;
@@ -88,12 +94,22 @@ public class PayPalServiceImpl implements PayPalService {
     }
 
     @Override
+    @Transactional
     public void completeOrder(Authentication authentication, String paypalOrderId) {
-        String username = authentication.getName();
         String capturedOrderId = this.captureOrder(paypalOrderId);
         Payment payment = paymentReaderService.getPaymentEntityByPaypalOrderId(capturedOrderId);
         if(payment.getOrder()!=null){
             com.phucx.phucxfandb.entity.Order order = payment.getOrder();
+
+            if(OrderType.DINE_IN.equals(order.getType())){
+                TableOccupancy tableOccupancy = order.getTableOccupancy();
+                tableOccupancyUpdateService.updateTableOccupancyStatus(
+                        tableOccupancy.getId(),
+                        tableOccupancy.getTable().getTableId(),
+                        TableOccupancyStatus.CLEANING
+                );
+            }
+
             sendOrderNotificationService.sendPlaceOrderNotification(
                     authentication,
                     order.getOrderId(),
@@ -103,6 +119,14 @@ public class PayPalServiceImpl implements PayPalService {
             );
         }else if (payment.getReservation()!=null){
             Reservation reservation = payment.getReservation();
+
+            TableOccupancy tableOccupancy = reservation.getTableOccupancy();
+            tableOccupancyUpdateService.updateTableOccupancyStatus(
+                    tableOccupancy.getId(),
+                    tableOccupancy.getTable().getTableId(),
+                    TableOccupancyStatus.CLEANING
+            );
+
             sendReservationNotificationService.sendPlaceReservationNotification(
                     authentication,
                     reservation.getReservationId(),

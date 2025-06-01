@@ -35,7 +35,7 @@ public class Reservation extends Auditable{
 
     @ManyToOne
     @JoinColumn(name = "table_id", nullable = false)
-    private ReservationTable table;
+    private TableEntity table;
 
     @Builder.Default
     @Column(name = "number_of_guests", nullable = false)
@@ -52,6 +52,11 @@ public class Reservation extends Auditable{
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
+    @OneToOne
+    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "table_occupancy_id")
+    private TableOccupancy tableOccupancy;
 
     @Builder.Default
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)

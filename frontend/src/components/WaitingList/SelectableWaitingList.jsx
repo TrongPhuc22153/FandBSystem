@@ -2,10 +2,10 @@ import { useCallback, useEffect } from "react";
 import { Clock, Trash, User, Users } from "lucide-react";
 import { useModal } from "../../context/ModalContext";
 import { useAlert } from "../../context/AlertContext";
-import { WAITING_LIST_STATUSES } from "../../constants/webConstant";
+import { TABLE_OCCUPANCY_STATUSES } from "../../constants/webConstant";
 import styles from "./WaitingList.module.css";
 import { formatDate } from "../../utils/datetimeUtils";
-import { useWaitingListActions } from "../../hooks/waitingListHooks";
+import { useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
 
 export default function SelectableWaitingList({
   waitingList,
@@ -17,11 +17,11 @@ export default function SelectableWaitingList({
   const { showNewAlert } = useAlert();
 
   const {
-    handleUpdateWaitingListStatus,
+    handleUpdateTableOccupancyStatus,
     updateStatusError,
     updateStatusSuccess,
     resetUpdateStatus,
-  } = useWaitingListActions();
+  } = useTableOccupancyActions();
 
   useEffect(() => {
     if (updateStatusError?.message) {
@@ -52,8 +52,8 @@ export default function SelectableWaitingList({
 
   const handleRemoveCustomer = useCallback(
     async (idToDelete) => {
-      const res = await handleUpdateWaitingListStatus(idToDelete, {
-        status: WAITING_LIST_STATUSES.CANCELLED,
+      const res = await handleUpdateTableOccupancyStatus(idToDelete, {
+        status: TABLE_OCCUPANCY_STATUSES.CANCELLED,
       });
       if (res) {
         mutate((prevData) => {
@@ -71,7 +71,7 @@ export default function SelectableWaitingList({
         }
       }
     },
-    [handleUpdateWaitingListStatus, mutate, selectedCustomer]
+    [handleUpdateTableOccupancyStatus, mutate, selectedCustomer]
   );
 
   const showRemoveCustomerConfirmModal = (id) => {

@@ -34,7 +34,7 @@ public class PaymentSpecification {
         return (root, query, criteriaBuilder) -> {
             Join<Payment, Order> orderJoin = root.join("order", JoinType.INNER);
             Join<Order, Customer> customerJoin = orderJoin.join("customer", JoinType.LEFT);
-            Join<Order, WaitList> waitListJoin = orderJoin.join("waitList", JoinType.LEFT);
+            Join<Order, TableOccupancy> waitListJoin = orderJoin.join("waitList", JoinType.LEFT);
 
             return criteriaBuilder.or(
                     criteriaBuilder.like(criteriaBuilder.lower(customerJoin.get("contactName")), searchTerm),
@@ -58,7 +58,7 @@ public class PaymentSpecification {
         return (root, query, criteriaBuilder) -> {
             Join<Payment, Order> orderJoin = root.join("order", JoinType.INNER);
             Join<Order, Customer> customerJoin = orderJoin.join("customer", JoinType.LEFT);
-            Join<Order, WaitList> waitListJoin = orderJoin.join("waitList", JoinType.LEFT);
+            Join<Order, TableOccupancy> waitListJoin = orderJoin.join("waitList", JoinType.LEFT);
 
             return criteriaBuilder.or(
                     criteriaBuilder.like(criteriaBuilder.lower(customerJoin.get("profile").get("phone")), searchTerm),

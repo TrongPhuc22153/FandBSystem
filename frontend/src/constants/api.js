@@ -48,6 +48,7 @@ export const ORDER_ITEMS_ENDPOINT = (id) => `${API_BASE_URL}/api/v1/orders/${id}
 export const ORDER_ITEM_ENDPOINT = (orderId, orderItemId) => `${API_BASE_URL}/api/v1/orders/${orderId}/items/${orderItemId}`;
 
 export const RESERVATION_TABLES_ENDPOINT = `${API_BASE_URL}/api/v1/tables`;
+export const RESERVATION_TABLES_AVAILABILITY_ENDPOINT = `${API_BASE_URL}/api/v1/tables/availability`;
 
 export const RESERVATIONS_ENDPOINT = `${API_BASE_URL}/api/v1/reservations`;
 
@@ -57,6 +58,6 @@ export const CUSTOMER_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/customers/me`;
 export const EMPLOYEE_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/employees`;
 export const EMPLOYEE_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/employees/me`;
 
-export const WAITLISTS_ENDPOINT = `${API_BASE_URL}/api/v1/waitlists`;
+export const TABLE_OCCUPANCIES_ENDPOINT = `${API_BASE_URL}/api/v1/table-occupancies`;
 
 export const PAYMENTS_ENDPOINT = `${API_BASE_URL}/api/v1/payments`;

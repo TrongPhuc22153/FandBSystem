@@ -17,7 +17,6 @@ function AdminUpdateTablePage() {
     tableNumber: null,
     capacity: "",
     location: "",
-    status: "",
   });
 
   const {
@@ -43,7 +42,6 @@ function AdminUpdateTablePage() {
         tableNumber: tableData.tableNumber || null,
         capacity: tableData.capacity || "",
         location: tableData.location || "",
-        status: tableData.status || "",
       });
     }
   }, [tableData, isEditMode]);
@@ -86,11 +84,10 @@ function AdminUpdateTablePage() {
 
   const handleUpdate = useCallback(async () => {
     const data = {
-      tableId: id, // Corrected to use id, not tableId
+      tableId: id,
       tableNumber: tableDetails.tableNumber,
       capacity: tableDetails.capacity,
       location: tableDetails.location,
-      status: tableDetails.status,
     };
 
     const response = await handleUpdateReservationTable(id, data);
@@ -105,7 +102,6 @@ function AdminUpdateTablePage() {
       tableNumber: tableData?.tableNumber || null,
       capacity: tableData?.capacity || "",
       location: tableData?.location || "",
-      status: tableData?.status || "",
     });
     setFieldErrors({});
     resetUpdate();

@@ -8,8 +8,9 @@ import {
   createReservationTable,
   createReservationTablesBulk,
   updateReservationTableStatus,
+  fetchAvailableTables,
 } from "../api/tableApi";
-import { RESERVATION_TABLES_ENDPOINT } from "../constants/api";
+import { RESERVATION_TABLES_AVAILABILITY_ENDPOINT, RESERVATION_TABLES_ENDPOINT } from "../constants/api";
 import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
 // Hook to fetch a single reservation table by ID
@@ -18,6 +19,12 @@ export const useReservationTable = ({ id }) => {
     fetchReservationTableById({ id })
   );
 };
+
+export const useAvailableTables = ({ date, time }) => {
+  return useSWR([RESERVATION_TABLES_AVAILABILITY_ENDPOINT, date, time], () =>
+    fetchAvailableTables({ date, time })
+  );
+}
 
 // Hook to fetch all reservation tables with pagination
 export const useReservationTables = ({

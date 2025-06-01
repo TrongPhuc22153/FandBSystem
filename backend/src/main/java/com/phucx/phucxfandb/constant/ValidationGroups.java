@@ -12,8 +12,10 @@ public class ValidationGroups {
     public interface OrderPayment {}
     public interface ReservationPayment {}
 
-    public interface CreateWaitList{}
-    public interface UpdateWaitList{}
-    public interface UpdateWaitListStatus{}
+    public interface CreateTableOccupancy {}
+    public interface UpdateTableOccupancy{}
+    public interface UpdateTableOccupancyStatus {}
+
+    public interface UpdateTableStatus {};
 
 }

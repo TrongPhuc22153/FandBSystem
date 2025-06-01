@@ -28,7 +28,7 @@ public interface ReservationMapper {
     @Mapping(target = "notes", source = "reservationDTO.notes")
     @Mapping(target = "reservationId", ignore = true)
     @Mapping(target = "payment", ignore = true)
-    Reservation toCustomerReservation(RequestReservationDTO reservationDTO, ReservationTable table, Customer customer);
+    Reservation toCustomerReservation(RequestReservationDTO reservationDTO, TableEntity table, Customer customer);
 
     @Mapping(target = "table", source = "table")
     @Mapping(target = "employee", source = "employee")
@@ -38,5 +38,5 @@ public interface ReservationMapper {
     @Mapping(target = "reservationId", ignore = true)
     @Mapping(target = "payment", ignore = true)
     @Mapping(target = "notes", source = "reservationDTO.notes")
-    Reservation toEmployeeReservation(RequestReservationDTO reservationDTO, ReservationTable table, Employee employee);
+    Reservation toEmployeeReservation(RequestReservationDTO reservationDTO, TableEntity table, Employee employee);
 }

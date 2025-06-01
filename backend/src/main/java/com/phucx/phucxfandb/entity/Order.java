@@ -41,8 +41,8 @@ public class Order extends Auditable{
     private OrderType type;
 
     @OneToOne
-    @JoinColumn(name = "wait_list_id")
-    private WaitList waitList;
+    @JoinColumn(name = "table_occupancy_id")
+    private TableOccupancy tableOccupancy;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 10, nullable = false)

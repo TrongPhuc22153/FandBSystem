@@ -3,13 +3,13 @@ import { Check, ChevronDown, Users } from "lucide-react";
 import styles from "./TableGrid.module.css";
 import {
   TABLE_STATUSES,
-  WAITING_LIST_STATUSES,
+  TABLE_OCCUPANCY_STATUSES,
 } from "../../constants/webConstant";
 import { formatDistanceToNow } from "date-fns";
-import { useWaitingListActions } from "../../hooks/waitingListHooks";
+import { useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
 import { useAlert } from "../../context/AlertContext";
 
-export function TableGrid({ tables, updateTableStatus, waitingList, mutateWaitingList, mutateTables }) {
+export function TableGrid({ tables, updateTableStatus, tableOccupancies, mutateTableOccupancies, mutateTables }) {
   const [selectedTable, setSelectedTable] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -18,10 +18,10 @@ export function TableGrid({ tables, updateTableStatus, waitingList, mutateWaitin
   const { showNewAlert } = useAlert();
 
   const {
-    handleUpdateWaitingListStatus,
+    handleUpdateTableOccupancyStatus,
     updateStatusError,
     resetUpdateStatus,
-  } = useWaitingListActions();
+  } = useTableOccupancyActions();
 
   useEffect(() => {
     if (updateStatusError?.message) {
@@ -40,18 +40,20 @@ export function TableGrid({ tables, updateTableStatus, waitingList, mutateWaitin
 
   const handleStatusChange = (status) => {
     if (selectedTable) {
-      updateTableStatus?.(selectedTable.tableId, status);
+      if(selectedTable?.occupancyId){
+        updateTableStatus?.(selectedTable.occupancyId, selectedTable.tableId, status);
+      }
       setIsDialogOpen(false);
     }
   };
 
   const handleSeatCustomer = async (status) => {
-    const res = await handleUpdateWaitingListStatus(selectedCustomer, {
+    const res = await handleUpdateTableOccupancyStatus(selectedCustomer, {
       status: status,
       tableId: selectedTable.tableId,
     });
     if (res) {
-      mutateWaitingList?.();
+      mutateTableOccupancies?.();
       mutateTables?.();
       setIsDialogOpen(false);
     }
@@ -183,26 +185,6 @@ export function TableGrid({ tables, updateTableStatus, waitingList, mutateWaitin
                   >
                     Available
                   </button>
-                  <button
-                    className={`${styles.actionButton} ${
-                      selectedTable?.status === TABLE_STATUSES.RESERVED
-                        ? styles.activeButton
-                        : ""
-                    } ${styles.reservedButton}`}
-                    onClick={() => handleStatusChange(TABLE_STATUSES.RESERVED)}
-                  >
-                    Reserved
-                  </button>
-                  <button
-                    className={`${styles.actionButton} ${
-                      selectedTable?.status === TABLE_STATUSES.CLEANING
-                        ? styles.activeButton
-                        : ""
-                    } ${styles.cleaningButton}`}
-                    onClick={() => handleStatusChange(TABLE_STATUSES.CLEANING)}
-                  >
-                    Cleaning
-                  </button>
                 </div>
               </div>
               {selectedTable?.status !== TABLE_STATUSES.OCCUPIED && (
@@ -219,7 +201,7 @@ export function TableGrid({ tables, updateTableStatus, waitingList, mutateWaitin
                         aria-label="Select customer to seat"
                       >
                         {selectedCustomer
-                          ? waitingList.find((s) => s.id === selectedCustomer)
+                          ? tableOccupancies.find((s) => s.id === selectedCustomer)
                               ?.contactName
                           : "Select customer"}
                         <ChevronDown
@@ -229,7 +211,7 @@ export function TableGrid({ tables, updateTableStatus, waitingList, mutateWaitin
                       </button>
                       {dropdownOpen && (
                         <div className={styles.dropdownMenu}>
-                          {waitingList
+                          {tableOccupancies
                             .filter(
                               (customer) =>
                                 customer.partySize <= selectedTable.capacity
@@ -296,7 +278,7 @@ export function TableGrid({ tables, updateTableStatus, waitingList, mutateWaitin
                                 />
                               </div>
                             ))}
-                          {waitingList.filter(
+                          {tableOccupancies.filter(
                             (customer) =>
                               customer.partySize <= selectedTable.capacity
                           ).length === 0 && (
@@ -313,7 +295,7 @@ export function TableGrid({ tables, updateTableStatus, waitingList, mutateWaitin
                         !selectedCustomer ? styles.disabled : ""
                       }`}
                       onClick={() =>
-                        handleSeatCustomer(WAITING_LIST_STATUSES.SEATED)
+                        handleSeatCustomer(TABLE_OCCUPANCY_STATUSES.SEATED)
                       }
                       disabled={!selectedCustomer}
                     >

@@ -1,8 +1,12 @@
 package com.phucx.phucxfandb.entity;
 
-import com.phucx.phucxfandb.enums.WaitListStatus;
+import com.phucx.phucxfandb.enums.OccupancyType;
+import com.phucx.phucxfandb.enums.TableOccupancyStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -10,9 +14,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "wait_lists")
+@Table(name = "table_occupancies")
 @EqualsAndHashCode(callSuper = false)
-public class WaitList extends Auditable{
+public class TableOccupancy extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
@@ -34,17 +38,30 @@ public class WaitList extends Auditable{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_id")
-    private ReservationTable table;
+    private TableEntity table;
+
+    @Column(name = "date")
+    private LocalDate date;
+
+    @Column(name = "start_time")
+    private LocalTime startTime;
+
+    @Column(name = "end_time")
+    private LocalTime endTime;
 
     @EqualsAndHashCode.Exclude
-    @OneToOne(mappedBy = "waitList", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "tableOccupancy", fetch = FetchType.LAZY)
     private Order order;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private WaitListStatus status = WaitListStatus.WAITING;
+    private TableOccupancyStatus status = TableOccupancyStatus.WAITING;
 
-    @Column(name = "notes", length = 255)
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OccupancyType type;
+
+    @Column(name = "notes")
     private String notes;
 }

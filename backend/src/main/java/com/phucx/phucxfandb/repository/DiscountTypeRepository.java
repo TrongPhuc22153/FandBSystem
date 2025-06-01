@@ -21,7 +21,4 @@ public interface DiscountTypeRepository extends JpaRepository<DiscountType, Long
 
     @Transactional(readOnly = true)
     boolean existsByDiscountType(String name);
-
-    @Transactional(readOnly = true)
-    Optional<DiscountType> findByDiscountTypeAndIsDeletedFalse(String name);
 }

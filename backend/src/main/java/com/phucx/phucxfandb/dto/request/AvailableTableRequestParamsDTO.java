@@ -6,13 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TableRequestParamsDTODTO extends PaginationParamsDTO {
+public class AvailableTableRequestParamsDTO extends PaginationParamsDTO {
     private String field = "tableNumber";
     private String search;
     private Integer tableNumber;
-    private Boolean isDeleted;
+    private LocalDate date;
+    private LocalTime time;
 }

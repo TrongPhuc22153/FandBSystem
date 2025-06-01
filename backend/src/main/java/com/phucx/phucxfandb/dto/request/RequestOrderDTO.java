@@ -22,8 +22,8 @@ public class RequestOrderDTO {
     @Size(min = 3, max = 36, message = "Employee ID must be between 3 and 36 characters")
     private String employeeId;
 
-    @Size(min = 3, max = 36, message = "Waiting list ID must be between 3 and 36 characters")
-    private String waitingListId;
+    @Size(min = 3, max = 36, message = "Table occupancy ID must be between 3 and 36 characters")
+    private String tableOccupancyId;
 
     @NotNull(message = "Order type cannot be null")
     private OrderType type;

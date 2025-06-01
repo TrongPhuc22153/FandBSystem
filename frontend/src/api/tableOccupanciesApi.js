@@ -1,7 +1,7 @@
-import { WAITLISTS_ENDPOINT } from "../constants/api";
+import { TABLE_OCCUPANCIES_ENDPOINT } from "../constants/api";
 import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
-export const fetchWaitLists = async ({ page = 0, size = 10, direction = SORTING_DIRECTIONS.ASC, field = "createdAt", status, token }) => {
+export const fetchTableOccupancies = async ({ page = 0, size = 10, direction = SORTING_DIRECTIONS.ASC, field = "createdAt", status, token }) => {
     const queryParams = new URLSearchParams({
         ...(status && { status }),
         page,
@@ -10,7 +10,7 @@ export const fetchWaitLists = async ({ page = 0, size = 10, direction = SORTING_
         field
     }).toString();
 
-    const url = `${WAITLISTS_ENDPOINT}${queryParams ? `?${queryParams}` : ''}`;
+    const url = `${TABLE_OCCUPANCIES_ENDPOINT}${queryParams ? `?${queryParams}` : ''}`;
 
     const response = await fetch(url, {
         method: 'GET',
@@ -27,8 +27,8 @@ export const fetchWaitLists = async ({ page = 0, size = 10, direction = SORTING_
     return response.json();
 };
 
-export const fetchWaitListById = async ({ id, token }) => {
-    const response = await fetch(`${WAITLISTS_ENDPOINT}/${id}`, {
+export const fetchTableOccupancy = async ({ id, token }) => {
+    const response = await fetch(`${TABLE_OCCUPANCIES_ENDPOINT}/${id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -43,14 +43,14 @@ export const fetchWaitListById = async ({ id, token }) => {
     return response.json();
 };
 
-export const updateWaitList = async ({ id, requestWaitListDTO, token }) => {
-    const response = await fetch(`${WAITLISTS_ENDPOINT}/${id}`, {
+export const updateTableOccupancy = async ({ id, data, token }) => {
+    const response = await fetch(`${TABLE_OCCUPANCIES_ENDPOINT}/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(requestWaitListDTO),
+        body: JSON.stringify(data),
     });
 
     if (!response.ok) {
@@ -59,8 +59,8 @@ export const updateWaitList = async ({ id, requestWaitListDTO, token }) => {
     return response.json();
 };
 
-export const createWaitList = async ({ contactName, phone, partySize, notes, token }) => {
-    const response = await fetch(WAITLISTS_ENDPOINT, {
+export const createTableOccupanncy = async ({ contactName, phone, partySize, notes, type, token }) => {
+    const response = await fetch(TABLE_OCCUPANCIES_ENDPOINT, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -70,7 +70,8 @@ export const createWaitList = async ({ contactName, phone, partySize, notes, tok
             contactName,
             phone,
             partySize,
-            notes
+            notes,
+            type
         }),
     });
 
@@ -80,8 +81,8 @@ export const createWaitList = async ({ contactName, phone, partySize, notes, tok
     return response.json();
 };
 
-export const updateWaitListStatus = async ({ id, status, tableId, token }) => {
-    const response = await fetch(`${WAITLISTS_ENDPOINT}/${id}`, {
+export const updateTableOccupancyStatus = async ({ id, status, tableId, token }) => {
+    const response = await fetch(`${TABLE_OCCUPANCIES_ENDPOINT}/${id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

@@ -11,21 +11,21 @@ import org.mapstruct.Named;
 public interface OrderMapper {
 
     @Mapping(target = "payment", qualifiedByName = "toPaymentDTO")
-    @Mapping(target = "waitList.order", ignore = true)
+    @Mapping(target = "tableOccupancy.order", ignore = true)
     @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")
     OrderDTO toOrderDTO(Order order);
 
     @Named("toOrderListEntryDTO")
     @Mapping(target = "payment", ignore = true)
-    @Mapping(target = "waitList.order", ignore = true)
+    @Mapping(target = "tableOccupancy.order", ignore = true)
     @Mapping(target = "orderDetails", qualifiedByName = {"toOrderDetailsDTO"})
     @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "shippingAddress", ignore = true)
     OrderDTO toOrderListEntryDTO(Order order);
 
-    @Mapping(target = "waitList", ignore = true)
+    @Mapping(target = "tableOccupancy", ignore = true)
     @Mapping(target = "totalPrice", ignore = true)
     @Mapping(target = "orderId", ignore = true)
     @Mapping(target = "orderDate", expression = "java(java.time.LocalDateTime.now())")
@@ -37,11 +37,12 @@ public interface OrderMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "type", source = "request.type")
     @Mapping(target = "shippingAddress", source = "shippingAddress")
     @Mapping(target = "payment", ignore = true)
-    Order toCustomerOrder(RequestOrderDTO order, Customer customer, ShippingAddress shippingAddress);
+    Order toCustomerOrder(RequestOrderDTO request, Customer customer, ShippingAddress shippingAddress);
 
-    @Mapping(target = "waitList", source = "waitList")
+    @Mapping(target = "tableOccupancy", source = "tableOccupancy")
     @Mapping(target = "totalPrice", ignore = true)
     @Mapping(target = "orderId", ignore = true)
     @Mapping(target = "orderDate", expression = "java(java.time.LocalDateTime.now())")
@@ -54,6 +55,7 @@ public interface OrderMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "payment", ignore = true)
+    @Mapping(target = "type", source = "request.type")
     @Mapping(target = "shippingAddress", ignore = true)
-    Order toEmployeeOrder(RequestOrderDTO orderDTO, Employee employee, WaitList waitList);
+    Order toEmployeeOrder(RequestOrderDTO request, Employee employee, TableOccupancy tableOccupancy);
 }

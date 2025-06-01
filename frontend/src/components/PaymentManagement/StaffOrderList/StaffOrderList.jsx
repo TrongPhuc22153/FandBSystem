@@ -34,7 +34,7 @@ const StaffOrderList = ({ payments = [], onProceedToCheckout }) => {
               {payments.map((payment, index) => (
                 <tr key={index} className={styles.tableRow}>
                   <td>{payment.paymentId}</td>
-                  <td>{payment?.order?.waitList?.table.tableNumber || 'N/A'}</td>
+                  <td>{payment?.order?.tableOccupancy?.table.tableNumber || 'N/A'}</td>
                   <td>{new Date(payment.paymentDate).toLocaleString()}</td>
                   <td className={styles.totalAmount}>${payment.amount.toFixed(2)}</td>
                   <td><Badge bg={ORDER_TYPE_CLASSES[payment.order.type]}>{payment.order.type}</Badge></td>

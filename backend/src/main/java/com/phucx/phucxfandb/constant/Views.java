@@ -10,7 +10,9 @@ public class Views {
 
     public interface UpdateUserEnabledStatus extends Default{}
 
-    public interface CreateWaitList extends Default{}
-    public interface UpdateWaitList extends Default{}
-    public interface UpdateWaitListStatus extends Default{}
+    public interface CreateTableOccupancy extends Default{}
+    public interface UpdateTableOccupancy extends Default{}
+    public interface UpdateTableOccupancyStatus extends Default{}
+
+    public interface UpdateTableStatus extends Default{};
 }

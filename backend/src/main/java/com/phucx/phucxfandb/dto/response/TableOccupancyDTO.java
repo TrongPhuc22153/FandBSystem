@@ -2,7 +2,7 @@ package com.phucx.phucxfandb.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.phucx.phucxfandb.enums.WaitListStatus;
+import com.phucx.phucxfandb.enums.TableOccupancyStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Value
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WaitListDTO {
+public class TableOccupancyDTO {
     String id;
 
     String contactName;
@@ -20,13 +20,19 @@ public class WaitListDTO {
 
     Integer partySize;
 
-    WaitListStatus status;
+    TableOccupancyStatus status;
 
     String notes;
 
     OrderDTO order;
 
-    ReservationTableDTO table;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime occupancyStartTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime occupancyEndTime;
+
+    TableDTO table;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt;

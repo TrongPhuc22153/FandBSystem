@@ -15,8 +15,6 @@ import java.util.Optional;
 
 @Repository
 public interface NotificationUserRepository extends JpaRepository<NotificationUser, String>, JpaSpecificationExecutor<NotificationUser> {
-    @EntityGraph(attributePaths = {"notification", "notification.topic"})
-    Page<NotificationUser> findByReceiverUsername(String username, Pageable pageable);
 
     @EntityGraph(attributePaths = {"notification", "notification.topic"})
     Optional<NotificationUser> findByReceiverUsernameAndId(String username, String id);

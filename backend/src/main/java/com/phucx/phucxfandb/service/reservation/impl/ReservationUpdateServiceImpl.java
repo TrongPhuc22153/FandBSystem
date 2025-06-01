@@ -13,7 +13,7 @@ import com.phucx.phucxfandb.service.employee.EmployeeReaderService;
 import com.phucx.phucxfandb.service.product.ProductReaderService;
 import com.phucx.phucxfandb.service.product.ProductUpdateService;
 import com.phucx.phucxfandb.service.reservation.ReservationUpdateService;
-import com.phucx.phucxfandb.service.table.ReservationTableReaderService;
+import com.phucx.phucxfandb.service.table.TableReaderService;
 import com.phucx.phucxfandb.utils.PriceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
     private final CustomerReaderService customerReaderService;
     private final EmployeeReaderService employeeReaderService;
     private final ReservationRepository reservationRepository;
-    private final ReservationTableReaderService reservationTableReaderService;
+    private final TableReaderService tableReaderService;
     private final ProductReaderService productReaderService;
     private final ProductUpdateService productUpdateService;
     private final ReservationMapper reservationMapper;
@@ -41,8 +41,8 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
     @Transactional
     public ReservationDTO createCustomerReservation(String username, RequestReservationDTO requestReservationDTO) {
         Customer customer = customerReaderService.getCustomerEntityByUsername(username);
-        ReservationTable table = reservationTableReaderService
-                .getReservationTableEntity(requestReservationDTO.getTableId());
+        TableEntity table = tableReaderService
+                .getTableEntity(requestReservationDTO.getTableId());
 
         Reservation newReservation = reservationMapper.toCustomerReservation(
                 requestReservationDTO,
@@ -81,8 +81,8 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
     @Transactional
     public ReservationDTO createEmployeeReservation(String username, RequestReservationDTO requestReservationDTO) {
         Employee employee = employeeReaderService.getEmployeeEntityByUsername(username);
-        ReservationTable table = reservationTableReaderService
-                .getReservationTableEntity(requestReservationDTO.getTableId());
+        TableEntity table = tableReaderService
+                .getTableEntity(requestReservationDTO.getTableId());
 
         Reservation newReservation = reservationMapper.toEmployeeReservation(
                 requestReservationDTO,
