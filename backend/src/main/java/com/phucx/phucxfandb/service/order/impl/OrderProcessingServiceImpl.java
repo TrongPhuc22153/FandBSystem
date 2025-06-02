@@ -3,11 +3,14 @@ package com.phucx.phucxfandb.service.order.impl;
 import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
+import com.phucx.phucxfandb.entity.Order;
+import com.phucx.phucxfandb.entity.OrderDetail;
 import com.phucx.phucxfandb.enums.*;
 import com.phucx.phucxfandb.service.cart.CartUpdateService;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.service.order.OrderDetailService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
+import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
@@ -16,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.EnumSet;
 import java.util.List;
 
 @Service
@@ -23,14 +27,17 @@ import java.util.List;
 public class OrderProcessingServiceImpl implements OrderProcessingService {
     private final CartUpdateService cartUpdateService;
     private final OrderUpdateService orderUpdateService;
+    private final OrderReaderService orderReaderService;
     private final OrderDetailService orderDetailService;
     private final SendOrderNotificationService sendOrderNotificationService;
 
     @Override
     @Transactional
     public OrderDTO cancelOrderByEmployee(String username, String orderId, OrderType type) {
+        validateOrder(orderId, type);
+
         OrderDTO orderDTO = orderUpdateService.updateOrderStatusByEmployee(username, orderId, type, OrderStatus.CANCELLED);
-        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PENDING, OrderItemStatus.CANCELED);
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
                 username,
@@ -51,8 +58,10 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Override
     @Transactional
     public OrderDTO cancelOrderByCustomer(String username, String orderId, OrderType type) {
+        validateOrder(orderId, type);
+
         OrderDTO orderDTO = orderUpdateService.updateOrderStatusByCustomer(username, orderId, type, OrderStatus.CANCELLED);
-        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PENDING, OrderItemStatus.CANCELED);
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
                 username,
@@ -68,6 +77,19 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
         );
 
         return orderDTO;
+    }
+
+    private void validateOrder(String orderId, OrderType type){
+        Order order = orderReaderService.getOrderEntity(orderId, type);
+        if(!OrderStatus.PENDING.equals(order.getStatus())){
+            throw new IllegalStateException("Cannot cancel in process order");
+        }
+
+        for (OrderDetail itemToCancel: order.getOrderDetails()){
+            if (!EnumSet.of(OrderItemStatus.PENDING, OrderItemStatus.PREPARING).contains(itemToCancel.getStatus())) {
+                throw new IllegalStateException("Only items in PENDING or PREPARING status can be canceled.");
+            }
+        }
     }
 
     @Override

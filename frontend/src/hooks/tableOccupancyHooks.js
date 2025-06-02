@@ -52,12 +52,20 @@ export const useTableOccupancyActions = () => {
   const [updateStatusSuccess, setUpdateStatusSuccess] = useState(null);
 
   const handleCreateTableOccupancy = useCallback(
-    async ({ contactName, phone, partySize, notes, type}) => {
+    async ({ contactName, phone, partySize, notes, type, reservationId }) => {
       setCreateError(null);
       setCreateSuccess(null);
       setCreateLoading(true);
       try {
-        const response = await createTableOccupanncy({ contactName, phone, partySize, notes, type, token });
+        const response = await createTableOccupanncy({ 
+          contactName, 
+          phone, 
+          partySize, 
+          notes, 
+          reservationId,
+          type, 
+          token 
+        });
         setCreateSuccess(response?.message || "Table occupancy created successfully");
         return response;
       } catch (error) {

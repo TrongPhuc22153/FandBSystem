@@ -225,11 +225,14 @@
     background-color: rgba(245, 158, 11, 0.1);
 }
 
+.completeButton,
 .cleaningButton {
     border-color: #3b82f6;
     color: #3b82f6;
 }
 
+.completeButton:hover,
+.completeButton.activeButton,
 .cleaningButton:hover,
 .cleaningButton.activeButton {
     background-color: rgba(59, 130, 246, 0.1);

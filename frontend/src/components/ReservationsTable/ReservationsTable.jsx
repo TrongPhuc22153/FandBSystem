@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import styles from "./kitchen-table.module.css";
 import ReservationDetailModal from "./ReservationDetailModal";
 import {
+  RESERVATION_ACTIONS,
   RESERVATION_STATUS_CLASSES,
   RESERVATION_STATUSES,
   SORTING_DIRECTIONS,
@@ -256,7 +257,7 @@ export default function ReservationsTable() {
                           onClick={() =>
                             showConfirmModal(
                               reservation.reservationId,
-                              RESERVATION_STATUSES.PREPARING
+                              RESERVATION_ACTIONS.PREPARING
                             )
                           }
                         >
@@ -270,7 +271,7 @@ export default function ReservationsTable() {
                           onClick={() =>
                             showConfirmModal(
                               reservation.reservationId,
-                              RESERVATION_STATUSES.PREPARED
+                              RESERVATION_ACTIONS.READY
                             )
                           }
                         >
@@ -283,7 +284,7 @@ export default function ReservationsTable() {
                           onClick={() =>
                             showConfirmModal(
                               reservation.reservationId,
-                              RESERVATION_STATUSES.COMPLETED
+                              RESERVATION_ACTIONS.COMPLETE
                             )
                           }
                         >

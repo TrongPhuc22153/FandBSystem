@@ -3,7 +3,7 @@ import { Clock, Plus, Trash, User, Users } from "lucide-react";
 import { useModal } from "../../context/ModalContext";
 import styles from "./WaitingList.module.css";
 import { formatDate } from "../../utils/datetimeUtils";
-import { useTableOccupancyActions, useWaitingListActions } from "../../hooks/tableOccupancyHooks";
+import { useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
 import { useAlert } from "../../context/AlertContext";
 import { TABLE_OCCUPANCY_STATUSES, TABLE_OCCUPANCY_TYPES } from "../../constants/webConstant";
 
@@ -15,6 +15,7 @@ export function WaitingList({ waitingList, mutate }) {
     phone: "",
     notes: "",
   });
+  const [editingCustomerId, setEditingCustomerId] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
 
   const { onOpen } = useModal();
@@ -22,26 +23,31 @@ export function WaitingList({ waitingList, mutate }) {
 
   const {
     handleCreateTableOccupancy,
-    createError,
     createLoading,
     createSuccess,
+    createError,
     resetCreate,
 
     handleUpdateTableOccupancyStatus,
     updateStatusError,
     updateStatusSuccess,
     resetUpdateStatus,
+    
+    handleUpdateTableOccupancy,
+    updateError,
+    updateSuccess,
+    resetUpdate,
   } = useTableOccupancyActions();
 
   useEffect(() => {
-    setFieldErrors(createError?.fields ?? {});
-    if (createError?.message || updateStatusError?.message) {
+    setFieldErrors(createError?.fields ?? updateError?.fields ?? {});
+    if (createError?.message || updateError?.message || updateStatusError?.message) {
       showNewAlert({
-        message: createError.message || updateStatusError.message,
+        message: createError?.message || updateError?.message || updateStatusError?.message,
         variant: "danger",
       });
     }
-  }, [createError, updateStatusError, showNewAlert]);
+  }, [createError, updateError, updateStatusError, showNewAlert]);
 
   useEffect(() => {
     if (updateStatusSuccess) {
@@ -56,15 +62,23 @@ export function WaitingList({ waitingList, mutate }) {
         action: resetCreate,
       });
     }
+    if (updateSuccess) {
+      showNewAlert({
+        message: updateSuccess,
+        action: resetUpdate,
+      });
+    }
   }, [
     createSuccess,
+    updateSuccess,
     updateStatusSuccess,
     showNewAlert,
     resetCreate,
+    resetUpdate,
     resetUpdateStatus,
   ]);
 
-  const handleAddCustomer = useCallback(async () => {
+  const handleCustomerInWaitingList = useCallback(async () => {
     const errors = {};
     if (!newCustomer.name) {
       errors.contactName = ["Customer name is required"];
@@ -89,7 +103,7 @@ export function WaitingList({ waitingList, mutate }) {
       return;
     }
 
-    const requestAddCustomer = {
+    const requestCustomer = {
       contactName: newCustomer.name,
       partySize: newCustomer.size,
       phone: newCustomer.phone,
@@ -98,33 +112,50 @@ export function WaitingList({ waitingList, mutate }) {
     };
 
     try {
-      const res = await handleCreateTableOccupancy(requestAddCustomer);
-      if (res) {
-        mutate(
-          (prevData) => ({
-            ...prevData,
-            content: [...(prevData?.content || []), res],
-          }),
-          false
-        );
-        mutate();
-        setNewCustomer({ name: "", size: 2, phone: "", notes: "" });
-        setFieldErrors({});
-        setIsDialogOpen(false); 
+      if (editingCustomerId) {
+        const res = await handleUpdateTableOccupancy(editingCustomerId, requestCustomer);
+        if (res) {
+          mutate(
+            (prevData) => ({
+              ...prevData,
+              content: prevData.content.map((customer) =>
+                customer.id === editingCustomerId ? { ...customer, ...res } : customer
+              ),
+            }),
+            false
+          );
+          mutate();
+        }
+      } else {
+        const res = await handleCreateTableOccupancy(requestCustomer);
+        if (res) {
+          mutate(
+            (prevData) => ({
+              ...prevData,
+              content: [...(prevData?.content || []), res],
+            }),
+            false
+          );
+          mutate();
+        }
       }
+      setNewCustomer({ name: "", size: 2, phone: "", notes: "" });
+      setFieldErrors({});
+      setIsDialogOpen(false);
+      setEditingCustomerId(null);
     } catch (error) {
       showNewAlert({
-        message: "Failed to add customer. Please try again.",
+        message: editingCustomerId ? "Failed to update customer. Please try again." : "Failed to add customer. Please try again.",
         variant: "danger",
       });
     }
-  }, [handleCreateTableOccupancy, newCustomer, showNewAlert, mutate]);
+  }, [handleCreateTableOccupancy, handleUpdateTableOccupancy, newCustomer, showNewAlert, mutate, editingCustomerId]);
 
-  const showAddCustomerConfirmModal = () => {
+  const showCustomerConfirmModal = () => {
     onOpen({
-      title: "Add customer",
-      message: "Do you want to add new customer?",
-      onYes: handleAddCustomer,
+      title: editingCustomerId ? "Update customer" : "Add customer",
+      message: editingCustomerId ? "Do you want to update this customer?" : "Do you want to add new customer?",
+      onYes: handleCustomerInWaitingList,
     });
   };
 
@@ -147,7 +178,7 @@ export function WaitingList({ waitingList, mutate }) {
         mutate();
       }
     },
-    [handleUpdateTableOccupancyStatus]
+    [handleUpdateTableOccupancyStatus, mutate]
   );
 
   const showRemoveCustomerConfirmModal = (id) => {
@@ -158,11 +189,26 @@ export function WaitingList({ waitingList, mutate }) {
     });
   };
 
+  const handleEditCustomer = useCallback((customer) => {
+    setNewCustomer({
+      name: customer.contactName,
+      size: customer.partySize,
+      phone: customer.phone,
+      notes: customer.notes || "",
+    });
+    setEditingCustomerId(customer.id);
+    setIsDialogOpen(true);
+  }, []);
+
   return (
     <div className={styles.container}>
       <button
         className={styles.addButton}
-        onClick={() => setIsDialogOpen(true)}
+        onClick={() => {
+          setNewCustomer({ name: "", size: 2, phone: "", notes: "" });
+          setEditingCustomerId(null);
+          setIsDialogOpen(true);
+        }}
       >
         <Plus size={16} className={styles.plusIcon} />
         Add to Waiting List
@@ -173,7 +219,12 @@ export function WaitingList({ waitingList, mutate }) {
           <div className={styles.emptyState}>No customers waiting</div>
         ) : (
           waitingList.map((customer) => (
-            <div key={customer.id} className={styles.customerCard}>
+            <div
+              key={customer.id}
+              className={styles.customerCard}
+              onClick={() => handleEditCustomer(customer)}
+              style={{ cursor: "pointer" }}
+            >
               <div className={styles.cardHeader}>
                 <div>
                   <h4 className={styles.customerName}>
@@ -186,7 +237,10 @@ export function WaitingList({ waitingList, mutate }) {
                 </div>
                 <button
                   className={styles.removeButton}
-                  onClick={() => showRemoveCustomerConfirmModal(customer.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    showRemoveCustomerConfirmModal(customer.id);
+                  }}
                 >
                   <Trash size={16} />
                   <span className={styles.srOnly}>Remove</span>
@@ -211,16 +265,26 @@ export function WaitingList({ waitingList, mutate }) {
       {isDialogOpen && (
         <div
           className={styles.modalOverlay}
-          onClick={() => setIsDialogOpen(false)}
+          onClick={() => {
+            setIsDialogOpen(false);
+            setEditingCustomerId(null);
+            setNewCustomer({ name: "", size: 2, phone: "", notes: "" });
+          }}
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>Add to Waiting List</h2>
+              <h2 className={styles.modalTitle}>
+                {editingCustomerId ? "Edit Customer" : "Add to Waiting List"}
+              </h2>
               <button
                 className={styles.closeButton}
-                onClick={() => setIsDialogOpen(false)}
+                onClick={() => {
+                  setIsDialogOpen(false);
+                  setEditingCustomerId(null);
+                  setNewCustomer({ name: "", size: 2, phone: "", notes: "" });
+                }}
               >
-                &times;
+                ×
               </button>
             </div>
             <div className={styles.modalBody}>
@@ -315,16 +379,20 @@ export function WaitingList({ waitingList, mutate }) {
             <div className={styles.modalFooter}>
               <button
                 className={styles.cancelButton}
-                onClick={() => setIsDialogOpen(false)}
+                onClick={() => {
+                  setIsDialogOpen(false);
+                  setEditingCustomerId(null);
+                  setNewCustomer({ name: "", size: 2, phone: "", notes: "" });
+                }}
               >
                 Cancel
               </button>
               <button
                 className={styles.submitButton}
-                onClick={showAddCustomerConfirmModal}
+                onClick={showCustomerConfirmModal}
                 disabled={createLoading}
               >
-                Add to List
+                {editingCustomerId ? "Update" : "Add to List"}
               </button>
             </div>
           </div>

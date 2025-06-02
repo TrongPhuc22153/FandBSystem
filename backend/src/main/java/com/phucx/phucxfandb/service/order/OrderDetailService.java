@@ -11,4 +11,8 @@ public interface OrderDetailService {
 
     void updateOrderItemStatus(String orderId, OrderItemStatus originalStatus, OrderItemStatus statusToUpdate);
 
+    void updateOrderItemStatus(String orderId, OrderItemStatus status);
+
+    void cancelOrderItem(String orderId, String orderItemId);
+
 }

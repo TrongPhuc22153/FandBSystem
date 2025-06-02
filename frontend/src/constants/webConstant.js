@@ -29,6 +29,7 @@ export const ORDER_TYPE_CLASSES = {
     TAKE_AWAY: "success",
     DEFAULT: "secondary"
 }
+
 export const ORDER_ITEM_STATUS_CLASSES = {
     CANCELLED: "danger",
     PENDING: "danger",
@@ -36,6 +37,14 @@ export const ORDER_ITEM_STATUS_CLASSES = {
     PREPARED: "success",
     COMPLETED: "secondary",
     DEFAULT: "primary"
+}
+
+export const ORDER_ITEM_STATUSES = {
+    CANCELLED: "CANCELLED",
+    PENDING: "PENDING",
+    PREPARING: "PREPARING",
+    PREPARED: "PREPARED",
+    COMPLETED: "COMPLETED"
 }
 
 export const ORDER_ACTIONS = {

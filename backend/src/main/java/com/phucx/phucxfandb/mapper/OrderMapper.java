@@ -12,6 +12,7 @@ public interface OrderMapper {
 
     @Mapping(target = "payment", qualifiedByName = "toPaymentDTO")
     @Mapping(target = "tableOccupancy.order", ignore = true)
+    @Mapping(target = "tableOccupancy.reservation", ignore = true)
     @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")
     OrderDTO toOrderDTO(Order order);
@@ -19,6 +20,7 @@ public interface OrderMapper {
     @Named("toOrderListEntryDTO")
     @Mapping(target = "payment", ignore = true)
     @Mapping(target = "tableOccupancy.order", ignore = true)
+    @Mapping(target = "tableOccupancy.reservation", ignore = true)
     @Mapping(target = "orderDetails", qualifiedByName = {"toOrderDetailsDTO"})
     @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")

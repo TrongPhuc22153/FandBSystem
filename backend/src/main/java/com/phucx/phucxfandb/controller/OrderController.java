@@ -118,6 +118,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/items/{orderItemId}")
+    @Operation(summary = "Update order item quantity", description = "Employee access")
     public ResponseEntity<ResponseDTO<OrderDTO>> updateOrderItemQuantity(
             @PathVariable String orderId,
             @PathVariable String orderItemId,
@@ -127,6 +128,19 @@ public class OrderController {
         ResponseDTO<OrderDTO> responseDTO = ResponseDTO.<OrderDTO>builder()
                 .message("Order item updated successfully")
                 .data(updatedOrder)
+                .build();
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @DeleteMapping("/{orderId}/items/{orderItemId}")
+    @Operation(summary = "Cancel order item", description = "Employee access")
+    public ResponseEntity<ResponseDTO<Void>> cancelOrderItem(
+            @PathVariable String orderId,
+            @PathVariable String orderItemId){
+        orderDetailService.cancelOrderItem(orderId, orderItemId);
+        ResponseDTO<Void> responseDTO = ResponseDTO.<Void>builder()
+                .message("Order item cancelled successfully")
                 .build();
 
         return ResponseEntity.ok(responseDTO);

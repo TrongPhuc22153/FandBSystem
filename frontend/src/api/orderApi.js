@@ -105,6 +105,22 @@ export const fetchUserOrders = async ({
   return response.json();
 };
 
+// Cancel order item
+export const cancelOrderItem = async ({ token, orderId, orderItemId }) => {
+  const response = await fetch(ORDER_ITEM_ENDPOINT(orderId, orderItemId), {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};
+
 // Place a new order
 export const placeOrder = async ({ token, requestOrderDTO }) => {
   const response = await fetch(ORDERS_ENDPOINT, {

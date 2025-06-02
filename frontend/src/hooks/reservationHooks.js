@@ -17,12 +17,21 @@ export const useReservation = ({ reservationId } = {}) => {
 };
 
 // Hook for fetching multiple reservations
-export const useReservations = ({ page = 0, size = 10, sortBy = "startTime", direction = SORTING_DIRECTIONS.ASC, status } = {}) => {
+export const useReservations = ({ page = 0, size = 10, sortBy = "startTime", direction = SORTING_DIRECTIONS.ASC, status, startDate, endDate } = {}) => {
   const { token } = useAuth();
   const fetcher = useCallback(() => {
     if (!token) return null;
-    return fetchReservations({ token: token, page: page, size: size, field: sortBy, direction: direction, status: status });
-  }, [token, page, size, status, sortBy, direction]);
+    return fetchReservations({ 
+      token: token, 
+      page: page, 
+      size: size, 
+      field: sortBy, 
+      direction: direction, 
+      status: status,
+      startDate: startDate,
+      endDate: endDate
+    });
+  }, [token, page, size, status, sortBy, direction, startDate, endDate ]);
 
   return useSWR(['reservations', page, size, status, sortBy, direction], fetcher);
 };

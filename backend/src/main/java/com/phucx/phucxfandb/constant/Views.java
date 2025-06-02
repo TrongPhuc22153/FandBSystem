@@ -14,5 +14,7 @@ public class Views {
     public interface UpdateTableOccupancy extends Default{}
     public interface UpdateTableOccupancyStatus extends Default{}
 
-    public interface UpdateTableStatus extends Default{};
+    public interface UpdateTableStatus extends Default{}
+
+    public interface UpdateOrderItemStatus extends Default{}
 }

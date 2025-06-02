@@ -72,6 +72,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.POST, Admin.POST).hasRole(RoleName.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT, Employee.PUT).hasRole(RoleName.EMPLOYEE.name())
                 .requestMatchers(HttpMethod.PUT, Admin.PUT).hasRole(RoleName.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE, Employee.DELETE).hasRole(RoleName.EMPLOYEE.name())
                 .anyRequest().authenticated());
 
         http.exceptionHandling(ex -> ex

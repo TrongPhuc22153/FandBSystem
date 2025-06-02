@@ -1,7 +1,7 @@
-import { Badge } from "react-bootstrap";
-import { ORDER_ACTIONS, ORDER_ITEM_STATUS_CLASSES, ORDER_STATUS_CLASSES, ORDER_STATUSES } from "../../constants/webConstant";
+import { Badge, Button } from "react-bootstrap";
+import { ORDER_ACTIONS, ORDER_ITEM_STATUS_CLASSES, ORDER_ITEM_STATUSES, ORDER_STATUS_CLASSES, ORDER_STATUSES } from "../../constants/webConstant";
 
-export default function OrderDetailModal({ order, onClose, onUpdateStatus }) {
+export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCancelOrderItem }) {
   if (!order) return null;
 
   const getNextAction = (currentStatus) => {
@@ -48,10 +48,10 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus }) {
               <div className="col-md-6">
                 <h6>Customer Information</h6>
                 <p className="mb-1">
-                  <strong>Name:</strong> {order?.customer?.profile.user.username || order?.tableOccupancy.contactName || "UNKNOW"}
+                  <strong>Name:</strong> {order?.customer?.profile.user.username || order?.tableOccupancy?.contactName || "UNKNOW"}
                 </p>
                 <p className="mb-1">
-                  <strong>Table:</strong> {order?.tableOccupancy.table.tableNumber}
+                  <strong>Table:</strong> {order?.tableOccupancy?.table?.tableNumber}
                 </p>
                 <p className="mb-1">
                   <strong>Order Time:</strong>{" "}
@@ -126,6 +126,7 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus }) {
                     <th>Quantity</th>
                     <th>Special Instructions</th>
                     <th className="text-end">Subtotal</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -133,17 +134,32 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus }) {
                     <tr key={index}>
                       <td>
                         <div className="d-flex justify-content-between">
-                          <span>{item.product?.productName} </span>
-                          <Badge bg={ORDER_ITEM_STATUS_CLASSES[item.status]}>{item.status}</Badge>
+                          <span>{item.product?.productName}</span>
+                          <Badge bg={ORDER_ITEM_STATUS_CLASSES[item.status]}>
+                            {item.status}
+                          </Badge>
                         </div>
                       </td>
                       <td>{item.quantity}</td>
-                      <td>{item.specialInstructions || "-"}</td>
-                      <td className="text-end">${item.quantity * item.product.unitPrice}</td>
+                      <td>{item.specialInstructions || '-'}</td>
+                      <td className="text-end">
+                        ${item.status !== ORDER_ITEM_STATUSES.CANCELLED ? (item.quantity * item.product.unitPrice).toFixed(2) : '0.00'}
+                      </td>
+                      <td>
+                        {(item.status === ORDER_ITEM_STATUSES.PENDING || item.status === ORDER_ITEM_STATUSES.PREPARING) && (
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => onCancelOrderItem(order.orderId, item.id)}
+                          >
+                            Cancel
+                          </Button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                   <tr className="table-active">
-                    <td colSpan={3} className="text-end">
+                    <td colSpan={4} className="text-end">
                       <strong>Total:</strong>
                     </td>
                     <td className="text-end">

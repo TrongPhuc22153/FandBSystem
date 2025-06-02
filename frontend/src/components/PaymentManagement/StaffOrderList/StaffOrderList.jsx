@@ -37,7 +37,7 @@ const StaffOrderList = ({ payments = [], onProceedToCheckout }) => {
                   <td>{payment?.order?.tableOccupancy?.table.tableNumber || 'N/A'}</td>
                   <td>{new Date(payment.paymentDate).toLocaleString()}</td>
                   <td className={styles.totalAmount}>${payment.amount.toFixed(2)}</td>
-                  <td><Badge bg={ORDER_TYPE_CLASSES[payment.order.type]}>{payment.order.type}</Badge></td>
+                  <td><Badge bg={ORDER_TYPE_CLASSES[payment.order?.type || "DEFAULT"]}>{payment.order?.type || "UNKNOW"}</Badge></td>
                   <td>
                     <span className={`badge bg-warning text-dark ${styles.statusBadge}`}>
                       {payment.status}

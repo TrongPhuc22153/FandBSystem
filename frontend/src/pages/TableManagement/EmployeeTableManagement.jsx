@@ -4,19 +4,25 @@ import { TableGrid } from "../../components/TableGrid/TableGrid";
 import styles from "./EmployeeTableManagement.module.css";
 import {
   useAvailableTables,
-  useReservationTableActions,
 } from "../../hooks/tableHooks";
 import {
   TABLE_STATUSES,
   TABLE_OCCUPANCY_STATUSES,
+  RESERVATION_STATUSES,
+  TABLE_OCCUPANCY_TYPES,
 } from "../../constants/webConstant";
 import { useAlert } from "../../context/AlertContext";
 import Pagination from "../../components/Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
-import { useTableOccupancies, useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
+import {
+  useTableOccupancies,
+  useTableOccupancyActions,
+} from "../../hooks/tableOccupancyHooks";
 import { WaitingList } from "../../components/WaitingList/WaitingList";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import moment from "moment";
+import { useReservations } from "../../hooks/reservationHooks";
+import { UpcommingReservations } from "../../components/WaitingList/UpcommingReservations";
 
 export default function EmployeeTableManagement() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,6 +32,7 @@ export default function EmployeeTableManagement() {
   );
 
   const [currentPage, setCurrentPage] = useState(currentPageFromURL);
+  const [view, setView] = useState('waiting');
 
   useEffect(() => {
     const pageFromURL = parseInt(searchParams.get("page")) || 1;
@@ -36,11 +43,29 @@ export default function EmployeeTableManagement() {
   const currentDate = now.format("YYYY-MM-DD");
   const currentTime = now.format("HH:mm");
 
+  const {
+    data: reservationsData,
+    error: reservationError,
+    mutate: mutateReservations,
+  } = useReservations({
+    page: 0,
+    size: 20,
+    sortBy: "startTime",
+    status: RESERVATION_STATUSES.PREPARED,
+    startDate: currentDate,
+    endDate: currentDate,
+  });
+  const reservations = useMemo(
+    () => reservationsData?.content || [],
+    [reservationsData]
+  );
+
   const { data: tablesData, mutate: mutateTables } = useAvailableTables({
     page: currentPage,
     size: 20,
     date: currentDate,
     time: currentTime,
+    search: searchValue
   });
   const totalPages = tablesData?.totalPages || 0;
   const tables = useMemo(() => tablesData?.content || [], [tablesData]);
@@ -60,6 +85,12 @@ export default function EmployeeTableManagement() {
   );
 
   const {
+    handleCreateTableOccupancy,
+    createError,
+    createLoading,
+    createSuccess,
+    resetCreate,
+
     handleUpdateTableOccupancyStatus,
     updateStatusError,
     updateStatusSuccess,
@@ -101,7 +132,10 @@ export default function EmployeeTableManagement() {
 
   const updateTableStatus = useCallback(
     async (id, tableId, newStatus) => {
-      const res = await handleUpdateTableOccupancyStatus(id, { tableId, status: mapStatus(newStatus) });
+      const res = await handleUpdateTableOccupancyStatus(id, {
+        tableId,
+        status: mapStatus(newStatus),
+      });
       if (res) {
         mutateTables();
       }
@@ -109,12 +143,43 @@ export default function EmployeeTableManagement() {
     [handleUpdateTableOccupancyStatus, mutateTables]
   );
 
+  const handleSeatCustomerReservation = useCallback(async (table) => {
+    const requestSeatReservation = {
+      contactName: table.contactName,
+      partySize: table.partySize,
+      phone: table.phone,
+      notes: table.notes,
+      reservationId: table.reservationId,
+      type: TABLE_OCCUPANCY_TYPES.RESERVATION,
+    };
+
+    try {
+      const res = await handleCreateTableOccupancy(requestSeatReservation);
+      if (res) {
+        mutateReservations(
+          (prevData) => ({
+            ...prevData,
+            content: [...(prevData?.content || []), res],
+          }),
+          false
+        );
+        mutateReservations();
+        mutateTables();
+      }
+    } catch (error) {
+      showNewAlert({
+        message: "Failed to seat customer. Please try again.",
+        variant: "danger",
+      });
+    }
+  }, [handleCreateTableOccupancy, showNewAlert, mutateReservations, mutateTables]);
+  
   const debouncedSearch = useCallback(
     (newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);
     },
-    [setSearchParams]
+    [setSearchParams, searchParams]
   );
 
   const handleSearchInputChange = (e) => {
@@ -224,6 +289,7 @@ export default function EmployeeTableManagement() {
               <div className={styles.tabContent}>
                 <TableGrid
                   tables={tables}
+                  seatCustomerReservation={handleSeatCustomerReservation}
                   updateTableStatus={updateTableStatus}
                   tableOccupancies={tableOccupancies}
                   mutateTableOccupancies={mutateTableOccupancies}
@@ -238,6 +304,55 @@ export default function EmployeeTableManagement() {
           </div>
 
           <div className={styles.tableOccupanciesSection}>
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <select
+                  className={styles.viewSelect}
+                  value={view}
+                  onChange={(e) => setView(e.target.value)}
+                >
+                  <option value="waiting">Waiting List</option>
+                  <option value="reservations">Upcoming Reservations</option>
+                  </select>
+                <div className={styles.headerControls}>
+                  <button className={styles.addButton}>
+                    <Plus size={16} />
+                    <span>Add</span>
+                  </button>
+                </div>
+              </div>
+              <div className={styles.cardContent}>
+                {view === 'waiting' ? (
+                  <>
+                    <p className={styles.waitingCount}>
+                      {tableOccupancies.length} parties waiting
+                    </p>
+                    {tableOccupanciesError?.message ? (
+                      <ErrorDisplay message={tableOccupanciesError.message} />
+                    ) : (
+                      <WaitingList
+                        waitingList={tableOccupancies}
+                        mutate={mutateTableOccupancies}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {reservationError?.message ? (
+                      <ErrorDisplay message={reservationError.message} />
+                    ) : (
+                      <UpcommingReservations
+                        reservations={reservations}
+                        mutate={mutateReservations}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* <div className={styles.tableOccupanciesSection}>
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <h2 className={styles.cardTitle}>Waiting List</h2>
@@ -258,9 +373,17 @@ export default function EmployeeTableManagement() {
                     mutate={mutateTableOccupancies}
                   />
                 )}
+                {reservationError?.message ? (
+                  <ErrorDisplay message={reservationError.message} />
+                ) : (
+                  <UpcommingReservations
+                    reservations={reservations}
+                    mutate={mutateReservations}
+                  />
+                )}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

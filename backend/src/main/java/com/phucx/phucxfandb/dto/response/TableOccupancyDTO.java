@@ -26,6 +26,8 @@ public class TableOccupancyDTO {
 
     OrderDTO order;
 
+    ReservationDTO reservation;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime occupancyStartTime;
 

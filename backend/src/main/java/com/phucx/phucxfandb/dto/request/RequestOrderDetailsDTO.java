@@ -1,5 +1,7 @@
 package com.phucx.phucxfandb.dto.request;
 
+import com.phucx.phucxfandb.constant.ValidationGroups;
+import com.phucx.phucxfandb.enums.OrderItemStatus;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -24,4 +26,7 @@ public class RequestOrderDetailsDTO {
 
     @Size(max = 255, message = "Special instruction cannot exceed 255 character")
     private String specialInstruction;
+
+    @NotNull(message = "Order item status cannot be null", groups = ValidationGroups.UpdateOrderItemStatus.class)
+    private OrderItemStatus status;
 }

@@ -18,6 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.EnumSet;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -113,6 +116,41 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                 item.setStatus(statusToUpdate);
             }
         });
+        orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void updateOrderItemStatus(String orderId, OrderItemStatus status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
+        order.getOrderDetails().forEach(item -> {
+            item.setStatus(status);
+        });
+        orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void cancelOrderItem(String orderId, String orderItemId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
+
+        OrderDetail itemToCancel = order.getOrderDetails().stream()
+                .filter(item -> item.getId().equals(orderItemId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(OrderDetail.class.getSimpleName(), "id", orderItemId));
+
+        if (!EnumSet.of(OrderItemStatus.PENDING, OrderItemStatus.PREPARING).contains(itemToCancel.getStatus())) {
+            throw new IllegalStateException("Only items in PENDING or PREPARING status can be canceled.");
+        }
+
+        itemToCancel.setStatus(OrderItemStatus.CANCELED);
+
+        BigDecimal newTotal = PriceUtils.calculateOrderTotalPrice(order.getOrderDetails());
+        order.setTotalPrice(newTotal);
+        order.getPayment().setAmount(newTotal);
+
         orderRepository.save(order);
     }
 }

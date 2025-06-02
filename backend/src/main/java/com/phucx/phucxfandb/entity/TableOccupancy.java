@@ -50,8 +50,12 @@ public class TableOccupancy extends Auditable{
     private LocalTime endTime;
 
     @EqualsAndHashCode.Exclude
-    @OneToOne(mappedBy = "tableOccupancy", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "tableOccupancy", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Order order;
+
+    @EqualsAndHashCode.Exclude
+    @OneToOne(mappedBy = "tableOccupancy", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Reservation reservation;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)

@@ -9,7 +9,11 @@ import {
   ORDER_TYPE_CLASSES,
   SORTING_DIRECTIONS,
 } from "../../constants/webConstant";
-import { useOrderActions, useOrders } from "../../hooks/orderHooks";
+import {
+  useOrderActions,
+  useOrderItemActions,
+  useOrders,
+} from "../../hooks/orderHooks";
 import { useModal } from "../../context/ModalContext";
 import { useAlert } from "../../context/AlertContext";
 import { useSearchParams } from "react-router-dom";
@@ -39,11 +43,15 @@ export default function OrdersTable() {
     sortField: "orderDate",
     page: currentPage,
   });
+
   const orders = useMemo(() => ordersData?.content || [], [ordersData]);
   const totalPages = ordersData?.totalPages || 0;
 
   const { handleProcessOrder, processError, processSuccess, resetProcess } =
     useOrderActions();
+
+  const { handleCancelOrderItem, cancelError, resetCancel } =
+    useOrderItemActions();
 
   const { onOpen } = useModal();
   const { showNewAlert } = useAlert();
@@ -55,7 +63,7 @@ export default function OrdersTable() {
         variant: "danger",
       });
     }
-  }, [processError]);
+  }, [processError, showNewAlert]);
 
   useEffect(() => {
     if (processSuccess) {
@@ -64,7 +72,21 @@ export default function OrdersTable() {
         action: resetProcess,
       });
     }
-  }, [processSuccess]);
+  }, [processSuccess, showNewAlert, resetProcess]);
+
+  useEffect(() => {
+    if (cancelError?.message) {
+      showNewAlert({
+        message: cancelError?.message,
+        variant: "danger",
+        action: resetCancel,
+      });
+    }
+  }, [cancelError, showNewAlert, resetCancel]);
+
+  const closeOrderDetail = useCallback(() => {
+    setSelectedOrder(null);
+  }, []);
 
   const updateOrderStatus = useCallback(
     async (orderId, action, type) => {
@@ -74,7 +96,7 @@ export default function OrdersTable() {
         closeOrderDetail();
       }
     },
-    [mutate, handleProcessOrder]
+    [mutate, handleProcessOrder, closeOrderDetail]
   );
 
   const showConfirmModal = useCallback(
@@ -92,10 +114,6 @@ export default function OrdersTable() {
     setSelectedOrder(order);
   };
 
-  const closeOrderDetail = useCallback(() => {
-    setSelectedOrder(null);
-  }, []);
-
   const { user } = useAuth();
 
   const handleMessage = useCallback((newNotification) => {
@@ -103,11 +121,34 @@ export default function OrdersTable() {
       if (!newNotification?.id) {
         return;
       }
-
     } catch (error) {
       console.error("Error processing notification:", error);
     }
   }, []);
+
+  const cancelOrderItem = useCallback(
+    async (orderId, orderItemId) => {
+      const res = await handleCancelOrderItem({
+        orderId,
+        orderItemId,
+      });
+      if (res) {
+        mutate();
+      }
+    },
+    [mutate, handleCancelOrderItem]
+  );
+
+  const showConfirmCancelOrderItem = useCallback(
+    (orderId, orderItemId) => {
+      onOpen({
+        title: "Cancel item",
+        message: "Do you want to cancel this item?",
+        onYes: () => cancelOrderItem(orderId, orderItemId),
+      });
+    },
+    [cancelOrderItem, onOpen]
+  );
 
   useStompSubscription({
     topic: TOPIC_KITCHEN,
@@ -192,7 +233,11 @@ export default function OrdersTable() {
                 >
                   <td>{order.orderId}</td>
                   <td>{order?.tableOccupancy?.table.tableNumber}</td>
-                  <td>{order?.customer?.profile.user.username || order?.tableOccupancy.contactName || "UNKNOW"}</td>
+                  <td>
+                    {order?.customer?.profile.user.username ||
+                      order?.tableOccupancy?.contactName ||
+                      "UNKNOW"}
+                  </td>
                   <td>
                     <ul className={styles.itemsList}>
                       {order.orderDetails.map((item, index) => (
@@ -298,6 +343,7 @@ export default function OrdersTable() {
           order={selectedOrder}
           onClose={closeOrderDetail}
           onUpdateStatus={showConfirmModal}
+          onCancelOrderItem={showConfirmCancelOrderItem}
         />
       )}
     </>

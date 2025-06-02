@@ -5,19 +5,25 @@ import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring", uses = {MenuItemMapper.class, UserMapper.class, PaymentMapper.class})
 public interface ReservationMapper {
 
     @Mapping(target = "payment", qualifiedByName = "toPaymentDTO")
+    @Mapping(target = "tableOccupancy.order", ignore = true)
+    @Mapping(target = "tableOccupancy.reservation", ignore = true)
     @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")
     ReservationDTO toReservationDTO(Reservation reservation);
 
+    @Named("toReservationListEntryDTO")
+    @Mapping(target = "payment", ignore = true)
+    @Mapping(target = "tableOccupancy.order", ignore = true)
+    @Mapping(target = "tableOccupancy.reservation", ignore = true)
     @Mapping(target = "menuItems", qualifiedByName = {"toMenuItemDTO"})
     @Mapping(target = "customer.profile.user", qualifiedByName = "toBriefUserDTO")
     @Mapping(target = "employee.profile.user", qualifiedByName = "toBriefUserDTO")
-    @Mapping(target = "payment", ignore = true)
     ReservationDTO toReservationListEntryDTO(Reservation reservation);
 
     @Mapping(target = "table", source = "table")

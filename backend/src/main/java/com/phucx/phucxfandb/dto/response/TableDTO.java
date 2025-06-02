@@ -15,11 +15,17 @@ public class TableDTO {
     Integer tableNumber;
     String location;
     Integer capacity;
-    String lastModifiedBy;
     String occupancyId;
     String status;
-    LocalTime incomingReservationAt;
+    String reservationId;
+    String contactName;
+    String phone;
+    Integer partySize;
+    String notes;
+    LocalTime startAt;
+    LocalTime occupiedAt;
     Boolean isDeleted;
+    String lastModifiedBy;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

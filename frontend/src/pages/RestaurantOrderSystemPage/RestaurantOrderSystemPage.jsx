@@ -92,6 +92,11 @@ export default function RestaurantOrderSystem() {
     resetUpdate,
   } = useOrderActions();
 
+  const clearOrder = useCallback(() => {
+    setOrderItems([]);
+    setSelectedCustomer(null);
+  }, []);
+
   // Handle place order success
   useEffect(() => {
     if (placeSuccess) {
@@ -102,7 +107,7 @@ export default function RestaurantOrderSystem() {
       clearOrder();
       navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?page=1`);
     }
-  }, [placeSuccess, resetPlace, showNewAlert, navigate]);
+  }, [placeSuccess, resetPlace, showNewAlert, navigate, clearOrder]);
 
   // Handle place order error
   useEffect(() => {
@@ -232,11 +237,6 @@ export default function RestaurantOrderSystem() {
     },
     [orderItems]
   );
-
-  const clearOrder = useCallback(() => {
-    setOrderItems([]);
-    setSelectedCustomer(null);
-  }, []);
 
   const showPlaceOrderModal = () => {
     if (!selectedCustomer?.id) {

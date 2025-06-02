@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -17,18 +16,16 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "notifications")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class Notification extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "notification_id", length = 36, nullable = false)
     private String notificationId;
 
-    @NotBlank
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @NotBlank
     @Column(name = "message", length = 500, nullable = false)
     private String message;
 

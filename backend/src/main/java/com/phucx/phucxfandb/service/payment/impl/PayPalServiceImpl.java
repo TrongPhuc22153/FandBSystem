@@ -120,13 +120,6 @@ public class PayPalServiceImpl implements PayPalService {
         }else if (payment.getReservation()!=null){
             Reservation reservation = payment.getReservation();
 
-            TableOccupancy tableOccupancy = reservation.getTableOccupancy();
-            tableOccupancyUpdateService.updateTableOccupancyStatus(
-                    tableOccupancy.getId(),
-                    tableOccupancy.getTable().getTableId(),
-                    TableOccupancyStatus.CLEANING
-            );
-
             sendReservationNotificationService.sendPlaceReservationNotification(
                     authentication,
                     reservation.getReservationId(),

@@ -174,6 +174,10 @@ public class ApiEndpoint {
                 ORDER_BY_ID_ITEM_BY_ID_ENDPOINT,
                 ORDER_BY_ID_ENDPOINT
         };
+
+        public static final String[] DELETE = {
+                ORDER_BY_ID_ITEM_BY_ID_ENDPOINT
+        };
     }
 
     public static final String PAYPAL_ANY_ENDPOINT = "/api/v1/paypal/**";

@@ -8,8 +8,16 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
 import { useAlert } from "../../context/AlertContext";
+import { formatTime } from "../../utils/datetimeUtils";
 
-export function TableGrid({ tables, updateTableStatus, tableOccupancies, mutateTableOccupancies, mutateTables }) {
+export function TableGrid({ 
+  tables, 
+  updateTableStatus, 
+  seatCustomerReservation,
+  tableOccupancies, 
+  mutateTableOccupancies, 
+  mutateTables 
+}) {
   const [selectedTable, setSelectedTable] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -105,18 +113,18 @@ export function TableGrid({ tables, updateTableStatus, tableOccupancies, mutateT
               </div>
             )}
 
-            {table.lastModifiedAt &&
+            {table.occupiedAt &&
               table.status === TABLE_STATUSES.OCCUPIED && (
                 <div className={styles.tableInfo}>
                   <span className={styles.infoLabel}>Since:</span>{" "}
-                  {table.lastModifiedAt}
+                  {formatTime(table.occupiedAt)}
                 </div>
               )}
 
-            {table.reservedFor && table.status === TABLE_STATUSES.RESERVED && (
+            {table.reservationId && table.status === TABLE_STATUSES.RESERVED && (
               <div className={styles.tableInfo}>
                 <span className={styles.infoLabel}>Reserved:</span>{" "}
-                {table.reservedFor}
+                {`${table.contactName} (${formatTime(table.startAt)})`}
               </div>
             )}
           </div>
@@ -155,7 +163,7 @@ export function TableGrid({ tables, updateTableStatus, tableOccupancies, mutateT
                       <span className={styles.detailLabel}>
                         Occupied since:
                       </span>{" "}
-                      {selectedTable.lastModifiedAt}
+                      {formatTime(selectedTable.occupiedAt)}
                     </p>
                   </div>
                 )}
@@ -169,25 +177,57 @@ export function TableGrid({ tables, updateTableStatus, tableOccupancies, mutateT
                   </div>
                 )}
               </div>
-
+              
               <div className={styles.statusActions}>
                 <h4 className={styles.sectionTitle}>Change Status</h4>
                 <div className={styles.actionButtons}>
-                  <button
-                    className={`${styles.actionButton} ${
-                      selectedTable?.status === TABLE_STATUSES.UNOCCUPIED
-                        ? styles.activeButton
-                        : ""
-                    } ${styles.availableButton}`}
-                    onClick={() =>
-                      handleStatusChange(TABLE_STATUSES.UNOCCUPIED)
-                    }
-                  >
-                    Available
-                  </button>
+                  {selectedTable.status === TABLE_STATUSES.CLEANING || selectedTable.status === TABLE_STATUSES.OCCUPIED &&
+                    <button
+                      className={`${styles.actionButton} ${
+                        selectedTable?.status === TABLE_STATUSES.UNOCCUPIED
+                          ? styles.activeButton
+                          : ""
+                      } ${styles.completeButton}`}
+                      onClick={() =>
+                        handleStatusChange(TABLE_STATUSES.UNOCCUPIED)
+                      }
+                    >
+                      Complete
+                    </button>
+                  }
+                  {selectedTable.status === TABLE_STATUSES.RESERVED &&
+                    <button
+                      className={`${styles.actionButton} ${
+                        selectedTable?.status === TABLE_STATUSES.RESERVED
+                          ? styles.activeButton
+                          : ""
+                      } ${styles.reservedButton}`}
+                      onClick={() =>{
+                        seatCustomerReservation(selectedTable)
+                        setIsDialogOpen(false)
+                      }}
+                    >
+                      Seat customer
+                    </button>
+                  }
+                  {selectedTable.status === TABLE_STATUSES.UNOCCUPIED &&
+                    <button
+                      className={`${styles.actionButton} ${
+                        selectedTable?.status === TABLE_STATUSES.CLEANING
+                          ? styles.activeButton
+                          : ""
+                      } ${styles.cleaningButton}`}
+                      onClick={() =>
+                        handleStatusChange(TABLE_STATUSES.CLEANING)
+                      }
+                    >
+                      Cleaning
+                    </button>
+                  }
                 </div>
               </div>
-              {selectedTable?.status !== TABLE_STATUSES.OCCUPIED && (
+
+              {selectedTable?.status === TABLE_STATUSES.UNOCCUPIED && (
                 <div className={styles.assignSection}>
                   <h4 className={styles.sectionTitle}>
                     Assign Server & Seat Customers

@@ -29,10 +29,16 @@ export const fetchReservationTables = async ({ page = 0, size = 10, direction = 
 };
 
 // Get all tables
-export const fetchAvailableTables = async ({ date, time }) => {
+export const fetchAvailableTables = async ({ date, time, search, tableNumber }) => {
     const params = new URLSearchParams();
     params.append("date", date.toString())
     params.append("time", time.toString())
+    if(search){
+        params.append("search", search.toString())
+    }
+    if(tableNumber){
+        params.append("tableNumber", tableNumber)
+    }
     const response = await fetch(`${RESERVATION_TABLES_AVAILABILITY_ENDPOINT}?${params.toString()}`,);
     if (!response.ok) {
         throw await response.json();

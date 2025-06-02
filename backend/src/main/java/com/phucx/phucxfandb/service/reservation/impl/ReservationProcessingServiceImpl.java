@@ -10,7 +10,6 @@ import com.phucx.phucxfandb.exception.TableNotAvailableException;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
 import com.phucx.phucxfandb.service.reservation.ReservationProcessingService;
 import com.phucx.phucxfandb.service.reservation.ReservationUpdateService;
-import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
 import com.phucx.phucxfandb.service.table.TableReaderService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
@@ -31,7 +30,6 @@ import java.util.List;
 public class ReservationProcessingServiceImpl implements ReservationProcessingService {
     private final ReservationUpdateService reservationUpdateService;
     private final TableReaderService tableReaderService;
-    private final TableOccupancyUpdateService tableOccupancyUpdateService;
     private final SendReservationNotificationService sendReservationNotificationService;
 
     @Override

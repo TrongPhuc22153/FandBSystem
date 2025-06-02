@@ -2,6 +2,7 @@ import useSWR from "swr";
 import { useCallback, useState } from "react";
 import {
   addOrderItem,
+  cancelOrderItem,
   fetchOrders,
   fetchUserOrder,
   placeOrder,
@@ -194,6 +195,15 @@ export const useOrderItemActions = () => {
     setUpdateQuantitySuccess(null);
   }, []);
 
+  // --- State for cancelOrderItem ---
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState(null);
+  const [cancelSuccess, setCancelSuccess] = useState(null);
+  const resetCancel = useCallback(() => {
+    setCancelError(null);
+    setCancelSuccess(null);
+  }, []);
+
   const handleAddOrderItem = useCallback(
     async ({ orderId, productId, quantity, specialInstruction }) => {
       if (!token) {
@@ -229,7 +239,14 @@ export const useOrderItemActions = () => {
       setUpdateQuantitySuccess(null);
 
       try {
-        const response = await updateOrderItemQuantity({ token, orderId, orderItemId, productId, quantity, specialInstruction });
+        const response = await updateOrderItemQuantity({
+          token,
+          orderId,
+          orderItemId,
+          productId,
+          quantity,
+          specialInstruction,
+        });
         setUpdateQuantitySuccess(response?.message || "Order item quantity updated successfully");
         return response;
       } catch (err) {
@@ -242,18 +259,51 @@ export const useOrderItemActions = () => {
     [token, authError]
   );
 
+  const handleCancelOrderItem = useCallback(
+    async ({ orderId, orderItemId }) => {
+      if (!token) {
+        setCancelError(authError?.message || "Authentication required");
+        return null;
+      }
+      setCancelLoading(true);
+      setCancelError(null);
+      setCancelSuccess(null);
+
+      try {
+        const response = await cancelOrderItem({ token, orderId, orderItemId });
+        setCancelSuccess(response?.message || "Order item cancelled successfully");
+        return response;
+      } catch (err) {
+        setCancelError(err);
+        return null;
+      } finally {
+        setCancelLoading(false);
+      }
+    },
+    [token, authError]
+  );
+
   return {
+    // Add
     handleAddOrderItem,
     addError,
     addLoading,
     addSuccess,
     resetAdd,
 
+    // Update quantity
     handleUpdateOrderItemQuantity,
     updateQuantityError,
     updateQuantityLoading,
     updateQuantitySuccess,
     resetUpdateQuantity,
+
+    // Cancel
+    handleCancelOrderItem,
+    cancelError,
+    cancelLoading,
+    cancelSuccess,
+    resetCancel,
   };
 };
 

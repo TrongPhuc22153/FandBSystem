@@ -59,7 +59,7 @@ export const updateTableOccupancy = async ({ id, data, token }) => {
     return response.json();
 };
 
-export const createTableOccupanncy = async ({ contactName, phone, partySize, notes, type, token }) => {
+export const createTableOccupanncy = async ({ contactName, phone, partySize, notes, reservationId, type, token }) => {
     const response = await fetch(TABLE_OCCUPANCIES_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -71,6 +71,7 @@ export const createTableOccupanncy = async ({ contactName, phone, partySize, not
             phone,
             partySize,
             notes,
+            reservationId,
             type
         }),
     });

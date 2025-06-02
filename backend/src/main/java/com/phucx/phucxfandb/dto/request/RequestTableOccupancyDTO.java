@@ -27,6 +27,9 @@ public class RequestTableOccupancyDTO {
     @Min(value = 1, message = "Party size must be at least 1")
     private Integer partySize;
 
+    @Size(max = 36, message = "Reservation ID must not exceed 36 characters")
+    private String reservationId;
+
     @Size(max = 36, message = "Table ID must not exceed 36 characters", groups =
             ValidationGroups.UpdateTableOccupancyStatus.class)
     @JsonView(Views.UpdateTableOccupancyStatus.class)

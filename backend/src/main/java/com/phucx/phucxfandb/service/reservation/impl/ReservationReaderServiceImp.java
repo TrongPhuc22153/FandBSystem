@@ -21,8 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j
@@ -36,10 +34,10 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
     @Transactional(readOnly = true)
     public Page<ReservationDTO> getReservations(ReservationRequestParamsDTO params, Authentication authentication) {
         List<RoleName> roles = RoleUtils.getRoles(authentication.getAuthorities());
-        if(roles.contains(RoleName.ADMIN)){
-            return getAdminReservations(params);
-        }else {
+        if(roles.contains(RoleName.CUSTOMER)){
             return getCustomerReservations(authentication.getName(), params);
+        }else {
+            return getReservations(params);
         }
     }
 
@@ -51,19 +49,23 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
         );
         Specification<Reservation> spec = Specification
                 .where(ReservationSpecification.hasCustomerUsername(username))
-                .and(ReservationSpecification.hasStatus(params.getStatus()));
+                .and(ReservationSpecification.hasStatus(params.getStatus()))
+                .and(ReservationSpecification.hasDate(params.getStartDate(), params.getEndDate()));
+
         return reservationRepository.findAll(spec, pageable)
                 .map(reservationMapper::toReservationListEntryDTO);
     }
 
-    public Page<ReservationDTO> getAdminReservations(ReservationRequestParamsDTO params){
+    public Page<ReservationDTO> getReservations(ReservationRequestParamsDTO params){
         Pageable pageable = PageRequest.of(
                 params.getPage(),
                 params.getSize(),
                 Sort.by(params.getDirection(), params.getField())
         );
         Specification<Reservation> spec = Specification
-                .where(ReservationSpecification.hasStatus(params.getStatus()));
+                .where(ReservationSpecification.hasStatus(params.getStatus()))
+                .and(ReservationSpecification.hasDate(params.getStartDate(), params.getEndDate()));
+
         return reservationRepository.findAll(spec, pageable)
                 .map(reservationMapper::toReservationListEntryDTO);
     }

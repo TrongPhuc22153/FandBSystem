@@ -3,6 +3,7 @@ package com.phucx.phucxfandb.utils;
 import com.phucx.phucxfandb.entity.CartItem;
 import com.phucx.phucxfandb.entity.MenuItem;
 import com.phucx.phucxfandb.entity.OrderDetail;
+import com.phucx.phucxfandb.enums.OrderItemStatus;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,7 +20,9 @@ public class PriceUtils {
     public static BigDecimal calculateOrderTotalPrice(List<OrderDetail> orderDetails) {
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (OrderDetail orderDetail : orderDetails) {
-            totalPrice = totalPrice.add(orderDetail.getUnitPrice().multiply(BigDecimal.valueOf(orderDetail.getQuantity())));
+            if(!OrderItemStatus.CANCELED.equals(orderDetail.getStatus())){
+                totalPrice = totalPrice.add(orderDetail.getUnitPrice().multiply(BigDecimal.valueOf(orderDetail.getQuantity())));
+            }
         }
         return totalPrice;
     }

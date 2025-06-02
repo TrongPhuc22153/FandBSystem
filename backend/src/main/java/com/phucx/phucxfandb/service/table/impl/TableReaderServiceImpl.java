@@ -115,11 +115,8 @@ public class TableReaderServiceImpl implements TableReaderService {
         LocalTime futureTime = time.plusMinutes(UPCOMING_RESERVATION_WINDOW_MINUTES);
         List<Reservation> upcomingReservations = reservationRepository
                 .findUpcomingReservations(date, time, futureTime, tableIds);
-        Map<String, LocalTime> upcomingReservationTimeByTableId = upcomingReservations.stream()
-                .collect(Collectors.toMap(
-                        r -> r.getTable().getTableId(),
-                        Reservation::getStartTime,
-                        (t1, t2) -> t1.isBefore(t2) ? t1 : t2));
+        Map<String, Reservation> upcomingReservationTimeByTableId = upcomingReservations.stream()
+                .collect(Collectors.toMap(r -> r.getTable().getTableId(), r -> r));
 
         return allTables
                 .map(table -> {
@@ -141,6 +138,7 @@ public class TableReaderServiceImpl implements TableReaderService {
                                     .tableNumber(table.getTableNumber())
                                     .location(table.getLocation())
                                     .capacity(table.getCapacity())
+                                    .occupiedAt(occupancy.getStartTime())
                                     .occupancyId(occupancy.getId())
                                     .status(TableStatusConstant.OCCUPIED)
                                     .build();
@@ -154,18 +152,29 @@ public class TableReaderServiceImpl implements TableReaderService {
                                 .tableNumber(table.getTableNumber())
                                 .location(table.getLocation())
                                 .capacity(table.getCapacity())
+                                .reservationId(reservation.getReservationId())
+                                .contactName(reservation.getCustomer().getContactName())
+                                .phone(reservation.getCustomer().getProfile().getPhone())
+                                .notes(reservation.getNotes())
+                                .partySize(reservation.getNumberOfGuests())
+                                .startAt(reservation.getStartTime())
                                 .status(TableStatusConstant.RESERVED)
                                 .build();
                     }
 
-                    LocalTime incomingTime = upcomingReservationTimeByTableId.get(tableId);
-                    if (incomingTime != null) {
+                    Reservation incomingReservation = upcomingReservationTimeByTableId.get(tableId);
+                    if (incomingReservation != null) {
                         return TableDTO.builder()
                                 .tableId(tableId)
                                 .tableNumber(table.getTableNumber())
                                 .location(table.getLocation())
                                 .capacity(table.getCapacity())
-                                .incomingReservationAt(incomingTime)
+                                .reservationId(incomingReservation.getReservationId())
+                                .contactName(incomingReservation.getCustomer().getContactName())
+                                .phone(incomingReservation.getCustomer().getProfile().getPhone())
+                                .notes(incomingReservation.getNotes())
+                                .partySize(incomingReservation.getNumberOfGuests())
+                                .startAt(incomingReservation.getStartTime())
                                 .status(TableStatusConstant.RESERVED)
                                 .build();
                     }

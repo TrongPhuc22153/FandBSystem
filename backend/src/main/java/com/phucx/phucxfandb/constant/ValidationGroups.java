@@ -16,6 +16,8 @@ public class ValidationGroups {
     public interface UpdateTableOccupancy{}
     public interface UpdateTableOccupancyStatus {}
 
-    public interface UpdateTableStatus {};
+    public interface UpdateTableStatus {}
+
+    public interface UpdateOrderItemStatus{}
 
 }

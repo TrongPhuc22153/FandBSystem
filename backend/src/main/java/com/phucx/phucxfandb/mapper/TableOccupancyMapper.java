@@ -9,14 +9,14 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring", uses = OrderMapper.class)
+@Mapper(componentModel = "spring", uses = {OrderMapper.class, ReservationMapper.class})
 public interface TableOccupancyMapper {
 
     @Named("toTableOccupancyDTO")
     @Mapping(target = "order", ignore = true)
+    @Mapping(target = "reservation", ignore = true)
     TableOccupancyDTO toTableOccupancyDTO(TableOccupancy tableOccupancy);
 
-    @Mapping(target = "order", qualifiedByName = "toOrderListEntryDTO")
     TableOccupancyDTO toTableOccupancyDetailDTO(TableOccupancy tableOccupancy);
 
     @Mapping(target = "id", ignore = true)
@@ -25,6 +25,8 @@ public interface TableOccupancyMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedAt", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "type", ignore = true)
     void updateTableOccupancy(RequestTableOccupancyDTO requestDTO, @MappingTarget TableOccupancy tableOccupancy);
 
     @Mapping(target = "id", ignore = true)
