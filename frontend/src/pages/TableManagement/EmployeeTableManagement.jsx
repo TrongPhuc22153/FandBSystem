@@ -8,9 +8,9 @@ import {
 import {
   TABLE_STATUSES,
   TABLE_OCCUPANCY_STATUSES,
-  RESERVATION_STATUSES,
   TABLE_OCCUPANCY_TYPES,
   ORDER_ACTIONS,
+  RESERVATION_ACTIONS,
 } from "../../constants/webConstant";
 import { useAlert } from "../../context/AlertContext";
 import Pagination from "../../components/Pagination/Pagination";
@@ -22,7 +22,7 @@ import {
 import { WaitingList } from "../../components/WaitingList/WaitingList";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import moment from "moment";
-import { useReservations } from "../../hooks/reservationHooks";
+import { useReservationActions, useReservations } from "../../hooks/reservationHooks";
 import { UpcommingReservations } from "../../components/WaitingList/UpcommingReservations";
 import { useOrderActions } from "../../hooks/orderHooks";
 
@@ -53,7 +53,6 @@ export default function EmployeeTableManagement() {
     page: 0,
     size: 20,
     sortBy: "startTime",
-    status: RESERVATION_STATUSES.PREPARED,
     startDate: currentDate,
     endDate: currentDate,
   });
@@ -101,10 +100,17 @@ export default function EmployeeTableManagement() {
 
    const { 
     handleProcessOrder, 
-    processError, 
-    processSuccess, 
-    resetProcess 
+    processError: processOrderError, 
+    processSuccess: processOrderSuccess, 
+    resetProcess: resetOrderProcess 
   } = useOrderActions();
+
+  const { 
+    handleProcessReservation,
+    processError: processReservationError,
+    processSuccess: processReservationSuccess,
+    resetProcess: resetReservationProcess
+  } = useReservationActions();
 
   const { showNewAlert } = useAlert();
 
@@ -125,6 +131,24 @@ export default function EmployeeTableManagement() {
       });
     }
   }, [updateStatusSuccess, resetUpdateStatus, showNewAlert]);
+
+  const onServedReservation = useCallback(
+    async (reservationId) => {
+      await handleProcessReservation(reservationId, RESERVATION_ACTIONS.SERVED);
+    },
+    [handleProcessReservation]
+  );
+
+  const onCompleteReservation = useCallback(
+    async (reservationId) => {
+      const res = await handleProcessReservation(reservationId, RESERVATION_ACTIONS.COMPLETE);
+      if(res){
+        mutateTables();
+        mutateReservations();
+      }
+    },
+    [handleProcessReservation]
+  );
 
   const onServedOrder = useCallback(
     async (orderId, type) => {
@@ -295,6 +319,8 @@ export default function EmployeeTableManagement() {
                   onSeatCustomerReservation={handleSeatCustomerReservation}
                   onUpdateTableStatus={updateTableStatus}
                   onServedOrder={onServedOrder}
+                  onServedReservation={onServedReservation}
+                  onCompleteReservation={onCompleteReservation}
                   tableOccupancies={tableOccupancies}
                   mutateTableOccupancies={mutateTableOccupancies}
                   mutateTables={mutateTables}

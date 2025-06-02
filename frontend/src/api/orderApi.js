@@ -157,7 +157,7 @@ export const placeOrder = async ({ token, requestOrderDTO }) => {
 export const updateOrder = async ({
   orderId,
   type,
-  waitingListId,
+  tableOccupancyId,
   orderDetails,
   token
 }) => {
@@ -168,7 +168,7 @@ export const updateOrder = async ({
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      waitingListId,
+      tableOccupancyId,
       orderDetails,
       type
     }),

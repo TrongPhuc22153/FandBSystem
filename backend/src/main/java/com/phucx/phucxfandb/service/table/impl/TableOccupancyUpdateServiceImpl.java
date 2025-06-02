@@ -65,7 +65,6 @@ public class TableOccupancyUpdateServiceImpl implements TableOccupancyUpdateServ
 
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NotFoundException(Reservation.class.getSimpleName(), "id", reservationId));
-        reservation.setStatus(ReservationStatus.SEATED);
 
         TableOccupancy occupancy = TableOccupancy.builder()
                 .table(reservation.getTable())
@@ -233,14 +232,6 @@ public class TableOccupancyUpdateServiceImpl implements TableOccupancyUpdateServ
     private TableOccupancyDTO finishOccupancy(String id){
         TableOccupancy tableOccupancy = tableOccupancyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(TableOccupancy.class.getSimpleName(), "id", id));
-
-        if(OccupancyType.RESERVATION.equals(tableOccupancy.getType())){
-            tableOccupancy.getReservation().setStatus(ReservationStatus.COMPLETED);
-//            Reservation reservation = reservationRepository.findByTableOccupancyId(id)
-//                            .orElseThrow(() -> new NotFoundException(Reservation.class.getSimpleName(), "occupancy id", id));
-//            reservation.setStatus(ReservationStatus.SERVED);
-//            reservationRepository.save(reservation);
-        }
 
         if(tableOccupancy.getTable() == null){
             throw new IllegalStateException("Table is missing");

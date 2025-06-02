@@ -51,6 +51,8 @@ export const RESERVATION_TABLES_ENDPOINT = `${API_BASE_URL}/api/v1/tables`;
 export const RESERVATION_TABLES_AVAILABILITY_ENDPOINT = `${API_BASE_URL}/api/v1/tables/availability`;
 
 export const RESERVATIONS_ENDPOINT = `${API_BASE_URL}/api/v1/reservations`;
+export const RESERVATION_ITEMS_ENDPOINT = (id) => `${API_BASE_URL}/api/v1/reservations/${id}/items`;
+export const RESERVATION_ITEM_ENDPOINT = (reservationId, itemId) => `${API_BASE_URL}/api/v1/reservations/${reservationId}/items/${itemId}`;
 
 export const CUSTOMER_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/customers`;
 export const CUSTOMER_PROFILE_ENDPOINT = `${API_BASE_URL}/api/v1/customers/me`;

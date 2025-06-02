@@ -9,14 +9,20 @@ import {
 } from "../../constants/webConstant";
 import {
   useReservationActions,
+  useReservationItemActions,
   useReservations,
 } from "../../hooks/reservationHooks";
 import { useModal } from "../../context/ModalContext";
 import { useAlert } from "../../context/AlertContext";
+import { useAuth } from "../../context/AuthContext";
+import { useStompSubscription } from "../../hooks/websocketHooks";
 import { Badge } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "../Pagination/Pagination";
+import { TOPIC_KITCHEN } from "../../constants/webSocketEnpoint";
 import { formatDate } from "../../utils/datetimeUtils";
+import { hasRole } from "../../utils/authUtils";
+import { ROLES } from "../../constants/roles";
 
 export default function ReservationsTable() {
   const [searchParams] = useSearchParams();
@@ -31,15 +37,11 @@ export default function ReservationsTable() {
   const [filterStatus, setFilterStatus] = useState(null);
   const [selectedReservation, setSelectedReservation] = useState(null);
 
-  useEffect(() => {
-    const pageFromURL = parseInt(searchParams.get("page")) || 1;
-    setCurrentPage(pageFromURL - 1);
-  }, [searchParams]);
-
   const { data: reservationsData, mutate } = useReservations({
     status: filterStatus,
     page: currentPage,
-    direction: SORTING_DIRECTIONS.ASC,
+    sortDirection: SORTING_DIRECTIONS.ASC,
+    sortField: "startTime",
   });
   const reservations = useMemo(
     () => reservationsData?.content || [],
@@ -49,13 +51,20 @@ export default function ReservationsTable() {
 
   const {
     handleProcessReservation,
-    resetProcess,
     processError,
     processSuccess,
+    resetProcess,
   } = useReservationActions();
+
+  const {
+    handleCancelReservationItem,
+    cancelError,
+    resetCancel,
+  } = useReservationItemActions();
 
   const { onOpen } = useModal();
   const { showNewAlert } = useAlert();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (processError?.message) {
@@ -75,9 +84,19 @@ export default function ReservationsTable() {
     }
   }, [processSuccess, showNewAlert, resetProcess]);
 
-    const closeReservationDetail = useCallback(() => {
-      setSelectedReservation(null);
-    }, []);
+  useEffect(() => {
+    if (cancelError?.message) {
+      showNewAlert({
+        message: cancelError.message,
+        variant: "danger",
+        action: resetCancel,
+      });
+    }
+  }, [cancelError, showNewAlert, resetCancel]);
+
+  const closeReservationDetail = useCallback(() => {
+    setSelectedReservation(null);
+  }, []);
 
   const updateReservationStatus = useCallback(
     async (reservationId, action) => {
@@ -88,6 +107,19 @@ export default function ReservationsTable() {
       }
     },
     [mutate, handleProcessReservation, closeReservationDetail]
+  );
+
+  const cancelReservationItem = useCallback(
+    async (reservationId, itemId) => {
+      const res = await handleCancelReservationItem({
+        reservationId,
+        itemId,
+      });
+      if (res) {
+        mutate();
+      }
+    },
+    [mutate, handleCancelReservationItem]
   );
 
   const showConfirmModal = useCallback(
@@ -101,6 +133,34 @@ export default function ReservationsTable() {
     [onOpen, updateReservationStatus]
   );
 
+  const showConfirmCancelReservationItem = useCallback(
+    (reservationId, itemId) => {
+      onOpen({
+        title: "Cancel item",
+        message: "Do you want to cancel this item?",
+        onYes: () => cancelReservationItem(reservationId, itemId),
+      });
+    },
+    [cancelReservationItem, onOpen]
+  );
+
+  const handleMessage = useCallback((newNotification) => {
+    try {
+      if (!newNotification?.id) {
+        return;
+      }
+      mutate(); // Refresh data on new notification
+    } catch (error) {
+      console.error("Error processing notification:", error);
+    }
+  }, [mutate]);
+
+  useStompSubscription({
+    topic: TOPIC_KITCHEN,
+    onMessage: handleMessage,
+    shouldSubscribe: hasRole(user, ROLES.EMPLOYEE),
+  });
+
   // Sort reservations by time
   const sortedReservations = [...reservations].sort(
     (a, b) =>
@@ -111,7 +171,6 @@ export default function ReservationsTable() {
   // Calculate time until reservation
   const getTimeUntil = (reservation) => {
     const now = new Date();
-
     const reservationDateTime = new Date(`${reservation.date}T${reservation.startTime}`);
     if (isNaN(reservationDateTime)) return "Invalid time";
 
@@ -130,7 +189,7 @@ export default function ReservationsTable() {
   };
 
   return (
-    <div>
+    <>
       <div className="d-flex justify-content-between mb-3">
         <h3>Reservations</h3>
         <div className="btn-group">
@@ -193,7 +252,7 @@ export default function ReservationsTable() {
           <tbody>
             {sortedReservations.length === 0 ? (
               <tr>
-                <td colSpan={8} className="text-center">
+                <td colSpan={9} className="text-center">
                   No reservations found
                 </td>
               </tr>
@@ -201,15 +260,15 @@ export default function ReservationsTable() {
               sortedReservations.map((reservation) => (
                 <tr
                   key={reservation.reservationId}
-                  className={`${styles.reservationRow} cursor-pointer`}
+                  className={`${styles.orderRow} cursor-pointer`} // Changed to orderRow to match OrdersTable
                   onClick={() => handleReservationClick(reservation)}
                   style={{ cursor: "pointer" }}
                 >
                   <td>{reservation.reservationId}</td>
                   <td>
-                    {reservation?.customer?.profile.user.username}
+                    {reservation?.customer?.profile.user.username || "UNKNOWN"}
                     <small className="d-block text-muted">
-                      {reservation?.customer?.profile.phone}
+                      {reservation?.customer?.profile.phone || "-"}
                     </small>
                   </td>
                   <td>
@@ -219,7 +278,7 @@ export default function ReservationsTable() {
                           {item.quantity}x {item.product.productName}
                           {item.specialInstructions && (
                             <small className="d-block text-muted">
-                              Note: {item?.specialInstructions}
+                              Note: {item.specialInstructions}
                             </small>
                           )}
                         </li>
@@ -253,7 +312,7 @@ export default function ReservationsTable() {
                     <div className="btn-group">
                       {reservation.status === RESERVATION_STATUSES.PENDING && (
                         <button
-                          className="btn btn-sm btn-outline-success"
+                          className="btn btn-sm btn-outline-warning"
                           onClick={() =>
                             showConfirmModal(
                               reservation.reservationId,
@@ -264,10 +323,9 @@ export default function ReservationsTable() {
                           Start Preparing
                         </button>
                       )}
-                      {reservation.status ===
-                        RESERVATION_STATUSES.PREPARING && (
+                      {reservation.status === RESERVATION_STATUSES.PREPARING && (
                         <button
-                          className="btn btn-sm btn-outline-secondary"
+                          className="btn btn-sm btn-outline-success"
                           onClick={() =>
                             showConfirmModal(
                               reservation.reservationId,
@@ -280,7 +338,7 @@ export default function ReservationsTable() {
                       )}
                       {reservation.status === RESERVATION_STATUSES.PREPARED && (
                         <button
-                          className="btn btn-sm btn-outline-danger"
+                          className="btn btn-sm btn-outline-secondary"
                           onClick={() =>
                             showConfirmModal(
                               reservation.reservationId,
@@ -308,8 +366,9 @@ export default function ReservationsTable() {
           reservation={selectedReservation}
           onClose={closeReservationDetail}
           onUpdateStatus={showConfirmModal}
+          onCancelReservationItem={showConfirmCancelReservationItem}
         />
       )}
-    </div>
+    </>
   );
 }

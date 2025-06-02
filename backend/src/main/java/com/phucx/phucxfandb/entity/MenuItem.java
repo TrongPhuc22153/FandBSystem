@@ -1,7 +1,7 @@
 package com.phucx.phucxfandb.entity;
 
+import com.phucx.phucxfandb.enums.MenuItemStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -9,21 +9,20 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "menu_items")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class MenuItem extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, length = 36, updatable = false)
     private String id;
 
-    @NotNull
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @NotNull
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
@@ -35,6 +34,11 @@ public class MenuItem extends Auditable{
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
+    @Column(name = "special_instruction")
+    private String specialInstruction;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20, nullable = false)
+    private MenuItemStatus status = MenuItemStatus.PENDING;
 }

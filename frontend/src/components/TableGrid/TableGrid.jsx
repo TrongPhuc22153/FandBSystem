@@ -6,6 +6,8 @@ import {
   TABLE_OCCUPANCY_STATUSES,
   ORDER_ITEM_STATUSES,
   ORDER_STATUSES,
+  RESERVATION_ITEM_STATUSES,
+  RESERVATION_STATUSES,
 } from "../../constants/webConstant";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -16,12 +18,16 @@ import { useAlert } from "../../context/AlertContext";
 import { formatTime } from "../../utils/datetimeUtils";
 import { OrderItemsDataTable } from "../OrderItemsTable/OrderItemDataTable";
 import { useOrderItemActions } from "../../hooks/orderHooks";
+import { ReservationItemsTable } from "../ReservationItemsTable/ReservationItemsTable";
+import { useReservationItemActions } from "../../hooks/reservationHooks";
 
 export function TableGrid({
   tables,
   onUpdateTableStatus,
   onSeatCustomerReservation,
+  onServedReservation,
   onServedOrder,
+  onCompleteReservation,
   tableOccupancies,
   mutateTableOccupancies,
   mutateTables,
@@ -45,6 +51,12 @@ export function TableGrid({
   } = useOrderItemActions();
 
   const {
+    handleUpdateReservationItemStatus,
+    updateStatusError: updateReservationItemStatusError,
+    resetUpdateStatus: resetUpdateReservationItemStatus,
+  } = useReservationItemActions();
+
+  const {
     data: occupancy,
     isLoading,
     mutate: mutateOccupancy,
@@ -53,6 +65,20 @@ export function TableGrid({
       ? selectedTable.occupancyId
       : null
   );
+
+  useEffect(() => {
+    if (updateReservationItemStatusError?.message) {
+      showNewAlert({
+        message: updateReservationItemStatusError.message,
+        variant: "danger",
+        action: resetUpdateReservationItemStatus,
+      });
+    }
+  }, [
+    updateReservationItemStatusError,
+    resetUpdateReservationItemStatus,
+    showNewAlert,
+  ]);
 
   useEffect(() => {
     if (updateOrderItemStatusError?.message) {
@@ -91,6 +117,32 @@ export function TableGrid({
       setIsDialogOpen(false);
     }
   };
+
+  const handleCompleteReservation = (reservation) => {
+    onCompleteReservation(reservation.reservationId);
+    mutateOccupancy();
+    setIsDialogOpen(false);
+  };
+
+  const handleServedReservation = (reservation) => {
+    onServedReservation(reservation.reservationId);
+    mutateOccupancy();
+    setIsDialogOpen(false);
+  };
+
+  const handleServeReservationItem = useCallback(
+    async (reservationId, itemId) => {
+      const res = await handleUpdateReservationItemStatus({
+        reservationId: reservationId,
+        itemId: itemId,
+        status: RESERVATION_ITEM_STATUSES.SERVED,
+      });
+      if (res) {
+        mutateOccupancy();
+      }
+    },
+    [mutateOccupancy, handleUpdateReservationItemStatus]
+  );
 
   const handleServedOrder = (order) => {
     onServedOrder(order.orderId, order.type);
@@ -235,7 +287,7 @@ export function TableGrid({
                         <span className={styles.detailLabel}>
                           Reserved for:
                         </span>{" "}
-                        {selectedTable.reservedFor}
+                        {selectedTable.contactName}
                       </p>
                     </div>
                   )}
@@ -246,6 +298,14 @@ export function TableGrid({
                     order={occupancy.order}
                     isLoading={isLoading}
                     onServeOrderItem={handleServeOrderItem}
+                  />
+                )}
+
+                {occupancy?.reservation && (
+                  <ReservationItemsTable
+                    reservation={occupancy.reservation}
+                    isLoading={isLoading}
+                    onServeReservationItem={handleServeReservationItem}
                   />
                 )}
 
@@ -264,10 +324,38 @@ export function TableGrid({
                           Served
                         </button>
                       )}
+                    {selectedTable.status === TABLE_STATUSES.OCCUPIED &&
+                      (occupancy?.reservation?.status ===
+                        RESERVATION_STATUSES.PARTIALLY_SERVED ||
+                        occupancy?.reservation?.status ===
+                          RESERVATION_STATUSES.READY_TO_SERVE) && (
+                        <button
+                          className={`${styles.actionButton} ${styles.servedButton}`}
+                          onClick={() =>
+                            handleServedReservation(occupancy.reservation)
+                          }
+                        >
+                          Served
+                        </button>
+                      )}
+                    {selectedTable.status === TABLE_STATUSES.OCCUPIED &&
+                      occupancy?.reservation?.status ===
+                        RESERVATION_STATUSES.SERVED && (
+                        <button
+                          className={`${styles.actionButton} ${styles.servedButton}`}
+                          onClick={() =>
+                            handleCompleteReservation(occupancy.reservation)
+                          }
+                        >
+                          Complete
+                        </button>
+                      )}
                     {selectedTable.status === TABLE_STATUSES.CLEANING && (
                       <button
                         className={`${styles.actionButton} ${styles.completeButton}`}
-                        onClick={() => handleStatusChange(TABLE_OCCUPANCY_STATUSES.COMPLETED)}
+                        onClick={() =>
+                          handleStatusChange(TABLE_OCCUPANCY_STATUSES.COMPLETED)
+                        }
                       >
                         Complete
                       </button>

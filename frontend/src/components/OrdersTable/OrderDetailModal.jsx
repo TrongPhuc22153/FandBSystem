@@ -1,7 +1,18 @@
 import { Badge, Button } from "react-bootstrap";
-import { ORDER_ACTIONS, ORDER_ITEM_STATUS_CLASSES, ORDER_ITEM_STATUSES, ORDER_STATUS_CLASSES, ORDER_STATUSES } from "../../constants/webConstant";
+import {
+  ORDER_ACTIONS,
+  ORDER_ITEM_STATUS_CLASSES,
+  ORDER_ITEM_STATUSES,
+  ORDER_STATUS_CLASSES,
+  ORDER_STATUSES,
+} from "../../constants/webConstant";
 
-export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCancelOrderItem }) {
+export default function OrderDetailModal({
+  order,
+  onClose,
+  onUpdateStatus,
+  onCancelOrderItem,
+}) {
   if (!order) return null;
 
   const getNextAction = (currentStatus) => {
@@ -20,7 +31,10 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCan
   const nextAction = getNextAction(order.status);
 
   const calculateTotal = (items) => {
-    return items.reduce((total, item) => total + (item.quantity * item.product.unitPrice), 0);
+    return items.reduce(
+      (total, item) => total + item.quantity * item.product.unitPrice,
+      0
+    );
   };
 
   return (
@@ -34,7 +48,8 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCan
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">
-              Order Details: {order.orderId} - Table {order?.tableOccupancy?.table?.tableNumber}
+              Order Details: {order.orderId} - Table{" "}
+              {order?.tableOccupancy?.table?.tableNumber}
             </h5>
             <button
               type="button"
@@ -48,10 +63,14 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCan
               <div className="col-md-6">
                 <h6>Customer Information</h6>
                 <p className="mb-1">
-                  <strong>Name:</strong> {order?.customer?.profile.user.username || order?.tableOccupancy?.contactName || "UNKNOW"}
+                  <strong>Name:</strong>{" "}
+                  {order?.customer?.profile.user.username ||
+                    order?.tableOccupancy?.contactName ||
+                    "UNKNOW"}
                 </p>
                 <p className="mb-1">
-                  <strong>Table:</strong> {order?.tableOccupancy?.table?.tableNumber}
+                  <strong>Table:</strong>{" "}
+                  {order?.tableOccupancy?.table?.tableNumber}
                 </p>
                 <p className="mb-1">
                   <strong>Order Time:</strong>{" "}
@@ -65,14 +84,26 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCan
               <div className="col-md-6">
                 <h6>Order Status</h6>
                 <div className="d-flex align-items-center mb-3">
-                  <Badge className={`me-2`} bg={ORDER_STATUS_CLASSES[order.status] || ORDER_STATUS_CLASSES.DEFAULT}>
+                  <Badge
+                    className={`me-2`}
+                    bg={
+                      ORDER_STATUS_CLASSES[order.status] ||
+                      ORDER_STATUS_CLASSES.DEFAULT
+                    }
+                  >
                     {order.status.charAt(0).toUpperCase() +
                       order.status.slice(1)}
                   </Badge>
                   {nextAction && (
                     <button
                       className="btn btn-sm btn-primary"
-                      onClick={() => onUpdateStatus(order.orderId, nextAction.toUpperCase(), order.type)}
+                      onClick={() =>
+                        onUpdateStatus(
+                          order.orderId,
+                          nextAction.toUpperCase(),
+                          order.type
+                        )
+                      }
                     >
                       Mark as{" "}
                       {nextAction.charAt(0).toUpperCase() + nextAction.slice(1)}
@@ -141,16 +172,22 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCan
                         </div>
                       </td>
                       <td>{item.quantity}</td>
-                      <td>{item.specialInstructions || '-'}</td>
+                      <td>{item.specialInstructions || "-"}</td>
                       <td className="text-end">
-                        ${item.status !== ORDER_ITEM_STATUSES.CANCELLED ? (item.quantity * item.product.unitPrice).toFixed(2) : '0.00'}
+                        $
+                        {item.status !== ORDER_ITEM_STATUSES.CANCELLED
+                          ? (item.quantity * item.product.unitPrice).toFixed(2)
+                          : "0.00"}
                       </td>
                       <td>
-                        {(item.status === ORDER_ITEM_STATUSES.PENDING || item.status === ORDER_ITEM_STATUSES.PREPARING) && (
+                        {(item.status === ORDER_ITEM_STATUSES.PENDING ||
+                          item.status === ORDER_ITEM_STATUSES.PREPARING) && (
                           <Button
                             variant="outline-danger"
                             size="sm"
-                            onClick={() => onCancelOrderItem(order.orderId, item.id)}
+                            onClick={() =>
+                              onCancelOrderItem(order.orderId, item.id)
+                            }
                           >
                             Cancel
                           </Button>
@@ -163,7 +200,9 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCan
                       <strong>Total:</strong>
                     </td>
                     <td className="text-end">
-                      <strong>${calculateTotal(order.orderDetails).toFixed(2)}</strong>
+                      <strong>
+                        ${calculateTotal(order.orderDetails).toFixed(2)}
+                      </strong>
                     </td>
                   </tr>
                 </tbody>

@@ -126,7 +126,7 @@ export const useOrderActions = () => {
   );
 
   const handleUpdateOrder = useCallback(
-    async ({ orderId, type, waitingListId, orderDetails }) => {
+    async ({ orderId, type, tableOccupancyId, orderDetails }) => {
       if (!token) {
         setUpdateError(authError?.message || "Authentication required");
         return null;
@@ -138,7 +138,7 @@ export const useOrderActions = () => {
         const response = await updateOrder({
           orderId,
           type,
-          waitingListId,
+          tableOccupancyId,
           orderDetails,
           token
         });
@@ -347,5 +347,3 @@ export const useOrderItemActions = () => {
     resetUpdateStatus,
   };
 };
-
-

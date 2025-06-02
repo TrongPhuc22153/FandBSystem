@@ -79,6 +79,7 @@ export const RESERVATION_ACTIONS = {
     PREPARING: "PREPARING",
     PREPARED: "PREPARED",
     READY: "READY",
+    SERVED: "SERVED",
     COMPLETE: "COMPLETE"
 }
 export const RESERVATION_STATUSES = {
@@ -87,8 +88,10 @@ export const RESERVATION_STATUSES = {
     CONFIRMED: "CONFIRMED",
     PREPARING: "PREPARING",
     PREPARED: "PREPARED",
+    READY_TO_SERVE: "READY_TO_SERVE",
+    PARTIALLY_SERVED: "PARTIALLY_SERVED",
+    SERVED: "SERVED",
     COMPLETED: "COMPLETED",
-    NO_SHOW: "NO_SHOW"
 }
 export const RESERVATION_STATUS_CLASSES = {
     CANCELLED: "danger",
@@ -97,6 +100,23 @@ export const RESERVATION_STATUS_CLASSES = {
     PREPARED: "success",
     COMPLETED: "secondary",
     DEFAULT: "primary"
+}
+
+export const RESERVATION_ITEM_STATUS_CLASSES = {
+    CANCELLED: "danger",
+    PENDING: "danger",
+    PREPARING: "warning",
+    PREPARED: "success",
+    SERVED: "secondary",
+    DEFAULT: "primary"
+}
+
+export const RESERVATION_ITEM_STATUSES = {
+    CANCELLED: "CANCELLED",
+    PENDING: "PENDING",
+    PREPARING: "PREPARING",
+    PREPARED: "PREPARED",
+    SERVED: "SERVED",
 }
 
 export const RESERVATION_TIME = {

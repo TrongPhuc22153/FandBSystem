@@ -20,4 +20,6 @@ public class ValidationGroups {
 
     public interface UpdateOrderItemStatus{}
 
+    public interface UpdateReservationItemStatus{}
+
 }

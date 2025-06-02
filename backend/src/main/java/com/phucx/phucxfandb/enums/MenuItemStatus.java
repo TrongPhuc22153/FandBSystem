@@ -1,10 +1,9 @@
 package com.phucx.phucxfandb.enums;
 
-public enum ReservationAction {
-    CANCEL,
+public enum MenuItemStatus {
+    PENDING,
     PREPARING,
     PREPARED,
-    READY,
     SERVED,
-    COMPLETE
+    CANCELED
 }

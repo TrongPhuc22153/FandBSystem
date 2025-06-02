@@ -14,13 +14,9 @@ public interface MenuItemMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "product", source = "product")
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "isDeleted", constant = "false")
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "reservation", source = "reservation")
     @Mapping(target = "price", source = "product.unitPrice")
+    @Mapping(target = "status", constant = "PENDING")
     MenuItem toMenuItem(RequestMenuItemDTO requestMenuItemDTO, Reservation reservation, Product product);
 
     @Named("toMenuItemDTO")

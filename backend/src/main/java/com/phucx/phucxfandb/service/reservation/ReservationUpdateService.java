@@ -8,6 +8,7 @@ public interface ReservationUpdateService {
     ReservationDTO createCustomerReservation(String username, RequestReservationDTO reservationDTO);
     ReservationDTO createEmployeeReservation(String username, RequestReservationDTO reservationDTO);
 
+    ReservationDTO updateReservation(String username, String reservationId, RequestReservationDTO request);
     ReservationDTO updateReservationStatus(String reservationId, ReservationStatus status);
     ReservationDTO updateReservationStatusByCustomer(String username, String reservationId, ReservationStatus status);
     ReservationDTO updateReservationStatusByEmployee(String username, String reservationId, ReservationStatus status);

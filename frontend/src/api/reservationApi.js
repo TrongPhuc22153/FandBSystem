@@ -1,4 +1,4 @@
-import { RESERVATIONS_ENDPOINT } from '../constants/api'; // Make sure this path is correct
+import { RESERVATION_ITEM_ENDPOINT, RESERVATION_ITEMS_ENDPOINT, RESERVATIONS_ENDPOINT } from '../constants/api'; // Make sure this path is correct
 import { SORTING_DIRECTIONS } from '../constants/webConstant';
 
 // Get reservation by ID
@@ -76,4 +76,122 @@ export const createReservation = async ({ token, requestReservationDTO }) => {
     throw await response.json();
   }
   return response.json();
+};
+
+export const updateReservation = async ({
+  token,
+  id,
+  requestReservationDTO,
+}) => {
+  const response = await fetch(`${RESERVATIONS_ENDPOINT}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(requestReservationDTO),
+  });
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};
+
+export const addReservationItem = async ({
+  token,
+  reservationId,
+  productId, 
+  quantity, 
+  specialInstruction
+}) => {
+  const response = await fetch(RESERVATION_ITEMS_ENDPOINT(reservationId), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      productId,
+      quantity,
+      specialInstruction
+    }),
+  });
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};
+
+export const updateReservationItemQuantity = async ({
+  token,
+  reservationId,
+  itemId,
+  productId,
+  quantity,
+  specialInstruction
+}) => {
+  const response = await fetch(
+    RESERVATION_ITEM_ENDPOINT(reservationId, itemId),
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        productId,
+        quantity,
+        specialInstruction
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};
+
+export const updateReservationItemStatus = async ({
+  token,
+  reservationId,
+  itemId,
+  status,
+}) => {
+  const response = await fetch(
+    RESERVATION_ITEM_ENDPOINT(reservationId, itemId),
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
+    }
+  );
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};
+
+export const cancelReservationItem = async ({ token, reservationId, itemId }) => {
+  const response = await fetch(
+    RESERVATION_ITEM_ENDPOINT(reservationId, itemId),
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json(); 
 };

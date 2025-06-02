@@ -12,6 +12,7 @@ import com.phucx.phucxfandb.service.order.OrderDetailService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
+import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     private final OrderUpdateService orderUpdateService;
     private final OrderReaderService orderReaderService;
     private final OrderDetailService orderDetailService;
+    private final TableOccupancyUpdateService tableOccupancyUpdateService;
     private final SendOrderNotificationService sendOrderNotificationService;
 
     @Override
@@ -183,8 +185,8 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Override
     @Transactional
     public OrderDTO completeDineInOrder(String username, String orderId){
-        OrderDTO order = orderReaderService.getOrder(orderId, OrderType.DINE_IN);
-        if(OrderStatus.SERVED.equals(order.getStatus())){
+        Order order = orderReaderService.getOrderEntity(orderId, OrderType.DINE_IN);
+        if(!OrderStatus.SERVED.equals(order.getStatus())){
             throw new IllegalStateException("Order is not served");
         }
         order.getOrderDetails().forEach(item -> {
@@ -192,6 +194,12 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
                 throw new IllegalStateException("There are still ongoing foods");
             }
         });
+
+        tableOccupancyUpdateService.updateTableOccupancyStatus(
+                order.getTableOccupancy().getId(),
+                order.getTableOccupancy().getTable().getTableId(),
+                TableOccupancyStatus.COMPLETED);
+
         return orderUpdateService.updateOrderStatus(orderId, OrderType.DINE_IN, OrderStatus.COMPLETED);
     }
 
@@ -199,7 +207,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Transactional
     public OrderDTO completeTakeAwayOrder(String username, String orderId) {
         OrderDTO order = orderReaderService.getOrder(orderId, OrderType.TAKE_AWAY);
-        if(OrderStatus.READY_TO_PICKUP.equals(order.getStatus())){
+        if(!OrderStatus.READY_TO_PICKUP.equals(order.getStatus())){
             throw new IllegalStateException("Order is not ready to pickup");
         }
         order.getOrderDetails().forEach(item -> {

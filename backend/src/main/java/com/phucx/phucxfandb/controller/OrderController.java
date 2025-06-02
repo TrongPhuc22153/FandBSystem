@@ -55,7 +55,7 @@ public class OrderController {
 
     @PatchMapping("/{id}")
     @Operation(summary = "Process order", description = "Employee access")
-    public ResponseEntity<ResponseDTO<OrderDTO>> updateOrderStatus(
+    public ResponseEntity<ResponseDTO<OrderDTO>> processOrder(
             Authentication authentication,
             @PathVariable String id,
             @RequestBody RequestOrderDTO requestOrderDTO
@@ -102,7 +102,7 @@ public class OrderController {
                 .message("Order updated successfully")
                 .data(order)
                 .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping(value = "/{id}/items", consumes = MediaType.APPLICATION_JSON_VALUE)

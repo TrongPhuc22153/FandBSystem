@@ -4,12 +4,15 @@ import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
-import com.phucx.phucxfandb.entity.TableEntity;
+import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.enums.*;
 import com.phucx.phucxfandb.exception.TableNotAvailableException;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
+import com.phucx.phucxfandb.service.reservation.MenuItemService;
 import com.phucx.phucxfandb.service.reservation.ReservationProcessingService;
+import com.phucx.phucxfandb.service.reservation.ReservationReaderService;
 import com.phucx.phucxfandb.service.reservation.ReservationUpdateService;
+import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
 import com.phucx.phucxfandb.service.table.TableReaderService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
@@ -22,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.EnumSet;
 import java.util.List;
 
 @Slf4j
@@ -29,7 +33,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationProcessingServiceImpl implements ReservationProcessingService {
     private final ReservationUpdateService reservationUpdateService;
+    private final ReservationReaderService reservationReaderService;
     private final TableReaderService tableReaderService;
+    private final MenuItemService menuItemService;
+    private final TableOccupancyUpdateService tableOccupancyUpdateService;
     private final SendReservationNotificationService sendReservationNotificationService;
 
     @Override
@@ -46,7 +53,10 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     private ReservationDTO cancelReservationByCustomer(String username, String reservationId) {
+        validateReservation(reservationId);
+
         ReservationDTO reservationDTO = reservationUpdateService.updateReservationStatusByCustomer(username, reservationId, ReservationStatus.CANCELLED);
+        menuItemService.updateItemStatus(reservationId, MenuItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
                 username,
@@ -65,7 +75,10 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     private ReservationDTO cancelReservationByEmployee(String username, String reservationId) {
+        validateReservation(reservationId);
+
         ReservationDTO reservationDTO = reservationUpdateService.updateReservationStatusByEmployee(username, reservationId, ReservationStatus.CANCELLED);
+        menuItemService.updateItemStatus(reservationId, MenuItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
                 username,
@@ -81,6 +94,19 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
         );
 
         return reservationDTO;
+    }
+
+    private void validateReservation(String reservationId){
+        Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
+        if(!ReservationStatus.PENDING.equals(reservation.getStatus())){
+            throw new IllegalStateException("Cannot cancel in process order");
+        }
+
+        for (MenuItem itemToCancel: reservation.getMenuItems()){
+            if (!EnumSet.of(MenuItemStatus.PENDING, MenuItemStatus.PREPARING).contains(itemToCancel.getStatus())) {
+                throw new IllegalStateException("Only items in PENDING or PREPARING status can be canceled.");
+            }
+        }
     }
 
     @Override
@@ -109,10 +135,27 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
     @Override
     @Transactional
+    public ReservationDTO markReservationAsServed(Authentication authentication, String reservationId) {
+        Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
+        var menuItemStatuses = EnumSet.of(MenuItemStatus.SERVED, MenuItemStatus.PREPARED);
+        for (MenuItem item : reservation.getMenuItems()) {
+            if (!menuItemStatuses.contains(item.getStatus())) {
+                throw new IllegalStateException("There are still in process food");
+            }
+        }
+        if (!(ReservationStatus.READY_TO_SERVE.equals(reservation.getStatus()) ||
+                ReservationStatus.PARTIALLY_SERVED.equals(reservation.getStatus()))) {
+            throw new IllegalStateException("Reservation is not in a state that can be marked as served.");
+        }
+
+        menuItemService.updateItemStatus(reservationId, MenuItemStatus.SERVED);
+        return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.SERVED);
+    }
+
+    @Override
+    @Transactional
     public ReservationDTO markReservationAsReady(Authentication authentication, String reservationId) {
-        return reservationUpdateService.updateReservationStatus(
-                reservationId,
-                ReservationStatus.READY_TO_SERVE
+        return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.READY_TO_SERVE
         );
     }
 
@@ -164,7 +207,23 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     @Override
+    @Transactional
     public ReservationDTO completeReservation(String username, String reservationId) {
+        Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
+        if(!ReservationStatus.SERVED.equals(reservation.getStatus())){
+            throw new IllegalStateException("Reservation is not served");
+        }
+        reservation.getMenuItems().forEach(item -> {
+            if(!EnumSet.of(MenuItemStatus.SERVED, MenuItemStatus.CANCELED).contains(item.getStatus())){
+                throw new IllegalStateException("There are still ongoing foods");
+            }
+        });
+
+        tableOccupancyUpdateService.updateTableOccupancyStatus(
+                reservation.getTableOccupancy().getId(),
+                reservation.getTableOccupancy().getTable().getTableId(),
+                TableOccupancyStatus.COMPLETED);
+
         return reservationUpdateService.updateReservationStatus(
                 reservationId,
                 ReservationStatus.COMPLETED
@@ -172,12 +231,16 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     @Override
+    @Transactional
     public ReservationDTO preparingReservation(String username, String reservationId) {
+        menuItemService.updateItemStatus(reservationId, MenuItemStatus.PENDING, MenuItemStatus.PREPARING);
         return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.PREPARING);
     }
 
     @Override
+    @Transactional
     public ReservationDTO markReservationAsPrepared(String username, String reservationId) {
+        menuItemService.updateItemStatus(reservationId, MenuItemStatus.PREPARING, MenuItemStatus.PREPARED);
         return reservationUpdateService.updateReservationStatus(reservationId, ReservationStatus.PREPARED);
     }
 
@@ -187,6 +250,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
             case PREPARING -> this.preparingReservation(authentication.getName(), reservationId);
             case PREPARED -> this.markReservationAsPrepared(authentication.getName(), reservationId);
             case READY -> this.markReservationAsReady(authentication, reservationId);
+            case SERVED -> this.markReservationAsServed(authentication, reservationId);
             case COMPLETE -> this.completeReservation(authentication.getName(), reservationId);
             case CANCEL -> this.cancelReservation(authentication, reservationId);
         };

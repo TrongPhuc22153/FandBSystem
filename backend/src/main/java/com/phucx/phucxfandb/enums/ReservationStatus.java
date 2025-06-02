@@ -3,11 +3,11 @@ package com.phucx.phucxfandb.enums;
 public enum ReservationStatus {
     PENDING,
     CONFIRMED,
-    CANCELLED,
     PREPARING,
     PREPARED,
     READY_TO_SERVE,
+    PARTIALLY_SERVED,
     SERVED,
-    SEATED,
     COMPLETED,
+    CANCELLED,
 }

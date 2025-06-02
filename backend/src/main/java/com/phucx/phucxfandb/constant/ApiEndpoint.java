@@ -159,25 +159,30 @@ public class ApiEndpoint {
 
         public static final String[] PATCH ={
                 ORDER_BY_ID_ENDPOINT,
-                RESERVATION_BY_ID_ENDPOINT,
+                ORDER_BY_ID_ITEM_BY_ID_ENDPOINT,
                 TABLE_BY_ID_ENDPOINT,
                 TABLE_OCCUPANCY_BY_ID_ENDPOINT,
-                ORDER_BY_ID_ITEM_BY_ID_ENDPOINT
+                RESERVATION_BY_ID_ENDPOINT,
+                RESERVATION_BY_ID_ITEM_BY_ID_ENDPOINT
         };
 
         public static final String[] POST = {
                 TABLE_OCCUPANCIES_ENDPOINT,
-                ORDER_BY_ID_ITEMS_ENDPOINT
+                ORDER_BY_ID_ITEMS_ENDPOINT,
+                RESERVATION_BY_ID_ITEMS_ENDPOINT
         };
 
         public static final String[] PUT = {
                 TABLE_OCCUPANCY_BY_ID_ENDPOINT,
                 ORDER_BY_ID_ITEM_BY_ID_ENDPOINT,
-                ORDER_BY_ID_ENDPOINT
+                ORDER_BY_ID_ENDPOINT,
+                RESERVATION_BY_ID_ITEM_BY_ID_ENDPOINT,
+                RESERVATION_BY_ID_ENDPOINT,
         };
 
         public static final String[] DELETE = {
-                ORDER_BY_ID_ITEM_BY_ID_ENDPOINT
+                ORDER_BY_ID_ITEM_BY_ID_ENDPOINT,
+                RESERVATION_BY_ID_ITEM_BY_ID_ENDPOINT
         };
     }
 
@@ -197,6 +202,8 @@ public class ApiEndpoint {
 
     public static final String RESERVATION_BY_ID_ENDPOINT = "/api/v1/reservations/{id}";
     public static final String RESERVATIONS_ENDPOINT = "/api/v1/reservations";
+    public static final String RESERVATION_BY_ID_ITEMS_ENDPOINT = "/api/v1/reservations/{id}/items";
+    public static final String RESERVATION_BY_ID_ITEM_BY_ID_ENDPOINT = "/api/v1/reservations/{reservationId}/items/{itemId}";
 
     public static final String TOPICS_ENDPOINT = "/api/v1/topics";
     public static final String TOPIC_BY_ID_ENDPOINT = "/api/v1/topics/{id}";

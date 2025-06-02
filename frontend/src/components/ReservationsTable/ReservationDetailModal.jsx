@@ -1,14 +1,18 @@
-import { Badge } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 import {
   RESERVATION_ACTIONS,
   RESERVATION_STATUS_CLASSES,
   RESERVATION_STATUSES,
+  RESERVATION_ITEM_STATUS_CLASSES,
+  RESERVATION_ITEM_STATUSES,
 } from "../../constants/webConstant";
+import { formatDate } from "../../utils/datetimeUtils";
 
 export default function ReservationDetailModal({
   reservation,
   onClose,
   onUpdateStatus,
+  onCancelReservationItem,
 }) {
   if (!reservation) return null;
 
@@ -27,13 +31,21 @@ export default function ReservationDetailModal({
 
   const nextAction = getNextAction(reservation.status);
 
+  const calculateTotal = (items) => {
+    return items.reduce(
+      (total, item) =>
+        total +
+        (item.status !== RESERVATION_ITEM_STATUSES.CANCELLED
+          ? item.quantity * item.product.unitPrice
+          : 0),
+      0
+    );
+  };
+
   // Calculate time until reservation
   const getTimeUntil = (reservation) => {
     const now = new Date();
-
-    const reservationDateTime = new Date(
-      `${reservation.date}T${reservation.startTime}`
-    );
+    const reservationDateTime = new Date(`${reservation.date}T${reservation.startTime}`);
     if (isNaN(reservationDateTime)) return "Invalid time";
 
     const diffMs = reservationDateTime - now;
@@ -46,17 +58,10 @@ export default function ReservationDetailModal({
     return `${hours}h ${mins}m`;
   };
 
-  const calculateTotal = (items) => {
-    return items.reduce(
-      (total, item) => total + item.quantity * item.product.unitPrice,
-      0
-    );
-  };
-
   return (
     <div
       className="modal show d-block"
-      tabIndex={-1}
+      tabIndex="-1"
       role="dialog"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
     >
@@ -79,33 +84,38 @@ export default function ReservationDetailModal({
                 <h6>Customer Information</h6>
                 <p className="mb-1">
                   <strong>Name:</strong>{" "}
-                  {reservation.customer.profile.user.username}
+                  {reservation?.customer?.profile.user.username || "UNKNOWN"}
                 </p>
                 <p className="mb-1">
-                  <strong>Phone:</strong> {reservation.customer.profile.phone}
+                  <strong>Phone:</strong>{" "}
+                  {reservation?.customer?.profile.phone || "-"}
                 </p>
                 <p className="mb-1">
-                  <strong>Party Size:</strong> {reservation.numberOfGuests}{" "}
-                  people
+                  <strong>Table:</strong>{" "}
+                  {reservation?.table?.tableNumber || "-"}
+                </p>
+                <p className="mb-1">
+                  <strong>Party Size:</strong> {reservation.numberOfGuests} people
                 </p>
                 <p className="mb-1">
                   <strong>Reservation Time:</strong>{" "}
-                  {new Date(
-                    `${reservation.date}T${reservation.startTime}`
-                  ).toLocaleString()}
+                  {formatDate(`${reservation.date}T${reservation.startTime}`)}
                 </p>
                 {reservation.status === RESERVATION_STATUSES.PENDING && (
                   <p className="mb-1">
-                    <strong>Time Until Arrival:</strong>{" "}
-                    {getTimeUntil(reservation)}
+                    <strong>Time Until Arrival:</strong> {getTimeUntil(reservation)}
                   </p>
                 )}
+                <p className="mb-1">
+                  <strong>Special Requests:</strong>{" "}
+                  {reservation.specialRequests || "-"}
+                </p>
               </div>
               <div className="col-md-6">
                 <h6>Reservation Status</h6>
                 <div className="d-flex align-items-center mb-3">
                   <Badge
-                    className={`me-2`}
+                    className="me-2"
                     bg={
                       RESERVATION_STATUS_CLASSES[reservation.status] ||
                       RESERVATION_STATUS_CLASSES.DEFAULT
@@ -115,8 +125,9 @@ export default function ReservationDetailModal({
                       reservation.status.slice(1)}
                   </Badge>
                   {nextAction && (
-                    <button
-                      className="btn btn-sm btn-primary"
+                    <Button
+                      variant="primary"
+                      size="sm"
                       onClick={() =>
                         onUpdateStatus(
                           reservation.reservationId,
@@ -126,7 +137,7 @@ export default function ReservationDetailModal({
                     >
                       Mark as{" "}
                       {nextAction.charAt(0).toUpperCase() + nextAction.slice(1)}
-                    </button>
+                    </Button>
                   )}
                 </div>
                 <div className="progress">
@@ -145,8 +156,7 @@ export default function ReservationDetailModal({
                       width:
                         reservation.status === RESERVATION_STATUSES.PENDING
                           ? "25%"
-                          : reservation.status ===
-                            RESERVATION_STATUSES.PREPARING
+                          : reservation.status === RESERVATION_STATUSES.PREPARING
                           ? "50%"
                           : reservation.status === RESERVATION_STATUSES.PREPARED
                           ? "75%"
@@ -168,29 +178,7 @@ export default function ReservationDetailModal({
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-md-6">
-                <h6>Special Requests</h6>
-                <div className="card">
-                  <div className="card-body">
-                    {reservation.specialRequests ||
-                      "No special requests provided."}
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <h6>Table Assignment</h6>
-                <div className="card">
-                  <div className="card-body">
-                    Table {reservation.table.tableNumber} - Capacity (
-                    {reservation.table.capacity} people) - Location{" "}
-                    {reservation.table.location}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <h6>reservation Items</h6>
+            <h6>Reservation Items</h6>
             <div className="table-responsive">
               <table className="table table-striped">
                 <thead>
@@ -199,27 +187,50 @@ export default function ReservationDetailModal({
                     <th>Quantity</th>
                     <th>Special Instructions</th>
                     <th className="text-end">Subtotal</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {reservation.menuItems.map((item, index) => (
                     <tr key={index}>
-                      <td>{item.product.productName}</td>
+                      <td>
+                        <div className="d-flex justify-content-between">
+                          <span>{item.product?.productName}</span>
+                          <Badge bg={RESERVATION_ITEM_STATUS_CLASSES[item.status]}>
+                            {item.status}
+                          </Badge>
+                        </div>
+                      </td>
                       <td>{item.quantity}</td>
                       <td>{item.specialInstructions || "-"}</td>
                       <td className="text-end">
-                        ${item.quantity * item.product.unitPrice}
+                        $
+                        {item.status !== RESERVATION_ITEM_STATUSES.CANCELLED
+                          ? (item.quantity * item.product.unitPrice).toFixed(2)
+                          : "0.00"}
+                      </td>
+                      <td>
+                        {(item.status === RESERVATION_ITEM_STATUSES.PENDING ||
+                          item.status === RESERVATION_ITEM_STATUSES.PREPARING) && (
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() =>
+                              onCancelReservationItem(reservation.reservationId, item.itemId)
+                            }
+                          >
+                            Cancel
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}
                   <tr className="table-active">
-                    <td colSpan={3} className="text-end">
+                    <td colSpan={4} className="text-end">
                       <strong>Total:</strong>
                     </td>
                     <td className="text-end">
-                      <strong>
-                        ${calculateTotal(reservation.menuItems).toFixed(2)}
-                      </strong>
+                      <strong>${calculateTotal(reservation.menuItems).toFixed(2)}</strong>
                     </td>
                   </tr>
                 </tbody>
@@ -227,22 +238,21 @@ export default function ReservationDetailModal({
             </div>
 
             <div className="mt-4">
-              <h6>Staff Notes</h6>
+              <h6>Kitchen Notes</h6>
               <textarea
                 className="form-control"
                 rows={3}
-                placeholder="Add notes about this reservation..."
+                placeholder="Add notes for kitchen staff..."
               ></textarea>
             </div>
           </div>
           <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
+            <Button
+              variant="secondary"
               onClick={onClose}
             >
               Close
-            </button>
+            </Button>
           </div>
         </div>
       </div>

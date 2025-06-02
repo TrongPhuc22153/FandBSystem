@@ -1,5 +1,7 @@
 package com.phucx.phucxfandb.service.reservation.impl;
 
+import com.phucx.phucxfandb.dto.request.RequestMenuItemDTO;
+import com.phucx.phucxfandb.enums.MenuItemStatus;
 import com.phucx.phucxfandb.enums.ReservationStatus;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
@@ -21,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -115,6 +119,130 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
 
         Reservation saved = reservationRepository.save(newReservation);
         return reservationMapper.toReservationDTO(saved);
+    }
+
+    @Override
+    @Transactional
+    public ReservationDTO updateReservation(String username, String reservationId, RequestReservationDTO requestReservationDTO) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new NotFoundException(Reservation.class.getSimpleName(), "id", reservationId));
+
+        validateReservationStatus(reservation);
+        processReservationItems(reservation, requestReservationDTO.getMenuItems());
+        updateReservationStatus(reservation);
+        updateReservationFinancials(reservation);
+
+        Reservation updated = reservationRepository.save(reservation);
+        return reservationMapper.toReservationDTO(updated);
+    }
+
+    private void validateReservationStatus(Reservation reservation) {
+        if (ReservationStatus.CANCELLED.equals(reservation.getStatus())) {
+            throw new IllegalStateException("Cannot modify reservation with status: " + reservation.getStatus());
+        }
+    }
+
+    private void processReservationItems(Reservation reservation, List<RequestMenuItemDTO> requestItems) {
+        for (RequestMenuItemDTO requestItem : requestItems) {
+            validateRequestItemDetail(requestItem);
+            Optional<MenuItem> existingItem = findExistingReservationItem(reservation, requestItem);
+            handleReservationItem(reservation, requestItem, existingItem);
+        }
+    }
+
+    private void validateRequestItemDetail(RequestMenuItemDTO requestItem) {
+        if (requestItem.getProductId() == null || requestItem.getQuantity() == null || requestItem.getQuantity() < 0) {
+            throw new IllegalArgumentException("menuItemId and non-negative quantity are required for reservation items");
+        }
+    }
+
+    private Optional<MenuItem> findExistingReservationItem(Reservation reservation, RequestMenuItemDTO requestItem) {
+        if (requestItem.getId() != null) {
+            return reservation.getMenuItems().stream()
+                    .filter(ri -> ri.getId().equals(requestItem.getId()))
+                    .findFirst();
+        }
+        return reservation.getMenuItems().stream()
+                .filter(ri -> ri.getProduct().getProductId().equals(requestItem.getProductId()))
+                .findFirst();
+    }
+
+    private void handleReservationItem(Reservation reservation, RequestMenuItemDTO requestItem, Optional<MenuItem> existingItem) {
+        if (existingItem.isPresent()) {
+            MenuItem item = existingItem.get();
+            if (isPreparedReservationItem(item)) {
+                handlePreparedItem(reservation, requestItem, item);
+            } else {
+                handlePendingOrPreparingItem(reservation, requestItem, item);
+            }
+        } else if (requestItem.getQuantity() > 0) {
+            addNewReservationItem(reservation, requestItem);
+        }
+    }
+
+    private boolean isPreparedReservationItem(MenuItem item) {
+        return EnumSet.of(MenuItemStatus.PREPARED, MenuItemStatus.SERVED, MenuItemStatus.CANCELED).contains(item.getStatus());
+    }
+
+    private void handlePreparedItem(Reservation reservation, RequestMenuItemDTO requestItem, MenuItem existingItem) {
+        if (requestItem.getQuantity() > existingItem.getQuantity()) {
+            int additionalQuantity = requestItem.getQuantity() - existingItem.getQuantity();
+            validateAvailability(requestItem.getProductId(), additionalQuantity);
+            addNewReservationItem(reservation, requestItem, additionalQuantity);
+        }
+    }
+
+    private void handlePendingOrPreparingItem(Reservation reservation, RequestMenuItemDTO requestItem, MenuItem item) {
+        if (requestItem.getQuantity().equals(item.getQuantity())) {
+            item.setSpecialInstruction(requestItem.getSpecialInstruction());
+        } else if (requestItem.getQuantity() == 0) {
+            reservation.getMenuItems().remove(item);
+        } else {
+            int quantityDelta = requestItem.getQuantity() - item.getQuantity();
+            if (quantityDelta > 0) {
+                validateAvailability(requestItem.getProductId(), quantityDelta);
+            }
+            item.setQuantity(requestItem.getQuantity());
+            item.setSpecialInstruction(requestItem.getSpecialInstruction());
+        }
+    }
+
+    private void addNewReservationItem(Reservation reservation, RequestMenuItemDTO requestItem) {
+        addNewReservationItem(reservation, requestItem, requestItem.getQuantity());
+    }
+
+    private void addNewReservationItem(Reservation reservation, RequestMenuItemDTO requestItem, int quantity) {
+        validateAvailability(requestItem.getProductId(), quantity);
+
+        Product product = productReaderService.getProductEntity(requestItem.getProductId());
+
+        MenuItem newDetail = MenuItem.builder()
+                .reservation(reservation)
+                .product(product)
+                .price(product.getUnitPrice())
+                .quantity(quantity)
+                .status(MenuItemStatus.PENDING)
+                .specialInstruction(requestItem.getSpecialInstruction())
+                .build();
+        reservation.getMenuItems().add(newDetail);
+    }
+
+    private void validateAvailability(long productId, int quantity) {
+        Product product = productReaderService.getProductEntity(productId);
+        if (product.getUnitsInStock() < quantity) {
+            throw new IllegalArgumentException("Insufficient availability for menu item ID: " + productId);
+        }
+    }
+
+    private void updateReservationStatus(Reservation reservation) {
+        if (!ReservationStatus.COMPLETED.equals(reservation.getStatus())) {
+            reservation.setStatus(ReservationStatus.CONFIRMED);
+        }
+    }
+
+    private void updateReservationFinancials(Reservation reservation) {
+        reservation.setTotalPrice(PriceUtils.calculateReservationTotalPrice(reservation.getMenuItems()));
+        reservation.getPayment().setAmount(reservation.getTotalPrice());
     }
 
     @Override
