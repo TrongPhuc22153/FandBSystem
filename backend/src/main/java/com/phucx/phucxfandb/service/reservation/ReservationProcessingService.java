@@ -12,6 +12,8 @@ public interface ReservationProcessingService {
     ReservationDTO placeEmployeeReservation(String username, RequestReservationDTO requestReservationDTO);
     ReservationDTO placeReservation(RequestReservationDTO requestReservationDTO, Authentication authentication);
 
+    ReservationDTO markReservationAsReady(Authentication authentication, String reservationId);
+
     ReservationDTO completeReservation(String username, String reservationId);
 
     ReservationDTO preparingReservation(String username, String reservationId);

@@ -64,7 +64,7 @@ export default function ReservationsTable() {
         variant: "danger",
       });
     }
-  }, [processError]);
+  }, [processError, showNewAlert]);
 
   useEffect(() => {
     if (processSuccess) {
@@ -73,7 +73,11 @@ export default function ReservationsTable() {
         action: resetProcess,
       });
     }
-  }, [processSuccess]);
+  }, [processSuccess, showNewAlert, resetProcess]);
+
+    const closeReservationDetail = useCallback(() => {
+      setSelectedReservation(null);
+    }, []);
 
   const updateReservationStatus = useCallback(
     async (reservationId, action) => {
@@ -83,7 +87,7 @@ export default function ReservationsTable() {
         closeReservationDetail();
       }
     },
-    [mutate, handleProcessReservation]
+    [mutate, handleProcessReservation, closeReservationDetail]
   );
 
   const showConfirmModal = useCallback(
@@ -124,10 +128,6 @@ export default function ReservationsTable() {
   const handleReservationClick = (reservation) => {
     setSelectedReservation(reservation);
   };
-
-  const closeReservationDetail = useCallback(() => {
-    setSelectedReservation(null);
-  }, []);
 
   return (
     <div>
@@ -271,11 +271,11 @@ export default function ReservationsTable() {
                           onClick={() =>
                             showConfirmModal(
                               reservation.reservationId,
-                              RESERVATION_ACTIONS.READY
+                              RESERVATION_ACTIONS.PREPARED
                             )
                           }
                         >
-                          Mark Ready
+                          Mark as Prepared
                         </button>
                       )}
                       {reservation.status === RESERVATION_STATUSES.PREPARED && (
@@ -284,11 +284,11 @@ export default function ReservationsTable() {
                           onClick={() =>
                             showConfirmModal(
                               reservation.reservationId,
-                              RESERVATION_ACTIONS.COMPLETE
+                              RESERVATION_ACTIONS.READY
                             )
                           }
                         >
-                          Complete
+                          Mark as Ready
                         </button>
                       )}
                     </div>

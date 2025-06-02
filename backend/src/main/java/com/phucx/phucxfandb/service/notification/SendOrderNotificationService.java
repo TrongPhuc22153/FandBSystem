@@ -19,6 +19,10 @@ public interface SendOrderNotificationService {
 
     void sendPreparingNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order);
 
+    void sendPreparedNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order);
+
+    void sendServedNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order);
+
     void sendReadyNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order);
 
     void sendCompleteNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order);

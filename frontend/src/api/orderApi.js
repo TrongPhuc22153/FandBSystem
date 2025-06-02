@@ -121,6 +121,23 @@ export const cancelOrderItem = async ({ token, orderId, orderItemId }) => {
   return response.json();
 };
 
+// Update order item status
+export const updateOrderItemStatus = async ({ token, orderId, orderItemId, status }) => {
+  const response = await fetch(ORDER_ITEM_ENDPOINT(orderId, orderItemId), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
+};
+
 // Place a new order
 export const placeOrder = async ({ token, requestOrderDTO }) => {
   const response = await fetch(ORDERS_ENDPOINT, {

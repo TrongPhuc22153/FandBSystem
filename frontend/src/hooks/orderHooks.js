@@ -9,6 +9,7 @@ import {
   processOrder,
   updateOrder,
   updateOrderItemQuantity,
+  updateOrderItemStatus,
 } from "../api/orderApi";
 import { useAuth } from "../context/AuthContext";
 import { ORDERS_ENDPOINT } from "../constants/api";
@@ -204,6 +205,15 @@ export const useOrderItemActions = () => {
     setCancelSuccess(null);
   }, []);
 
+  // --- State for updateOrderItemStatus ---
+  const [updateStatusLoading, setUpdateStatusLoading] = useState(false);
+  const [updateStatusError, setUpdateStatusError] = useState(null);
+  const [updateStatusSuccess, setUpdateStatusSuccess] = useState(null);
+  const resetUpdateStatus = useCallback(() => {
+    setUpdateStatusError(null);
+    setUpdateStatusSuccess(null);
+  }, []);
+
   const handleAddOrderItem = useCallback(
     async ({ orderId, productId, quantity, specialInstruction }) => {
       if (!token) {
@@ -283,6 +293,30 @@ export const useOrderItemActions = () => {
     [token, authError]
   );
 
+  const handleUpdateOrderItemStatus = useCallback(
+    async ({ orderId, orderItemId, status }) => {
+      if (!token) {
+        setUpdateStatusError(authError?.message || "Authentication required");
+        return null;
+      }
+      setUpdateStatusLoading(true);
+      setUpdateStatusError(null);
+      setUpdateStatusSuccess(null);
+
+      try {
+        const response = await updateOrderItemStatus({ token, orderId, orderItemId, status });
+        setUpdateStatusSuccess(response?.message || "Order item status updated successfully");
+        return response;
+      } catch (err) {
+        setUpdateStatusError(err);
+        return null;
+      } finally {
+        setUpdateStatusLoading(false);
+      }
+    },
+    [token, authError]
+  );
+
   return {
     // Add
     handleAddOrderItem,
@@ -304,6 +338,13 @@ export const useOrderItemActions = () => {
     cancelLoading,
     cancelSuccess,
     resetCancel,
+
+    // Update status
+    handleUpdateOrderItemStatus,
+    updateStatusError,
+    updateStatusLoading,
+    updateStatusSuccess,
+    resetUpdateStatus,
   };
 };
 

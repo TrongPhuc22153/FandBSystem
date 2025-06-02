@@ -53,7 +53,7 @@ export default function RestaurantOrderSystem() {
     data: occupancyData,
     isLoading: loadingOccupancy,
     error: occupancyError,
-  } = useTableOccupancy({ id: selectedCustomer?.id || null });
+  } = useTableOccupancy(selectedCustomer?.id || null);
 
   // Fetch products
   const {

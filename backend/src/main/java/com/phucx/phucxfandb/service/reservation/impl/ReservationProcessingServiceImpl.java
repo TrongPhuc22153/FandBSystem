@@ -108,6 +108,15 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     }
 
     @Override
+    @Transactional
+    public ReservationDTO markReservationAsReady(Authentication authentication, String reservationId) {
+        return reservationUpdateService.updateReservationStatus(
+                reservationId,
+                ReservationStatus.READY_TO_SERVE
+        );
+    }
+
+    @Override
     public ReservationDTO placeCustomerReservation(String username, RequestReservationDTO request) {
         long durationMinutes = ChronoUnit.MINUTES.between(request.getStartTime(), request.getEndTime());
 
@@ -176,7 +185,8 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     public ReservationDTO processReservation(Authentication authentication, String reservationId, ReservationAction action) {
         ReservationDTO result = switch (action){
             case PREPARING -> this.preparingReservation(authentication.getName(), reservationId);
-            case READY -> this.markReservationAsPrepared(authentication.getName(), reservationId);
+            case PREPARED -> this.markReservationAsPrepared(authentication.getName(), reservationId);
+            case READY -> this.markReservationAsReady(authentication, reservationId);
             case COMPLETE -> this.completeReservation(authentication.getName(), reservationId);
             case CANCEL -> this.cancelReservation(authentication, reservationId);
         };

@@ -7,8 +7,10 @@ public class NotificationTitle {
     public static final String ORDER_PLACED = "Order placed";
     public static final String ORDER_PREPARING = "Order preparing";
     public static final String ORDER_PREPARED = "Order prepared";
+    public static final String ORDER_READY = "Order is ready";
     public static final String ORDER_COMPLETED = "Order completed";
     public static final String ORDER_CANCELLED = "Order cancelled";
+    public static final String ORDER_SERVED = "Order served";
     public static final String CONFIRM_ORDER = "Confirm Order";
     public static final String RECEIVE_ORDER = "Receive Order";
     public static final String CANCEL_ORDER = "Cancel Order"; // Note: Duplicate functionality with ORDER_CANCELLED

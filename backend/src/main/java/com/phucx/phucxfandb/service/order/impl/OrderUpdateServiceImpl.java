@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -124,8 +125,8 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     private void handleOrderDetail(Order order, RequestOrderDetailsDTO requestDetail, Optional<OrderDetail> existingDetail) {
         if (existingDetail.isPresent()) {
             OrderDetail detail = existingDetail.get();
-            if (isPreparedOrCompleted(detail)) {
-                handlePreparedOrCompletedDetail(order, requestDetail, detail);
+            if (isPreparedOrderItem(detail)) {
+                handlePreparedItem(order, requestDetail, detail);
             } else {
                 handlePendingOrPreparingDetail(order, requestDetail, detail);
             }
@@ -134,11 +135,11 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
         }
     }
 
-    private boolean isPreparedOrCompleted(OrderDetail detail) {
-        return OrderItemStatus.PREPARED.equals(detail.getStatus()) || OrderItemStatus.COMPLETED.equals(detail.getStatus());
+    private boolean isPreparedOrderItem(OrderDetail detail) {
+        return EnumSet.of(OrderItemStatus.PREPARED, OrderItemStatus.SERVED, OrderItemStatus.CANCELED).contains(detail.getStatus());
     }
 
-    private void handlePreparedOrCompletedDetail(Order order, RequestOrderDetailsDTO requestDetail, OrderDetail existingDetail) {
+    private void handlePreparedItem(Order order, RequestOrderDetailsDTO requestDetail, OrderDetail existingDetail) {
         if (requestDetail.getQuantity() > existingDetail.getQuantity()) {
             int additionalQuantity = requestDetail.getQuantity() - existingDetail.getQuantity();
             validateStock(requestDetail.getProductId(), additionalQuantity);
@@ -187,10 +188,7 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     }
 
     private void updateOrderStatus(Order order) {
-        if (OrderStatus.PENDING.equals(order.getStatus()) ||
-                OrderStatus.CONFIRMED.equals(order.getStatus()) ||
-                OrderStatus.PREPARED.equals(order.getStatus()) ||
-                OrderStatus.COMPLETED.equals(order.getStatus())) {
+        if (!OrderStatus.COMPLETED.equals(order.getStatus())) {
             order.setStatus(OrderStatus.PENDING);
         }
     }

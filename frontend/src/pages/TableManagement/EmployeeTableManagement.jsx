@@ -10,6 +10,7 @@ import {
   TABLE_OCCUPANCY_STATUSES,
   RESERVATION_STATUSES,
   TABLE_OCCUPANCY_TYPES,
+  ORDER_ACTIONS,
 } from "../../constants/webConstant";
 import { useAlert } from "../../context/AlertContext";
 import Pagination from "../../components/Pagination/Pagination";
@@ -23,6 +24,7 @@ import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import moment from "moment";
 import { useReservations } from "../../hooks/reservationHooks";
 import { UpcommingReservations } from "../../components/WaitingList/UpcommingReservations";
+import { useOrderActions } from "../../hooks/orderHooks";
 
 export default function EmployeeTableManagement() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -97,6 +99,13 @@ export default function EmployeeTableManagement() {
     resetUpdateStatus,
   } = useTableOccupancyActions();
 
+   const { 
+    handleProcessOrder, 
+    processError, 
+    processSuccess, 
+    resetProcess 
+  } = useOrderActions();
+
   const { showNewAlert } = useAlert();
 
   useEffect(() => {
@@ -117,24 +126,18 @@ export default function EmployeeTableManagement() {
     }
   }, [updateStatusSuccess, resetUpdateStatus, showNewAlert]);
 
-  const mapStatus = (newStatus) => {
-    switch (newStatus) {
-      case TABLE_STATUSES.CLEANING:
-        return TABLE_OCCUPANCY_STATUSES.CLEANING;
-
-      case TABLE_STATUSES.UNOCCUPIED:
-        return TABLE_OCCUPANCY_STATUSES.COMPLETED;
-
-      default:
-        return null;
-    }
-  };
+  const onServedOrder = useCallback(
+    async (orderId, type) => {
+      await handleProcessOrder(orderId, ORDER_ACTIONS.SERVED, type);
+    },
+    [handleProcessOrder]
+  );
 
   const updateTableStatus = useCallback(
     async (id, tableId, newStatus) => {
       const res = await handleUpdateTableOccupancyStatus(id, {
         tableId,
-        status: mapStatus(newStatus),
+        status: newStatus,
       });
       if (res) {
         mutateTables();
@@ -289,8 +292,9 @@ export default function EmployeeTableManagement() {
               <div className={styles.tabContent}>
                 <TableGrid
                   tables={tables}
-                  seatCustomerReservation={handleSeatCustomerReservation}
-                  updateTableStatus={updateTableStatus}
+                  onSeatCustomerReservation={handleSeatCustomerReservation}
+                  onUpdateTableStatus={updateTableStatus}
+                  onServedOrder={onServedOrder}
                   tableOccupancies={tableOccupancies}
                   mutateTableOccupancies={mutateTableOccupancies}
                   mutateTables={mutateTables}
@@ -351,39 +355,6 @@ export default function EmployeeTableManagement() {
               </div>
             </div>
           </div>
-
-          {/* <div className={styles.tableOccupanciesSection}>
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <h2 className={styles.cardTitle}>Waiting List</h2>
-                <button className={styles.addButton}>
-                  <Plus size={16} />
-                  <span>Add</span>
-                </button>
-              </div>
-              <div className={styles.cardContent}>
-                <p className={styles.waitingCount}>
-                  {tableOccupancies.length} parties waiting
-                </p>
-                {tableOccupanciesError?.message ? (
-                  <ErrorDisplay message={tableOccupanciesError.message} />
-                ) : (
-                  <WaitingList
-                    waitingList={tableOccupancies}
-                    mutate={mutateTableOccupancies}
-                  />
-                )}
-                {reservationError?.message ? (
-                  <ErrorDisplay message={reservationError.message} />
-                ) : (
-                  <UpcommingReservations
-                    reservations={reservations}
-                    mutate={mutateReservations}
-                  />
-                )}
-              </div>
-            </div>
-          </div> */}
         </div>
       </div>
     </div>

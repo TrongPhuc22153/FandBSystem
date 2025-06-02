@@ -64,7 +64,7 @@ public class Reservation extends Auditable{
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 20)
     private ReservationStatus status = ReservationStatus.PENDING;
 
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)

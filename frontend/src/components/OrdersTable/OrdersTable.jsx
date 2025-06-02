@@ -304,12 +304,12 @@ export default function OrdersTable() {
                           onClick={() =>
                             showConfirmModal(
                               order.orderId,
-                              ORDER_ACTIONS.READY,
+                              ORDER_ACTIONS.PREPARED,
                               order.type
                             )
                           }
                         >
-                          Mark Ready
+                          Mark as Prepared
                         </button>
                       )}
                       {order.status === ORDER_STATUSES.PREPARED && (
@@ -318,12 +318,12 @@ export default function OrdersTable() {
                           onClick={() =>
                             showConfirmModal(
                               order.orderId,
-                              ORDER_ACTIONS.COMPLETE,
+                              ORDER_ACTIONS.READY,
                               order.type
                             )
                           }
                         >
-                          Complete
+                          Ready
                         </button>
                       )}
                     </div>

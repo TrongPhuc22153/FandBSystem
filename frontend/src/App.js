@@ -41,7 +41,7 @@ import AdminLayout from "./pages/ProfileLayout/AdminLayout";
 import CustomerLayout from "./pages/ProfileLayout/CustomerLayout";
 import EmployeeLayout from "./pages/ProfileLayout/EmployeeLayout";
 import EmployeeTableManagement from "./pages/TableManagement/EmployeeTableManagement"
-import EmployeeKitchenPage from "./pages/EmployeeKitchenPage/EmployeeKitchennPage";
+import EmployeeKitchenPage from "./pages/EmployeeKitchenPage/EmployeeKitchenPage";
 import RestaurantOrderSystem from "./pages/RestaurantOrderSystemPage/RestaurantOrderSystemPage";
 import UserReservationsPage from "./pages/UserReservationsPage/UserReservationsPage";
 import ReservationFormPage from "./pages/ReservationFormPage/ReservationPage";

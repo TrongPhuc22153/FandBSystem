@@ -1,22 +1,30 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Check, ChevronDown, Users } from "lucide-react";
 import styles from "./TableGrid.module.css";
 import {
   TABLE_STATUSES,
   TABLE_OCCUPANCY_STATUSES,
+  ORDER_ITEM_STATUSES,
+  ORDER_STATUSES,
 } from "../../constants/webConstant";
 import { formatDistanceToNow } from "date-fns";
-import { useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
+import {
+  useTableOccupancy,
+  useTableOccupancyActions,
+} from "../../hooks/tableOccupancyHooks";
 import { useAlert } from "../../context/AlertContext";
 import { formatTime } from "../../utils/datetimeUtils";
+import { OrderItemsDataTable } from "../OrderItemsTable/OrderItemDataTable";
+import { useOrderItemActions } from "../../hooks/orderHooks";
 
-export function TableGrid({ 
-  tables, 
-  updateTableStatus, 
-  seatCustomerReservation,
-  tableOccupancies, 
-  mutateTableOccupancies, 
-  mutateTables 
+export function TableGrid({
+  tables,
+  onUpdateTableStatus,
+  onSeatCustomerReservation,
+  onServedOrder,
+  tableOccupancies,
+  mutateTableOccupancies,
+  mutateTables,
 }) {
   const [selectedTable, setSelectedTable] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -24,12 +32,37 @@ export function TableGrid({
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   const { showNewAlert } = useAlert();
-
   const {
     handleUpdateTableOccupancyStatus,
     updateStatusError,
     resetUpdateStatus,
   } = useTableOccupancyActions();
+
+  const {
+    handleUpdateOrderItemStatus,
+    updateStatusError: updateOrderItemStatusError,
+    resetUpdateStatus: resetUpdateOrderItemStatus,
+  } = useOrderItemActions();
+
+  const {
+    data: occupancy,
+    isLoading,
+    mutate: mutateOccupancy,
+  } = useTableOccupancy(
+    selectedTable?.status === TABLE_STATUSES.OCCUPIED
+      ? selectedTable.occupancyId
+      : null
+  );
+
+  useEffect(() => {
+    if (updateOrderItemStatusError?.message) {
+      showNewAlert({
+        message: updateOrderItemStatusError.message,
+        variant: "danger",
+        action: resetUpdateOrderItemStatus,
+      });
+    }
+  }, [updateOrderItemStatusError, resetUpdateOrderItemStatus, showNewAlert]);
 
   useEffect(() => {
     if (updateStatusError?.message) {
@@ -39,7 +72,7 @@ export function TableGrid({
         action: resetUpdateStatus,
       });
     }
-  }, [updateStatusError]);
+  }, [updateStatusError, resetUpdateStatus, showNewAlert]);
 
   const handleTableClick = (table) => {
     setSelectedTable(table);
@@ -48,12 +81,36 @@ export function TableGrid({
 
   const handleStatusChange = (status) => {
     if (selectedTable) {
-      if(selectedTable?.occupancyId){
-        updateTableStatus?.(selectedTable.occupancyId, selectedTable.tableId, status);
+      if (selectedTable?.occupancyId) {
+        onUpdateTableStatus?.(
+          selectedTable.occupancyId,
+          selectedTable.tableId,
+          status
+        );
       }
       setIsDialogOpen(false);
     }
   };
+
+  const handleServedOrder = (order) => {
+    onServedOrder(order.orderId, order.type);
+    mutateOccupancy();
+    setIsDialogOpen(false);
+  };
+
+  const handleServeOrderItem = useCallback(
+    async (orderId, orderItemId) => {
+      const res = await handleUpdateOrderItemStatus({
+        orderId: orderId,
+        orderItemId: orderItemId,
+        status: ORDER_ITEM_STATUSES.SERVED,
+      });
+      if (res) {
+        mutateOccupancy();
+      }
+    },
+    [mutateOccupancy, handleUpdateOrderItemStatus]
+  );
 
   const handleSeatCustomer = async (status) => {
     const res = await handleUpdateTableOccupancyStatus(selectedCustomer, {
@@ -113,20 +170,20 @@ export function TableGrid({
               </div>
             )}
 
-            {table.occupiedAt &&
-              table.status === TABLE_STATUSES.OCCUPIED && (
-                <div className={styles.tableInfo}>
-                  <span className={styles.infoLabel}>Since:</span>{" "}
-                  {formatTime(table.occupiedAt)}
-                </div>
-              )}
-
-            {table.reservationId && table.status === TABLE_STATUSES.RESERVED && (
+            {table.occupiedAt && table.status === TABLE_STATUSES.OCCUPIED && (
               <div className={styles.tableInfo}>
-                <span className={styles.infoLabel}>Reserved:</span>{" "}
-                {`${table.contactName} (${formatTime(table.startAt)})`}
+                <span className={styles.infoLabel}>Since:</span>{" "}
+                {formatTime(table.occupiedAt)}
               </div>
             )}
+
+            {table.reservationId &&
+              table.status === TABLE_STATUSES.RESERVED && (
+                <div className={styles.tableInfo}>
+                  <span className={styles.infoLabel}>Reserved:</span>{" "}
+                  {`${table.contactName} (${formatTime(table.startAt)})`}
+                </div>
+              )}
           </div>
         ))}
       </div>
@@ -139,7 +196,7 @@ export function TableGrid({
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <h2 className={styles.modalTitle}>
-                Table {selectedTable?.number}
+                Table {selectedTable?.tableNumber}
               </h2>
               <button
                 className={styles.closeButton}
@@ -148,202 +205,221 @@ export function TableGrid({
                 ×
               </button>
             </div>
-            <div className={styles.modalBody}>
-              <div className={styles.statusSection}>
-                <h4 className={styles.sectionTitle}>
-                  Current Status:{" "}
-                  <span className={styles.statusText}>
-                    {selectedTable?.status}
-                  </span>
-                </h4>
-
-                {selectedTable?.status === TABLE_STATUSES.OCCUPIED && (
-                  <div className={styles.statusDetails}>
-                    <p>
-                      <span className={styles.detailLabel}>
-                        Occupied since:
-                      </span>{" "}
-                      {formatTime(selectedTable.occupiedAt)}
-                    </p>
-                  </div>
-                )}
-
-                {selectedTable?.status === TABLE_STATUSES.RESERVED && (
-                  <div className={styles.statusDetails}>
-                    <p>
-                      <span className={styles.detailLabel}>Reserved for:</span>{" "}
-                      {selectedTable.reservedFor}
-                    </p>
-                  </div>
-                )}
-              </div>
-              
-              <div className={styles.statusActions}>
-                <h4 className={styles.sectionTitle}>Change Status</h4>
-                <div className={styles.actionButtons}>
-                  {selectedTable.status === TABLE_STATUSES.CLEANING || selectedTable.status === TABLE_STATUSES.OCCUPIED &&
-                    <button
-                      className={`${styles.actionButton} ${
-                        selectedTable?.status === TABLE_STATUSES.UNOCCUPIED
-                          ? styles.activeButton
-                          : ""
-                      } ${styles.completeButton}`}
-                      onClick={() =>
-                        handleStatusChange(TABLE_STATUSES.UNOCCUPIED)
-                      }
-                    >
-                      Complete
-                    </button>
-                  }
-                  {selectedTable.status === TABLE_STATUSES.RESERVED &&
-                    <button
-                      className={`${styles.actionButton} ${
-                        selectedTable?.status === TABLE_STATUSES.RESERVED
-                          ? styles.activeButton
-                          : ""
-                      } ${styles.reservedButton}`}
-                      onClick={() =>{
-                        seatCustomerReservation(selectedTable)
-                        setIsDialogOpen(false)
-                      }}
-                    >
-                      Seat customer
-                    </button>
-                  }
-                  {selectedTable.status === TABLE_STATUSES.UNOCCUPIED &&
-                    <button
-                      className={`${styles.actionButton} ${
-                        selectedTable?.status === TABLE_STATUSES.CLEANING
-                          ? styles.activeButton
-                          : ""
-                      } ${styles.cleaningButton}`}
-                      onClick={() =>
-                        handleStatusChange(TABLE_STATUSES.CLEANING)
-                      }
-                    >
-                      Cleaning
-                    </button>
-                  }
-                </div>
-              </div>
-
-              {selectedTable?.status === TABLE_STATUSES.UNOCCUPIED && (
-                <div className={styles.assignSection}>
+            <div
+              className={styles.modalBody}
+              style={{ display: "flex", gap: "1rem" }}
+            >
+              <div style={{ flex: 1 }}>
+                <div className={styles.statusSection}>
                   <h4 className={styles.sectionTitle}>
-                    Assign Server & Seat Customers
+                    Current Status:{" "}
+                    <span className={styles.statusText}>
+                      {selectedTable?.status}
+                    </span>
                   </h4>
-                  <div className={styles.assignActions}>
-                    <div className={styles.dropdownContainer}>
+
+                  {selectedTable?.status === TABLE_STATUSES.OCCUPIED && (
+                    <div className={styles.statusDetails}>
+                      <p>
+                        <span className={styles.detailLabel}>
+                          Occupied since:
+                        </span>{" "}
+                        {formatTime(selectedTable.occupiedAt)}
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedTable?.status === TABLE_STATUSES.RESERVED && (
+                    <div className={styles.statusDetails}>
+                      <p>
+                        <span className={styles.detailLabel}>
+                          Reserved for:
+                        </span>{" "}
+                        {selectedTable.reservedFor}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {occupancy?.order && (
+                  <OrderItemsDataTable
+                    order={occupancy.order}
+                    isLoading={isLoading}
+                    onServeOrderItem={handleServeOrderItem}
+                  />
+                )}
+
+                <div className={styles.statusActions}>
+                  <h4 className={styles.sectionTitle}>Change Status</h4>
+                  <div className={styles.actionButtons}>
+                    {selectedTable.status === TABLE_STATUSES.OCCUPIED &&
+                      (occupancy?.order?.status ===
+                        ORDER_STATUSES.PARTIALLY_SERVED ||
+                        occupancy?.order?.status ===
+                          ORDER_STATUSES.READY_TO_SERVE) && (
+                        <button
+                          className={`${styles.actionButton} ${styles.servedButton}`}
+                          onClick={() => handleServedOrder(occupancy.order)}
+                        >
+                          Served
+                        </button>
+                      )}
+                    {selectedTable.status === TABLE_STATUSES.CLEANING && (
                       <button
-                        className={styles.dropdownButton}
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
-                        aria-expanded={dropdownOpen}
-                        aria-label="Select customer to seat"
+                        className={`${styles.actionButton} ${styles.completeButton}`}
+                        onClick={() => handleStatusChange(TABLE_OCCUPANCY_STATUSES.COMPLETED)}
                       >
-                        {selectedCustomer
-                          ? tableOccupancies.find((s) => s.id === selectedCustomer)
-                              ?.contactName
-                          : "Select customer"}
-                        <ChevronDown
-                          size={16}
-                          className={styles.dropdownIcon}
-                        />
+                        Complete
                       </button>
-                      {dropdownOpen && (
-                        <div className={styles.dropdownMenu}>
-                          {tableOccupancies
-                            .filter(
+                    )}
+                    {selectedTable.status === TABLE_STATUSES.RESERVED && (
+                      <button
+                        className={`${styles.actionButton} ${styles.reservedButton}`}
+                        onClick={() => {
+                          onSeatCustomerReservation(selectedTable);
+                          setIsDialogOpen(false);
+                        }}
+                      >
+                        Seat customer
+                      </button>
+                    )}
+                    {selectedTable.status === TABLE_STATUSES.UNOCCUPIED && (
+                      <button
+                        className={`${styles.actionButton} ${styles.cleaningButton}`}
+                        onClick={() =>
+                          handleStatusChange(TABLE_OCCUPANCY_STATUSES.CLEANING)
+                        }
+                      >
+                        Cleaning
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {selectedTable?.status === TABLE_STATUSES.UNOCCUPIED && (
+                  <div className={styles.assignSection}>
+                    <h4 className={styles.sectionTitle}>
+                      Assign Server & Seat Customers
+                    </h4>
+                    <div className={styles.assignActions}>
+                      <div className={styles.dropdownContainer}>
+                        <button
+                          className={styles.dropdownButton}
+                          onClick={() => setDropdownOpen(!dropdownOpen)}
+                          aria-expanded={dropdownOpen}
+                          aria-label="Select customer to seat"
+                        >
+                          {selectedCustomer
+                            ? tableOccupancies.find(
+                                (s) => s.id === selectedCustomer
+                              )?.contactName
+                            : "Select customer"}
+                          <ChevronDown
+                            size={16}
+                            className={styles.dropdownIcon}
+                          />
+                        </button>
+                        {dropdownOpen && (
+                          <div className={styles.dropdownMenu}>
+                            {tableOccupancies
+                              .filter(
+                                (customer) =>
+                                  customer.partySize <= selectedTable.capacity
+                              )
+                              .sort(
+                                (a, b) =>
+                                  new Date(a.createdAt) - new Date(b.createdAt)
+                              )
+                              .map((customer) => (
+                                <div
+                                  key={customer.id}
+                                  className={styles.dropdownItem}
+                                  onClick={() => {
+                                    setSelectedCustomer(customer.id);
+                                    setDropdownOpen(false);
+                                  }}
+                                  role="option"
+                                  aria-selected={
+                                    selectedCustomer === customer.id
+                                  }
+                                >
+                                  <div className={styles.customerInfo}>
+                                    <div className={styles.customerHeader}>
+                                      <span className={styles.customerName}>
+                                        {customer.contactName} (ID:{" "}
+                                        {customer.id.slice(-4)})
+                                      </span>
+                                      <br />
+                                      <span className={styles.partySize}>
+                                        <Users
+                                          size={14}
+                                          className={styles.usersIcon}
+                                        />
+                                        Party of {customer.partySize}
+                                      </span>
+                                    </div>
+                                    <div className={styles.customerDetails}>
+                                      <span className={styles.phone}>
+                                        {customer.phone}
+                                      </span>
+                                      <br />
+                                      <span className={styles.waitTime}>
+                                        Waiting:{" "}
+                                        {formatDistanceToNow(
+                                          new Date(customer.createdAt),
+                                          { addSuffix: true }
+                                        )}
+                                      </span>
+                                      {customer.notes && (
+                                        <span className={styles.notes}>
+                                          Notes:{" "}
+                                          {customer.notes.length > 20
+                                            ? `${customer.notes.slice(
+                                                0,
+                                                20
+                                              )}...`
+                                            : customer.notes}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <Check
+                                    className={`${styles.checkIcon} ${
+                                      selectedCustomer === customer.id
+                                        ? styles.visible
+                                        : styles.hidden
+                                    }`}
+                                    size={16}
+                                  />
+                                </div>
+                              ))}
+                            {tableOccupancies.filter(
                               (customer) =>
                                 customer.partySize <= selectedTable.capacity
-                            )
-                            .sort(
-                              (a, b) =>
-                                new Date(a.createdAt) - new Date(b.createdAt)
-                            )
-                            .map((customer) => (
-                              <div
-                                key={customer.id}
-                                className={styles.dropdownItem}
-                                onClick={() => {
-                                  setSelectedCustomer(customer.id);
-                                  setDropdownOpen(false);
-                                }}
-                                role="option"
-                                aria-selected={selectedCustomer === customer.id}
-                              >
-                                <div className={styles.customerInfo}>
-                                  <div className={styles.customerHeader}>
-                                    <span className={styles.customerName}>
-                                      {customer.contactName} (ID:{" "}
-                                      {customer.id.slice(-4)})
-                                    </span>
-                                    <br />
-                                    <span className={styles.partySize}>
-                                      <Users
-                                        size={14}
-                                        className={styles.usersIcon}
-                                      />
-                                      Party of {customer.partySize}
-                                    </span>
-                                  </div>
-                                  <div className={styles.customerDetails}>
-                                    <span className={styles.phone}>
-                                      {customer.phone}
-                                    </span>
-                                    <br />
-                                    <span className={styles.waitTime}>
-                                      Waiting:{" "}
-                                      {formatDistanceToNow(
-                                        new Date(customer.createdAt),
-                                        { addSuffix: true }
-                                      )}
-                                    </span>
-                                    {customer.notes && (
-                                      <span className={styles.notes}>
-                                        Notes:{" "}
-                                        {customer.notes.length > 20
-                                          ? `${customer.notes.slice(0, 20)}...`
-                                          : customer.notes}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                                <Check
-                                  className={`${styles.checkIcon} ${
-                                    selectedCustomer === customer.id
-                                      ? styles.visible
-                                      : styles.hidden
-                                  }`}
-                                  size={16}
-                                />
+                            ).length === 0 && (
+                              <div className={styles.dropdownEmpty}>
+                                No suitable customers available
                               </div>
-                            ))}
-                          {tableOccupancies.filter(
-                            (customer) =>
-                              customer.partySize <= selectedTable.capacity
-                          ).length === 0 && (
-                            <div className={styles.dropdownEmpty}>
-                              No suitable customers available
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
 
-                    <button
-                      className={`${styles.primaryButton} ${
-                        !selectedCustomer ? styles.disabled : ""
-                      }`}
-                      onClick={() =>
-                        handleSeatCustomer(TABLE_OCCUPANCY_STATUSES.SEATED)
-                      }
-                      disabled={!selectedCustomer}
-                    >
-                      Seat Customers
-                    </button>
+                      <button
+                        className={`${styles.primaryButton} ${
+                          !selectedCustomer ? styles.disabled : ""
+                        }`}
+                        onClick={() =>
+                          handleSeatCustomer(TABLE_OCCUPANCY_STATUSES.SEATED)
+                        }
+                        disabled={!selectedCustomer}
+                      >
+                        Seat Customers
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
             <div className={styles.modalFooter}>
               <button

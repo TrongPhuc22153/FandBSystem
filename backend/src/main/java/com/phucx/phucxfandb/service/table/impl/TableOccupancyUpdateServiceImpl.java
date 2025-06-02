@@ -238,7 +238,7 @@ public class TableOccupancyUpdateServiceImpl implements TableOccupancyUpdateServ
             tableOccupancy.getReservation().setStatus(ReservationStatus.COMPLETED);
 //            Reservation reservation = reservationRepository.findByTableOccupancyId(id)
 //                            .orElseThrow(() -> new NotFoundException(Reservation.class.getSimpleName(), "occupancy id", id));
-//            reservation.setStatus(ReservationStatus.COMPLETED);
+//            reservation.setStatus(ReservationStatus.SERVED);
 //            reservationRepository.save(reservation);
         }
 

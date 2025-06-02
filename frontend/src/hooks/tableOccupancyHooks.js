@@ -28,7 +28,7 @@ export const useTableOccupancies = ({
   );
 };
 
-export const useTableOccupancy = ({ id }) => {
+export const useTableOccupancy = (id) => {
   const { token } = useAuth();
 
   return useSWR(id && token ? [TABLE_OCCUPANCIES_ENDPOINT, id, token] : null, () =>

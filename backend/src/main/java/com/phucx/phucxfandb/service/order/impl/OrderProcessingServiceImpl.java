@@ -113,6 +113,25 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
 
     @Override
     @Transactional
+    public OrderDTO markOrderAsServed(Authentication authentication, String orderId, OrderType type) {
+        Order order = orderReaderService.getOrderEntity(orderId, type);
+        var orderItemStatuses = EnumSet.of(OrderItemStatus.SERVED, OrderItemStatus.PREPARED);
+        for (OrderDetail detail : order.getOrderDetails()) {
+            if (!orderItemStatuses.contains(detail.getStatus())) {
+                throw new IllegalStateException("There are still in process food");
+            }
+        }
+        if (!(OrderStatus.READY_TO_SERVE.equals(order.getStatus()) ||
+                OrderStatus.PARTIALLY_SERVED.equals(order.getStatus()))) {
+            throw new IllegalStateException("Order is not in a state that can be marked as served.");
+        }
+
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.SERVED);
+        return orderUpdateService.updateOrderStatus(orderId, type, OrderStatus.SERVED);
+    }
+
+    @Override
+    @Transactional
     public OrderDTO preparingOrder(String username, String orderId, OrderType type) {
         orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PENDING, OrderItemStatus.PREPARING);
         return orderUpdateService.updateOrderStatus(orderId, type, OrderStatus.PREPARING);
@@ -164,22 +183,61 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Override
     @Transactional
     public OrderDTO completeDineInOrder(String username, String orderId){
-        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PREPARED, OrderItemStatus.COMPLETED);
+        OrderDTO order = orderReaderService.getOrder(orderId, OrderType.DINE_IN);
+        if(OrderStatus.SERVED.equals(order.getStatus())){
+            throw new IllegalStateException("Order is not served");
+        }
+        order.getOrderDetails().forEach(item -> {
+            if(!EnumSet.of(OrderItemStatus.SERVED, OrderItemStatus.CANCELED).contains(item.getStatus())){
+                throw new IllegalStateException("There are still ongoing foods");
+            }
+        });
         return orderUpdateService.updateOrderStatus(orderId, OrderType.DINE_IN, OrderStatus.COMPLETED);
     }
 
     @Override
     @Transactional
     public OrderDTO completeTakeAwayOrder(String username, String orderId) {
-        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PREPARED, OrderItemStatus.COMPLETED);
+        OrderDTO order = orderReaderService.getOrder(orderId, OrderType.TAKE_AWAY);
+        if(OrderStatus.READY_TO_PICKUP.equals(order.getStatus())){
+            throw new IllegalStateException("Order is not ready to pickup");
+        }
+        order.getOrderDetails().forEach(item -> {
+            if(!EnumSet.of(OrderItemStatus.PREPARED, OrderItemStatus.CANCELED).contains(item.getStatus())){
+                throw new IllegalStateException("There are still ongoing foods");
+            }
+        });
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PREPARED, OrderItemStatus.SERVED);
         return orderUpdateService.updateOrderStatus(orderId, OrderType.TAKE_AWAY, OrderStatus.COMPLETED);
+    }
+
+    @Override
+    @Transactional
+    public OrderDTO markDineInOrderAsReadyToServe(String username, String orderId) {
+        return orderUpdateService.updateOrderStatus(orderId, OrderType.DINE_IN, OrderStatus.READY_TO_SERVE);
+    }
+
+    @Override
+    @Transactional
+    public OrderDTO markTakeAwayOrderAsReadyToPick(String username, String orderId) {
+        return orderUpdateService.updateOrderStatus(orderId, OrderType.DINE_IN, OrderStatus.READY_TO_PICKUP);
+    }
+
+    @Override
+    public OrderDTO markOrderAsReady(Authentication authentication, String orderId, OrderType type) {
+        return switch (type){
+            case DINE_IN -> this.markDineInOrderAsReadyToServe(authentication.getName(), orderId);
+            case TAKE_AWAY -> this.markTakeAwayOrderAsReadyToPick(authentication.getName(), orderId);
+        };
     }
 
     @Override
     public OrderDTO processOrder(Authentication authentication, String orderId, OrderAction action, OrderType type) {
         OrderDTO result = switch (action){
             case PREPARING -> this.preparingOrder(authentication.getName(), orderId, type);
-            case READY -> this.markOrderAsPrepared(authentication.getName(), orderId, type);
+            case PREPARED -> this.markOrderAsPrepared(authentication.getName(), orderId, type);
+            case READY -> this.markOrderAsReady(authentication, orderId, type);
+            case SERVED -> this.markOrderAsServed(authentication, orderId, type);
             case COMPLETE -> this.completeOrder(authentication.getName(), orderId, type);
             case CANCEL -> this.cancelOrder(orderId, type, authentication);
         };

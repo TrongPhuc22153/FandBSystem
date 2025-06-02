@@ -20,7 +20,13 @@ public interface OrderProcessingService {
     OrderDTO completeTakeAwayOrder(String username, String orderId);
     OrderDTO completeDineInOrder(String username, String orderId);
 
+    OrderDTO markDineInOrderAsReadyToServe(String username, String orderId);
+    OrderDTO markTakeAwayOrderAsReadyToPick(String username, String orderId);
+    OrderDTO markOrderAsReady(Authentication authentication, String orderId, OrderType type);
+
     OrderDTO markOrderAsPrepared(String username, String orderId, OrderType type);
+
+    OrderDTO markOrderAsServed(Authentication authentication, String orderId, OrderType type);
 
     OrderDTO preparingOrder(String username, String orderId, OrderType orderType);
 

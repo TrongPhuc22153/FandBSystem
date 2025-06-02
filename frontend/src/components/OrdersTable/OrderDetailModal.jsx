@@ -9,9 +9,9 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCan
       case ORDER_STATUSES.PENDING:
         return ORDER_ACTIONS.PREPARING.toLowerCase();
       case ORDER_STATUSES.PREPARING:
-        return ORDER_ACTIONS.READY.toLowerCase();
+        return ORDER_ACTIONS.PREPARED.toLowerCase();
       case ORDER_STATUSES.PREPARED:
-        return ORDER_ACTIONS.COMPLETE.toLowerCase();
+        return ORDER_ACTIONS.READY.toLowerCase();
       default:
         return null;
     }
@@ -34,7 +34,7 @@ export default function OrderDetailModal({ order, onClose, onUpdateStatus, onCan
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">
-              Order Details: {order.orderId} - Table {order?.table?.tableNumber}
+              Order Details: {order.orderId} - Table {order?.tableOccupancy?.table?.tableNumber}
             </h5>
             <button
               type="button"

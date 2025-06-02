@@ -1,0 +1,42 @@
+.itemContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statusContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.servedIcon {
+  color: #28a745; /* Bootstrap success green */
+  margin-right: 0.25rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  margin-right: 0.25rem;
+}
+
+.loading {
+  color: #666;
+  font-style: italic;
+}
+
+.emptyOrder {
+  color: #666;
+  font-style: italic;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}

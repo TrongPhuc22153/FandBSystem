@@ -17,9 +17,9 @@ export default function ReservationDetailModal({
       case RESERVATION_STATUSES.PENDING:
         return RESERVATION_ACTIONS.PREPARING.toLowerCase();
       case RESERVATION_STATUSES.PREPARING:
-        return RESERVATION_ACTIONS.READY.toLowerCase();
+        return RESERVATION_ACTIONS.PREPARED.toLowerCase();
       case RESERVATION_STATUSES.PREPARED:
-        return RESERVATION_ACTIONS.COMPLETE.toLowerCase();
+        return RESERVATION_ACTIONS.READY.toLowerCase();
       default:
         return null;
     }

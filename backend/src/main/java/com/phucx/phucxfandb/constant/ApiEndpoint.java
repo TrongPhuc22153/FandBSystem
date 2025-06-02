@@ -162,6 +162,7 @@ public class ApiEndpoint {
                 RESERVATION_BY_ID_ENDPOINT,
                 TABLE_BY_ID_ENDPOINT,
                 TABLE_OCCUPANCY_BY_ID_ENDPOINT,
+                ORDER_BY_ID_ITEM_BY_ID_ENDPOINT
         };
 
         public static final String[] POST = {

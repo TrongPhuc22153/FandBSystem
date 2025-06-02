@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.controller;
 
+import com.phucx.phucxfandb.constant.ValidationGroups;
 import com.phucx.phucxfandb.dto.request.OrderRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.request.RequestOrderDetailsDTO;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -127,6 +129,23 @@ public class OrderController {
 
         ResponseDTO<OrderDTO> responseDTO = ResponseDTO.<OrderDTO>builder()
                 .message("Order item updated successfully")
+                .data(updatedOrder)
+                .build();
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PatchMapping("/{orderId}/items/{orderItemId}")
+    @Operation(summary = "Update order item quantity", description = "Employee access")
+    public ResponseEntity<ResponseDTO<OrderDTO>> updateOrderItemStatus(
+            @PathVariable String orderId,
+            @PathVariable String orderItemId,
+            @Validated(ValidationGroups.UpdateOrderItemStatus.class)
+            @RequestBody RequestOrderDetailsDTO request) {
+        OrderDTO updatedOrder = orderDetailService.updateOrderItemStatus(orderId, orderItemId, request);
+
+        ResponseDTO<OrderDTO> responseDTO = ResponseDTO.<OrderDTO>builder()
+                .message("Order item status updated successfully")
                 .data(updatedOrder)
                 .build();
 

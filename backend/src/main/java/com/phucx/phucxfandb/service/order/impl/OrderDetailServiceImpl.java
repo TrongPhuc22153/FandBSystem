@@ -94,6 +94,29 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         return saveAndMapOrder(order);
     }
 
+    @Override
+    @Transactional
+    public OrderDTO updateOrderItemStatus(String orderId, String orderItemId, RequestOrderDetailsDTO request) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
+
+        if(!(OrderStatus.PARTIALLY_SERVED.equals(order.getStatus()) ||
+                OrderStatus.READY_TO_PICKUP.equals(order.getStatus()) ||
+                OrderStatus.READY_TO_SERVE.equals(order.getStatus()))){
+            throw new IllegalStateException("Cannot update order item status");
+        }
+
+        OrderDetail item = order.getOrderDetails().stream()
+                .filter(od -> od.getId().equals(orderItemId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(OrderDetail.class.getSimpleName(), "id", orderItemId));
+
+        item.setStatus(request.getStatus());
+        order.setStatus(OrderStatus.PARTIALLY_SERVED);
+
+        return saveAndMapOrder(order);
+    }
+
     private OrderDTO saveAndMapOrder(Order order) {
         if (order.getStatus() == OrderStatus.PENDING || order.getStatus() == OrderStatus.CONFIRMED) {
             order.setStatus(OrderStatus.PREPARING);

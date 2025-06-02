@@ -50,6 +50,7 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
 
         switch (action) {
             case PREPARING -> sendPreparingNotification(username, orderId, type, order);
+            case PREPARED -> sendPreparedNotification(username, orderId, type, order);
             case READY -> sendReadyNotification(username, orderId, type, order);
             case COMPLETE -> sendCompleteNotification(username, orderId, type, order);
             case CANCEL -> sendCancelNotification(authentication, orderId, type, order);
@@ -123,12 +124,58 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
     }
 
     @Override
+    public void sendPreparedNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order) {
+        if (type == OrderType.TAKE_AWAY && order != null && order.getCustomer() != null
+                && order.getCustomer().getProfile() != null && order.getCustomer().getProfile().getUser() != null) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    order.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.ORDER,
+                    NotificationTitle.ORDER_PREPARED,
+                    String.format("Your order #%s has been prepared by our staff", orderId)
+            );
+            this.sendNotificationToUser(orderId, customerNotification);
+        }
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.ORDER,
+                NotificationTitle.ORDER_PREPARED,
+                String.format("Order #%s has been prepared by %s", orderId, employeeUsername)
+        );
+        this.sendNotificationToGroup(orderId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
+    public void sendServedNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order) {
+        if (type == OrderType.DINE_IN && order != null && order.getCustomer() != null
+                && order.getCustomer().getProfile() != null && order.getCustomer().getProfile().getUser() != null) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    order.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.ORDER,
+                    NotificationTitle.ORDER_SERVED,
+                    String.format("Your order #%s has been served. Enjoy your meal!", orderId)
+            );
+            this.sendNotificationToUser(orderId, customerNotification);
+        }
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.ORDER,
+                NotificationTitle.ORDER_SERVED,
+                String.format("Order #%s has been served by %s", orderId, employeeUsername)
+        );
+        this.sendNotificationToGroup(orderId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
     public void sendReadyNotification(String employeeUsername, String orderId, OrderType type, OrderDTO order) {
         if (type == OrderType.TAKE_AWAY) {
             RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
                     order.getCustomer().getProfile().getUser().getUsername(),
                     NotificationTopic.ORDER,
-                    NotificationTitle.ORDER_PREPARED,
+                    NotificationTitle.ORDER_READY,
                     String.format("Good news! Your order #%s is now ready for pickup", orderId)
             );
 
@@ -139,7 +186,7 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
                 employeeUsername,
                 RoleName.EMPLOYEE,
                 NotificationTopic.ORDER,
-                NotificationTitle.ORDER_PREPARED,
+                NotificationTitle.ORDER_READY,
                 String.format("Order #%s is prepared and ready for %s", orderId,
                         type == OrderType.TAKE_AWAY ? "customer pickup" : "service")
         );

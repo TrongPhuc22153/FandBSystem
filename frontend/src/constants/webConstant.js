@@ -1,11 +1,3 @@
-export const ORDER_STATUS_CLASSES = {
-    CANCELLED: "danger",
-    PENDING: "danger",
-    PREPARING: "warning",
-    PREPARED: "success",
-    COMPLETED: "secondary",
-    DEFAULT: "primary"
-}
 export const ROLE_CLASSES = {
     ADMIN: "success",
     CUSTOMER: "info"
@@ -35,7 +27,7 @@ export const ORDER_ITEM_STATUS_CLASSES = {
     PENDING: "danger",
     PREPARING: "warning",
     PREPARED: "success",
-    COMPLETED: "secondary",
+    SERVED: "secondary",
     DEFAULT: "primary"
 }
 
@@ -44,14 +36,16 @@ export const ORDER_ITEM_STATUSES = {
     PENDING: "PENDING",
     PREPARING: "PREPARING",
     PREPARED: "PREPARED",
-    COMPLETED: "COMPLETED"
+    SERVED: "SERVED",
 }
 
 export const ORDER_ACTIONS = {
     CONFIRM: "CONFIRM",
     CANCEL: "CANCEL",
     PREPARING: "PREPARING",
+    PREPARED: "PREPARED",
     READY: "READY",
+    SERVED: "SERVED",
     COMPLETE: "COMPLETE"
 }
 export const ORDER_STATUSES = {
@@ -60,13 +54,30 @@ export const ORDER_STATUSES = {
     CONFIRMED: "CONFIRMED",
     PREPARING: "PREPARING",
     PREPARED: "PREPARED",
+    READY_TO_SERVE: "READY_TO_SERVE",
+    READY_TO_PICKUP: "READY_TO_PICKUP",
+    PARTIALLY_SERVED: "PARTIALLY_SERVED",
+    SERVED: "SERVED",
     COMPLETED: "COMPLETED",
+}
+export const ORDER_STATUS_CLASSES = {
+    CANCELLED: "danger",
+    PENDING: "danger",
+    PREPARING: "warning",
+    PREPARED: "success",
+    READY_TO_SERVE: "success",
+    READY_TO_PICKUP: "success",
+    PARTIALLY_SERVED: "info",
+    SERVED: "success",
+    COMPLETED: "secondary",
+    DEFAULT: "primary"
 }
 
 export const RESERVATION_ACTIONS = {
     CONFIRM: "CONFIRM",
     CANCEL: "CANCEL",
     PREPARING: "PREPARING",
+    PREPARED: "PREPARED",
     READY: "READY",
     COMPLETE: "COMPLETE"
 }

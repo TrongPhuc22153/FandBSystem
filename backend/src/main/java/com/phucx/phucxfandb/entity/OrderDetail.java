@@ -45,7 +45,7 @@ public class OrderDetail extends Auditable{
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 20)
     private OrderItemStatus status = OrderItemStatus.PENDING;
 
     @Builder.Default
