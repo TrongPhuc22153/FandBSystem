@@ -15,6 +15,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -62,4 +65,78 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
                @Param("reservationStatus") ReservationStatus reservationStatus,
                @Param("isDeleted") boolean isDeleted
        );
+
+       @Query("""
+           SELECT p.productName, SUM(
+               COALESCE(od.quantity, 0) + COALESCE(mi.quantity, 0)
+           )
+           FROM Product p
+           LEFT JOIN OrderDetail od ON od.product = p
+           LEFT JOIN MenuItem mi ON mi.product = p
+           GROUP BY p.productName
+           ORDER BY SUM(COALESCE(od.quantity, 0) + COALESCE(mi.quantity, 0)) DESC
+       """)
+       List<Object[]> getTopSellingProducts(
+               @Param("startOfWeek") LocalDateTime startOfWeek,
+               @Param("endOfWeek") LocalDateTime endOfWeek,
+               Pageable pageable);
+
+       @Query("""
+           SELECT p.productName, SUM(od.quantity)
+           FROM OrderDetail od
+           JOIN od.product p
+           JOIN od.order o
+           WHERE o.orderDate BETWEEN :start AND :end
+           GROUP BY p.productName
+       """)
+       List<Object[]> getProductSalesFromOrders(
+               @Param("start") LocalDateTime start,
+               @Param("end") LocalDateTime end
+       );
+
+       @Query("""
+           SELECT p.productName, SUM(mi.quantity)
+           FROM MenuItem mi
+           JOIN mi.product p
+           JOIN mi.reservation r
+           WHERE r.date BETWEEN :start AND :end
+           GROUP BY p.productName
+       """)
+       List<Object[]> getProductSalesFromReservations(
+               @Param("start") LocalDate start,
+               @Param("end") LocalDate end
+       );
+
+       @Query("""
+               SELECT c.categoryName, SUM(od.quantity)
+               FROM OrderDetail od
+               JOIN od.product p
+               JOIN p.category c
+               JOIN od.order o
+               WHERE c.isDeleted = false AND p.isDeleted = false
+                   AND o.orderDate BETWEEN :start AND :end
+               GROUP BY c.categoryName
+           """)
+       List<Object[]> getCategorySalesFromOrders(
+               @Param("start") LocalDateTime start,
+               @Param("end") LocalDateTime end
+       );
+
+       @Query("""
+               SELECT c.categoryName, SUM(mi.quantity)
+               FROM MenuItem mi
+               JOIN mi.product p
+               JOIN p.category c
+               JOIN mi.reservation r
+               WHERE c.isDeleted = false AND p.isDeleted = false
+                   AND r.date BETWEEN :start AND :end
+               GROUP BY c.categoryName
+           """)
+       List<Object[]> getCategorySalesFromReservations(
+               @Param("start") LocalDate start,
+               @Param("end") LocalDate end
+       );
+
+
+
 }

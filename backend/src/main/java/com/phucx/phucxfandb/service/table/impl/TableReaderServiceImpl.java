@@ -4,6 +4,7 @@ import com.phucx.phucxfandb.constant.TableStatusConstant;
 import com.phucx.phucxfandb.dto.request.AvailableTableRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.TableRequestParamsDTODTO;
 import com.phucx.phucxfandb.dto.response.TableDTO;
+import com.phucx.phucxfandb.dto.response.TableSummaryDTO;
 import com.phucx.phucxfandb.entity.Reservation;
 import com.phucx.phucxfandb.entity.TableEntity;
 import com.phucx.phucxfandb.entity.TableOccupancy;
@@ -67,19 +68,6 @@ public class TableReaderServiceImpl implements TableReaderService {
     public TableEntity getTableEntity(String tableId) {
         return tableRepository.findByTableIdAndIsDeletedFalse(tableId)
                 .orElseThrow(() -> new NotFoundException(TableEntity.class.getSimpleName(), "id", tableId));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public TableEntity getAvailableTable(int numberOfGuests, LocalDate date, LocalTime requestedStartTime, LocalTime requestedEndTime) {
-        List<TableEntity> tables = tableRepository.findFirstAvailableTableWithLeastCapacity(
-                numberOfGuests,
-                Boolean.FALSE,
-                date,
-                requestedStartTime,
-                requestedEndTime);
-        if(tables.isEmpty()) throw new NotFoundException("No available table found for the requested time and number of guests.");
-        return tables.get(0);
     }
 
     @Override
@@ -188,6 +176,66 @@ public class TableReaderServiceImpl implements TableReaderService {
                             .build();
                 });
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TableSummaryDTO getTableStatusSummary(LocalDate date, LocalTime time) {
+        List<TableEntity> allTables = tableRepository.findByIsDeletedFalse();
+        List<String> tableIds = allTables.stream()
+                .map(TableEntity::getTableId)
+                .collect(Collectors.toList());
+
+        List<TableOccupancy> activeOccupancies = tableOccupancyRepository
+                .findActiveOccupancies(date, tableIds);
+        Map<String, TableOccupancy> occupancyByTableId = activeOccupancies.stream()
+                .collect(Collectors.toMap(o -> o.getTable().getTableId(), o -> o));
+
+        List<Reservation> activeReservations = reservationRepository
+                .findActiveReservations(date, time, tableIds);
+        Map<String, Reservation> reservationByTableId = activeReservations.stream()
+                .collect(Collectors.toMap(r -> r.getTable().getTableId(), r -> r));
+
+        LocalTime futureTime = time.plusMinutes(UPCOMING_RESERVATION_WINDOW_MINUTES);
+        List<Reservation> upcomingReservations = reservationRepository
+                .findUpcomingReservations(date, time, futureTime, tableIds);
+        Map<String, Reservation> upcomingReservationByTableId = upcomingReservations.stream()
+                .collect(Collectors.toMap(r -> r.getTable().getTableId(), r -> r));
+
+        long occupied = 0;
+        long unoccupied = 0;
+        long cleaning = 0;
+        long reserved = 0;
+
+        for (TableEntity table : allTables) {
+            String tableId = table.getTableId();
+            TableOccupancy occupancy = occupancyByTableId.get(tableId);
+
+            if (occupancy != null) {
+                if (TableOccupancyStatus.CLEANING.equals(occupancy.getStatus())) {
+                    cleaning++;
+                    continue;
+                } else if (TableOccupancyStatus.SEATED.equals(occupancy.getStatus())) {
+                    occupied++;
+                    continue;
+                }
+            }
+
+            if (reservationByTableId.containsKey(tableId) || upcomingReservationByTableId.containsKey(tableId)) {
+                reserved++;
+                continue;
+            }
+
+            unoccupied++;
+        }
+
+        return TableSummaryDTO.builder()
+                .occupied(occupied)
+                .unoccupied(unoccupied)
+                .cleaning(cleaning)
+                .reserved(reserved)
+                .total((long) allTables.size())
+                .build();
     }
 
     @Override

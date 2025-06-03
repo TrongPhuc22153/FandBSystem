@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.repository;
 
+import com.phucx.phucxfandb.enums.OrderStatus;
 import com.phucx.phucxfandb.enums.OrderType;
 import com.phucx.phucxfandb.entity.Order;
 import org.springframework.data.domain.Page;
@@ -8,10 +9,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -34,4 +38,22 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
     })
     @NonNull
     Page<Order> findAll(@Nullable Specification<Order> spec, @NonNull Pageable pageable);
+
+    @Query("""
+            SELECT COUNT(o) FROM Order o
+            WHERE o.orderDate BETWEEN :startOfDay AND :endOfDay
+            """)
+    Long countTotalOrders(@Param("startOfDay") LocalDateTime startOfDay,
+                          @Param("endOfDay") LocalDateTime endOfDay);
+
+    @Query("""
+            SELECT COUNT(o) FROM Order o
+            WHERE o.orderDate BETWEEN :startOfDay AND :endOfDay
+                AND o.status = :status
+            """)
+    Long countTotalOrdersByStatus(
+            @Param("status") OrderStatus status,
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("endOfDay") LocalDateTime endOfDay
+    );
 } 

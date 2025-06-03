@@ -1,4 +1,4 @@
-import { RESERVATION_TABLES_AVAILABILITY_ENDPOINT, RESERVATION_TABLES_ENDPOINT } from "../constants/api";
+import { RESERVATION_TABLES_AVAILABILITY_ENDPOINT, RESERVATION_TABLES_ENDPOINT, RESERVATION_TABLES_SUMMARY_ENDPOINT } from "../constants/api";
 import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
 // Get all reservation tables with pagination
@@ -44,6 +44,19 @@ export const fetchAvailableTables = async ({ date, time, search, tableNumber }) 
         throw await response.json();
     }
     return response.json();
+};
+
+export const fetchTableStatusSummary = async ({ date, time }) => {
+  const params = new URLSearchParams();
+  params.append("date", date.toString());
+  params.append("time", time.toString());
+
+  const response = await fetch(`${RESERVATION_TABLES_SUMMARY_ENDPOINT}?${params.toString()}`);
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+  return response.json();
 };
 
 

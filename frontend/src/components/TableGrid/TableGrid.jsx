@@ -30,7 +30,8 @@ export function TableGrid({
   onCompleteReservation,
   tableOccupancies,
   mutateTableOccupancies,
-  mutateTables,
+  mutateTableStatusSummary,
+  mutateTables
 }) {
   const [selectedTable, setSelectedTable] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -172,6 +173,7 @@ export function TableGrid({
     if (res) {
       mutateTableOccupancies?.();
       mutateTables?.();
+      mutateTableStatusSummary?.();
       setIsDialogOpen(false);
     }
   };

@@ -84,7 +84,6 @@ public class PayPalServiceImpl implements PayPalService {
                 return capturedOrder.id();
             } else {
                 paymentUpdateService.updatePaypalPaymentStatus(orderId, PaymentStatus.FAILED);
-
                 throw new PaymentException("Payment capture failed: " + paypalStatus);
             }
         } catch (IOException e) {

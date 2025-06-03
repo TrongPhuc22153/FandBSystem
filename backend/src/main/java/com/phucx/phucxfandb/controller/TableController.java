@@ -6,6 +6,7 @@ import com.phucx.phucxfandb.dto.request.RequestTableDTO;
 import com.phucx.phucxfandb.dto.request.TableRequestParamsDTODTO;
 import com.phucx.phucxfandb.dto.response.TableDTO;
 import com.phucx.phucxfandb.dto.response.ResponseDTO;
+import com.phucx.phucxfandb.dto.response.TableSummaryDTO;
 import com.phucx.phucxfandb.service.table.TableReaderService;
 import com.phucx.phucxfandb.service.table.TableUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -43,6 +46,17 @@ public class TableController {
     public ResponseEntity<Page<TableDTO>> getTableAvailability(@ModelAttribute AvailableTableRequestParamsDTO params) {
         var tables = tableReaderService.getTableAvailability(params);
         return ResponseEntity.ok(tables);
+    }
+
+    @GetMapping(value = "/summary")
+    @Operation(summary = "Get table status summary", description = "Public access")
+    public ResponseEntity<TableSummaryDTO> getTableStatusSummary(
+            @RequestParam("date") LocalDate date,
+            @RequestParam("time") LocalTime time
+    ) {
+        TableSummaryDTO summary = tableReaderService
+                .getTableStatusSummary(date, time);
+        return ResponseEntity.ok().body(summary);
     }
 
     @GetMapping(value = "/{id}")

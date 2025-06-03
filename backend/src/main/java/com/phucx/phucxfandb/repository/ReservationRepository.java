@@ -72,4 +72,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
             @Param("time") LocalTime time,
             @Param("futureTime") LocalTime futureTime,
             @Param("tableIds") Collection<String> tableIds);
+
+    @Query("""
+            SELECT COUNT(r)
+            FROM Reservation r
+            WHERE r.date BETWEEN :startOfDay AND :endOfDay
+            """)
+    Long countReservations(
+            @Param("startOfDay") LocalDate startOfDay,
+            @Param("endOfDay") LocalDate endOfDay
+    );
 }

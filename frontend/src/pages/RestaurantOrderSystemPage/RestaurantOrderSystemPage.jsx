@@ -130,7 +130,7 @@ export default function RestaurantOrderSystem() {
       clearOrder();
       navigate(`${EMPLOYEE_PLACE_ORDERS_URI}?page=1`);
     }
-  }, [updateSuccess, resetUpdate, showNewAlert, navigate]);
+  }, [updateSuccess, resetUpdate, showNewAlert, navigate, clearOrder]);
 
   // Handle update order error
   useEffect(() => {

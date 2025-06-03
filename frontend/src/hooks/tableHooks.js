@@ -9,8 +9,9 @@ import {
   createReservationTablesBulk,
   updateReservationTableStatus,
   fetchAvailableTables,
+  fetchTableStatusSummary,
 } from "../api/tableApi";
-import { RESERVATION_TABLES_AVAILABILITY_ENDPOINT, RESERVATION_TABLES_ENDPOINT } from "../constants/api";
+import { RESERVATION_TABLES_AVAILABILITY_ENDPOINT, RESERVATION_TABLES_ENDPOINT, RESERVATION_TABLES_SUMMARY_ENDPOINT } from "../constants/api";
 import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
 // Hook to fetch a single reservation table by ID
@@ -25,6 +26,16 @@ export const useAvailableTables = ({ date, time, search, tableNumber }) => {
     fetchAvailableTables({ date, time, search, tableNumber })
   );
 }
+
+export const useTableStatusSummary = ({ date, time }) => {
+  return useSWR(
+    [RESERVATION_TABLES_SUMMARY_ENDPOINT, date, time],
+    () => fetchTableStatusSummary({ date, time }),
+    {
+      revalidateOnFocus: false,
+    }
+  );
+};
 
 // Hook to fetch all reservation tables with pagination
 export const useReservationTables = ({

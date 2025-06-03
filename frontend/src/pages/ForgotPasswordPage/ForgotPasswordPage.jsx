@@ -38,7 +38,7 @@ function ForgotPasswordPage() {
 
       validateToken();
     }
-  }, [location.search]);
+  }, [location.search, handleValidateToken]);
 
   if (loadingValidateToken) return <Loading />;
 

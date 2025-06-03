@@ -50,12 +50,4 @@ public class Product extends Auditable{
 
     @OneToOne(mappedBy = "product")
     private ProductSize productSize;
-
-    @ManyToMany
-    @JoinTable(
-            name = "products_discounts",
-            inverseJoinColumns = {@JoinColumn(name = "discount_id", referencedColumnName = "discount_id")},
-            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "product_id")}
-    )
-    private List<Discount> discounts = new ArrayList<>();
 }

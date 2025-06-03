@@ -228,7 +228,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Override
     @Transactional
     public OrderDTO markTakeAwayOrderAsReadyToPick(String username, String orderId) {
-        return orderUpdateService.updateOrderStatus(orderId, OrderType.DINE_IN, OrderStatus.READY_TO_PICKUP);
+        return orderUpdateService.updateOrderStatus(orderId, OrderType.TAKE_AWAY, OrderStatus.READY_TO_PICKUP);
     }
 
     @Override

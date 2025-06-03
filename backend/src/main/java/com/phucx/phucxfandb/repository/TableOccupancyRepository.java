@@ -49,6 +49,7 @@ public interface TableOccupancyRepository extends JpaRepository<TableOccupancy, 
                 AND o.table.tableId IN :tableIds
                 AND o.status IN ('SEATED', 'CLEANING')
             """)
-    List<TableOccupancy> findActiveOccupancies(@Param("date") LocalDate date,
-                                               @Param("tableIds") Collection<String> tableIds);
+    List<TableOccupancy> findActiveOccupancies(
+            @Param("date") LocalDate date,
+            @Param("tableIds") Collection<String> tableIds);
 }

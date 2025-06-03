@@ -20,6 +20,5 @@ public interface OrderDetailsMapper {
 
     @Named("toOrderDetailsDTO")
     @Mapping(target = "product", qualifiedByName = {"toProductKitchen"})
-    @Mapping(target = "discounts", ignore = true)
     OrderDetailDTO toOrderDetailsDTO(OrderDetail orderDetail);
 }

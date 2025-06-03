@@ -15,7 +15,12 @@ import { HOME_URI } from "../../constants/routes";
 import { CHECKOUT_ITEMS, ORDER_TYPES } from "../../constants/webConstant";
 import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
 import PaymentMethodOptions from "../../components/PaymentMethodOptions/PaymentMethodOptions";
-import { CANCEL_PAYMENT_URL, PAYMENT_METHODS, PAYMENT_TYPES, SUCCESS_PAYMENT_URL } from "../../constants/paymentConstants";
+import {
+  CANCEL_PAYMENT_URL,
+  PAYMENT_METHODS,
+  PAYMENT_TYPES,
+  SUCCESS_PAYMENT_URL,
+} from "../../constants/paymentConstants";
 import { usePaymentActions } from "../../hooks/paymentHooks";
 
 const CheckoutPage = () => {
@@ -33,11 +38,8 @@ const CheckoutPage = () => {
     error: cartError,
   } = useCart();
 
-  const {
-    handleProcessPayment,
-    paymentError,
-    resetPayment
-  } = usePaymentActions()
+  const { handleProcessPayment, paymentError, resetPayment } =
+    usePaymentActions();
 
   const {
     data: paymentMethodsData,
@@ -151,12 +153,12 @@ const CheckoutPage = () => {
   }, [addresses]);
 
   useEffect(() => {
-    if(paymentError?.message){
+    if (paymentError?.message) {
       showNewAlert({
         message: paymentError.message,
         variant: "danger",
-        action: resetPayment
-      })
+        action: resetPayment,
+      });
     }
     setFieldErrors(placeError?.fields ?? {});
   }, [placeError, paymentError, resetPayment, showNewAlert]);
@@ -221,7 +223,10 @@ const CheckoutPage = () => {
         }
       }
 
-      const res = await handlePlaceOrder(requestOrderDTO, ORDER_TYPES.TAKE_AWAY);
+      const res = await handlePlaceOrder(
+        requestOrderDTO,
+        ORDER_TYPES.TAKE_AWAY
+      );
       if (res) {
         setIsOpenPopUp(true);
         setFieldErrors({});
@@ -234,11 +239,11 @@ const CheckoutPage = () => {
           returnUrl: SUCCESS_PAYMENT_URL,
           cancelUrl: CANCEL_PAYMENT_URL,
           paymentMethod: selectedPayment,
-          orderId: orderId
-        })
-        if(paymentRes){
+          orderId: orderId,
+        });
+        if (paymentRes) {
           const link = paymentRes.data.link;
-          if(link){
+          if (link) {
             window.location.href = link;
           }
         }
@@ -249,7 +254,16 @@ const CheckoutPage = () => {
         variant: "danger",
       });
     }
-  }, [handleCreateShippingAddress, handlePlaceOrder, showNewAlert, cartItems, address, selectedAddressId, cartData]);
+  }, [
+    handleCreateShippingAddress,
+    handlePlaceOrder,
+    handleProcessPayment,
+    selectedPayment,
+    showNewAlert,
+    cartItems,
+    address,
+    selectedAddressId,
+  ]);
 
   const showConfirmModal = () => {
     if (validateForm()) {

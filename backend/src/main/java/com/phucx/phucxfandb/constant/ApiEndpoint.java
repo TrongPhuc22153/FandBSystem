@@ -22,6 +22,7 @@ public class ApiEndpoint {
                 TABLES_ENDPOINT,
                 TABLE_BY_ID_ENDPOINT,
                 TABLES_AVAILABILITY_ENDPOINT,
+                TABLES_SUMMARY_ENDPOINT,
                 TOPICS_ENDPOINT,
                 TOPIC_BY_ID_ENDPOINT,
                 PAYMENT_METHODS_ENDPOINT,
@@ -83,7 +84,9 @@ public class ApiEndpoint {
                 TABLE_BULK_ENDPOINT,
                 PRODUCTS_BULK_ENDPOINT,
                 TOPICS_BULK_ENDPOINT,
-                DISCOUNTS_BY_PRODUCT_ENDPOINT
+                DISCOUNTS_BY_PRODUCT_ENDPOINT,
+                REPORTS_ENDPOINT,
+                REPORTS_METRICS_ENDPOINT
         };
 
         public static final String[] GET = {
@@ -186,6 +189,10 @@ public class ApiEndpoint {
         };
     }
 
+
+    public static final String REPORTS_METRICS_ENDPOINT = "/api/v1/reports/metrics";
+    public static final String REPORTS_ENDPOINT = "/api/v1/reports";
+
     public static final String PAYPAL_ANY_ENDPOINT = "/api/v1/paypal/**";
 
     public static final String WEBSOCKET_ENDPOINT = "/chat";
@@ -260,6 +267,7 @@ public class ApiEndpoint {
 
     public static final String TABLES_ENDPOINT = "/api/v1/tables";
     public static final String TABLES_AVAILABILITY_ENDPOINT = "/api/v1/tables/availability";
+    public static final String TABLES_SUMMARY_ENDPOINT = "/api/v1/tables/summary";
     public static final String TABLE_BY_ID_ENDPOINT = "/api/v1/tables/{id}";
     public static final String TABLE_BULK_ENDPOINT = "/api/v1/tables/bulk";
 

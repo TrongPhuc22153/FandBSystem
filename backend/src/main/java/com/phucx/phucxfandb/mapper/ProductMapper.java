@@ -22,7 +22,6 @@ public interface ProductMapper {
 
     @Mapping(target = "productSize", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
-    @Mapping(target = "discounts", ignore = true)
     @Mapping(target = "category", source = "category")
     @Mapping(target = "picture", source = "requestProductDTO.picture")
     @Mapping(target = "description", source = "requestProductDTO.description")
@@ -34,7 +33,6 @@ public interface ProductMapper {
 
     @Mapping(target = "productSize", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
-    @Mapping(target = "discounts", ignore = true)
     @Mapping(target = "category", source = "category")
     @Mapping(target = "picture", source = "requestProductDTO.picture")
     @Mapping(target = "description", source = "requestProductDTO.description")

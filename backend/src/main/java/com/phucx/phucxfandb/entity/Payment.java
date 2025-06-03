@@ -14,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "payments")
-@EqualsAndHashCode(callSuper = false, exclude = {"order", "reservation"})
+@EqualsAndHashCode(callSuper = false)
 public class Payment extends Auditable{
     @Id
     @Column(name = "payment_id", nullable = false, length = 36, updatable = false)
@@ -51,10 +51,15 @@ public class Payment extends Auditable{
     @JoinColumn(name = "method_id")
     private PaymentMethod method;
 
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "payment", fetch = FetchType.LAZY)
     private Order order;
 
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "payment", fetch = FetchType.LAZY)
     private Reservation reservation;
+
+    @Version
+    private Long version;
 
 }

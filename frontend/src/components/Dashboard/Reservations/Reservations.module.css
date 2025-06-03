@@ -1,0 +1,27 @@
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.table {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.table th,
+.table td {
+  border: none;
+  padding: 0.75rem;
+}
+
+.table thead th {
+  border-bottom: 1px solid #dee2e6;
+}

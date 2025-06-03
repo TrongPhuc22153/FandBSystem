@@ -50,7 +50,7 @@ function AdminCreateUserPage() {
         clearTimeout(timer);
       };
     }
-  }, [createSuccess]);
+  }, [createSuccess, resetCreate]);
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();

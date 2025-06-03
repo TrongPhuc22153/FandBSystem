@@ -43,12 +43,16 @@ export const IMAGE_ENDPOINT = `${API_BASE_URL}/api/v1/images`;
 
 export const ROLES_ENDPOINT = `${API_BASE_URL}/api/v1/roles`;
 
+export const REPORTS_ENDPOINT = `${API_BASE_URL}/api/v1/reports`;
+export const REPORTS_METRICS_ENDPOINT = `${API_BASE_URL}/api/v1/reports/metrics`;
+
 export const ORDERS_ENDPOINT = `${API_BASE_URL}/api/v1/orders`;
 export const ORDER_ITEMS_ENDPOINT = (id) => `${API_BASE_URL}/api/v1/orders/${id}/items`;
 export const ORDER_ITEM_ENDPOINT = (orderId, orderItemId) => `${API_BASE_URL}/api/v1/orders/${orderId}/items/${orderItemId}`;
 
 export const RESERVATION_TABLES_ENDPOINT = `${API_BASE_URL}/api/v1/tables`;
 export const RESERVATION_TABLES_AVAILABILITY_ENDPOINT = `${API_BASE_URL}/api/v1/tables/availability`;
+export const RESERVATION_TABLES_SUMMARY_ENDPOINT = `${API_BASE_URL}/api/v1/tables/summary`;
 
 export const RESERVATIONS_ENDPOINT = `${API_BASE_URL}/api/v1/reservations`;
 export const RESERVATION_ITEMS_ENDPOINT = (id) => `${API_BASE_URL}/api/v1/reservations/${id}/items`;

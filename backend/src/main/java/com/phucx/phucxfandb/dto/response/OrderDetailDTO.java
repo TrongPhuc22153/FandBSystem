@@ -8,7 +8,6 @@ import lombok.Value;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Value
 @Builder
@@ -16,8 +15,6 @@ import java.util.List;
 public class OrderDetailDTO {
     String id;
     ProductDTO product;
-    List<OrderDetailsDiscountDTO> discounts;
-
     Integer quantity;
     BigDecimal unitPrice;
     OrderItemStatus status;

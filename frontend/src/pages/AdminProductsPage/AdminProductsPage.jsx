@@ -165,7 +165,7 @@ const AdminProductsPage = () => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);
     },
-    [setSearchParams]
+    [setSearchParams, searchParams]
   );
 
   const handleSearchInputChange = (e) => {

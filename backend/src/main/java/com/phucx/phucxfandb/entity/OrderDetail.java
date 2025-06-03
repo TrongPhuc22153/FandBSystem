@@ -1,8 +1,6 @@
 package com.phucx.phucxfandb.entity;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 
 import com.phucx.phucxfandb.enums.OrderItemStatus;
@@ -34,10 +32,6 @@ public class OrderDetail extends Auditable{
 
     @Column(name = "special_instruction")
     private String specialInstruction;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "orderDetail", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderDetailDiscount> orderDetailDiscounts = new ArrayList<>();
 
     @Builder.Default
     @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)

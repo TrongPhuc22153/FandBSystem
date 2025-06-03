@@ -2,11 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Clock, Plus, Search } from "lucide-react";
 import { TableGrid } from "../../components/TableGrid/TableGrid";
 import styles from "./EmployeeTableManagement.module.css";
+import { useAvailableTables, useTableStatusSummary } from "../../hooks/tableHooks";
 import {
-  useAvailableTables,
-} from "../../hooks/tableHooks";
-import {
-  TABLE_STATUSES,
   TABLE_OCCUPANCY_STATUSES,
   TABLE_OCCUPANCY_TYPES,
   ORDER_ACTIONS,
@@ -22,7 +19,10 @@ import {
 import { WaitingList } from "../../components/WaitingList/WaitingList";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import moment from "moment";
-import { useReservationActions, useReservations } from "../../hooks/reservationHooks";
+import {
+  useReservationActions,
+  useReservations,
+} from "../../hooks/reservationHooks";
 import { UpcommingReservations } from "../../components/WaitingList/UpcommingReservations";
 import { useOrderActions } from "../../hooks/orderHooks";
 
@@ -34,7 +34,7 @@ export default function EmployeeTableManagement() {
   );
 
   const [currentPage, setCurrentPage] = useState(currentPageFromURL);
-  const [view, setView] = useState('waiting');
+  const [view, setView] = useState("waiting");
 
   useEffect(() => {
     const pageFromURL = parseInt(searchParams.get("page")) || 1;
@@ -61,12 +61,23 @@ export default function EmployeeTableManagement() {
     [reservationsData]
   );
 
+  const {
+    data: tableStatusSummaryData,
+    error: tableStatusSummaryError,
+    mutate: mutateTableStatusSummary,
+  } = useTableStatusSummary({
+    date: currentDate,
+    time: currentTime,
+  })
+  const { unoccupied, occupied, reserved, cleaning, total } =
+    tableStatusSummaryData || {};
+
   const { data: tablesData, mutate: mutateTables } = useAvailableTables({
     page: currentPage,
     size: 20,
     date: currentDate,
     time: currentTime,
-    search: searchValue
+    search: searchValue,
   });
   const totalPages = tablesData?.totalPages || 0;
   const tables = useMemo(() => tablesData?.content || [], [tablesData]);
@@ -88,7 +99,6 @@ export default function EmployeeTableManagement() {
   const {
     handleCreateTableOccupancy,
     createError,
-    createLoading,
     createSuccess,
     resetCreate,
 
@@ -98,21 +108,78 @@ export default function EmployeeTableManagement() {
     resetUpdateStatus,
   } = useTableOccupancyActions();
 
-   const { 
-    handleProcessOrder, 
-    processError: processOrderError, 
-    processSuccess: processOrderSuccess, 
-    resetProcess: resetOrderProcess 
+  const {
+    handleProcessOrder,
+    processError: processOrderError,
+    processSuccess: processOrderSuccess,
+    resetProcess: resetOrderProcess,
   } = useOrderActions();
 
-  const { 
+  const {
     handleProcessReservation,
     processError: processReservationError,
     processSuccess: processReservationSuccess,
-    resetProcess: resetReservationProcess
+    resetProcess: resetReservationProcess,
   } = useReservationActions();
 
   const { showNewAlert } = useAlert();
+
+  // Create Table Occupancy Effects
+  useEffect(() => {
+    if (createError?.message) {
+      showNewAlert({
+        message: createError.message,
+        variant: "danger",
+      });
+    }
+  }, [createError, showNewAlert]);
+
+  useEffect(() => {
+    if (createSuccess) {
+      showNewAlert({
+        message: createSuccess,
+        action: resetCreate,
+      });
+    }
+  }, [createSuccess, resetCreate, showNewAlert]);
+
+  // Process Order Effects
+  useEffect(() => {
+    if (processOrderError?.message) {
+      showNewAlert({
+        message: processOrderError.message,
+        variant: "danger",
+      });
+    }
+  }, [processOrderError, showNewAlert]);
+
+  useEffect(() => {
+    if (processOrderSuccess) {
+      showNewAlert({
+        message: processOrderSuccess,
+        action: resetOrderProcess,
+      });
+    }
+  }, [processOrderSuccess, resetOrderProcess, showNewAlert]);
+
+  // Process Reservation Effects
+  useEffect(() => {
+    if (processReservationError?.message) {
+      showNewAlert({
+        message: processReservationError.message,
+        variant: "danger",
+      });
+    }
+  }, [processReservationError, showNewAlert]);
+
+  useEffect(() => {
+    if (processReservationSuccess) {
+      showNewAlert({
+        message: processReservationSuccess,
+        action: resetReservationProcess,
+      });
+    }
+  }, [processReservationSuccess, resetReservationProcess, showNewAlert]);
 
   useEffect(() => {
     if (updateStatusError?.message) {
@@ -141,13 +208,17 @@ export default function EmployeeTableManagement() {
 
   const onCompleteReservation = useCallback(
     async (reservationId) => {
-      const res = await handleProcessReservation(reservationId, RESERVATION_ACTIONS.COMPLETE);
-      if(res){
+      const res = await handleProcessReservation(
+        reservationId,
+        RESERVATION_ACTIONS.COMPLETE
+      );
+      if (res) {
         mutateTables();
         mutateReservations();
+        mutateTableStatusSummary();
       }
     },
-    [handleProcessReservation]
+    [handleProcessReservation, mutateReservations, mutateTables]
   );
 
   const onServedOrder = useCallback(
@@ -170,37 +241,41 @@ export default function EmployeeTableManagement() {
     [handleUpdateTableOccupancyStatus, mutateTables]
   );
 
-  const handleSeatCustomerReservation = useCallback(async (table) => {
-    const requestSeatReservation = {
-      contactName: table.contactName,
-      partySize: table.partySize,
-      phone: table.phone,
-      notes: table.notes,
-      reservationId: table.reservationId,
-      type: TABLE_OCCUPANCY_TYPES.RESERVATION,
-    };
+  const handleSeatCustomerReservation = useCallback(
+    async (table) => {
+      const requestSeatReservation = {
+        contactName: table.contactName,
+        partySize: table.partySize,
+        phone: table.phone,
+        notes: table.notes,
+        reservationId: table.reservationId,
+        type: TABLE_OCCUPANCY_TYPES.RESERVATION,
+      };
 
-    try {
-      const res = await handleCreateTableOccupancy(requestSeatReservation);
-      if (res) {
-        mutateReservations(
-          (prevData) => ({
-            ...prevData,
-            content: [...(prevData?.content || []), res],
-          }),
-          false
-        );
-        mutateReservations();
-        mutateTables();
+      try {
+        const res = await handleCreateTableOccupancy(requestSeatReservation);
+        if (res) {
+          mutateReservations(
+            (prevData) => ({
+              ...prevData,
+              content: [...(prevData?.content || []), res],
+            }),
+            false
+          );
+          mutateReservations();
+          mutateTables();
+          mutateTableStatusSummary();
+        }
+      } catch (error) {
+        showNewAlert({
+          message: "Failed to seat customer. Please try again.",
+          variant: "danger",
+        });
       }
-    } catch (error) {
-      showNewAlert({
-        message: "Failed to seat customer. Please try again.",
-        variant: "danger",
-      });
-    }
-  }, [handleCreateTableOccupancy, showNewAlert, mutateReservations, mutateTables]);
-  
+    },
+    [handleCreateTableOccupancy, showNewAlert, mutateReservations, mutateTables]
+  );
+
   const debouncedSearch = useCallback(
     (newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
@@ -215,19 +290,19 @@ export default function EmployeeTableManagement() {
     debouncedSearch(newSearchValue);
   };
 
-  // Calculate statistics
-  const availableTables = tables.filter(
-    (t) => t.status === TABLE_STATUSES.UNOCCUPIED
-  ).length;
-  const occupiedTables = tables.filter(
-    (t) => t.status === TABLE_STATUSES.OCCUPIED
-  ).length;
-  const reservedTables = tables.filter(
-    (t) => t.status === TABLE_STATUSES.RESERVED
-  ).length;
-  const cleaningTables = tables.filter(
-    (t) => t.status === TABLE_STATUSES.CLEANING
-  ).length;
+  if( tableStatusSummaryError?.message ||
+      reservationError?.message ||
+      tableOccupanciesError?.message) {
+    return (
+      <ErrorDisplay
+        message={
+          tableStatusSummaryError?.message ||
+          reservationError?.message ||
+          tableOccupanciesError?.message
+        }
+      />
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -254,11 +329,11 @@ export default function EmployeeTableManagement() {
             <div className={styles.statHeader}>
               <h3 className={styles.statTitle}>Available Tables</h3>
               <span className={`${styles.badge} ${styles.badgeSuccess}`}>
-                {availableTables}
+                {unoccupied}
               </span>
             </div>
             <div className={styles.statValue}>
-              {Math.round((availableTables / tables.length) * 100)}%
+              {Math.round((unoccupied / total) * 100)}%
             </div>
             <p className={styles.statDescription}>of total capacity</p>
           </div>
@@ -266,11 +341,11 @@ export default function EmployeeTableManagement() {
             <div className={styles.statHeader}>
               <h3 className={styles.statTitle}>Occupied Tables</h3>
               <span className={`${styles.badge} ${styles.badgeDanger}`}>
-                {occupiedTables}
+                {occupied}
               </span>
             </div>
             <div className={styles.statValue}>
-              {Math.round((occupiedTables / tables.length) * 100)}%
+              {Math.round((occupied / total) * 100)}%
             </div>
             <p className={styles.statDescription}>of total capacity</p>
           </div>
@@ -278,11 +353,11 @@ export default function EmployeeTableManagement() {
             <div className={styles.statHeader}>
               <h3 className={styles.statTitle}>Cleaing Tables</h3>
               <span className={`${styles.badge} ${styles.badgePrimary}`}>
-                {cleaningTables}
+                {cleaning}
               </span>
             </div>
             <div className={styles.statValue}>
-              {Math.round((cleaningTables / tables.length) * 100)}%
+              {Math.round((cleaning / total) * 100)}%
             </div>
             <p className={styles.statDescription}>of total capacity</p>
           </div>
@@ -290,10 +365,10 @@ export default function EmployeeTableManagement() {
             <div className={styles.statHeader}>
               <h3 className={styles.statTitle}>Reserved Tables</h3>
               <span className={`${styles.badge} ${styles.badgeWarning}`}>
-                {reservedTables}
+                {reserved}
               </span>
             </div>
-            <div className={styles.statValue}>{reservedTables}</div>
+            <div className={styles.statValue}>{reserved}</div>
             <p className={styles.statDescription}>upcoming reservations</p>
           </div>
         </div>
@@ -323,6 +398,7 @@ export default function EmployeeTableManagement() {
                   onCompleteReservation={onCompleteReservation}
                   tableOccupancies={tableOccupancies}
                   mutateTableOccupancies={mutateTableOccupancies}
+                  mutateTableStatusSummary={mutateTableStatusSummary}
                   mutateTables={mutateTables}
                 />
                 <Pagination
@@ -343,7 +419,7 @@ export default function EmployeeTableManagement() {
                 >
                   <option value="waiting">Waiting List</option>
                   <option value="reservations">Upcoming Reservations</option>
-                  </select>
+                </select>
                 <div className={styles.headerControls}>
                   <button className={styles.addButton}>
                     <Plus size={16} />
@@ -352,7 +428,7 @@ export default function EmployeeTableManagement() {
                 </div>
               </div>
               <div className={styles.cardContent}>
-                {view === 'waiting' ? (
+                {view === "waiting" ? (
                   <>
                     <p className={styles.waitingCount}>
                       {tableOccupancies.length} parties waiting
