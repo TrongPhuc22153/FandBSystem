@@ -2,6 +2,7 @@ package com.phucx.phucxfandb.service.reservation.impl;
 
 import com.phucx.phucxfandb.dto.request.RequestMenuItemDTO;
 import com.phucx.phucxfandb.enums.MenuItemStatus;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 import com.phucx.phucxfandb.enums.ReservationStatus;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
@@ -119,6 +120,16 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
 
         Reservation saved = reservationRepository.save(newReservation);
         return reservationMapper.toReservationDTO(saved);
+    }
+
+    @Override
+    public ReservationDTO updateReservation(String reservationId, ReservationStatus reservationStatus, PaymentStatus paymentStatus) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(()-> new NotFoundException(Reservation.class.getSimpleName(), "id", reservationId));
+        reservation.setStatus(reservationStatus);
+        reservation.getPayment().setStatus(paymentStatus);
+        Reservation updatedOrder = reservationRepository.save(reservation);
+        return reservationMapper.toReservationDTO(updatedOrder);
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.phucx.phucxfandb.service.order.impl;
 
-import com.phucx.phucxfandb.enums.OrderItemStatus;
-import com.phucx.phucxfandb.enums.OrderStatus;
-import com.phucx.phucxfandb.enums.OrderType;
-import com.phucx.phucxfandb.enums.TableOccupancyStatus;
+import com.phucx.phucxfandb.enums.*;
 import com.phucx.phucxfandb.dto.request.RequestOrderDTO;
 import com.phucx.phucxfandb.dto.request.RequestOrderDetailsDTO;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
@@ -72,6 +69,18 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
                 .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderID));
 
         order.setStatus(status);
+        Order updatedOrder = orderRepository.save(order);
+        return orderMapper.toOrderDTO(updatedOrder);
+    }
+
+    @Override
+    @Transactional
+    public OrderDTO updateOrder(String orderId, OrderType type, OrderStatus orderStatus, PaymentStatus paymentStatus) {
+        Order order = orderRepository.findByOrderIdAndType(orderId, type)
+                .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
+
+        order.setStatus(orderStatus);
+        order.getPayment().setStatus(paymentStatus);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderDTO(updatedOrder);
     }

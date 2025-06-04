@@ -4,7 +4,7 @@ import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
 import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { formatDate } from "../../utils/datetimeUtils";
+import { formatDate, formatTime } from "../../utils/datetimeUtils";
 import { USER_RESERVATIONS_URI } from "../../constants/routes";
 import { Badge } from "react-bootstrap";
 import {
@@ -47,9 +47,19 @@ const UserReservationsPage = () => {
   const reservationColumns = [
     { key: "reservationId", title: "ID" },
     {
+      key: "date",
+      title: "Date",
+      render: (reservation) => new Date(reservation.date).toLocaleDateString(),
+    },
+    {
       key: "startTime",
-      title: "Start Date Time",
-      render: (reservation) => formatDate(reservation.startTime),
+      title: "Start Time",
+      render: (reservation) => formatTime(reservation.startTime),
+    },
+    {
+      key: "endTime",
+      title: "End Time",
+      render: (reservation) => formatTime(reservation.endTime),
     },
     {
       key: "tableNumber",
@@ -143,7 +153,7 @@ const UserReservationsPage = () => {
                         <input
                           className="form-control me-2"
                           type="search"
-                          placeholder="Search Orders"
+                          placeholder="Search Reservations"
                           aria-label="Search"
                           value={searchValue}
                           onChange={handleSearchInputChange}

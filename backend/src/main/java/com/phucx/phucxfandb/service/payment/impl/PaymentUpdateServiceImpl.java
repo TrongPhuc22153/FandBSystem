@@ -36,7 +36,7 @@ public class PaymentUpdateServiceImpl implements PaymentUpdateService {
     @Transactional
     public void updatePayPalOrder(String paymentId, String paypalOrderId, PaymentStatus status) {
         PaymentMethod method = paymentMethodReaderService
-                .getPaymentMethodEntityByName(PaymentMethodConstants.PAY_PAL);
+                .getPaymentMethodEntityByName(PaymentMethodConstants.PAYPAL);
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new NotFoundException(
                         Payment.class.getSimpleName(),
@@ -45,6 +45,19 @@ public class PaymentUpdateServiceImpl implements PaymentUpdateService {
         payment.setMethod(method);
         payment.setStatus(status);
         payment.setPaypalOrderId(paypalOrderId);
+        paymentRepository.save(payment);
+    }
+
+    @Override
+    @Transactional
+    public void updatePayPalPayment(String paypalOrderId, String paypalCaptureId, PaymentStatus status) {
+        Payment payment = paymentRepository.findByPaypalOrderId(paypalOrderId)
+                .orElseThrow(() -> new NotFoundException(
+                        Payment.class.getSimpleName(),
+                        "paypal order id",
+                        paypalOrderId));
+        payment.setPaypalCaptureId(paypalCaptureId);
+        payment.setStatus(status);
         paymentRepository.save(payment);
     }
 

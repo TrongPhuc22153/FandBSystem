@@ -1,15 +1,8 @@
-import { CAPTURE_PAYPAL_ORDER } from "../constants/api";
+import { COMPLETE_PAYPAL_ORDER, REFUND_PAYPAL_ORDER } from "../constants/api";
 
-/**
- * Captures an existing PayPal order.
- * @param {object} params - The parameters for capturing the order.
- * @param {string} params.orderId - The ID of the order to capture.
- * @returns {Promise<object>} A promise that resolves with the response DTO (likely void or success message).
- * @throws {object} An error object if the API call fails.
- */
-export const capturePayPalOrder = async ({ orderId, token }) => {
+export const completePayPalOrder = async ({ paypalOrderId, token }) => {
     const response = await fetch(
-        `${CAPTURE_PAYPAL_ORDER}?orderId=${encodeURIComponent(orderId)}`,
+        `${COMPLETE_PAYPAL_ORDER}?paypalOrderId=${encodeURIComponent(paypalOrderId)}`,
         {
             method: "POST",
             headers: {
@@ -25,3 +18,22 @@ export const capturePayPalOrder = async ({ orderId, token }) => {
 
     return response.json();
 };
+
+export const refundPayPalOrder = async ({ paymentId, token }) => {
+    const response = await fetch(
+        `${REFUND_PAYPAL_ORDER}?paymentId=${encodeURIComponent(paymentId)}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+        }
+    );
+
+    if (!response.ok) {
+        throw await response.json();
+    }
+
+    return response.json();
+}

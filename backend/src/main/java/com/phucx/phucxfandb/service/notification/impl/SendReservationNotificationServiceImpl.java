@@ -57,7 +57,9 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
 
         switch (action) {
             case PREPARING -> sendPreparingNotification(username, reservationId, reservation);
+            case PREPARED -> sendPreparedNotification(username, reservationId, reservation);
             case READY -> sendReadyNotification(username, reservationId, reservation);
+            case SERVED -> sendServeNotification(username, reservationId, reservation);
             case COMPLETE -> sendCompleteNotification(username, reservationId, reservation);
             case CANCEL -> sendCancelNotification(authentication, reservationId, reservation);
         }
@@ -65,11 +67,9 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
 
     @Override
     public void sendPlaceReservationNotification(Authentication authentication, String reservationId, LocalDate date, String paymentMethod, PaymentStatus paymentStatus) {
-        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL) && paymentStatus != PaymentStatus.SUCCESSFUL) {
-            log.warn("Reservation {} notification skipped due to payment status: {}", reservationId, paymentStatus);
+        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAYPAL) && paymentStatus != PaymentStatus.SUCCESSFUL) {
             return;
         } else if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.COD) && paymentStatus != PaymentStatus.PENDING) {
-            log.warn("Reservation {} notification skipped due to payment status: {}", reservationId, paymentStatus);
             return;
         }
 
@@ -103,7 +103,7 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
     }
 
     private String createPaymentMessage(String paymentMethod, PaymentStatus paymentStatus) {
-        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL)) {
+        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAYPAL)) {
             return "(Payment: SUCCESS - PayPal)";
         } else if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.COD)) {
             return "(Payment: PENDING - COD)";
@@ -113,7 +113,7 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
     }
 
     private String createCustomerMessage(String paymentMethod, String reservationId, String formattedStartTime) {
-        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL)) {
+        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAYPAL)) {
             return String.format(
                     "Your reservation #%s has been confirmed and paid. See you on %s!",
                     reservationId, formattedStartTime
@@ -146,6 +146,52 @@ public class SendReservationNotificationServiceImpl implements SendReservationNo
         );
 
         this.sendNotificationToGroup(reservationId, TOPIC_KITCHEN, employeeNotification);
+    }
+
+    @Override
+    public void sendServeNotification(String employeeUsername, String reservationId, ReservationDTO reservation) {
+        if (reservation != null && reservation.getCustomer() != null
+                && reservation.getCustomer().getProfile() != null && reservation.getCustomer().getProfile().getUser() != null) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    reservation.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.RESERVATION,
+                    NotificationTitle.RESERVATION_SERVED,
+                    String.format("Your reservation #%s has been served. Enjoy your experience!", reservationId)
+            );
+            this.sendNotificationToUser(reservationId, customerNotification);
+        }
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_SERVED,
+                String.format("Reservation #%s has been served by %s", reservationId, employeeUsername)
+        );
+        this.sendNotificationToGroup(reservationId, TOPIC_EMPLOYEE, employeeNotification);
+    }
+
+    @Override
+    public void sendPreparedNotification(String employeeUsername, String reservationId, ReservationDTO reservation) {
+        if (reservation != null && reservation.getCustomer() != null
+                && reservation.getCustomer().getProfile() != null && reservation.getCustomer().getProfile().getUser() != null) {
+            RequestNotificationDTO customerNotification = NotificationUtils.createSystemRequestNotificationDTO(
+                    reservation.getCustomer().getProfile().getUser().getUsername(),
+                    NotificationTopic.RESERVATION,
+                    NotificationTitle.RESERVATION_PREPARED,
+                    String.format("Your reservation #%s has been prepared by our staff", reservationId)
+            );
+            this.sendNotificationToUser(reservationId, customerNotification);
+        }
+
+        RequestNotificationDTO employeeNotification = NotificationUtils.createRequestNotificationDTOForGroup(
+                employeeUsername,
+                RoleName.EMPLOYEE,
+                NotificationTopic.RESERVATION,
+                NotificationTitle.RESERVATION_PREPARED,
+                String.format("Reservation #%s has been prepared by %s", reservationId, employeeUsername)
+        );
+        this.sendNotificationToGroup(reservationId, TOPIC_EMPLOYEE, employeeNotification);
     }
 
     @Override

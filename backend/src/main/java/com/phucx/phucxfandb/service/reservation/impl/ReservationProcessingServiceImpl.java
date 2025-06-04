@@ -8,6 +8,7 @@ import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.enums.*;
 import com.phucx.phucxfandb.exception.TableNotAvailableException;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
+import com.phucx.phucxfandb.service.refund.PayPalRefundService;
 import com.phucx.phucxfandb.service.reservation.MenuItemService;
 import com.phucx.phucxfandb.service.reservation.ReservationProcessingService;
 import com.phucx.phucxfandb.service.reservation.ReservationReaderService;
@@ -28,12 +29,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.EnumSet;
 import java.util.List;
 
+import static com.phucx.phucxfandb.utils.RefundUtils.isAutoRefundable;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationProcessingServiceImpl implements ReservationProcessingService {
     private final ReservationUpdateService reservationUpdateService;
     private final ReservationReaderService reservationReaderService;
+    private final PayPalRefundService payPalRefundService;
     private final TableReaderService tableReaderService;
     private final MenuItemService menuItemService;
     private final TableOccupancyUpdateService tableOccupancyUpdateService;
@@ -55,7 +59,35 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     private ReservationDTO cancelReservationByCustomer(String username, String reservationId) {
         validateReservation(reservationId);
 
-        ReservationDTO reservationDTO = reservationUpdateService.updateReservationStatusByCustomer(username, reservationId, ReservationStatus.CANCELLED);
+        Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
+        EnumSet<ReservationStatus> cancellableStatuses = EnumSet.of(
+                ReservationStatus.PENDING,
+                ReservationStatus.CONFIRMED,
+                ReservationStatus.PREPARING
+        );
+
+        if (!cancellableStatuses.contains(reservation.getStatus())) {
+            throw new IllegalStateException("Reservation cannot be cancelled at this stage.");
+        }
+
+        Payment payment = reservation.getPayment();
+        PaymentStatus paymentStatus = payment.getStatus();
+
+        if (paymentStatus == PaymentStatus.SUCCESSFUL) {
+            if (isAutoRefundable(payment.getMethod())) {
+                payPalRefundService.refundPayment(payment.getPaymentId());
+                paymentStatus = PaymentStatus.REFUNDED;
+            } else {
+                paymentStatus = PaymentStatus.CANCELLED;
+            }
+        }
+
+        ReservationDTO reservationDTO = reservationUpdateService.updateReservation(
+                reservationId,
+                ReservationStatus.CANCELLED,
+                paymentStatus
+        );
+
         menuItemService.updateItemStatus(reservationId, MenuItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
@@ -77,7 +109,35 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     private ReservationDTO cancelReservationByEmployee(String username, String reservationId) {
         validateReservation(reservationId);
 
-        ReservationDTO reservationDTO = reservationUpdateService.updateReservationStatusByEmployee(username, reservationId, ReservationStatus.CANCELLED);
+        Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
+        EnumSet<ReservationStatus> cancellableStatuses = EnumSet.of(
+                ReservationStatus.PENDING,
+                ReservationStatus.CONFIRMED,
+                ReservationStatus.PREPARING
+        );
+
+        if (!cancellableStatuses.contains(reservation.getStatus())) {
+            throw new IllegalStateException("Reservation cannot be cancelled at this stage.");
+        }
+
+        Payment payment = reservation.getPayment();
+        PaymentStatus paymentStatus = payment.getStatus();
+
+        if (paymentStatus == PaymentStatus.SUCCESSFUL) {
+            if (isAutoRefundable(payment.getMethod())) {
+                payPalRefundService.refundPayment(payment.getPaymentId());
+                paymentStatus = PaymentStatus.REFUNDED;
+            } else {
+                paymentStatus = PaymentStatus.CANCELLED;
+            }
+        }
+
+        ReservationDTO reservationDTO = reservationUpdateService.updateReservation(
+                reservationId,
+                ReservationStatus.CANCELLED,
+                paymentStatus
+        );
+
         menuItemService.updateItemStatus(reservationId, MenuItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(

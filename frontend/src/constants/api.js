@@ -29,7 +29,12 @@ export const USER_PROFILES_ENDPOINT = `${API_BASE_URL}/api/v1/profiles`;
 
 const PAYPAL_ENDPOINT = `${API_BASE_URL}/api/v1/paypal`;
 export const CREATE_PAYPAL_ORDER = `${PAYPAL_ENDPOINT}/create`;
-export const CAPTURE_PAYPAL_ORDER = `${PAYPAL_ENDPOINT}/capture`; 
+export const COMPLETE_PAYPAL_ORDER = `${PAYPAL_ENDPOINT}/complete`; 
+export const REFUND_PAYPAL_ORDER = `${PAYPAL_ENDPOINT}/refund`;
+
+export const REFUND_ENDPOINT = `${API_BASE_URL}/api/v1/refunds`;
+export const REFUND_ORDER_PREVIEW_ENDPOINT = (orderId) => `${API_BASE_URL}/api/v1/refunds/orders/${orderId}/preview`;
+export const REFUND_RESERVATION_PREVIEW_ENDPOINT = (reservationId) => `${API_BASE_URL}/api/v1/refunds/reservations/${reservationId}/preview`;
 
 export const PAYMENT_METHODS_ENDPOINT = `${API_BASE_URL}/api/v1/payment-methods`;
 

@@ -27,7 +27,7 @@ public class PaymentProcessServiceImpl implements PaymentProcessService {
         Payment payment = paymentReaderService.getPaymentEntity(paymentId);
         String methodName = requestPaymentDTO.getPaymentMethod();
 
-        if(methodName.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL)) {
+        if(methodName.equalsIgnoreCase(PaymentMethodConstants.PAYPAL)) {
             String approvedLink = payPalService.createOrder(
                     paymentId,
                     payment.getAmount(),

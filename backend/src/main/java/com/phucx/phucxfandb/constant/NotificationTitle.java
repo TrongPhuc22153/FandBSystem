@@ -24,6 +24,8 @@ public class NotificationTitle {
     public static final String RESERVATION_CANCELLED = "Reservation cancelled";
     public static final String RESERVATION_READY = "Reservation ready";
     public static final String RESERVATION_PREPARING = "Reservation In Progress";
+    public static final String RESERVATION_PREPARED = "Reservation prepared";
+    public static final String RESERVATION_SERVED = "Reservation served";
     public static final String RESERVATION_COMPLETED = "Reservation completed";
     public static final String RESERVATION_ERROR = "Reservation error";
     public static final String RESERVATION_INVALID = "Invalid reservation";

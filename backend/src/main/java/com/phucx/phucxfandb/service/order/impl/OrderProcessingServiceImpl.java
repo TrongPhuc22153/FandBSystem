@@ -5,6 +5,7 @@ import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.entity.Order;
 import com.phucx.phucxfandb.entity.OrderDetail;
+import com.phucx.phucxfandb.entity.Payment;
 import com.phucx.phucxfandb.enums.*;
 import com.phucx.phucxfandb.service.cart.CartUpdateService;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
@@ -12,6 +13,7 @@ import com.phucx.phucxfandb.service.order.OrderDetailService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.service.order.OrderUpdateService;
+import com.phucx.phucxfandb.service.refund.PayPalRefundService;
 import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
@@ -23,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.EnumSet;
 import java.util.List;
 
+import static com.phucx.phucxfandb.utils.RefundUtils.isAutoRefundable;
+
 @Service
 @RequiredArgsConstructor
 public class OrderProcessingServiceImpl implements OrderProcessingService {
@@ -30,6 +34,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     private final OrderUpdateService orderUpdateService;
     private final OrderReaderService orderReaderService;
     private final OrderDetailService orderDetailService;
+    private final PayPalRefundService payPalRefundService;
     private final TableOccupancyUpdateService tableOccupancyUpdateService;
     private final SendOrderNotificationService sendOrderNotificationService;
 
@@ -38,7 +43,35 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     public OrderDTO cancelOrderByEmployee(String username, String orderId, OrderType type) {
         validateOrder(orderId, type);
 
-        OrderDTO orderDTO = orderUpdateService.updateOrderStatusByEmployee(username, orderId, type, OrderStatus.CANCELLED);
+        Order order = orderReaderService.getOrderEntity(orderId, type);
+        EnumSet<OrderStatus> cancellableStatuses = EnumSet.of(
+                OrderStatus.PENDING,
+                OrderStatus.CONFIRMED,
+                OrderStatus.PREPARING
+        );
+
+        if (!cancellableStatuses.contains(order.getStatus())) {
+            throw new IllegalStateException("Order cannot be cancelled at this stage.");
+        }
+
+        Payment payment = order.getPayment();
+        PaymentStatus paymentStatus = payment.getStatus();
+        if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
+            if (isAutoRefundable(payment.getMethod())) {
+                payPalRefundService.refundPayment(payment.getPaymentId());
+                paymentStatus = PaymentStatus.REFUNDED;
+            } else {
+                paymentStatus = PaymentStatus.CANCELLED;
+            }
+        }
+
+        OrderDTO orderDTO = orderUpdateService.updateOrder(
+                order.getOrderId(),
+                type,
+                OrderStatus.CANCELLED,
+                paymentStatus
+        );
+
         orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
@@ -62,7 +95,25 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     public OrderDTO cancelOrderByCustomer(String username, String orderId, OrderType type) {
         validateOrder(orderId, type);
 
-        OrderDTO orderDTO = orderUpdateService.updateOrderStatusByCustomer(username, orderId, type, OrderStatus.CANCELLED);
+        Order order = orderReaderService.getOrderEntity(orderId, type);
+
+        EnumSet<OrderStatus> cancellableStatuses = EnumSet.of(OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.PREPARING);
+        if (!cancellableStatuses.contains(order.getStatus())) {
+            throw new IllegalStateException("Order cannot be cancelled at this stage.");
+        }
+
+        Payment payment = order.getPayment();
+        PaymentStatus paymentStatus = payment.getStatus();
+        if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
+            if (isAutoRefundable(payment.getMethod())) {
+                payPalRefundService.refundPayment(payment.getPaymentId());
+                paymentStatus = PaymentStatus.REFUNDED;
+            } else {
+                paymentStatus = PaymentStatus.CANCELLED;
+            }
+        }
+
+        OrderDTO orderDTO = orderUpdateService.updateOrder(order.getOrderId(), type, OrderStatus.CANCELLED, paymentStatus);
         orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(

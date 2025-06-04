@@ -1,42 +1,74 @@
 import { useCallback, useState } from "react";
-import { capturePayPalOrder } from "../api/paypalApi";
+import { completePayPalOrder, refundPayPalOrder } from "../api/paypalApi";
 import { useAuth } from "../context/AuthContext";
 
 export const usePayPalActions = () => {
     const { token } = useAuth();
 
-    const [captureError, setCaptureError] = useState(null);
-    const [captureLoading, setCaptureLoading] = useState(false);
-    const [captureSuccess, setCaptureSuccess] = useState(null);
+    const [completeError, setCompleteError] = useState(null);
+    const [completeLoading, setCompleteLoading] = useState(false);
+    const [completeSuccess, setCompleteSuccess] = useState(null);
 
-    const handleCaptureOrder = useCallback(
-        async (orderId) => {
-            setCaptureError(null);
-            setCaptureSuccess(null);
-            setCaptureLoading(true);
+    const [refundError, setRefundError] = useState(null);
+    const [refundLoading, setRefundLoading] = useState(false);
+    const [refundSuccess, setRefundSuccess] = useState(null);
+
+    const handleCompleteOrder = useCallback(
+        async (paypalOrderId) => {
+            setCompleteError(null);
+            setCompleteSuccess(null);
+            setCompleteLoading(true);
             try {
-                const response = await capturePayPalOrder({ orderId, token });
-                setCaptureSuccess(response?.message || "Payment captured successfully");
+                const response = await completePayPalOrder({ paypalOrderId, token });
+                setCompleteSuccess(response?.message || "Complete payment successfully");
                 return response;
             } catch (error) {
-                setCaptureError(error);
+                setCompleteError(error);
                 return null;
             } finally {
-                setCaptureLoading(false);
+                setCompleteLoading(false);
             }
         }, [token]
     );
 
-    const resetCapture = useCallback(() => {
-        setCaptureError(null);
-        setCaptureSuccess(null);
+    const resetComplete = useCallback(() => {
+        setCompleteError(null);
+        setCompleteSuccess(null);
+    }, []);
+
+    const handleRefundOrder = useCallback(
+        async (paymentId) => {
+            setRefundError(null);
+            setRefundSuccess(null);
+            setRefundLoading(true);
+            try {
+                const response = await refundPayPalOrder({ paymentId, token });
+                setRefundSuccess(response?.message || "Refund payment successfully");
+                return response;
+            } catch (error) {
+                setRefundError(error);
+                return null;
+            } finally {
+                setRefundLoading(false);
+            }
+        }, [token]
+    );
+
+    const resetRefund = useCallback(() => {
+        setRefundError(null);
+        setRefundSuccess(null);
     }, []);
 
     return {
-        handleCaptureOrder,
-        captureError,
-        captureLoading,
-        captureSuccess,
-        resetCapture,
+        handleCompleteOrder,
+        completeError,
+        completeLoading,
+        completeSuccess,
+        resetComplete,
+        handleRefundOrder,
+        refundError,
+        refundLoading,
+        refundSuccess,
+        resetRefund,
     };
 };

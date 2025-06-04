@@ -26,7 +26,7 @@ public class Payment extends Auditable{
     private LocalDateTime paymentDate = LocalDateTime.now();
 
     @Column(name = "transaction_id", length = 100)
-    private String transactionID;
+    private String transactionId;
 
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
@@ -38,6 +38,9 @@ public class Payment extends Auditable{
 
     @Column(name = "paypal_order_id", length = 36)
     private String paypalOrderId;
+
+    @Column(name = "paypal_capture_id", length = 36)
+    private String paypalCaptureId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")

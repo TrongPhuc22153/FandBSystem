@@ -52,6 +52,7 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
             case PREPARING -> sendPreparingNotification(username, orderId, type, order);
             case PREPARED -> sendPreparedNotification(username, orderId, type, order);
             case READY -> sendReadyNotification(username, orderId, type, order);
+            case SERVED -> sendServedNotification(username, orderId, type, order);
             case COMPLETE -> sendCompleteNotification(username, orderId, type, order);
             case CANCEL -> sendCancelNotification(authentication, orderId, type, order);
         }
@@ -59,11 +60,9 @@ public class SendOrderNotificationServiceImp implements SendOrderNotificationSer
 
     @Override
     public void sendPlaceOrderNotification(Authentication authentication, String orderId, OrderType type, String paymentMethod, PaymentStatus paymentStatus) {
-        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAY_PAL) && paymentStatus != PaymentStatus.SUCCESSFUL) {
-            log.warn("Order {} notification skipped due to payment status: {}", orderId, paymentStatus);
+        if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.PAYPAL) && paymentStatus != PaymentStatus.SUCCESSFUL) {
             return;
         } else if (paymentMethod.equalsIgnoreCase(PaymentMethodConstants.COD) && paymentStatus != PaymentStatus.PENDING) {
-            log.warn("Order {} notification skipped due to payment status: {}", orderId, paymentStatus);
             return;
         }
 

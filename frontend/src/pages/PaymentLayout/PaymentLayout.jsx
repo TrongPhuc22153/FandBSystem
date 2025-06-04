@@ -8,7 +8,7 @@ import PaymentError from "../../components/PaymentProcessing/PaymentErrror/Payme
 export default function PaymentLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { handleCaptureOrder, captureError, captureLoading, resetCapture } =
+  const { handleCompleteOrder, completeError, completeLoading, resetComplete } =
     usePayPalActions();
 
   useEffect(() => {
@@ -23,9 +23,9 @@ export default function PaymentLayout() {
     let isMounted = true;
 
     const finalizePayment = async () => {
-      const res = await handleCaptureOrder(token);
+      const res = await handleCompleteOrder(token);
       if (res && isMounted) {
-        resetCapture();
+        resetComplete();
       }
     };
 
@@ -34,9 +34,9 @@ export default function PaymentLayout() {
     return () => {
       isMounted = false;
     };
-  }, [location, navigate, handleCaptureOrder, resetCapture]);
+  }, [location, navigate, handleCompleteOrder, resetComplete]);
 
-  if (captureError?.message)
+  if (completeError?.message)
     return (
       <div className="center">
         <PaymentError />
@@ -45,7 +45,7 @@ export default function PaymentLayout() {
 
   return (
     <div className="center">
-      {captureLoading ? <ProcessingPage /> : <Outlet />}
+      {completeLoading ? <ProcessingPage /> : <Outlet />}
     </div>
   );
 }

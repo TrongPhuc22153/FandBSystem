@@ -26,7 +26,7 @@ public interface PaymentRepository extends JpaRepository<Payment, String>, JpaSp
     Page<Payment> findAll(Specification<Payment> spec, @NotNull Pageable pageable);
 
     @Query("""
-            SELECT SUM(p.amount) FROM Payment p
+            SELECT COALESCE(SUM(p.amount), 0) FROM Payment p
             WHERE p.paymentDate >= :startOfDay AND p.paymentDate < :endOfDay
                 AND p.status = :status
             """)

@@ -20,6 +20,10 @@ public interface SendReservationNotificationService {
 
     void sendPreparingNotification(String employeeUsername, String reservationId, ReservationDTO reservation);
 
+    void sendServeNotification(String employeeUsername, String reservationId, ReservationDTO reservation);
+
+    void sendPreparedNotification(String employeeUsername, String reservationId, ReservationDTO reservation);
+
     void sendReadyNotification(String employeeUsername, String reservationId, ReservationDTO reservation);
 
     void sendCompleteNotification(String employeeUsername, String reservationId, ReservationDTO reservation);

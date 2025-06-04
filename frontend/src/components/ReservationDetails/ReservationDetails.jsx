@@ -1,61 +1,97 @@
-import { Badge, Card } from "react-bootstrap";
-import {
-  PAYMENT_STATUS_CLASSES,
-  RESERVATION_ACTIONS,
-  RESERVATION_STATUS_CLASSES,
-  RESERVATION_STATUSES,
-} from "../../constants/webConstant";
+import React, { useEffect, useState } from 'react';
+import { Button, Badge, Card, Modal } from 'react-bootstrap';
+import { useRefundActions } from '../../hooks/refundHooks';
+import { useReservationActions } from '../../hooks/reservationHooks';
+import { useAlert } from '../../context/AlertContext';
+import { RESERVATION_STATUS_CLASSES, RESERVATION_STATUSES, PAYMENT_STATUS_CLASSES } from '../../constants/webConstant';
+import RefundPreviewModal from '../RefundPreviewModal/RefundPreviewModal';
+import Loading from '../Loading/Loading';
 
 export default function ReservationDetail({ reservation }) {
-  if (!reservation) return null;
+  const { fetchReservationPreview } = useRefundActions();
+  const [refundPreview, setRefundPreview] = useState(null);
+  const [showRefundModal, setShowRefundModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const getNextAction = (currentStatus) => {
-    switch (currentStatus.toUpperCase()) {
-      case RESERVATION_STATUSES.PENDING:
-        return RESERVATION_ACTIONS.PREPARING.toLowerCase();
-      case RESERVATION_STATUSES.PREPARING:
-        return RESERVATION_ACTIONS.READY.toLowerCase();
-      case RESERVATION_STATUSES.PREPARED:
-        return RESERVATION_ACTIONS.COMPLETE.toLowerCase();
-      default:
-        return null;
+  const {
+    handleProcessReservation,
+    processError,
+    processLoading,
+    resetProcess,
+  } = useReservationActions();
+
+  const { showNewAlert } = useAlert();
+
+  useEffect(() => {
+    if (processError?.message) {
+      showNewAlert({
+        message: processError.message,
+        variant: 'danger',
+        action: resetProcess,
+      });
+    }
+  }, [processError, showNewAlert, resetProcess]);
+
+  const handleCancelClick = async () => {
+    try {
+      if (reservation.payment.method.toUpperCase() === 'PAYPAL') {
+        const preview = await fetchReservationPreview(reservation.reservationId);
+        if (preview) {
+          setRefundPreview(preview);
+          setShowRefundModal(true);
+        }
+      } else {
+        // For non-PayPal methods, directly process cancellation
+        const result = await handleProcessReservation(reservation.reservationId, 'CANCEL');
+        if (result) {
+          setShowSuccessModal(true);
+        } else {
+          showNewAlert({
+            message: 'Failed to cancel reservation. Please try again.',
+            variant: 'danger',
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error handling cancellation:', err);
+      showNewAlert({
+        message: 'Failed to process cancellation. Please try again.',
+        variant: 'danger',
+      });
     }
   };
 
-  const nextAction = getNextAction(reservation.status);
-
-  // Calculate time until reservation
-  const getTimeUntil = (reservationTime) => {
-    const now = new Date();
-    const resTime = new Date(reservationTime);
-    const diffMs = resTime.getTime() - now.getTime();
-
-    if (diffMs < 0) return "Overdue";
-
-    const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 60) return `${diffMins} min`;
-
-    const hours = Math.floor(diffMins / 60);
-    const mins = diffMins % 60;
-    return `${hours}h ${mins}m`;
+  const handleConfirmRefund = async () => {
+    setShowRefundModal(false);
+    try {
+      const result = await handleProcessReservation(reservation.reservationId, 'CANCEL');
+      if (result) {
+        setShowSuccessModal(true);
+      } else {
+        showNewAlert({
+          message: 'Failed to initiate refund. Please try again.',
+          variant: 'danger',
+        });
+      }
+    } catch (err) {
+      console.error('Error processing refund:', err);
+      showNewAlert({
+        message: 'Failed to initiate refund. Please try again.',
+        variant: 'danger',
+      });
+    }
   };
 
-  const calculateTotal = (items) => {
-    return items.reduce(
-      (total, item) => total + item.quantity * item.product.unitPrice,
-      0
-    );
-  };
+  if (processLoading) return <Loading />;
 
   return (
-    <div className="container bg-white py-3 px-3 rounded-3" style={{ maxWidth: "800px" }}>
+    <div className="container bg-white py-3 px-3 rounded-3" style={{ maxWidth: '800px' }}>
       <h5>Reservation Details: {reservation.reservationId}</h5>
       <div className="row mb-4">
         <div className="col-md-6">
           <h6>Customer Information</h6>
           <p className="mb-1">
-            <strong>Name:</strong>{" "}
-            {reservation.customer.profile.user.username}
+            <strong>Name:</strong> {reservation.customer.profile.user.username}
           </p>
           <p className="mb-1">
             <strong>Phone:</strong> {reservation.customer.profile.phone}
@@ -64,54 +100,46 @@ export default function ReservationDetail({ reservation }) {
             <strong>Party Size:</strong> {reservation.numberOfGuests} people
           </p>
           <p className="mb-1">
-            <strong>Reservation Date:</strong>{" "}
-            {new Date(reservation.date).toLocaleDateString()}
+            <strong>Reservation Date:</strong> {new Date(reservation.date).toLocaleDateString()}
           </p>
           <p className="mb-1">
-            <strong>Start time:</strong>{" "}
-            {reservation.startTime}
+            <strong>Start time:</strong> {reservation.startTime}
           </p>
           <p className="mb-1">
-            <strong>End time:</strong>{" "}
-            {reservation.endTime}
+            <strong>End time:</strong> {reservation.endTime}
           </p>
-
         </div>
         <div className="col-md-6">
           <h6>Reservation Status</h6>
           <div className="d-flex align-items-center mb-3">
             <Badge
-              className={`me-2`}
-              bg={
-                RESERVATION_STATUS_CLASSES[reservation.status] ||
-                RESERVATION_STATUS_CLASSES.DEFAULT
-              }
+              className="me-2"
+              bg={RESERVATION_STATUS_CLASSES[reservation.status] || RESERVATION_STATUS_CLASSES.DEFAULT}
             >
-              {reservation.status.charAt(0).toUpperCase() +
-                reservation.status.slice(1)}
+              {reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}
             </Badge>
           </div>
           <div className="progress">
             <div
               className={`progress-bar ${
                 reservation.status === RESERVATION_STATUSES.PENDING
-                  ? "bg-danger"
+                  ? 'bg-danger'
                   : reservation.status === RESERVATION_STATUSES.PREPARING
-                  ? "bg-warning"
+                  ? 'bg-warning'
                   : reservation.status === RESERVATION_STATUSES.PREPARED
-                  ? "bg-success"
-                  : "bg-secondary"
+                  ? 'bg-success'
+                  : 'bg-secondary'
               }`}
               role="progressbar"
               style={{
                 width:
                   reservation.status === RESERVATION_STATUSES.PENDING
-                    ? "25%"
+                    ? '25%'
                     : reservation.status === RESERVATION_STATUSES.PREPARING
-                    ? "50%"
+                    ? '50%'
                     : reservation.status === RESERVATION_STATUSES.PREPARED
-                    ? "75%"
-                    : "100%",
+                    ? '75%'
+                    : '100%',
               }}
               aria-valuenow={
                 reservation.status === RESERVATION_STATUSES.PENDING
@@ -135,17 +163,12 @@ export default function ReservationDetail({ reservation }) {
           <Card>
             <Card.Body>
               <p className="mb-1">
-                <strong>Method:</strong>{" "}
-                {reservation.payment.method.toUpperCase()}
+                <strong>Method:</strong> {reservation.payment.method.toUpperCase()}
               </p>
               <p className="mb-1">
-                <strong>Status:</strong>{" "}
-                <Badge
-                  bg={PAYMENT_STATUS_CLASSES[reservation.payment.status]}
-                  aria-label={`Payment status: ${reservation.payment.status}`}
-                >
-                  {reservation.payment.status.charAt(0).toUpperCase() +
-                    reservation.payment.status.slice(1)}
+                <strong>Status:</strong>{' '}
+                <Badge bg={PAYMENT_STATUS_CLASSES[reservation.payment.status]} aria-label={`Payment status: ${reservation.payment.status}`}>
+                  {reservation.payment.status.charAt(0).toUpperCase() + reservation.payment.status.slice(1)}
                 </Badge>
               </p>
             </Card.Body>
@@ -155,21 +178,17 @@ export default function ReservationDetail({ reservation }) {
           <h6>Table Assignment</h6>
           <div className="card">
             <div className="card-body">
-              Table {reservation.table.tableNumber} - Capacity (
-              {reservation.table.capacity} people) - Location{" "}
-              {reservation.table.location}
+              Table {reservation.table.tableNumber} - Capacity ({reservation.table.capacity} people) - Location {reservation.table.location}
             </div>
           </div>
         </div>
       </div>
-      
+
       <div className="row mb-4">
         <div className="col-md-12">
           <h6>Special Requests</h6>
           <div className="card">
-            <div className="card-body">
-              {reservation.notes || "No special requests provided."}
-            </div>
+            <div className="card-body">{reservation.notes || 'No special requests provided.'}</div>
           </div>
         </div>
       </div>
@@ -190,10 +209,8 @@ export default function ReservationDetail({ reservation }) {
               <tr key={index}>
                 <td>{item.product.productName}</td>
                 <td>{item.quantity}</td>
-                <td>{item.specialInstructions || "-"}</td>
-                <td className="text-end">
-                  ${item.quantity * item.product.unitPrice}
-                </td>
+                <td>{item.specialInstructions || '-'}</td>
+                <td className="text-end">${(item.quantity * item.product.unitPrice).toFixed(2)}</td>
               </tr>
             ))}
             <tr className="table-active">
@@ -201,12 +218,39 @@ export default function ReservationDetail({ reservation }) {
                 <strong>Total:</strong>
               </td>
               <td className="text-end">
-                <strong>${calculateTotal(reservation.menuItems).toFixed(2)}</strong>
+                <strong>${reservation.totalPrice.toFixed(2)}</strong>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <div className="d-flex justify-content-end mt-3">
+        <Button variant="danger" onClick={handleCancelClick} disabled={processLoading}>
+          Cancel Reservation
+        </Button>
+      </div>
+
+      <RefundPreviewModal
+        show={showRefundModal}
+        onHide={() => setShowRefundModal(false)}
+        preview={refundPreview}
+        onConfirm={handleConfirmRefund}
+      />
+
+      <Modal show={showSuccessModal} onHide={() => setShowSuccessModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Reservation Cancelled</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Your reservation #{reservation.reservationId} has been successfully cancelled.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShowSuccessModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

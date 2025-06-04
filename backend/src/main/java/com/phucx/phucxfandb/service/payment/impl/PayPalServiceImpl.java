@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -70,24 +71,40 @@ public class PayPalServiceImpl implements PayPalService {
     }
 
     @Override
-    public String captureOrder(String orderId) {
-        OrdersCaptureRequest request = new OrdersCaptureRequest(orderId);
+    public Order captureOrder(String paypalOrderId) throws IOException {
+        OrdersCaptureRequest request = new OrdersCaptureRequest(paypalOrderId);
         request.requestBody(new OrderRequest());
+        HttpResponse<Order> response = client.execute(request);
+        return response.result();
+    }
 
+    private void handlePaymentCompletion(String paypalOrderId){
         try {
-            HttpResponse<Order> response = client.execute(request);
-            Order capturedOrder = response.result();
-            String paypalStatus = capturedOrder.status();
+            Order order = captureOrder(paypalOrderId);
+            String paypalStatus = order.status();
 
             if (PayPalConstants.COMPLETED.equalsIgnoreCase(paypalStatus)) {
-                paymentUpdateService.updatePaypalPaymentStatus(orderId, PaymentStatus.SUCCESSFUL);
-                return capturedOrder.id();
+
+                List<PurchaseUnit> purchaseUnits = order.purchaseUnits();
+                if (purchaseUnits.isEmpty()) {
+                    paymentUpdateService.updatePaypalPaymentStatus(paypalOrderId, PaymentStatus.FAILED);
+                    throw new PaymentException("Purchase units not found in PayPal response");
+                }
+
+                List<Capture> captures = purchaseUnits.get(0).payments().captures();
+                if(captures.isEmpty()){
+                    paymentUpdateService.updatePaypalPaymentStatus(paypalOrderId, PaymentStatus.FAILED);
+                    throw new PaymentException("Capture ID not found in PayPal response");
+                }
+
+                String captureId = captures.get(0).id();
+                paymentUpdateService.updatePayPalPayment(paypalOrderId, captureId, PaymentStatus.SUCCESSFUL);
             } else {
-                paymentUpdateService.updatePaypalPaymentStatus(orderId, PaymentStatus.FAILED);
+                paymentUpdateService.updatePaypalPaymentStatus(paypalOrderId, PaymentStatus.FAILED);
                 throw new PaymentException("Payment capture failed: " + paypalStatus);
             }
         } catch (IOException e) {
-            paymentUpdateService.updatePaypalPaymentStatus(orderId, PaymentStatus.FAILED);
+            paymentUpdateService.updatePaypalPaymentStatus(paypalOrderId, PaymentStatus.FAILED);
             throw new PaymentException("Error capturing payment: " + e.getMessage());
         }
     }
@@ -95,8 +112,8 @@ public class PayPalServiceImpl implements PayPalService {
     @Override
     @Transactional
     public void completeOrder(Authentication authentication, String paypalOrderId) {
-        String capturedOrderId = this.captureOrder(paypalOrderId);
-        Payment payment = paymentReaderService.getPaymentEntityByPaypalOrderId(capturedOrderId);
+        this.handlePaymentCompletion(paypalOrderId);
+        Payment payment = paymentReaderService.getPaymentEntityByPaypalOrderId(paypalOrderId);
         if(payment.getOrder()!=null){
             com.phucx.phucxfandb.entity.Order order = payment.getOrder();
 

@@ -54,7 +54,8 @@ public class ApiEndpoint {
                 PROFILE_ME_ENDPOINT,
                 NOTIFICATIONS_ANY_ENDPOINT,
                 IMAGES_ENDPOINT,
-                LOGOUT_AUTH_ENDPOINT
+                LOGOUT_AUTH_ENDPOINT,
+                REFUNDS_ANY_ENDPOINT
         };
 
         public static final String[] GET = {
@@ -70,7 +71,9 @@ public class ApiEndpoint {
         };
 
         public static final String[] PATCH = {
-                PAYMENT_BY_ID_ENDPOINT
+                PAYMENT_BY_ID_ENDPOINT,
+                RESERVATION_BY_ID_ENDPOINT,
+                ORDER_BY_ID_ENDPOINT,
         };
     }
     /**
@@ -161,11 +164,9 @@ public class ApiEndpoint {
         };
 
         public static final String[] PATCH ={
-                ORDER_BY_ID_ENDPOINT,
                 ORDER_BY_ID_ITEM_BY_ID_ENDPOINT,
                 TABLE_BY_ID_ENDPOINT,
                 TABLE_OCCUPANCY_BY_ID_ENDPOINT,
-                RESERVATION_BY_ID_ENDPOINT,
                 RESERVATION_BY_ID_ITEM_BY_ID_ENDPOINT
         };
 
@@ -189,6 +190,7 @@ public class ApiEndpoint {
         };
     }
 
+    public static final String REFUNDS_ANY_ENDPOINT = "/api/v1/refunds/**";
 
     public static final String REPORTS_METRICS_ENDPOINT = "/api/v1/reports/metrics";
     public static final String REPORTS_ENDPOINT = "/api/v1/reports";
