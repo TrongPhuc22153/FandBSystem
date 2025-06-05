@@ -46,7 +46,7 @@ function AdminCategoryPage() {
       });
       navigate(ADMIN_CATEGORIES_URI)
     }
-  }, [createSuccess]);
+  }, [createSuccess, showNewAlert, resetCreate, navigate]);
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
@@ -92,7 +92,7 @@ function AdminCategoryPage() {
       setImagePreview(null);
       setFieldErrors({});
     }
-  }, [newCategory, handleCreateCategory]);
+  }, [newCategory, handleCreateCategory, handleUploadImage, imagePreview, uploadImage, showNewAlert]);
 
   const handleCancelClick = () => {
     if (fileInputRef.current) {

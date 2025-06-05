@@ -59,6 +59,7 @@ import PaymentCancelled from "./components/PaymentProcessing/PaymentCancelled/Pa
 import PaymentLayout from "./pages/PaymentLayout/PaymentLayout";
 import PaymentCheckoutPage from "./pages/PaymentCheckoutPage/PaymentCheckoutPage";
 import PaymentManagementPage from "./pages/PaymentManagementPage/PaymentManagementPage";
+import ReservationForm from "./components/Reservation/ReservationForm/ReservationForm";
 
 function App() {
   return (
@@ -80,7 +81,7 @@ function App() {
                     <Route element={<Authorization roles={[ROLES.CUSTOMER]} />}>
                       <Route path="cart" element={<ShoppingCart />} />
                       <Route path="checkout" element={<CheckoutPage />} />
-                      <Route path="reservation" element={<ReservationFormPage />} />
+                      <Route path="reservation" element={<ReservationForm />} />
                     </Route>
                   </Route>
                 </Route>

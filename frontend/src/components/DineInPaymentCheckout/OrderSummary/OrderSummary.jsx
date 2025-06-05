@@ -3,7 +3,7 @@ import styles from "./OrderSummary.module.css";
 const OrderSummary = ({ order, totalPrice }) => {
   return (
     <div className={`card mb-4 ${styles.orderSummaryCard}`}>
-      <div className="card-header ${styles.cardHeader}">
+      <div className={`card-header ${styles.cardHeader}`}>
         <h5 className="mb-0">Order Summary</h5>
       </div>
       <div className="card-body">

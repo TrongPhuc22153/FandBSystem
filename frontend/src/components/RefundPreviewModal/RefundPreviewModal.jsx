@@ -24,7 +24,7 @@ export default function RefundPreviewModal({ show, onHide, preview, onConfirm })
         </p>
         <p>
           <strong>Payment Status:</strong>{" "}
-          <Badge bg="secondary">{preview.paymentStatus}</Badge>
+          <Badge bg={"secondary"}>{preview.paymentStatus}</Badge>
         </p>
         <p>
           <strong>Reason:</strong> {preview.reason}

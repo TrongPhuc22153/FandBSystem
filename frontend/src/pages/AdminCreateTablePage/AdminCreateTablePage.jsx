@@ -10,7 +10,7 @@ function AdminCreateTablePage() {
     tableNumber: null,
     capacity: "",
     location: "",
-    status: "", // Add status
+    status: "",
   });
 
   const { onOpen } = useModal();
@@ -37,7 +37,7 @@ function AdminCreateTablePage() {
         clearTimeout(timer);
       };
     }
-  }, [createSuccess]);
+  }, [createSuccess, resetCreate]);
 
   const handleFormSubmit = (event) => {
     event.preventDefault();

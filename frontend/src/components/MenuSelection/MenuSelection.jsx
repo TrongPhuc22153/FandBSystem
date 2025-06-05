@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import styles from "./menu-selection.module.css";
 import { useProducts } from "../../hooks/productHooks";
 import debounce from "lodash/debounce";
+import ErrorDisplay from "../ErrorDisplay/ErrorDisplay";
 
 export default function MenuSelection({
   reservationData,
@@ -16,14 +17,14 @@ export default function MenuSelection({
     page: currentPage,
     search: debouncedSearchQuery,
   });
-  const products = productsData?.content || [];
+  const products = useMemo(() => productsData?.content || [], [productsData]);
 
   // Debounce search input
-  const handleSearchChange = useCallback(
+  const handleSearchChange = useCallback(() => {
     debounce((value) => {
       setDebouncedSearchQuery(value);
-      setCurrentPage(0); // Reset to page 0 for new search
-    }, 300),
+      setCurrentPage(0);
+    }, 300)},
     []
   );
 
@@ -149,11 +150,14 @@ export default function MenuSelection({
     handleSearchChange("");
   };
 
+  if( error?.message ) {
+    return <ErrorDisplay message={error.message} />;
+  }
+
   return (
     <form onSubmit={handleSubmit} className={styles.menuForm}>
       <h2 className="mb-4">Select Menu Items</h2>
 
-      {/* Search Bar */}
       <div className="mb-4 d-flex">
         <input
           type="text"
@@ -223,7 +227,6 @@ export default function MenuSelection({
         ))
       )}
 
-      {/* Load More Button */}
       {currentPage < productsData?.totalPages - 1 && (
         <div className="mb-4 text-center">
           <button

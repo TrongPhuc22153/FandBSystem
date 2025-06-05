@@ -4,7 +4,7 @@ import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
 import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { formatDate, formatTime } from "../../utils/datetimeUtils";
+import { formatTime } from "../../utils/datetimeUtils";
 import { USER_RESERVATIONS_URI } from "../../constants/routes";
 import { Badge } from "react-bootstrap";
 import {

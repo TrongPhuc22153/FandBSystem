@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { Card, Form } from 'react-bootstrap';
 import { Line, Bar, Pie } from 'react-chartjs-2';
 import {

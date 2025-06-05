@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import styles from "./ReservationForm.module.css";
 import { useReservationTables } from "../../hooks/tableHooks";
 import { useAlert } from "../../context/AlertContext";
@@ -50,7 +50,7 @@ export default function ReservationDetails({
     isLoading: tablesLoading,
     error: tablesError,
   } = useReservationTables();
-  const tables = tablesData?.content || [];
+  const tables = useMemo(() => tablesData?.content || [], [tablesData]);
 
   const { showNewAlert } = useAlert();
 
@@ -109,7 +109,6 @@ export default function ReservationDetails({
     date,
     startTime,
     updateReservationData,
-    RESERVATION_TIME.DEFAULT_DURATION_HOURS,
     reservationData.date,
     reservationData.startTime,
     reservationData.endTime,

@@ -13,7 +13,6 @@ import { useModal } from "../../context/ModalContext";
 import { Badge } from "react-bootstrap";
 import {
   SORTING_DIRECTIONS,
-  TABLE_STATUS_CLASSES,
 } from "../../constants/webConstant";
 
 const AdminTablesPage = () => {

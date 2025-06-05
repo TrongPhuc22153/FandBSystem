@@ -1,17 +1,17 @@
 import { Link } from "react-router-dom";
-import { Button, Badge, Modal } from "react-bootstrap";
+import { Button, Badge } from "react-bootstrap";
 import { getImageSrc } from "../../utils/imageUtils";
 import styles from "./OrderDetails.module.css";
 import { SHOP_URI } from "../../constants/routes";
-import { ORDER_ACTIONS, ORDER_STATUSES, ORDER_TYPES, PAYMENT_STATUS_CLASSES } from "../../constants/webConstant";
-import Loading from "../Loading/Loading";
-import { useRefundActions } from "../../hooks/refundHooks";
-import { useOrderActions } from "../../hooks/orderHooks";
-import { useEffect, useState } from "react";
-import { useAlert } from "../../context/AlertContext";
-import RefundPreviewModal from "../RefundPreviewModal/RefundPreviewModal";
+import {
+  ORDER_STATUSES,
+  ORDER_TYPES,
+  PAYMENT_STATUS_CLASSES,
+} from "../../constants/webConstant";
 
 const OrderDetail = ({
+  processLoading,
+  onHandleCancel,
   orderDate,
   orderNumber,
   orderStatus,
@@ -23,91 +23,20 @@ const OrderDetail = ({
   waitList,
   customer,
   paymentMethod,
+  paymentStatus,
 }) => {
-  const { fetchOrderPreview } = useRefundActions();
-  const [refundPreview, setRefundPreview] = useState(null);
-  const [showRefundModal, setShowRefundModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  const {
-    handleProcessOrder,
-    processError,
-    processLoading,
-    resetProcess,
-  } = useOrderActions();
-
-  const { showNewAlert } = useAlert();
-
-  useEffect(() => {
-    if (processError?.message) {
-      showNewAlert({
-        message: processError.message,
-        variant: 'danger',
-        action: resetProcess,
-      });
-    }
-  }, [processError, showNewAlert, resetProcess]);
-
-  const canCancelStatuses = [ORDER_STATUSES.PENDING, ORDER_STATUSES.CONFIRMED, ORDER_STATUSES.PREPARING, ORDER_STATUSES.PREPARED];
-
-  const handleCancelClick = async () => {
-    try {
-      if (paymentMethod.toUpperCase() === 'PAYPAL') {
-        const preview = await fetchOrderPreview(orderNumber);
-        if (preview) {
-          setRefundPreview(preview);
-          setShowRefundModal(true);
-        }
-      } else {
-        const result = await handleProcessOrder(orderNumber, ORDER_ACTIONS.CANCEL, orderType);
-        if (result) {
-          setShowSuccessModal(true);
-        } else {
-          showNewAlert({
-            message: 'Failed to cancel order. Please try again.',
-            variant: 'danger',
-          });
-        }
-      }
-    } catch (err) {
-      console.error('Error handling cancellation:', err);
-      showNewAlert({
-        message: 'Failed to process cancellation. Please try again.',
-        variant: 'danger',
-      });
-    }
-  };
-
-  const handleConfirmRefund = async () => {
-    setShowRefundModal(false);
-    try {
-      const result = await handleProcessOrder(orderNumber, ORDER_ACTIONS.CANCEL, orderType);
-      if (result) {
-        setShowSuccessModal(true);
-      } else {
-        showNewAlert({
-          message: 'Failed to initiate refund. Please try again.',
-          variant: 'danger',
-        });
-      }
-    } catch (err) {
-      console.error('Error processing refund:', err);
-      showNewAlert({
-        message: 'Failed to initiate refund. Please try again.',
-        variant: 'danger',
-      });
-    }
-  };
-
-  if (processLoading) {
-    return <Loading/>
-  }
+  const canCancelStatuses = [
+    ORDER_STATUSES.PENDING,
+    ORDER_STATUSES.CONFIRMED,
+    ORDER_STATUSES.PREPARING,
+    ORDER_STATUSES.PREPARED,
+  ];
 
   return (
-    <div className="container py-3" style={{ maxWidth: '800px' }}>
+    <div className="container py-3" style={{ maxWidth: "800px" }}>
       <div
         className={`d-flex flex-column justify-content-center align-items-center ${styles.orderHeading}`}
-        id={styles['order-heading']}
+        id={styles["order-heading"]}
       >
         <div className={`text-uppercase ${styles.textUppercase}`}>
           <p>Order Detail</p>
@@ -137,7 +66,7 @@ const OrderDetail = ({
                   <tr key={item.id}>
                     <th scope="row">
                       <div className="d-flex justify-content-start align-items-center list py-1">
-                        <div style={{ minWidth: '50px' }}>
+                        <div style={{ minWidth: "50px" }}>
                           <b>{item.quantity}x</b>
                         </div>
                         <div className="mx-3">
@@ -175,7 +104,19 @@ const OrderDetail = ({
           <div className="text-muted">Payment Method</div>
           <div className="ms-auto">
             <label className={styles.label}>
-              {paymentMethod?.toUpperCase?.() || <Badge bg={PAYMENT_STATUS_CLASSES['PENDING']}>Pending</Badge>}
+              {paymentMethod?.toUpperCase?.()}
+            </label>
+          </div>
+        </div>
+        <div className="d-flex justify-content-start align-items-center  py-1 pl-3">
+          <div className="text-muted">Payment Status</div>
+          <div className="ms-auto">
+            <label className={styles.label}>
+              {
+                <Badge bg={PAYMENT_STATUS_CLASSES[paymentStatus]}>
+                  {paymentStatus}
+                </Badge>
+              }
             </label>
           </div>
         </div>
@@ -215,7 +156,7 @@ const OrderDetail = ({
                 <p className="text-justify pt-2">{shippingAddress.shipName},</p>
                 <p className="text-justify">{shippingAddress.shipAddress},</p>
                 <p className="text-justify">
-                  {shippingAddress.shipCity}, {shippingAddress.shipDistrict},{' '}
+                  {shippingAddress.shipCity}, {shippingAddress.shipDistrict},{" "}
                   {shippingAddress.shipWard}
                 </p>
                 <p className="text-justify">Phone: {shippingAddress.phone}</p>
@@ -261,32 +202,15 @@ const OrderDetail = ({
         </div>
         {canCancelStatuses.includes(orderStatus.toUpperCase()) && (
           <div className="d-flex justify-content-end mt-3">
-            <Button variant="danger" onClick={handleCancelClick} disabled={processLoading}>
+            <Button
+              variant="danger"
+              onClick={onHandleCancel}
+              disabled={processLoading}
+            >
               Cancel Order
             </Button>
           </div>
         )}
-
-        <RefundPreviewModal
-          show={showRefundModal}
-          onHide={() => setShowRefundModal(false)}
-          preview={refundPreview}
-          onConfirm={handleConfirmRefund}
-        />
-
-        <Modal show={showSuccessModal} onHide={() => setShowSuccessModal(false)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Order Cancelled</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>Your order #{orderNumber} has been successfully cancelled.</p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={() => setShowSuccessModal(false)}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
       </div>
     </div>
   );

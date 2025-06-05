@@ -3,7 +3,7 @@ import styles from './PaymentOptions.module.css';
 const PaymentOptions = ({ paymentMethods, selectedPaymentMethod, setSelectedPaymentMethod }) => {
   return (
     <div className={`card mb-4 ${styles.paymentOptionsCard}`}>
-      <div className="card-header ${styles.cardHeader}">
+      <div className={`card-header ${styles.cardHeader}`}>
         <h5 className="mb-0">Payment Options</h5>
       </div>
       <div className="card-body">

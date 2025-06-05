@@ -1,6 +1,4 @@
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { HOME_URI } from "../../constants/routes";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./PasswordForm.module.css";
 import Loading from "../Loading/Loading";
@@ -14,7 +12,6 @@ export default function RequiredResetPasswordForm() {
     handleResetPassword, resetPasswordError, resetPasswordLoading, resetResetPassword
    } = useAuth();
   const [fieldErrors, setFieldErrors] = useState({});
-  const navigate = useNavigate();
   const [passwordMatchError, setPasswordMatchError] = useState("");
 
   useEffect(() => {

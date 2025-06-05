@@ -25,7 +25,7 @@ const AuthProvider = ({ children }) => {
   const resetLogin = useCallback(() => {
     setLoginError(null);
     setLoginSuccess(null);
-  });
+  }, []);
 
   const [isResetPassword, setIsResetPassword] = useState(
     Cookies.get("reset_password_required") === "true" || false
@@ -63,7 +63,7 @@ const AuthProvider = ({ children }) => {
       }
     };
     validateResetRequirement();
-  }, [token]);
+  }, [token, isResetPassword]);
 
   const {
     data: user,

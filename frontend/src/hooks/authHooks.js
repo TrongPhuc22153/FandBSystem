@@ -26,7 +26,7 @@ export const useAuthActions = () => {
         } finally {
             setLoadingRegister(false);
         }
-    }, [register])
+    }, [])
 
     return {
         handleRegisterUser,
@@ -67,7 +67,7 @@ export const useForgotPasswordActions = () => {
         } finally {
             setLoadingForgotPassword(false);
         }
-    }, [forgotPassword]);
+    }, []);
 
     const handleValidateToken = useCallback(async (token) => {
         setLoadingValidateToken(true);
@@ -83,7 +83,7 @@ export const useForgotPasswordActions = () => {
         } finally {
             setLoadingValidateToken(false);
         }
-    }, [validateResetToken]);
+    }, []);
 
     const handleResetPassword = useCallback(async (resetData) => {
         setLoadingResetPassword(true);
@@ -102,7 +102,7 @@ export const useForgotPasswordActions = () => {
         } finally {
             setLoadingResetPassword(false);
         }
-    }, [resetPassword]);
+    }, []);
 
     return {
         handleForgotPassword,

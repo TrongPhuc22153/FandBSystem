@@ -1,4 +1,3 @@
-import React from "react";
 
 const AddressProfileSection = ({
   selectedAddress,
@@ -11,7 +10,6 @@ const AddressProfileSection = ({
   handleCancelEdit,
   handleSetDefaultAddress,
   setIsEditing,
-  setEditingAddressId 
 }) => {
   return (
     <div className="col-xl-8 mb-3">
@@ -245,7 +243,6 @@ const AddressProfileSection = ({
                   type="button"
                   onClick={() => {
                     setIsEditing(true);
-                    setEditingAddressId(selectedAddress.id);
                   }}
                 >
                   Edit Address

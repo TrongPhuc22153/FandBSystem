@@ -71,14 +71,11 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
         }
 
         Payment payment = reservation.getPayment();
-        PaymentStatus paymentStatus = payment.getStatus();
-
-        if (paymentStatus == PaymentStatus.SUCCESSFUL) {
+        PaymentStatus paymentStatus = PaymentStatus.CANCELLED;
+        if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
             if (isAutoRefundable(payment.getMethod())) {
                 payPalRefundService.refundPayment(payment.getPaymentId());
                 paymentStatus = PaymentStatus.REFUNDED;
-            } else {
-                paymentStatus = PaymentStatus.CANCELLED;
             }
         }
 
@@ -90,16 +87,17 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
         menuItemService.updateItemStatus(reservationId, MenuItemStatus.CANCELED);
 
-        RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(
+        RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTOForGroup(
                 username,
-                reservationDTO.getEmployee().getProfile().getUser().getUsername(),
+                RoleName.EMPLOYEE,
                 NotificationTopic.RESERVATION,
                 NotificationTitle.RESERVATION_CANCELLED,
                 NotificationMessage.RESERVATION_CANCELLED_MESSAGE
         );
 
-        sendReservationNotificationService.sendNotificationToUser(
+        sendReservationNotificationService.sendNotificationToGroup(
                 reservationDTO.getReservationId(),
+                WebSocketEndpoint.TOPIC_EMPLOYEE,
                 requestNotificationDTO
         );
 
@@ -121,14 +119,12 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
         }
 
         Payment payment = reservation.getPayment();
-        PaymentStatus paymentStatus = payment.getStatus();
+        PaymentStatus paymentStatus = PaymentStatus.CANCELLED;
 
-        if (paymentStatus == PaymentStatus.SUCCESSFUL) {
+        if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
             if (isAutoRefundable(payment.getMethod())) {
                 payPalRefundService.refundPayment(payment.getPaymentId());
                 paymentStatus = PaymentStatus.REFUNDED;
-            } else {
-                paymentStatus = PaymentStatus.CANCELLED;
             }
         }
 

@@ -9,7 +9,6 @@ export default function ImageShowcase({ imageUrl }) {
           <img
             className="rounded"
             src={getImageSrc(imageUrl)}
-            alt={`product image`}
           />
         </div>
       </div>

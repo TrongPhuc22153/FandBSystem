@@ -60,7 +60,7 @@ export const useUserActions = () => {
         setLoadingChangePassword(false);
       }
     },
-    [changePassword]
+    [token, user.userId]
   );
 
   const handleCreateUser = useCallback(

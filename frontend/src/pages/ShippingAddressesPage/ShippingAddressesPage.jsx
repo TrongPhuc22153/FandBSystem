@@ -37,18 +37,14 @@ const ShippingAddressesPage = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
-  const [editingAddressId, setEditingAddressId] = useState(null);
-  const [isDefaultAddress, setIsDefaultAddress] = useState(null);
 
   // Initialize selectedAddress and default address when addresses load
   useEffect(() => {
     if (addresses && addresses.length > 0) {
       const defaultAddress = addresses.find((addr) => addr.isDefault);
       setSelectedAddress(defaultAddress || addresses[0]);
-      setIsDefaultAddress(defaultAddress ? defaultAddress.id : null);
     } else {
       setSelectedAddress(null);
-      setIsDefaultAddress(null);
     }
   }, [addresses]);
 
@@ -171,7 +167,6 @@ const ShippingAddressesPage = () => {
 
         setFieldErrors({});
         setSelectedAddress(newDefault);
-        setIsDefaultAddress(addressId);
       }
     },
     [handleUpdateShippingAddress, mutate, addresses]
@@ -242,7 +237,6 @@ const ShippingAddressesPage = () => {
               handleCancelEdit={handleCancelEdit}
               handleSetDefaultAddress={handleSetDefaultAddress}
               setIsEditing={setIsEditing}
-              setEditingAddressId={setEditingAddressId}
             />
           </div>
         </div>

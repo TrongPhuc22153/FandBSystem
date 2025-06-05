@@ -159,7 +159,7 @@ const AdminCategoriesPage = () => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);
     },
-    [setSearchParams]
+    [setSearchParams, searchParams]
   );
 
   const handleSearchInputChange = (e) => {

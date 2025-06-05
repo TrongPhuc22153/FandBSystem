@@ -1,0 +1,291 @@
+.container {
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h2 {
+  font-size: 28px;
+  color: #1e293b;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.header p {
+  color: #64748b;
+  font-size: 16px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.section {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sectionHeader h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.editButton {
+  background: none;
+  border: 1px solid #667eea;
+  color: #667eea;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editButton:hover {
+  background: #667eea;
+  color: white;
+}
+
+.detailsGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.label {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.value {
+  font-size: 14px;
+  color: #1e293b;
+  text-align: right;
+  word-break: break-word;
+}
+
+.productsGrid {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.productCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.productImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.productInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.productName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.productDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quantity {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.price {
+  font-size: 16px;
+  font-weight: 600;
+  color: #059669;
+}
+
+.totals {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.totalRow:last-child {
+  margin-bottom: 0;
+}
+
+.finalTotal {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.paymentMethods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.paymentMethod {
+  cursor: pointer;
+}
+
+.paymentMethod input[type="radio"] {
+  display: none;
+}
+
+.paymentMethodContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.paymentMethod input[type="radio"]:checked + .paymentMethodContent {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.paymentMethodContent:hover {
+  border-color: #667eea;
+}
+
+.paymentIcon {
+  font-size: 20px;
+}
+
+.paymentName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.backButton {
+  background: white;
+  color: #374151;
+  border: 2px solid #d1d5db;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.confirmButton {
+  background: #059669;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirmButton:hover {
+  background: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .productCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .productDetails {
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .paymentMethods {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .header h2 {
+    font-size: 24px;
+  }
+}

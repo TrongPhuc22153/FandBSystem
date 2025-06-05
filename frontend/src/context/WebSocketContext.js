@@ -18,9 +18,7 @@ const WebSocketProvider = ({ children }) => {
                 Authorization: `Bearer ${token}`,
             },
             onConnect: () => {
-                console.log('Connected');
                 setConnected(true);
-                // Subscribe to topics here if needed
             },
             onDisconnect: () => {
                 console.log('Disconnected');
@@ -38,7 +36,7 @@ const WebSocketProvider = ({ children }) => {
         return () => {
             client.deactivate();
         };
-    }, []);
+    }, [token]);
 
     return (
         <WebSocketContext.Provider value={{ client: clientRef.current, connected }}>

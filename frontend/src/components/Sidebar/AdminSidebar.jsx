@@ -38,7 +38,7 @@ export const AdminSidebar = () => {
       message: "Do you want to logout?",
       onYes: logoutAction,
     });
-  }, [logoutAction, user]);
+  }, [logoutAction, onOpen]);
 
   return (
     <nav className={styles["nav"]}>

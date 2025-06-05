@@ -41,6 +41,9 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Override
     @Transactional
     public OrderDTO cancelOrderByEmployee(String username, String orderId, OrderType type) {
+        if(!OrderType.DINE_IN.equals(type)){
+            throw new IllegalArgumentException("Only DINE IN orders can be cancelled by employees.");
+        }
         validateOrder(orderId, type);
 
         Order order = orderReaderService.getOrderEntity(orderId, type);
@@ -55,13 +58,11 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
         }
 
         Payment payment = order.getPayment();
-        PaymentStatus paymentStatus = payment.getStatus();
+        PaymentStatus paymentStatus = PaymentStatus.CANCELLED;;
         if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
             if (isAutoRefundable(payment.getMethod())) {
                 payPalRefundService.refundPayment(payment.getPaymentId());
                 paymentStatus = PaymentStatus.REFUNDED;
-            } else {
-                paymentStatus = PaymentStatus.CANCELLED;
             }
         }
 
@@ -93,6 +94,10 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Override
     @Transactional
     public OrderDTO cancelOrderByCustomer(String username, String orderId, OrderType type) {
+        if(!OrderType.TAKE_AWAY.equals(type)){
+            throw new IllegalArgumentException("Only TAKE AWAY orders can be cancelled by customers.");
+        }
+
         validateOrder(orderId, type);
 
         Order order = orderReaderService.getOrderEntity(orderId, type);
@@ -103,13 +108,11 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
         }
 
         Payment payment = order.getPayment();
-        PaymentStatus paymentStatus = payment.getStatus();
+        PaymentStatus paymentStatus = PaymentStatus.CANCELLED;
         if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
             if (isAutoRefundable(payment.getMethod())) {
                 payPalRefundService.refundPayment(payment.getPaymentId());
                 paymentStatus = PaymentStatus.REFUNDED;
-            } else {
-                paymentStatus = PaymentStatus.CANCELLED;
             }
         }
 
@@ -148,9 +151,9 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Override
     public OrderDTO cancelOrder(String orderId, OrderType type, Authentication authentication) {
         List<RoleName> roleNames = RoleUtils.getRoles(authentication.getAuthorities());
-        if(roleNames.contains(RoleName.CUSTOMER) && type.equals(OrderType.TAKE_AWAY)){
+        if(roleNames.contains(RoleName.CUSTOMER)){
             return this.cancelOrderByCustomer(authentication.getName(), orderId, type);
-        }else if(roleNames.contains(RoleName.EMPLOYEE) && type.equals(OrderType.DINE_IN)){
+        }else if(roleNames.contains(RoleName.EMPLOYEE)){
             return this.cancelOrderByEmployee(authentication.getName(), orderId, type);
         }else{
             throw new IllegalArgumentException("Invalid order type and role");

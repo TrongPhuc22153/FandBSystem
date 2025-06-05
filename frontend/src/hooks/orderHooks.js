@@ -37,7 +37,7 @@ export const useOrder = ({ orderId, isRated } = {}) => {
     if (!token) return null;
     if (!orderId) return null; // Add check for orderId
     return fetchUserOrder({ token, orderId, isRated });
-  }, [token, orderId]);
+  }, [token, orderId, isRated]);
 
   return useSWR(orderId ? `order-${orderId}` : null, fetcher);
 };

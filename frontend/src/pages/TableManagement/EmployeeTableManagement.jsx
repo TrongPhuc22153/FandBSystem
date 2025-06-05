@@ -218,7 +218,7 @@ export default function EmployeeTableManagement() {
         mutateTableStatusSummary();
       }
     },
-    [handleProcessReservation, mutateReservations, mutateTables]
+    [handleProcessReservation, mutateTableStatusSummary, mutateReservations, mutateTables]
   );
 
   const onServedOrder = useCallback(
@@ -273,7 +273,7 @@ export default function EmployeeTableManagement() {
         });
       }
     },
-    [handleCreateTableOccupancy, showNewAlert, mutateReservations, mutateTables]
+    [handleCreateTableOccupancy, mutateTableStatusSummary, showNewAlert, mutateReservations, mutateTables]
   );
 
   const debouncedSearch = useCallback(

@@ -1,0 +1,84 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.stepWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stepNumber {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.stepNumber.active {
+  background: #667eea;
+  color: white;
+}
+
+.stepTitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.stepTitle.activeTitle {
+  color: #1e293b;
+}
+
+.connector {
+  width: 60px;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 20px;
+  transition: background 0.3s ease;
+}
+
+.connector.activeConnector {
+  background: #667eea;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  .stepTitle {
+    font-size: 10px;
+  }
+
+  .stepNumber {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .connector {
+    width: 40px;
+    margin: 0 10px;
+  }
+}

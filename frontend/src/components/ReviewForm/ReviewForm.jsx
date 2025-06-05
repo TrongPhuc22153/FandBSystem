@@ -25,7 +25,7 @@ const ReviewForm = ({ review, productId, handleCreateOrUpdateUserRating }) => {
       rating: review.score || 0,
       comment: review.comment || "",
     });
-  }, []);
+  }, [review.score, review.comment]);
 
   useEffect(() => {
     setFieldErrors(createError?.fields ?? {});
@@ -38,7 +38,7 @@ const ReviewForm = ({ review, productId, handleCreateOrUpdateUserRating }) => {
         action: resetCreateRating,
       });
     }
-  }, [createSuccess]);
+  }, [createSuccess, showNewAlert, resetCreateRating]);
 
   const handleCreateOrUpdate = useCallback(async () => {
     const ratingData = {
@@ -52,7 +52,7 @@ const ReviewForm = ({ review, productId, handleCreateOrUpdateUserRating }) => {
       mutate(`${PRODUCT_RATING_ENDPOINT}/${productId}`)
       handleCreateOrUpdateUserRating?.();
     }
-  }, [handleCreateRating, initialReview]);
+  }, [handleCreateRating, initialReview, productId, handleCreateOrUpdateUserRating]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

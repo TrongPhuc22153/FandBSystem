@@ -1,38 +1,38 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Alert } from "react-bootstrap";
 
-const AlertContext = createContext();
+
+const AlertContext = createContext(null);
 
 const AlertProvider = ({ children }) => {
   const [alerts, setAlerts] = useState([]);
-  const timers = {};
+  const timers = useRef({});
 
   const showNewAlert = useCallback(
     ({ message, action, variant = "success", duration = 5000 }) => {
-      const newAlert = { id: Date.now(), action, message, variant, duration };
-      setAlerts([...alerts, newAlert]);
+      setAlerts((prev) => [
+        ...prev,
+        { id: Date.now(), action, message, variant, duration },
+      ]);
     },
     []
   );
 
-  const removeAlert = (id) => {
+  const removeAlert = useCallback((id) => {
     setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== id));
-    if (timers[id]) {
-      clearTimeout(timers[id]);
-      delete timers[id];
+    if (timers.current[id]) {
+      clearTimeout(timers.current[id]);
+      delete timers.current[id];
     }
-  };
+  }, []);
 
   useEffect(() => {
+    Object.values(timers.current).forEach(clearTimeout);
+    timers.current = {};
+
     alerts.forEach((alert) => {
-      if (!timers[alert.id]) {
-        timers[alert.id] = setTimeout(() => {
+      if (!timers.current[alert.id]) {
+        timers.current[alert.id] = setTimeout(() => {
           if (alert.action) {
             alert.action();
           }
@@ -42,20 +42,14 @@ const AlertProvider = ({ children }) => {
     });
 
     return () => {
-      Object.values(timers).forEach(clearTimeout);
+      Object.values(timers.current).forEach(clearTimeout);
     };
   }, [alerts, removeAlert]);
 
   return (
-    <AlertContext.Provider
-      value={{
-        alerts,
-        showNewAlert,
-        removeAlert,
-      }}
-    >
+    <AlertContext.Provider value={{ alerts, showNewAlert, removeAlert }}>
       {children}
-      <div className="alert-position">
+      <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 1000 }}>
         {alerts.map((alert) => (
           <Alert
             key={alert.id}
@@ -73,4 +67,6 @@ const AlertProvider = ({ children }) => {
 
 export default AlertProvider;
 
-export const useAlert = () => useContext(AlertContext);
+export const useAlert = () => {
+  return useContext(AlertContext);
+};

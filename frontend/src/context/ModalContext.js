@@ -25,19 +25,19 @@ const ModalProvider = ({ children }) => {
     setOnYes(null);
   }, []);
 
-  const handleYes = useCallback(() => {
-    if (onYes) {
-      onYes();
-    }
-    handleNo();
-  }, [onYes, onClose]);
-
   const handleNo = useCallback(() => {
     if (onNo) {
       onNo();
     }
     onClose();
   }, [onNo, onClose]);
+
+  const handleYes = useCallback(() => {
+    if (onYes) {
+      onYes();
+    }
+    handleNo();
+  }, [onYes, handleNo]);
 
   return (
     <ModalContext.Provider

@@ -71,7 +71,7 @@ export default function SelectableWaitingList({
         }
       }
     },
-    [handleUpdateTableOccupancyStatus, mutate, selectedCustomer]
+    [handleUpdateTableOccupancyStatus, mutate, selectedCustomer, setSelectedCustomer]
   );
 
   const showRemoveCustomerConfirmModal = (id) => {
