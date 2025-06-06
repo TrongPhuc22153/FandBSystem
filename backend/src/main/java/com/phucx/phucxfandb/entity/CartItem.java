@@ -8,10 +8,11 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cart_items")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class CartItem extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,8 +28,8 @@ public class CartItem extends Auditable{
     private Product product;
 
     @Column(name = "quantity", nullable = false)
-    private Integer quantity = 0;
+    private Integer quantity;
 
     @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal unitPrice = BigDecimal.ZERO;
+    private BigDecimal unitPrice;
 }

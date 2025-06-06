@@ -25,10 +25,6 @@ public interface UserMapper {
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "roles", source = "roles")
     @Mapping(target = "profile", source = "profile")
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "emailVerified", ignore = true)
     @Mapping(target = "enabled", ignore = true)
     User toUser(RegisterUserDTO registerUserDTO, List<Role> roles, UserProfile profile);

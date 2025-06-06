@@ -33,7 +33,7 @@ public class MenuItemServiceImpl implements MenuItemService {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NotFoundException(Reservation.class.getSimpleName(), "id", reservationId));
 
-        if (reservation.getStatus() == ReservationStatus.COMPLETED || reservation.getStatus() == ReservationStatus.CANCELLED) {
+        if (reservation.getStatus() == ReservationStatus.COMPLETED || reservation.getStatus() == ReservationStatus.CANCELED) {
             throw new IllegalStateException("Cannot modify reservation with status: " + reservation.getStatus());
         }
 

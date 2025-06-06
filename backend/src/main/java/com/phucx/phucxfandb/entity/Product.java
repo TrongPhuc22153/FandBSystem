@@ -10,6 +10,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "products")
@@ -28,26 +29,37 @@ public class Product extends Auditable{
     private Category category;
 
     @Column(name = "unit_price", precision = 10, scale = 2, nullable = false)
-    private BigDecimal unitPrice = BigDecimal.ZERO;
+    private BigDecimal unitPrice;
 
+    @Builder.Default
     @Column(name = "units_in_stock")
     private Integer unitsInStock = 0;
 
-    @Column(name = "picture", length = 255)
+    @Builder.Default
+    @Column(name = "minimum_stock")
+    private Integer minimumStock = 0;
+
+    @Column(name = "picture")
     private String picture;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Builder.Default
     @Column(name = "is_featured")
     private Boolean isFeatured = false;
 
+    @Builder.Default
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
+    @Builder.Default
     @OneToMany(mappedBy = "product")
     private List<Rating> ratings = new ArrayList<>();
 
     @OneToOne(mappedBy = "product")
     private ProductSize productSize;
+
+    @Version
+    private Long version;
 }

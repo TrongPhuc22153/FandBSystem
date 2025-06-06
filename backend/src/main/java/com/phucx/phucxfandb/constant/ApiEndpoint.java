@@ -114,7 +114,6 @@ public class ApiEndpoint {
         public static final String[] PATCH = {
                 PAYMENT_METHOD_BY_ID_ENDPOINT,
                 CATEGORY_BY_ID_ENDPOINT,
-                PRODUCT_BY_ID_ENDPOINT,
                 DISCOUNT_TYPE_BY_ID_ENDPOINT,
                 TOPIC_BY_ID_ENDPOINT,
                 USER_BY_ID_ENDPOINT
@@ -167,7 +166,8 @@ public class ApiEndpoint {
                 ORDER_BY_ID_ITEM_BY_ID_ENDPOINT,
                 TABLE_BY_ID_ENDPOINT,
                 TABLE_OCCUPANCY_BY_ID_ENDPOINT,
-                RESERVATION_BY_ID_ITEM_BY_ID_ENDPOINT
+                RESERVATION_BY_ID_ITEM_BY_ID_ENDPOINT,
+                PRODUCT_QUANTITY_BY_ID_ENDPOINT
         };
 
         public static final String[] POST = {
@@ -188,6 +188,18 @@ public class ApiEndpoint {
                 ORDER_BY_ID_ITEM_BY_ID_ENDPOINT,
                 RESERVATION_BY_ID_ITEM_BY_ID_ENDPOINT
         };
+    }
+
+    public static class Shared{
+        private Shared() {}
+
+        public static class AdminEmployee{
+            private AdminEmployee(){}
+
+            public static final String[] PATCH = {
+                    PRODUCT_BY_ID_ENDPOINT
+            };
+        }
     }
 
     public static final String REFUNDS_ANY_ENDPOINT = "/api/v1/refunds/**";
@@ -224,6 +236,7 @@ public class ApiEndpoint {
 
     public static final String PRODUCTS_ENDPOINT = "/api/v1/products";
     public static final String PRODUCT_BY_ID_ENDPOINT = "/api/v1/products/{id}";
+    public static final String PRODUCT_QUANTITY_BY_ID_ENDPOINT = "/api/v1/products/{id}/quantity";
     public static final String PRODUCTS_BULK_ENDPOINT = "/api/v1/products/bulk";
 
     public static final String CATEGORIES_ENDPOINT = "/api/v1/categories";

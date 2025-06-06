@@ -23,7 +23,7 @@ export const ORDER_TYPE_CLASSES = {
 }
 
 export const ORDER_ITEM_STATUS_CLASSES = {
-    CANCELLED: "danger",
+    CANCELED: "danger",
     PENDING: "danger",
     PREPARING: "warning",
     PREPARED: "success",
@@ -32,7 +32,7 @@ export const ORDER_ITEM_STATUS_CLASSES = {
 }
 
 export const ORDER_ITEM_STATUSES = {
-    CANCELLED: "CANCELLED",
+    CANCELED: "CANCELED",
     PENDING: "PENDING",
     PREPARING: "PREPARING",
     PREPARED: "PREPARED",
@@ -49,7 +49,7 @@ export const ORDER_ACTIONS = {
     COMPLETE: "COMPLETE"
 }
 export const ORDER_STATUSES = {
-    CANCELLED: "CANCELLED",
+    CANCELED: "CANCELED",
     PENDING: "PENDING",
     CONFIRMED: "CONFIRMED",
     PREPARING: "PREPARING",
@@ -61,7 +61,7 @@ export const ORDER_STATUSES = {
     COMPLETED: "COMPLETED",
 }
 export const ORDER_STATUS_CLASSES = {
-    CANCELLED: "danger",
+    CANCELED: "danger",
     PENDING: "danger",
     PREPARING: "warning",
     PREPARED: "success",
@@ -83,7 +83,7 @@ export const RESERVATION_ACTIONS = {
     COMPLETE: "COMPLETE"
 }
 export const RESERVATION_STATUSES = {
-    CANCELLED: "CANCELLED",
+    CANCELED: "CANCELED",
     PENDING: "PENDING",
     CONFIRMED: "CONFIRMED",
     PREPARING: "PREPARING",
@@ -94,7 +94,7 @@ export const RESERVATION_STATUSES = {
     COMPLETED: "COMPLETED",
 }
 export const RESERVATION_STATUS_CLASSES = {
-    CANCELLED: "danger",
+    CANCELED: "danger",
     PENDING: "danger",
     PREPARING: "warning",
     PREPARED: "success",
@@ -103,7 +103,7 @@ export const RESERVATION_STATUS_CLASSES = {
 }
 
 export const RESERVATION_ITEM_STATUS_CLASSES = {
-    CANCELLED: "danger",
+    CANCELED: "danger",
     PENDING: "danger",
     PREPARING: "warning",
     PREPARED: "success",
@@ -112,7 +112,7 @@ export const RESERVATION_ITEM_STATUS_CLASSES = {
 }
 
 export const RESERVATION_ITEM_STATUSES = {
-    CANCELLED: "CANCELLED",
+    CANCELED: "CANCELED",
     PENDING: "PENDING",
     PREPARING: "PREPARING",
     PREPARED: "PREPARED",
@@ -130,7 +130,7 @@ export const DEFAULT_RESERVATION_DURATION_HOURS = 2;
 export const PAYMENT_STATUS_CLASSES = {
     PENDING: "info",
     SUCCESSFUL: "success",
-    CANCELLED: "danger",
+    CANCELED: "danger",
     FAILED: "danger",
     DEFAULT: "primary"
 }
@@ -138,7 +138,7 @@ export const PAYMENT_STATUS_CLASSES = {
 export const PAYMENT_STATUSES = {
     PENDING: "PENDING",
     SUCCESSFUL: "SUCCESSFUL",
-    CANCELLED: "CANCELLED",
+    CANCELED: "CANCELED",
     FAILED: "FAILED",
 }
 
@@ -151,7 +151,7 @@ export const CHECKOUT_ITEMS = "checkoutItems";
 export const TABLE_OCCUPANCY_STATUSES = {
     SEATED: "SEATED",
     COMPLETED: "COMPLETED",
-    CANCELLED: "CANCELLED",
+    CANCELED: "CANCELED",
     CLEANING: "CLEANING",
     WAITING: "WAITING"
 }

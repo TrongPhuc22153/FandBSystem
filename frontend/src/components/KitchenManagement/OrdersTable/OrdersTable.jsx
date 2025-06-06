@@ -8,22 +8,22 @@ import {
   ORDER_STATUSES,
   ORDER_TYPE_CLASSES,
   SORTING_DIRECTIONS,
-} from "../../constants/webConstant";
+} from "../../../constants/webConstant";
 import {
   useOrderActions,
   useOrderItemActions,
   useOrders,
-} from "../../hooks/orderHooks";
-import { useModal } from "../../context/ModalContext";
-import { useAlert } from "../../context/AlertContext";
+} from "../../../hooks/orderHooks";
+import { useModal } from "../../../context/ModalContext";
+import { useAlert } from "../../../context/AlertContext";
 import { useSearchParams } from "react-router-dom";
-import Pagination from "../Pagination/Pagination";
-import { TOPIC_KITCHEN } from "../../constants/webSocketEnpoint";
-import { useAuth } from "../../context/AuthContext";
-import { useStompSubscription } from "../../hooks/websocketHooks";
-import { hasRole } from "../../utils/authUtils";
-import { ROLES } from "../../constants/roles";
-import { ORDER_FILTER_MAPPING } from "../../constants/filter";
+import Pagination from "../../Pagination/Pagination";
+import { TOPIC_KITCHEN } from "../../../constants/webSocketEnpoint";
+import { useAuth } from "../../../context/AuthContext";
+import { useStompSubscription } from "../../../hooks/websocketHooks";
+import { hasRole } from "../../../utils/authUtils";
+import { ROLES } from "../../../constants/roles";
+import { ORDER_FILTER_MAPPING } from "../../../constants/filter";
 
 export default function OrdersTable() {
   const [searchParams] = useSearchParams();
@@ -46,7 +46,7 @@ export default function OrdersTable() {
   });
 
   const orders = useMemo(() => ordersData?.content || [], [ordersData]);
-  const totalPages = ordersData?.totalPages || 0;
+  const totalPages = useMemo(() => ordersData?.totalPages || 0, [ordersData]);
 
   const { handleProcessOrder, processError, processSuccess, resetProcess } =
     useOrderActions();

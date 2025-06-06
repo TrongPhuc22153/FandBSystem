@@ -53,7 +53,7 @@ export default function SelectableWaitingList({
   const handleRemoveCustomer = useCallback(
     async (idToDelete) => {
       const res = await handleUpdateTableOccupancyStatus(idToDelete, {
-        status: TABLE_OCCUPANCY_STATUSES.CANCELLED,
+        status: TABLE_OCCUPANCY_STATUSES.CANCELED,
       });
       if (res) {
         mutate((prevData) => {

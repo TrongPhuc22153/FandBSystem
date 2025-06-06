@@ -17,14 +17,9 @@ public interface CategoryMapper {
     @Mapping(target = "picture", ignore = true)
     CategoryDTO toCategoryListEntry(Category category);
 
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "isDeleted", constant = "false")
     @Mapping(target = "categoryId", ignore = true)
     Category toCategory(RequestCategoryDTO requestCategoryDTO);
-
 
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedAt", ignore = true)

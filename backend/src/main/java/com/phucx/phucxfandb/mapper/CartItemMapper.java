@@ -15,10 +15,6 @@ public interface CartItemMapper {
     @Mapping(target = "cart", source = "cart")
     @Mapping(target = "product", source = "product")
     @Mapping(target = "unitPrice", source = "product.unitPrice")
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     CartItem toCartItem(RequestCartItemDTO requestCartItemDTO, Product product, Cart cart);
 
 

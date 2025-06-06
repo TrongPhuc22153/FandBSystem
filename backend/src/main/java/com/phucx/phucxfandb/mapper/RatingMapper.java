@@ -24,10 +24,6 @@ public interface RatingMapper {
     @Mapping(target = "customer", source = "customer")
     @Mapping(target = "product", source = "product")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "lastModifiedBy", ignore = true)
     Rating toRating(RequestRatingDTO requestRatingDTO, Customer customer, Product product);
 
     @Mapping(target = "customer", ignore = true)

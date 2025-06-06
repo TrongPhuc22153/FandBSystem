@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.controller;
 
+import com.phucx.phucxfandb.constant.ValidationGroups;
 import com.phucx.phucxfandb.dto.request.ProductRequestParamsDTO;
 import com.phucx.phucxfandb.dto.request.RequestProductDTO;
 import com.phucx.phucxfandb.dto.response.ProductDTO;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,6 +54,21 @@ public class ProductController {
         ProductDTO updatedProduct = productUpdateService.updateProduct(id, requestProductDTO);
         var response = ResponseDTO.<ProductDTO>builder()
                 .message("Product updated successfully")
+                .data(updatedProduct)
+                .build();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PatchMapping(value = "{id}/quantity", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Update product quantity", description = "Employee access")
+    public ResponseEntity<ResponseDTO<ProductDTO>> updateProductQuantity(
+            @Validated(ValidationGroups.UpdateProductQuantity.class)
+            @RequestBody RequestProductDTO requestProductDTO,
+            @PathVariable Long id
+    ){
+        ProductDTO updatedProduct = productUpdateService.updateProductQuantity(id, requestProductDTO.getUnitsInStock());
+        var response = ResponseDTO.<ProductDTO>builder()
+                .message("Product quantity updated successfully")
                 .data(updatedProduct)
                 .build();
         return ResponseEntity.ok().body(response);

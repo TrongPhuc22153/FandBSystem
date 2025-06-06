@@ -1,7 +1,8 @@
 import { useState } from "react";
-import OrdersTable from "../../components/OrdersTable/OrdersTable";
-import ReservationsTable from "../../components/ReservationsTable/ReservationsTable";
+import OrdersTable from "../../components/KitchenManagement/OrdersTable/OrdersTable";
+import ReservationsTable from "../../components/KitchenManagement/ReservationsTable/ReservationsTable";
 import styles from "./kitchen-table.module.css"
+import MenuItemsTable from "../../components/KitchenManagement/MenuItemsTable/MenuItemsTable";
 
 export default function EmployeeKitchenPage() {
   const [activeTab, setActiveTab] = useState("orders")
@@ -27,20 +28,20 @@ export default function EmployeeKitchenPage() {
             Reservations
           </button>
         </li>
-        {/* <li className="nav-item">
+        <li className="nav-item">
           <button
             className={`nav-link ${activeTab === "menuItems" ? "active" : ""}`}
             onClick={() => setActiveTab("menuItems")}
           >
             Menu Items & Inventory
           </button>
-        </li> */}
+        </li>
       </ul>
 
       <div className={styles.tabContent}>
         {activeTab === "orders" && <OrdersTable />}
         {activeTab === "reservations" && <ReservationsTable />}
-        {/* {activeTab === "menuItems" && <MenuItemsTable />} */}
+        {activeTab === "menuItems" && <MenuItemsTable />}
       </div>
     </div>
     </main>

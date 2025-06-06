@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.dto.request;
 
+import com.phucx.phucxfandb.constant.ValidationGroups;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -24,8 +25,12 @@ public class RequestProductDTO {
     @Positive(message = "Unit price must be a positive number")
     private BigDecimal unitPrice;
 
+    @NotNull(message = "Product units in stock cannot be null", groups = ValidationGroups.UpdateProductQuantity.class)
     @Min(value = 0, message = "Units in stock cannot be negative")
     private Integer unitsInStock;
+
+    @Min(value = 0, message = "Minimum stock cannot be negative")
+    private Integer minimumStock;
 
     @NotNull(message = "Is featured cannot be null")
     private Boolean isFeatured = false;
@@ -37,7 +42,4 @@ public class RequestProductDTO {
     private String description;
 
     private Boolean isDeleted = false;
-
-//    @Valid
-//    private RequestProductSizeDTO productSize;
 }

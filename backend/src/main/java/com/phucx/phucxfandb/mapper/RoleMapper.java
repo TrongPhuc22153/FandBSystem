@@ -11,19 +11,11 @@ public interface RoleMapper {
     RoleDTO toRoleDTO(Role role);
 
     @Mapping(target = "roleId", ignore = true)
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "isDeleted", constant = "false")
     Role toRole(RoleDTO roleDTO);
 
     @Mapping(target = "roleId", ignore = true)
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
     @Mapping(target = "isDeleted", constant = "false")
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     Role toRole(RequestRoleDTO requestRoleDTO);
 
 }

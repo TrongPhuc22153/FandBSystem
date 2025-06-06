@@ -48,7 +48,7 @@ export function UpcommingReservations({ reservations, mutate }) {
   const handleCancelReservation = useCallback(
     async (idToCancel) => {
       const res = await handleUpdateTableOccupancyStatus(idToCancel, {
-        status: TABLE_OCCUPANCY_STATUSES.CANCELLED,
+        status: TABLE_OCCUPANCY_STATUSES.CANCELED,
       });
       if (res) {
         mutate((prevData) => {

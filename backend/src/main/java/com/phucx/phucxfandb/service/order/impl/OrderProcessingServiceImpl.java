@@ -58,7 +58,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
         }
 
         Payment payment = order.getPayment();
-        PaymentStatus paymentStatus = PaymentStatus.CANCELLED;;
+        PaymentStatus paymentStatus = PaymentStatus.CANCELED;;
         if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
             if (isAutoRefundable(payment.getMethod())) {
                 payPalRefundService.refundPayment(payment.getPaymentId());
@@ -69,7 +69,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
         OrderDTO orderDTO = orderUpdateService.updateOrder(
                 order.getOrderId(),
                 type,
-                OrderStatus.CANCELLED,
+                OrderStatus.CANCELED,
                 paymentStatus
         );
 
@@ -108,7 +108,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
         }
 
         Payment payment = order.getPayment();
-        PaymentStatus paymentStatus = PaymentStatus.CANCELLED;
+        PaymentStatus paymentStatus = PaymentStatus.CANCELED;
         if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
             if (isAutoRefundable(payment.getMethod())) {
                 payPalRefundService.refundPayment(payment.getPaymentId());
@@ -116,7 +116,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
             }
         }
 
-        OrderDTO orderDTO = orderUpdateService.updateOrder(order.getOrderId(), type, OrderStatus.CANCELLED, paymentStatus);
+        OrderDTO orderDTO = orderUpdateService.updateOrder(order.getOrderId(), type, OrderStatus.CANCELED, paymentStatus);
         orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.CANCELED);
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTO(

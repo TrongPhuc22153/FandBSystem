@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "refunds")
+@EqualsAndHashCode(callSuper = false)
 public class Refund extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

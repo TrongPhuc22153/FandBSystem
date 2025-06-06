@@ -33,8 +33,6 @@ public class ProductUpdateServiceImpl implements ProductUpdateService {
     @Override
     @Transactional
     public Product updateProductInStock(long productId, int quantity) {
-        log.info("updateProductInStock(productId={}, quantity={})", productId, quantity);
-        // Find existing product
         Product product = productRepository.findByProductIdAndIsDeletedFalse(productId)
                 .orElseThrow(() -> new NotFoundException(Product.class.getSimpleName(), "id", productId));
         product.setUnitsInStock(quantity);
@@ -43,13 +41,17 @@ public class ProductUpdateServiceImpl implements ProductUpdateService {
 
     @Override
     @Transactional
+    public ProductDTO updateProductQuantity(long productId, int quantity) {
+        Product updated = this.updateProductInStock(productId, quantity);
+        return mapper.toProductDTO(updated);
+    }
+
+    @Override
+    @Transactional
     public ProductDTO updateProduct(long productId, RequestProductDTO requestProductDTO) {
-        log.info("updateProduct(productId={}, requestProductDTO={})", productId, requestProductDTO);
-        // Find existing product
         Product product = productRepository.findByProductIdAndIsDeletedFalse(productId)
                 .orElseThrow(() -> new NotFoundException(Product.class.getSimpleName(), "id", productId));
 
-        // upload new image
         if(requestProductDTO.getPicture()!=null && !requestProductDTO.getPicture().isEmpty()){
             String newImageName = ImageUtils.extractImageNameFromUrl(requestProductDTO.getPicture());
             if(product.getPicture() != null ){
@@ -65,34 +67,25 @@ public class ProductUpdateServiceImpl implements ProductUpdateService {
         }
 
         Category category = categoryReaderService.getCategoryEntity(requestProductDTO.getCategoryId());
-        // Update product fields
         mapper.updateProductFromDTO(requestProductDTO, category, product);
-        // Save updated product
         Product updatedProduct = productRepository.save(product);
-        // Map to DTO and return
         return mapper.toProductDTO(updatedProduct);
     }
 
     @Override
     @Transactional
     public ProductDTO createProduct(RequestProductDTO requestProductDTO) {
-        log.info("createProduct(requestProductDTO={})", requestProductDTO);
-        // Find existing product
         if(productRepository.existsByProductName(requestProductDTO.getProductName())) {
             throw new EntityExistsException(String.format("Product with name %s already exists", requestProductDTO.getProductName()));
         }
-        // upload new image
         if(requestProductDTO.getPicture()!=null && !requestProductDTO.getPicture().isEmpty()){
             String imageName = ImageUtils.extractImageNameFromUrl(requestProductDTO.getPicture());
             requestProductDTO.setPicture(imageName);
         }
 
         Category category = categoryReaderService.getCategoryEntity(requestProductDTO.getCategoryId());
-        // Map DTO to entity
         Product product = mapper.toProduct(requestProductDTO, category);
-        // Save new product
         Product savedProduct = productRepository.save(product);
-        // Map to DTO and return
         return mapper.toProductDTO(savedProduct);
     }
 
@@ -100,7 +93,6 @@ public class ProductUpdateServiceImpl implements ProductUpdateService {
     @Modifying
     @Transactional
     public ProductDTO updateProductIsDeletedStatus(long id, RequestProductDTO requestProductDTO) {
-        log.info("updateProductIsDeletedStatus(id={})", id);
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Product.class.getSimpleName(), id));
         existingProduct.setIsDeleted(requestProductDTO.getIsDeleted());
@@ -111,8 +103,6 @@ public class ProductUpdateServiceImpl implements ProductUpdateService {
     @Override
     @Transactional
     public List<ProductDTO> createProducts(List<RequestProductDTO> requestProductDTOs) {
-        log.info("createProducts(requestProductDTOs={})", requestProductDTOs);
-
         List<Product> productsToSave = requestProductDTOs.stream()
                 .map(dto -> {
                     Category category = categoryReaderService.getCategoryEntity(dto.getCategoryId());

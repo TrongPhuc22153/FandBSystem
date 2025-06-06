@@ -6,24 +6,24 @@ import {
   RESERVATION_STATUS_CLASSES,
   RESERVATION_STATUSES,
   SORTING_DIRECTIONS,
-} from "../../constants/webConstant";
+} from "../../../constants/webConstant";
 import {
   useReservationActions,
   useReservationItemActions,
   useReservations,
-} from "../../hooks/reservationHooks";
-import { useModal } from "../../context/ModalContext";
-import { useAlert } from "../../context/AlertContext";
-import { useAuth } from "../../context/AuthContext";
-import { useStompSubscription } from "../../hooks/websocketHooks";
+} from "../../../hooks/reservationHooks";
+import { useModal } from "../../../context/ModalContext";
+import { useAlert } from "../../../context/AlertContext";
+import { useAuth } from "../../../context/AuthContext";
+import { useStompSubscription } from "../../../hooks/websocketHooks";
 import { Badge } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
-import Pagination from "../Pagination/Pagination";
-import { TOPIC_KITCHEN } from "../../constants/webSocketEnpoint";
-import { formatDate } from "../../utils/datetimeUtils";
-import { hasRole } from "../../utils/authUtils";
-import { ROLES } from "../../constants/roles";
-import { RESERVATION_FILTER_MAPPING } from "../../constants/filter";
+import Pagination from "../../Pagination/Pagination";
+import { TOPIC_KITCHEN } from "../../../constants/webSocketEnpoint";
+import { formatDate } from "../../../utils/datetimeUtils";
+import { hasRole } from "../../../utils/authUtils";
+import { ROLES } from "../../../constants/roles";
+import { RESERVATION_FILTER_MAPPING } from "../../../constants/filter";
 
 export default function ReservationsTable() {
   const [searchParams] = useSearchParams();
@@ -48,7 +48,7 @@ export default function ReservationsTable() {
     () => reservationsData?.content || [],
     [reservationsData]
   );
-  const totalPages = reservationsData?.totalPages || 0;
+  const totalPages = useMemo(() => reservationsData?.totalPages || 0, [reservationsData]);
 
   const {
     handleProcessReservation,

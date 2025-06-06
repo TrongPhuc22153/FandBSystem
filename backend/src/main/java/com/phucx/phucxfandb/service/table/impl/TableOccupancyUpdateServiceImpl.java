@@ -148,7 +148,7 @@ public class TableOccupancyUpdateServiceImpl implements TableOccupancyUpdateServ
             return seatWalkIn(id, requestTableOccupancyDTO.getTableId());
         }else if(TableOccupancyStatus.COMPLETED.equals(status)){
             return finishOccupancy(id);
-        }else if(TableOccupancyStatus.CANCELLED.equals(status)){
+        }else if(TableOccupancyStatus.CANCELED.equals(status)){
             return cancelOccupancy(id, requestTableOccupancyDTO.getTableId());
         }else{
             throw new IllegalStateException("Cannot change this table occupancy");
@@ -171,7 +171,7 @@ public class TableOccupancyUpdateServiceImpl implements TableOccupancyUpdateServ
         TableOccupancy tableOccupancy = tableOccupancyRepository.findById(occupancyId)
                 .orElseThrow(() -> new NotFoundException(TableOccupancy.class.getSimpleName(), "id", occupancyId));
         if(TableOccupancyStatus.WAITING.equals(tableOccupancy.getStatus())){
-            tableOccupancy.setStatus(TableOccupancyStatus.CANCELLED);
+            tableOccupancy.setStatus(TableOccupancyStatus.CANCELED);
         }else{
             throw new IllegalStateException("Cannot cancel this table");
         }

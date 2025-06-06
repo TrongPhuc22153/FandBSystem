@@ -13,6 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "notifications")
@@ -29,7 +30,7 @@ public class Notification extends Auditable{
     @Column(name = "message", length = 500, nullable = false)
     private String message;
 
-    @Column(name = "picture", length = 255)
+    @Column(name = "picture")
     private String picture;
 
     @ManyToOne
@@ -44,6 +45,7 @@ public class Notification extends Auditable{
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
+    @Builder.Default
     @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NotificationUser> notificationUsers = new ArrayList<>();
 

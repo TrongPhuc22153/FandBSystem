@@ -40,11 +40,10 @@ import AdminReservationPage from "./pages/AdminReservationPage/AdminReservationP
 import AdminLayout from "./pages/ProfileLayout/AdminLayout";
 import CustomerLayout from "./pages/ProfileLayout/CustomerLayout";
 import EmployeeLayout from "./pages/ProfileLayout/EmployeeLayout";
-import EmployeeTableManagement from "./pages/TableManagement/EmployeeTableManagement"
+import TableManagement from "./pages/TableManagement/TableManagement"
 import EmployeeKitchenPage from "./pages/EmployeeKitchenPage/EmployeeKitchenPage";
 import RestaurantOrderSystem from "./pages/RestaurantOrderSystemPage/RestaurantOrderSystemPage";
 import UserReservationsPage from "./pages/UserReservationsPage/UserReservationsPage";
-import ReservationFormPage from "./pages/ReservationFormPage/ReservationPage";
 import UserReservationDetailsPage from "./pages/UserReservationDetailsPage/UserReservationDetailsPage";
 import UserNotificationPage from "./pages/UserNotificationPage/UserNotificationPage";
 import WebSocketProvider from "./context/WebSocketContext";
@@ -60,6 +59,7 @@ import PaymentLayout from "./pages/PaymentLayout/PaymentLayout";
 import PaymentCheckoutPage from "./pages/PaymentCheckoutPage/PaymentCheckoutPage";
 import PaymentManagementPage from "./pages/PaymentManagementPage/PaymentManagementPage";
 import ReservationForm from "./components/Reservation/ReservationForm/ReservationForm";
+import ShiftSchedule from "./pages/ShiftSchedule/ShiftSchedule";
 
 function App() {
   return (
@@ -106,6 +106,7 @@ function App() {
                       <Route path="tables/:id" element={<AdminUpdateTablePage />}/>
                       <Route path="reservations" element={<AdminReservationsPage />} />
                       <Route path="reservations/:id" element={<AdminReservationPage />}/>
+                      <Route path="shifts" element={<ShiftSchedule/>}/>
                     </Route>
                   </Route>
 
@@ -113,7 +114,7 @@ function App() {
                     <Route element={<EmployeeLayout />}>
                       <Route path="profile" element={<EmployeeProfilePage />} />
                       <Route path="orders/place" element={<RestaurantOrderSystem />}/>
-                      <Route path="tables" element={<EmployeeTableManagement/>}/>
+                      <Route path="tables" element={<TableManagement/>}/>
                       <Route path="kitchen" element={<EmployeeKitchenPage/>}/>
                       <Route path="notifications" element={<EmployeeNotificationPage/>}/>
                       <Route path="payments" element={<PaymentManagementPage/>}/>

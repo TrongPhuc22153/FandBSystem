@@ -12,10 +12,6 @@ import org.mapstruct.MappingTarget;
 public interface ProductSizeMapper {
     ProductSizeDTO toProductSizeDTO(ProductSize productSize);
 
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "product", source = "product")
     ProductSize toProductSize(RequestProductSizeDTO requestProductSizeDTO, Product product);
 

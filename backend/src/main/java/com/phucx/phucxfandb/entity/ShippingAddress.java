@@ -6,10 +6,11 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "shipping_addresses")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class ShippingAddress extends Auditable{
     @Id
     @Column(name = "id", nullable = false)
@@ -34,9 +35,11 @@ public class ShippingAddress extends Auditable{
     @Column(name = "phone", length = 24)
     private String phone;
 
+    @Builder.Default
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
+    @Builder.Default
     @Column(name = "is_default")
     private Boolean isDefault = false;
 

@@ -1,4 +1,4 @@
-import { PRODUCTS_ENDPOINT } from "../constants/api";
+import { PRODUCT_QUANTITY_ENDPOINT, PRODUCTS_ENDPOINT } from "../constants/api";
 
 export const fetchProducts = async ({
   page = 0,
@@ -15,7 +15,7 @@ export const fetchProducts = async ({
   params.append("page", page.toString());
   params.append("size", size.toString());
   params.append("direction", direction.toString());
-  params.append("sortBy", sortBy.toString());
+  params.append("field", sortBy.toString());
   if (search) {
     params.append("search", search.toString());
   }
@@ -61,6 +61,26 @@ export const updateProduct = async ({ productId, productData, token }) => {
       'Authorization': `Bearer ${token}`,
     },
     body: JSON.stringify(productData),
+  });
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+
+  return response.json();
+};
+
+// Update product quantity
+export const updateProductQuantity = async ({ productId, quantity, token }) => {
+  const response = await fetch(PRODUCT_QUANTITY_ENDPOINT(productId), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      unitsInStock: quantity,
+    }),
   });
 
   if (!response.ok) {

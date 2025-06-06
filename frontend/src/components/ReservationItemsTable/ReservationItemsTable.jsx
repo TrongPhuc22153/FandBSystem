@@ -9,7 +9,7 @@ import {
 const calculateTotal = (reservationItems) =>
   reservationItems.reduce(
     (sum, item) =>
-      item.status !== ORDER_ITEM_STATUSES.CANCELLED
+      item.status !== ORDER_ITEM_STATUSES.CANCELED
         ? sum + item.quantity * item.product.unitPrice
         : sum,
     0
@@ -62,7 +62,7 @@ export function ReservationItemsTable({
                   <td>{item.specialInstructions || "-"}</td>
                   <td className="text-end">
                     $
-                    {item.status !== ORDER_ITEM_STATUSES.CANCELLED
+                    {item.status !== ORDER_ITEM_STATUSES.CANCELED
                       ? (item.quantity * item.product.unitPrice).toFixed(2)
                       : "0.00"}
                   </td>

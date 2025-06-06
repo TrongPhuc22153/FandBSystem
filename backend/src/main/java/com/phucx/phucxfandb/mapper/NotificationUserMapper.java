@@ -19,11 +19,7 @@ public interface NotificationUserMapper {
     @Mapping(target = "sender", ignore = true)
     @Mapping(target = "receiver", ignore = true)
     @Mapping(target = "receiverRole", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "isRead", constant = "false")
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
     @Mapping(target = "notification", source = "notification")
     NotificationUser toNotificationUser(RequestNotificationDTO requestNotificationDTO, Notification notification);
 }

@@ -6,10 +6,11 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "categories")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class Category extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +23,10 @@ public class Category extends Auditable{
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "picture", length = 255)
+    @Column(name = "picture")
     private String picture;
 
+    @Builder.Default
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 }

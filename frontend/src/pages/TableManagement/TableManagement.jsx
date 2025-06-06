@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Clock, Plus, Search } from "lucide-react";
 import { TableGrid } from "../../components/TableGrid/TableGrid";
-import styles from "./EmployeeTableManagement.module.css";
-import { useAvailableTables, useTableStatusSummary } from "../../hooks/tableHooks";
+import styles from "./TableManagement.module.css";
+import { debounce } from "lodash";
+import {
+  useAvailableTables,
+  useTableStatusSummary,
+} from "../../hooks/tableHooks";
 import {
   TABLE_OCCUPANCY_STATUSES,
   TABLE_OCCUPANCY_TYPES,
@@ -25,8 +29,9 @@ import {
 } from "../../hooks/reservationHooks";
 import { UpcommingReservations } from "../../components/WaitingList/UpcommingReservations";
 import { useOrderActions } from "../../hooks/orderHooks";
+import { StaffAssignment } from "../../components/StaffAssignment/StaffAssignment";
 
-export default function EmployeeTableManagement() {
+export default function TableManagement() {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
   const [searchValue, setSearchValue] = useState(
@@ -68,7 +73,7 @@ export default function EmployeeTableManagement() {
   } = useTableStatusSummary({
     date: currentDate,
     time: currentTime,
-  })
+  });
   const { unoccupied, occupied, reserved, cleaning, total } =
     tableStatusSummaryData || {};
 
@@ -218,7 +223,12 @@ export default function EmployeeTableManagement() {
         mutateTableStatusSummary();
       }
     },
-    [handleProcessReservation, mutateTableStatusSummary, mutateReservations, mutateTables]
+    [
+      handleProcessReservation,
+      mutateTableStatusSummary,
+      mutateReservations,
+      mutateTables,
+    ]
   );
 
   const onServedOrder = useCallback(
@@ -273,14 +283,20 @@ export default function EmployeeTableManagement() {
         });
       }
     },
-    [handleCreateTableOccupancy, mutateTableStatusSummary, showNewAlert, mutateReservations, mutateTables]
+    [
+      handleCreateTableOccupancy,
+      mutateTableStatusSummary,
+      showNewAlert,
+      mutateReservations,
+      mutateTables,
+    ]
   );
 
   const debouncedSearch = useCallback(
-    (newSearchValue) => {
+    debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);
-    },
+    }, 300),
     [setSearchParams, searchParams]
   );
 
@@ -290,9 +306,11 @@ export default function EmployeeTableManagement() {
     debouncedSearch(newSearchValue);
   };
 
-  if( tableStatusSummaryError?.message ||
-      reservationError?.message ||
-      tableOccupanciesError?.message) {
+  if (
+    tableStatusSummaryError?.message ||
+    reservationError?.message ||
+    tableOccupanciesError?.message
+  ) {
     return (
       <ErrorDisplay
         message={
@@ -455,6 +473,18 @@ export default function EmployeeTableManagement() {
                   </>
                 )}
               </div>
+            </div>
+          </div>
+
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitle}>Staff Assignments</h2>
+              <p className={styles.cardDescription}>
+                Manage waitstaff table assignments
+              </p>
+            </div>
+            <div className={styles.cardContent}>
+              <StaffAssignment staff={[]} tables={tables} />
             </div>
           </div>
         </div>

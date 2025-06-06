@@ -14,10 +14,6 @@ public interface ShippingAddressMapper {
     ShippingAddressDTO toShippingAddressDTO(ShippingAddress shippingAddress);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "phone", source = "requestShippingAddressDTO.phone")
     @Mapping(target = "customer", source = "customer")
     @Mapping(target = "isDeleted", constant = "false")

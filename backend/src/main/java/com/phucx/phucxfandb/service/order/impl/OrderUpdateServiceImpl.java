@@ -101,7 +101,7 @@ public class OrderUpdateServiceImpl implements OrderUpdateService {
     }
 
     private void validateOrderStatus(Order order) {
-        if (OrderStatus.CANCELLED.equals(order.getStatus())) {
+        if (OrderStatus.CANCELED.equals(order.getStatus())) {
             throw new IllegalStateException("Cannot modify order with status: " + order.getStatus());
         }
     }

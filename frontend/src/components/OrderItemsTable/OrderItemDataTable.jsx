@@ -6,7 +6,7 @@ import { CheckCircle } from "lucide-react";
 const calculateTotal = (orderDetails) =>
   orderDetails.reduce(
     (sum, item) =>
-      item.status !== ORDER_ITEM_STATUSES.CANCELLED
+      item.status !== ORDER_ITEM_STATUSES.CANCELED
         ? sum + item.quantity * item.product.unitPrice
         : sum,
     0
@@ -49,7 +49,7 @@ export function OrderItemsDataTable({ order, isLoading, onCancelOrderItem, onSer
                   <td>{item.quantity}</td>
                   <td>{item.specialInstructions || '-'}</td>
                   <td className="text-end">
-                    ${item.status !== ORDER_ITEM_STATUSES.CANCELLED
+                    ${item.status !== ORDER_ITEM_STATUSES.CANCELED
                       ? (item.quantity * item.product.unitPrice).toFixed(2)
                       : '0.00'}
                   </td>

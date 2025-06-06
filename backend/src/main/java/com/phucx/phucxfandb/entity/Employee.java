@@ -8,10 +8,11 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "employees")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class Employee extends Auditable{
     @Id
     @Column(name = "employee_id", length = 36, updatable = false, nullable = false)
@@ -34,6 +35,7 @@ public class Employee extends Auditable{
     @JoinColumn(name = "profile_id", referencedColumnName = "profile_id", nullable = false)
     private UserProfile profile;
 
+    @Builder.Default
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 }

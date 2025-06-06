@@ -3,6 +3,7 @@ package com.phucx.phucxfandb.utils;
 import com.phucx.phucxfandb.entity.CartItem;
 import com.phucx.phucxfandb.entity.MenuItem;
 import com.phucx.phucxfandb.entity.OrderDetail;
+import com.phucx.phucxfandb.enums.MenuItemStatus;
 import com.phucx.phucxfandb.enums.OrderItemStatus;
 
 import java.math.BigDecimal;
@@ -12,7 +13,9 @@ public class PriceUtils {
     public static BigDecimal calculateReservationTotalPrice(List<MenuItem> menuItems) {
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (MenuItem item : menuItems) {
-            totalPrice = totalPrice.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            if(!MenuItemStatus.CANCELED.equals(item.getStatus())){
+                totalPrice = totalPrice.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            }
         }
         return totalPrice;
     }

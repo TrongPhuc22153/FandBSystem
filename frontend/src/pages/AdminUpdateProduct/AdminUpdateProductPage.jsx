@@ -23,6 +23,7 @@ function AdminUpdateProductPage() {
     categoryId: 0,
     unitPrice: 0,
     unitsInStock: 0,
+    minimumStock: 0,
     isFeatured: false,
     description: "",
     image: null,
@@ -61,6 +62,9 @@ function AdminUpdateProductPage() {
         unitPrice: productData.unitPrice ? productData.unitPrice.toString() : 0,
         unitsInStock: productData.unitsInStock
           ? productData.unitsInStock.toString()
+          : 0,
+        minimumStock: productData.minimumStock
+          ? productData.minimumStock.toString()
           : 0,
         isFeatured: productData.isFeatured || false,
         description: productData.description || "",
@@ -137,6 +141,7 @@ function AdminUpdateProductPage() {
       categoryId: +productDetails.categoryId,
       unitPrice: productDetails.unitPrice,
       unitsInStock: productDetails.unitsInStock,
+      minimumStock: productDetails.minimumStock,
       isFeatured: productDetails.isFeatured,
       description: productDetails.description,
       picture: uploadedImageData ? uploadedImageData[0].imageUrl : imagePreview,

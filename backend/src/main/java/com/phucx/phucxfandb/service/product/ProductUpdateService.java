@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ProductUpdateService {
     Product updateProductInStock(long productId, int quantity);
+    ProductDTO updateProductQuantity(long productId, int quantity);
     ProductDTO updateProduct(long productId, RequestProductDTO requestProductDTO);
     ProductDTO createProduct(RequestProductDTO requestProductDTO);
     ProductDTO updateProductIsDeletedStatus(long id, RequestProductDTO requestProductDTO);

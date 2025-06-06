@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "notification_users")
@@ -42,6 +43,7 @@ public class NotificationUser extends Auditable{
     @JoinColumn(name = "receiver_role_id", referencedColumnName = "role_id")
     private Role receiverRole;
 
+    @Builder.Default
     @Column(name = "is_read", nullable = false)
     private Boolean isRead = false;
 }

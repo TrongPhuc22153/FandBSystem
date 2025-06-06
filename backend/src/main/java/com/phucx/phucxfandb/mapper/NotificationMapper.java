@@ -26,10 +26,6 @@ public interface NotificationMapper {
     @Mapping(target = "title", source = "requestNotificationDTO.title")
     @Mapping(target = "message", source = "requestNotificationDTO.message")
     @Mapping(target = "picture", source = "requestNotificationDTO.picture")
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     Notification toOrderNotification(RequestNotificationDTO requestNotificationDTO, Order order, Topic topic);
 
     @Named("toReservationNotification")
@@ -43,10 +39,6 @@ public interface NotificationMapper {
     @Mapping(target = "title", source = "requestNotificationDTO.title")
     @Mapping(target = "message", source = "requestNotificationDTO.message")
     @Mapping(target = "picture", source = "requestNotificationDTO.picture")
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     Notification toReservationNotification(RequestNotificationDTO requestNotificationDTO, Reservation reservation, Topic topic);
 
 }

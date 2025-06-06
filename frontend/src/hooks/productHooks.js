@@ -5,6 +5,7 @@ import {
   fetchProduct,
   fetchProducts,
   updateProduct,
+  updateProductQuantity,
 } from "../api/productApi";
 import { PRODUCTS_ENDPOINT } from "../constants/api";
 import { useCallback, useState } from "react";
@@ -21,7 +22,7 @@ export const useProducts = ({
   direction = SORTING_DIRECTIONS.ASC,
   discontinued,
   sortBy = "productName",
-}) => {
+} = {}) => {
   return useSWR(
     [
       PRODUCTS_ENDPOINT,
@@ -33,7 +34,7 @@ export const useProducts = ({
       isDeleted,
       categoryId,
       search,
-      discontinued,
+      discontinued
     ],
     () =>
       fetchProducts({
@@ -69,6 +70,10 @@ export const useProductActions = () => {
   const [updateSuccess, setUpdateSuccess] = useState(null);
   const [createSuccess, setCreateSuccess] = useState(null);
   const [deleteSuccess, setDeleteSuccess] = useState(null);
+
+  const [updateQuantityError, setUpdateQuantityError] = useState(null);
+  const [updateQuantityLoading, setUpdateQuantityLoading] = useState(false);
+  const [updateQuantitySuccess, setUpdateQuantitySuccess] = useState(null);
 
   const handleUpdateProduct = useCallback(
     async (id, requestData) => {
@@ -134,6 +139,29 @@ export const useProductActions = () => {
     [token]
   );
 
+  const handleUpdateProductQuantity = useCallback(
+    async (productId, quantity) => {
+      setUpdateQuantityError(null);
+      setUpdateQuantitySuccess(null);
+      setUpdateQuantityLoading(true);
+      try {
+        const response = await updateProductQuantity({
+          productId,
+          quantity,
+          token,
+        });
+        setUpdateQuantitySuccess(response?.message || 'Product quantity updated successfully');
+        return response.data;
+      } catch (error) {
+        setUpdateQuantityError(error);
+        return null;
+      } finally {
+        setUpdateQuantityLoading(false);
+      }
+    },
+    [token]
+  );
+
   return {
     handleUpdateProduct,
     updateError,
@@ -161,5 +189,14 @@ export const useProductActions = () => {
       setDeleteError(null);
       setDeleteSuccess(null);
     }, []),
+
+    handleUpdateProductQuantity,
+    updateQuantityError,
+    updateQuantityLoading,
+    updateQuantitySuccess,
+    resetUpdateQuantity: useCallback(() => {
+      setUpdateQuantityError(null);
+      setUpdateQuantitySuccess(null);
+    }, [])
   };
 };

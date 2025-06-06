@@ -6,10 +6,11 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "product_sizes")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class ProductSize extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -18,10 +19,13 @@ public class ProductSize extends Auditable{
 
     @Column(name = "height", nullable = false)
     private Integer height;
+
     @Column(name = "length", nullable = false)
     private Integer length;
+
     @Column(name = "weight", nullable = false)
     private Integer weight;
+    
     @Column(name = "width", nullable = false)
     private Integer width;
 

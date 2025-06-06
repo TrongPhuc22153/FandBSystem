@@ -10,10 +10,11 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-@EqualsAndHashCode(callSuper = true, exclude = {"profile"})
+@EqualsAndHashCode(callSuper = false)
 public class User extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,16 +24,18 @@ public class User extends Auditable{
     @Column(name = "username", length = 20, nullable = false)
     private String username;
 
-    @Column(name = "password", length = 255, nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Email
-    @Column(name = "email", length = 255, nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
+    @Builder.Default
     @Column(name = "enabled", nullable = false)
     private Boolean enabled = false;
 
+    @Builder.Default
     @Column(name = "email_verified", nullable = false)
     private Boolean emailVerified = false;
 
@@ -42,6 +45,7 @@ public class User extends Auditable{
     @Column(name = "last_name", length = 30, nullable = false)
     private String lastName;
 
+    @Builder.Default
     @Column(name = "reset_password", nullable = false)
     private Boolean resetPassword = false;
 
@@ -51,8 +55,10 @@ public class User extends Auditable{
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserProfile profile;
 }

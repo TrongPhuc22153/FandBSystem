@@ -71,7 +71,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
         }
 
         Payment payment = reservation.getPayment();
-        PaymentStatus paymentStatus = PaymentStatus.CANCELLED;
+        PaymentStatus paymentStatus = PaymentStatus.CANCELED;
         if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
             if (isAutoRefundable(payment.getMethod())) {
                 payPalRefundService.refundPayment(payment.getPaymentId());
@@ -81,7 +81,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
         ReservationDTO reservationDTO = reservationUpdateService.updateReservation(
                 reservationId,
-                ReservationStatus.CANCELLED,
+                ReservationStatus.CANCELED,
                 paymentStatus
         );
 
@@ -119,7 +119,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
         }
 
         Payment payment = reservation.getPayment();
-        PaymentStatus paymentStatus = PaymentStatus.CANCELLED;
+        PaymentStatus paymentStatus = PaymentStatus.CANCELED;
 
         if (payment.getStatus() == PaymentStatus.SUCCESSFUL) {
             if (isAutoRefundable(payment.getMethod())) {
@@ -130,7 +130,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
         ReservationDTO reservationDTO = reservationUpdateService.updateReservation(
                 reservationId,
-                ReservationStatus.CANCELLED,
+                ReservationStatus.CANCELED,
                 paymentStatus
         );
 

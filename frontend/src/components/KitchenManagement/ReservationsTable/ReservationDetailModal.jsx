@@ -5,8 +5,8 @@ import {
   RESERVATION_STATUSES,
   RESERVATION_ITEM_STATUS_CLASSES,
   RESERVATION_ITEM_STATUSES,
-} from "../../constants/webConstant";
-import { formatDate } from "../../utils/datetimeUtils";
+} from "../../../constants/webConstant";
+import { formatDate } from "../../../utils/datetimeUtils";
 
 export default function ReservationDetailModal({
   reservation,
@@ -35,7 +35,7 @@ export default function ReservationDetailModal({
     return items.reduce(
       (total, item) =>
         total +
-        (item.status !== RESERVATION_ITEM_STATUSES.CANCELLED
+        (item.status !== RESERVATION_ITEM_STATUSES.CANCELED
           ? item.quantity * item.product.unitPrice
           : 0),
       0
@@ -205,7 +205,7 @@ export default function ReservationDetailModal({
                       <td>{item.specialInstructions || "-"}</td>
                       <td className="text-end">
                         $
-                        {item.status !== RESERVATION_ITEM_STATUSES.CANCELLED
+                        {item.status !== RESERVATION_ITEM_STATUSES.CANCELED
                           ? (item.quantity * item.product.unitPrice).toFixed(2)
                           : "0.00"}
                       </td>
@@ -216,7 +216,7 @@ export default function ReservationDetailModal({
                             variant="outline-danger"
                             size="sm"
                             onClick={() =>
-                              onCancelReservationItem(reservation.reservationId, item.itemId)
+                              onCancelReservationItem(reservation.reservationId, item.id)
                             }
                           >
                             Cancel

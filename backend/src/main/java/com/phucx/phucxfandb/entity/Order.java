@@ -14,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "orders")
@@ -48,6 +49,7 @@ public class Order extends Auditable{
     @Column(name = "status", length = 20, nullable = false)
     private OrderStatus status;
 
+    @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 

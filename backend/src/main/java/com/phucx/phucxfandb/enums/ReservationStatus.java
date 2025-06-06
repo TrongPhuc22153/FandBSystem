@@ -9,5 +9,5 @@ public enum ReservationStatus {
     PARTIALLY_SERVED,
     SERVED,
     COMPLETED,
-    CANCELLED,
+    CANCELED,
 }

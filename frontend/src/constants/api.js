@@ -3,6 +3,7 @@ const WEBSOCKET_URL = "ws://localhost:8080/chat";
 export const WEBSOCKET_ENDPOINT = `${WEBSOCKET_URL}`;
 
 export const PRODUCTS_ENDPOINT = `${API_BASE_URL}/api/v1/products`;
+export const PRODUCT_QUANTITY_ENDPOINT = (productId) => `${PRODUCTS_ENDPOINT}/${productId}/quantity`;
 
 export const CATEGORIES_ENDPOINT = `${API_BASE_URL}/api/v1/categories`;
 

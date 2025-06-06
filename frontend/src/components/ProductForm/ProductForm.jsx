@@ -129,6 +129,32 @@ export default function ProductForm({
         </div>
         <div className="col-md-6">
           <div className="form-group">
+            <div className="form-group">
+              <label htmlFor="minimumStock">Minimum Stock</label>
+              <input
+                type="number"
+                id="minimumStock"
+                name="minimumStock"
+                className="form-control"
+                min="0"
+                value={product.minimumStock}
+                onChange={handleInputChange}
+                required
+                disabled={!isEditMode}
+              />
+              {fieldErrors?.minimumStock &&
+                fieldErrors.minimumStock.map((error, index) => (
+                  <div key={index} className="error-message text-danger">
+                    {error}
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-md-12">
+          <div className="form-group">
             <label htmlFor="description">Description</label>
             <textarea
               id="description"

@@ -5,5 +5,5 @@ public enum TableOccupancyStatus {
     SEATED,
     COMPLETED,
     CLEANING,
-    CANCELLED
+    CANCELED
 }

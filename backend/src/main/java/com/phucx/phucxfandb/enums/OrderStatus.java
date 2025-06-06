@@ -10,5 +10,5 @@ public enum OrderStatus {
     PARTIALLY_SERVED,
     SERVED,
     COMPLETED,
-    CANCELLED
+    CANCELED
 }

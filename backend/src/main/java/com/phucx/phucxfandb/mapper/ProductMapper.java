@@ -25,10 +25,6 @@ public interface ProductMapper {
     @Mapping(target = "category", source = "category")
     @Mapping(target = "picture", source = "requestProductDTO.picture")
     @Mapping(target = "description", source = "requestProductDTO.description")
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     Product toProduct(RequestProductDTO requestProductDTO, Category category);
 
     @Mapping(target = "productSize", ignore = true)

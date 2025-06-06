@@ -148,7 +148,7 @@ public class ReservationUpdateServiceImpl implements ReservationUpdateService {
     }
 
     private void validateReservationStatus(Reservation reservation) {
-        if (ReservationStatus.CANCELLED.equals(reservation.getStatus())) {
+        if (ReservationStatus.CANCELED.equals(reservation.getStatus())) {
             throw new IllegalStateException("Cannot modify reservation with status: " + reservation.getStatus());
         }
     }

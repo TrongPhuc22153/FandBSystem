@@ -35,7 +35,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
 
-        if (order.getStatus() == OrderStatus.COMPLETED || order.getStatus() == OrderStatus.CANCELLED) {
+        if (order.getStatus() == OrderStatus.COMPLETED || order.getStatus() == OrderStatus.CANCELED) {
             throw new IllegalStateException("Cannot modify order with status: " + order.getStatus());
         }
 

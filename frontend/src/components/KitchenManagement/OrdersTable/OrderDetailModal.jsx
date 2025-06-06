@@ -5,7 +5,7 @@ import {
   ORDER_ITEM_STATUSES,
   ORDER_STATUS_CLASSES,
   ORDER_STATUSES,
-} from "../../constants/webConstant";
+} from "../../../constants/webConstant";
 
 export default function OrderDetailModal({
   order,
@@ -175,7 +175,7 @@ export default function OrderDetailModal({
                       <td>{item.specialInstructions || "-"}</td>
                       <td className="text-end">
                         $
-                        {item.status !== ORDER_ITEM_STATUSES.CANCELLED
+                        {item.status !== ORDER_ITEM_STATUSES.CANCELED
                           ? (item.quantity * item.product.unitPrice).toFixed(2)
                           : "0.00"}
                       </td>
@@ -201,7 +201,7 @@ export default function OrderDetailModal({
                     </td>
                     <td className="text-end">
                       <strong>
-                        ${calculateTotal(order.orderDetails).toFixed(2)}
+                        ${order.totalPrice.toFixed(2)}
                       </strong>
                     </td>
                   </tr>
