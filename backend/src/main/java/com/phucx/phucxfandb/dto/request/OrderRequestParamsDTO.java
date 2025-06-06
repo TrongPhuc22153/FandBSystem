@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,5 +20,7 @@ public class OrderRequestParamsDTO extends PaginationParamsDTO {
     private String field = "orderDate";
     private Sort.Direction direction = Sort.Direction.DESC;
     private OrderType type;
-    private OrderStatus status;
+    private List<OrderStatus> status;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

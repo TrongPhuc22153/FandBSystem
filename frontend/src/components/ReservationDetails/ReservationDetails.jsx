@@ -1,22 +1,26 @@
 import { Button, Badge, Card } from "react-bootstrap";
 import {
-  RESERVATION_STATUS_CLASSES,
   RESERVATION_STATUSES,
   PAYMENT_STATUS_CLASSES,
 } from "../../constants/webConstant";
+import { CreditCard, FileText, MapPin } from "lucide-react";
+import ReservationProcessingBar from "../ProcessingBar/ReservationProcessingBar/ReservationProcessingBar";
 
 export default function ReservationDetail({
   reservation,
   processLoading,
   onHandleCancel,
 }) {
-
   return (
     <div
-      className="container bg-white py-3 px-3 rounded-3"
+      className="bg-white py-3 px-4 rounded-3 flex-grow-1 flex-shrink-1 shadow rounded"
       style={{ maxWidth: "800px" }}
     >
-      <h5>Reservation Details: {reservation.reservationId}</h5>
+      <div className="text-sm-center">
+        <h3 className="text-2xl font-bold text-gray-900">Reservation Details</h3>
+        <p className="text-gray-600">Reservation ID: {reservation.reservationId}</p>
+      </div>
+
       <div className="row mb-4">
         <div className="col-md-6">
           <h6>Customer Information</h6>
@@ -42,59 +46,16 @@ export default function ReservationDetail({
         </div>
         <div className="col-md-6">
           <h6>Reservation Status</h6>
-          <div className="d-flex align-items-center mb-3">
-            <Badge
-              className="me-2"
-              bg={
-                RESERVATION_STATUS_CLASSES[reservation.status] ||
-                RESERVATION_STATUS_CLASSES.DEFAULT
-              }
-            >
-              {reservation.status.charAt(0).toUpperCase() +
-                reservation.status.slice(1)}
-            </Badge>
-          </div>
-          <div className="progress">
-            <div
-              className={`progress-bar ${
-                reservation.status === RESERVATION_STATUSES.PENDING
-                  ? "bg-danger"
-                  : reservation.status === RESERVATION_STATUSES.PREPARING
-                  ? "bg-warning"
-                  : reservation.status === RESERVATION_STATUSES.PREPARED
-                  ? "bg-success"
-                  : "bg-secondary"
-              }`}
-              role="progressbar"
-              style={{
-                width:
-                  reservation.status === RESERVATION_STATUSES.PENDING
-                    ? "25%"
-                    : reservation.status === RESERVATION_STATUSES.PREPARING
-                    ? "50%"
-                    : reservation.status === RESERVATION_STATUSES.PREPARED
-                    ? "75%"
-                    : "100%",
-              }}
-              aria-valuenow={
-                reservation.status === RESERVATION_STATUSES.PENDING
-                  ? 25
-                  : reservation.status === RESERVATION_STATUSES.PREPARING
-                  ? 50
-                  : reservation.status === RESERVATION_STATUSES.PREPARED
-                  ? 75
-                  : 100
-              }
-              aria-valuemin={0}
-              aria-valuemax={100}
-            ></div>
-          </div>
+          <ReservationProcessingBar status={reservation.status}/>
         </div>
       </div>
 
       <div className="row mb-4">
         <div className="col-md-6">
-          <h6>Payment Details</h6>
+          <div className="d-flex mb-1">
+            <CreditCard className="w-5 h-5" />
+            <h6 className="ms-1 mb-0">Payment Details</h6>
+          </div>
           <Card>
             <Card.Body>
               <p className="mb-1">
@@ -115,25 +76,34 @@ export default function ReservationDetail({
           </Card>
         </div>
         <div className="col-md-6">
-          <h6>Table Assignment</h6>
-          <div className="card">
-            <div className="card-body">
-              Table {reservation.table.tableNumber} - Capacity (
-              {reservation.table.capacity} people) - Location{" "}
-              {reservation.table.location}
-            </div>
+          <div className="d-flex mb-1">
+            <MapPin className="w-5 h-5" />
+            <h6 className="ms-1 mb-0">Table Assignment</h6>
           </div>
+          <Card>
+            <Card.Body>
+              <p className="mb-1">
+                <strong>Table:</strong> {reservation.table.tableNumber}
+              </p>
+              <p className="mb-1">
+                <strong>Location:</strong> {reservation.table.location}
+              </p>
+            </Card.Body>
+          </Card>
         </div>
       </div>
 
       <div className="row mb-4">
         <div className="col-md-12">
-          <h6>Special Requests</h6>
-          <div className="card">
-            <div className="card-body">
-              {reservation.notes || "No special requests provided."}
-            </div>
+          <div className="d-flex mb-1">
+            <FileText className="w-5 h-5" />
+            <h6 className="ms-1 mb-0">Special Requests</h6>
           </div>
+          <Card>
+            <Card.Body>
+              {reservation.notes || "No special requests provided."}
+            </Card.Body>
+          </Card>
         </div>
       </div>
 
@@ -170,7 +140,7 @@ export default function ReservationDetail({
           </tbody>
         </table>
       </div>
-
+              
       {(reservation.status === RESERVATION_STATUSES.PENDING ||
         reservation.status === RESERVATION_STATUSES.PREPARING ||
         reservation.status === RESERVATION_STATUSES.PREPARED ||

@@ -13,10 +13,11 @@ import {
 } from "../api/orderApi";
 import { useAuth } from "../context/AuthContext";
 import { ORDERS_ENDPOINT } from "../constants/api";
+import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
-export const useOrders = ({ page = 0, size = 10, sortField = "orderDate", sortDirection = "DESC", type, status } = {}) => {
+export const useOrders = ({ page = 0, size = 10, sortField = "orderDate", sortDirection = SORTING_DIRECTIONS.DESC, type, status, startDate, endDate } = {}) => {
   const { token } = useAuth();
-  return useSWR([ORDERS_ENDPOINT, token, page, size, sortField, sortDirection, type, status, token],
+  return useSWR([ORDERS_ENDPOINT, token, page, size, sortField, sortDirection, type, status, startDate, endDate, token],
     () => fetchOrders({
       token: token,
       page: page,
@@ -24,7 +25,9 @@ export const useOrders = ({ page = 0, size = 10, sortField = "orderDate", sortDi
       field: sortField,
       direction: sortDirection,
       type: type,
-      status: status
+      status: status,
+      startDate: startDate,
+      endDate: endDate
     })
   );
 };

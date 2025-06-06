@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { addReservationItem, cancelReservationItem, createReservation, fetchReservationById, fetchReservations, processReservation, updateReservation, updateReservationItemQuantity, updateReservationItemStatus } from "../api/reservationApi";
 import useSWR from "swr";
 import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { RESERVATIONS_ENDPOINT } from "../constants/api";
 
 // Hook for fetching a single reservation
 export const useReservation = ({ reservationId } = {}) => {
@@ -33,7 +34,7 @@ export const useReservations = ({ page = 0, size = 10, sortBy = "startTime", dir
     });
   }, [token, page, size, status, sortBy, direction, startDate, endDate ]);
 
-  return useSWR(['reservations', page, size, status, sortBy, direction], fetcher);
+  return useSWR([RESERVATIONS_ENDPOINT, page, size, status, sortBy, direction], fetcher);
 };
 
 export const useReservationActions = () => {

@@ -7,63 +7,73 @@ import Reservations from "../../components/Dashboard/Reservations/Reservations";
 import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { useMetrics, useReport } from "../../hooks/reportHooks";
-import moment from "moment";
+import { format } from "date-fns";
 import {
   faCalendarCheck,
-  faChair,
   faDollarSign,
+  faMoneyBillWave,
   faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
 import { useReservations } from "../../hooks/reservationHooks";
-import { useMemo, useState } from "react";
 import { useAvailableTables } from "../../hooks/tableHooks";
 import { useOrders } from "../../hooks/orderHooks";
 import { SORTING_DIRECTIONS } from "../../constants/webConstant";
-import { getDateRange } from "../../utils/metricUtils";
+import { DATE_FILTER } from "../../constants/filter";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 function AdminDashboardPage() {
-  const now = moment();
-  const currentDate = now.format("YYYY-MM-DD");
-  const currentTime = now.format("HH:mm");
+  // Date and time formatting
+  const now = useMemo(() => new Date(), []); // Memoize to prevent re-creation
+  const currentDate = format(now, "yyyy-MM-dd");
+  const currentTime = format(now, "HH:mm");
 
   // State for filters and pagination
-  const [filter, setFilter] = useState("today");
-  const [reservationPage] = useState(0);
-  const [tablePage] = useState(0);
-  const [orderPage] = useState(0);
+  const [filter, setFilter] = useState(DATE_FILTER[0].value);
+  const [reservationPage, setReservationPage] = useState(0);
+  const [tablePage, setTablePage] = useState(0);
+  const [orderPage, setOrderPage] = useState(0);
+
+  // Memoized date range
+  const { start: startDate, end: endDate } = useMemo(() => {
+    const selectedFilter =
+      DATE_FILTER.find((f) => f.value === filter) || DATE_FILTER[0];
+    return selectedFilter.getRange();
+  }, [filter]);
 
   // Data fetching hooks
   const {
-    data: reportData,
+    data: reportData = {
+      totalOrders: 0,
+      totalRevenue: 0,
+      totalReservations: 0,
+      totalOccupiedTables: 0,
+    },
     isLoading: loadingReport,
     error: reportError,
-  } = useReport(currentDate, currentDate);
+  } = useReport({ startDate, endDate });
 
   const {
-    data: metricsData,
+    data: metricsData = {},
     isLoading: loadingMetrics,
     error: metricsError,
-  } = useMetrics(getDateRange(filter));
-  const metrics = useMemo(() => metricsData || {}, [metricsData]);
+    mutate: refetchMetrics,
+  } = useMetrics({ startDate, endDate });
 
   const {
-    data: reservationsData,
-    error: reservationError,
+    data: reservationsData = { content: [], totalPages: 0 },
     isLoading: loadingReservations,
+    error: reservationError,
+    mutate: refetchReservations,
   } = useReservations({
     page: reservationPage,
-    size: 20,
-    sortBy: "startTime",
-    startDate: currentDate,
-    endDate: currentDate,
+    size: 5,
+    sortBy: "date",
+    startDate,
+    endDate,
   });
-  const reservations = useMemo(
-    () => reservationsData?.content || [],
-    [reservationsData]
-  );
 
   const {
-    data: tablesData,
+    data: tablesData = { content: [], totalPages: 0 },
     isLoading: loadingTables,
     error: tablesError,
   } = useAvailableTables({
@@ -72,101 +82,172 @@ function AdminDashboardPage() {
     date: currentDate,
     time: currentTime,
   });
-  const tables = useMemo(() => tablesData?.content || [], [tablesData]);
 
   const {
-    data: ordersData,
+    data: ordersData = { content: [], totalPages: 0 },
     isLoading: loadingOrders,
     error: ordersError,
+    mutate: refetchOrders,
   } = useOrders({
-    sortDirection: SORTING_DIRECTIONS.ASC,
+    sortDirection: SORTING_DIRECTIONS.DESC,
     sortField: "orderDate",
+    size: 5,
     page: orderPage,
+    startDate,
+    endDate,
   });
-  const orders = useMemo(() => ordersData?.content || [], [ordersData]);
 
-  // Loading state check
-  if (
+  // Memoized data
+  const metrics = useMemo(() => metricsData, [metricsData]);
+  const reservations = useMemo(
+    () => reservationsData.content,
+    [reservationsData]
+  );
+  const tables = useMemo(() => tablesData.content, [tablesData]);
+  const orders = useMemo(() => ordersData.content, [ordersData]);
+
+  const summaryCards = useMemo(
+    () => [
+      {
+        title: `Total Orders ${
+          DATE_FILTER.find((f) => f.value === filter)?.label ||
+          DATE_FILTER[0].label
+        }`,
+        value: reportData.totalOrders,
+        icon: faUtensils,
+        bgColor: "#e3f2fd",
+      },
+      {
+        title: `Total Revenue ${
+          DATE_FILTER.find((f) => f.value === filter)?.label ||
+          DATE_FILTER[0].label
+        }`,
+        value: reportData.totalRevenue,
+        icon: faDollarSign,
+        bgColor: "#e8f5e9",
+      },
+      {
+        title: `Reservations ${
+          DATE_FILTER.find((f) => f.value === filter)?.label ||
+          DATE_FILTER[0].label
+        }`,
+        value: reportData.totalReservations,
+        icon: faCalendarCheck,
+        bgColor: "#f3e5f5",
+      },
+      {
+        title: `Average Order Value ${
+          DATE_FILTER.find((f) => f.value === filter)?.label ||
+          DATE_FILTER[0].label
+        }`,
+        value: reportData.averageOrderValue,
+        icon: faMoneyBillWave,
+        bgColor: "#e0f7fa",
+      },
+    ],
+    [filter, reportData]
+  );
+
+  // Handle filter and pagination changes
+  const handleFilterChange = useCallback((value) => {
+    setFilter(value);
+    setReservationPage(0); // Reset pagination on filter change
+    setTablePage(0);
+    setOrderPage(0);
+  }, []);
+
+  const handlePageChange = useCallback((type, page) => {
+    switch (type) {
+      case "reservations":
+        setReservationPage(page);
+        break;
+      case "tables":
+        setTablePage(page);
+        break;
+      case "orders":
+        setOrderPage(page);
+        break;
+      default:
+        break;
+    }
+  }, []);
+
+  // Refetch data on filter or page change
+  useEffect(() => {
+    refetchMetrics();
+    refetchReservations();
+    refetchOrders();
+  }, [
+    startDate,
+    endDate,
+    reservationPage,
+    orderPage,
+    refetchMetrics,
+    refetchReservations,
+    refetchOrders,
+  ]);
+
+  // Loading and error states
+  const isLoading =
     loadingReport ||
     loadingReservations ||
     loadingMetrics ||
     loadingTables ||
-    loadingOrders
-  ) {
-    return <Loading />;
-  }
+    loadingOrders;
+  const errors = useMemo(
+    () =>
+      [reportError, reservationError, metricsError, tablesError, ordersError]
+        .filter((value) => value)
+        .map((err) => err.message),
+    [reportError, reservationError, metricsError, tablesError, ordersError]
+  );
 
-  // Error state check
-  if (
-    reportError?.message ||
-    reservationError?.message ||
-    metricsError?.message ||
-    tablesError?.message ||
-    ordersError?.message
-  ) {
-    return (
-      <ErrorDisplay
-        message={
-          reportError?.message ||
-          reservationError?.message ||
-          metricsError?.message ||
-          tablesError?.message ||
-          ordersError?.message
-        }
-      />
-    );
-  }
+  // Early returns for loading and error states
+  if (isLoading) return <Loading />;
+  if (errors.length > 0) return <ErrorDisplay messages={errors} />;
 
   return (
     <div className="AdminDashboardPage">
-      <Container fluid className="py-4">
-        <div className="row g-4">
-          <div className="col-lg-3 col-md-6 col-sm-6">
-            <SummaryCard
-              title={"Total Orders Today"}
-              value={reportData.totalOrders}
-              icon={faUtensils}
-              bgColor={"#e3f2fd"}
-            />
-          </div>
-          <div className="col-lg-3 col-md-6 col-sm-6">
-            <SummaryCard
-              title={"Total Revenue Today"}
-              value={reportData.totalRevenue}
-              icon={faDollarSign}
-              bgColor={"#e8f5e9"}
-            />
-          </div>
-          <div className="col-lg-3 col-md-6 col-sm-6">
-            <SummaryCard
-              title={"Reservations Today"}
-              value={reportData.totalReservations}
-              icon={faCalendarCheck}
-              bgColor={"#f3e5f5"}
-            />
-          </div>
-          <div className="col-lg-3 col-md-6 col-sm-6">
-            <SummaryCard
-              title={"Table Occupancy"}
-              value={reportData.totalOccupiedTables}
-              icon={faChair}
-              bgColor={"#e0f7fa"}
-            />
-          </div>
+      <Container fluid class P="py-4">
+        <div className="row g-4 mt-3">
+          {summaryCards.map((card, index) => (
+            <div key={index} className="col-lg-3 col-md-6 col-sm-6">
+              <SummaryCard {...card} />
+            </div>
+          ))}
         </div>
         <div className="row g-4 mt-4">
           <div className="col-lg-7 col-md-12">
-            <Analytics metrics={metrics} filter={filter} onChangeFilter={setFilter} />
+            <Analytics
+              metrics={metrics}
+              filter={filter}
+              onChangeFilter={handleFilterChange}
+            />
           </div>
           <div className="col-lg-5 col-md-12">
             <div className="mb-4">
-              <Reservations reservations={reservations} />
+              <Reservations
+                reservations={reservations}
+                currentPage={reservationPage}
+                totalPages={reservationsData.totalPages}
+                onPageChange={(page) => handlePageChange("reservations", page)}
+              />
             </div>
             <div className="mb-4">
-              <OrderStatus orders={orders} />
+              <OrderStatus
+                orders={orders}
+                currentPage={orderPage}
+                totalPages={ordersData.totalPages}
+                onPageChange={(page) => handlePageChange("orders", page)}
+              />
             </div>
             <div className="mb-4">
-              <TableMap tables={tables}/>
+              <TableMap
+                tables={tables}
+                currentPage={tablePage}
+                totalPages={tablesData.totalPages}
+                onPageChange={(page) => handlePageChange("tables", page)}
+              />
             </div>
           </div>
         </div>

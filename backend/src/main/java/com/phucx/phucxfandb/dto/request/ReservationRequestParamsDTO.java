@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 public class ReservationRequestParamsDTO extends PaginationParamsDTO {
     private String field = "startTime";
     private Sort.Direction direction = Sort.Direction.DESC;
-    private ReservationStatus status;
+    private List<ReservationStatus> status;
     private LocalDate startDate;
     private LocalDate endDate;
 }

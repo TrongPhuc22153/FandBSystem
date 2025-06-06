@@ -9,17 +9,25 @@ export const fetchOrders = async ({
   direction = "DESC",
   type,
   status,
+  startDate,
+  endDate
 }) => {
   const params = new URLSearchParams();
   params.append("page", page.toString());
   params.append("size", size.toString());
   params.append("direction", direction.toString());
   params.append("field", field.toString());
-  if (type) {
+  if (type !== null && type !== undefined) {
     params.append("type", type);
   }
-  if (status) {
+  if (status !== null && status !== undefined) {
     params.append("status", status);
+  }
+  if (startDate !== null && startDate !== undefined) {
+    params.append("startDate", startDate);
+  }
+  if (endDate !== null && endDate !== undefined) {
+    params.append("endDate", endDate);
   }
 
   const response = await fetch(`${ORDERS_ENDPOINT}?${params.toString()}`, {

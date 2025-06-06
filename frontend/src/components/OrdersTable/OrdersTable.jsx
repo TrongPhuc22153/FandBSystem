@@ -23,6 +23,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useStompSubscription } from "../../hooks/websocketHooks";
 import { hasRole } from "../../utils/authUtils";
 import { ROLES } from "../../constants/roles";
+import { ORDER_FILTER_MAPPING } from "../../constants/filter";
 
 export default function OrdersTable() {
   const [searchParams] = useSearchParams();
@@ -34,8 +35,8 @@ export default function OrdersTable() {
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
-  const [filterStatus, setFilterStatus] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [filterStatus, setFilterStatus] = useState(ORDER_FILTER_MAPPING[0].statuses);
 
   const { data: ordersData, mutate } = useOrders({
     status: filterStatus,
@@ -49,10 +50,8 @@ export default function OrdersTable() {
 
   const { handleProcessOrder, processError, processSuccess, resetProcess } =
     useOrderActions();
-
   const { handleCancelOrderItem, cancelError, resetCancel } =
     useOrderItemActions();
-
   const { onOpen } = useModal();
   const { showNewAlert } = useAlert();
 
@@ -161,44 +160,19 @@ export default function OrdersTable() {
       <div className="d-flex justify-content-between mb-3">
         <h3>Incoming Orders</h3>
         <div className="btn-group">
-          <button
-            className={`btn ${
-              filterStatus === null ? "btn-primary" : "btn-outline-primary"
-            }`}
-            onClick={() => setFilterStatus(null)}
-          >
-            All
-          </button>
-          <button
-            className={`btn ${
-              filterStatus === ORDER_STATUSES.PENDING
-                ? "btn-primary"
-                : "btn-outline-primary"
-            }`}
-            onClick={() => setFilterStatus(ORDER_STATUSES.PENDING)}
-          >
-            {ORDER_STATUSES.PENDING}
-          </button>
-          <button
-            className={`btn ${
-              filterStatus === ORDER_STATUSES.PREPARING
-                ? "btn-primary"
-                : "btn-outline-primary"
-            }`}
-            onClick={() => setFilterStatus(ORDER_STATUSES.PREPARING)}
-          >
-            {ORDER_STATUSES.PREPARING}
-          </button>
-          <button
-            className={`btn ${
-              filterStatus === ORDER_STATUSES.PREPARED
-                ? "btn-primary"
-                : "btn-outline-primary"
-            }`}
-            onClick={() => setFilterStatus(ORDER_STATUSES.PREPARED)}
-          >
-            {ORDER_STATUSES.PREPARED}
-          </button>
+          {ORDER_FILTER_MAPPING.map((filter) => (
+            <button
+              key={filter.label}
+              className={`btn ${
+                filterStatus === filter.statuses
+                  ? filter.activeClass
+                  : filter.inactiveClass
+              }`}
+              onClick={() => setFilterStatus(filter.statuses)}
+            >
+              {filter.label}
+            </button>
+          ))}
         </div>
       </div>
 

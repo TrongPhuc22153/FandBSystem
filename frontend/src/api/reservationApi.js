@@ -23,13 +23,13 @@ export const fetchReservations = async ({ token, page = 0, size = 10, field = "s
   params.append('size', size.toString());
   params.append('field', field.toString());
   params.append('direction', direction.toString());
-  if (status) {
+  if (status !== null && status!==undefined) {
     params.append('status', status.toString());
   }
-  if (startDate) {
+  if (startDate !== null && startDate!== undefined) {
     params.append('startDate', startDate.toString());
   }
-  if (endDate) {
+  if (endDate !== null && endDate !== undefined) {
     params.append('endDate', endDate.toString());
   }
 

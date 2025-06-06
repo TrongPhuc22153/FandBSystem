@@ -27,17 +27,8 @@ function AdminReservationDetailsPage() {
   }
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        top: "12%",
-        left: "50%",
-        transform: "translate(-50%, 0)",
-      }}
-    >
-      <div className="shadow rounded">
-        <ReservationDetails reservation={reservationData} />
-      </div>
+    <div className="d-flex justify-content-center p-4">
+      <ReservationDetails reservation={reservationData} />
     </div>
   );
 }

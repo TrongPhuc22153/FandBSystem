@@ -23,6 +23,7 @@ import { TOPIC_KITCHEN } from "../../constants/webSocketEnpoint";
 import { formatDate } from "../../utils/datetimeUtils";
 import { hasRole } from "../../utils/authUtils";
 import { ROLES } from "../../constants/roles";
+import { RESERVATION_FILTER_MAPPING } from "../../constants/filter";
 
 export default function ReservationsTable() {
   const [searchParams] = useSearchParams();
@@ -34,14 +35,14 @@ export default function ReservationsTable() {
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
-  const [filterStatus, setFilterStatus] = useState(null);
+  const [filterStatus, setFilterStatus] = useState(RESERVATION_FILTER_MAPPING[0].statuses);
   const [selectedReservation, setSelectedReservation] = useState(null);
 
   const { data: reservationsData, mutate } = useReservations({
     status: filterStatus,
     page: currentPage,
     sortDirection: SORTING_DIRECTIONS.ASC,
-    sortField: "startTime",
+    sortField: "date",
   });
   const reservations = useMemo(
     () => reservationsData?.content || [],
@@ -193,44 +194,19 @@ export default function ReservationsTable() {
       <div className="d-flex justify-content-between mb-3">
         <h3>Reservations</h3>
         <div className="btn-group">
-          <button
-            className={`btn ${
-              filterStatus === null ? "btn-primary" : "btn-outline-primary"
-            }`}
-            onClick={() => setFilterStatus(null)}
-          >
-            All
-          </button>
-          <button
-            className={`btn ${
-              filterStatus === RESERVATION_STATUSES.PENDING
-                ? "btn-primary"
-                : "btn-outline-primary"
-            }`}
-            onClick={() => setFilterStatus(RESERVATION_STATUSES.PENDING)}
-          >
-            {RESERVATION_STATUSES.PENDING}
-          </button>
-          <button
-            className={`btn ${
-              filterStatus === RESERVATION_STATUSES.PREPARING
-                ? "btn-primary"
-                : "btn-outline-primary"
-            }`}
-            onClick={() => setFilterStatus(RESERVATION_STATUSES.PREPARING)}
-          >
-            {RESERVATION_STATUSES.PREPARING}
-          </button>
-          <button
-            className={`btn ${
-              filterStatus === RESERVATION_STATUSES.PREPARED
-                ? "btn-primary"
-                : "btn-outline-primary"
-            }`}
-            onClick={() => setFilterStatus(RESERVATION_STATUSES.PREPARED)}
-          >
-            {RESERVATION_STATUSES.PREPARED}
-          </button>
+          {RESERVATION_FILTER_MAPPING.map((filter) => (
+            <button
+              key={filter.label}
+              className={`btn ${
+                filterStatus === filter.statuses
+                  ? filter.activeClass
+                  : filter.inactiveClass
+              }`}
+              onClick={() => setFilterStatus(filter.statuses)}
+            >
+              {filter.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -260,7 +236,7 @@ export default function ReservationsTable() {
               sortedReservations.map((reservation) => (
                 <tr
                   key={reservation.reservationId}
-                  className={`${styles.orderRow} cursor-pointer`} // Changed to orderRow to match OrdersTable
+                  className={`${styles.orderRow} cursor-pointer`}
                   onClick={() => handleReservationClick(reservation)}
                   style={{ cursor: "pointer" }}
                 >

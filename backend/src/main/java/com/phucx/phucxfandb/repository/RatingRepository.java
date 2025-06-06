@@ -32,18 +32,25 @@ public interface RatingRepository extends JpaRepository<Rating, String> {
     BigDecimal findAverageRatingByProductId(long productId);
 
     @Query("""
-        SELECT r FROM Rating r \
-            LEFT JOIN r.product p \
-            LEFT JOIN OrderDetail oi ON oi.product = p \
-            LEFT JOIN oi.order o ON o.customer = r.customer \
-            LEFT JOIN MenuItem mi ON mi.product = p \
-            LEFT JOIN mi.reservation res ON res.customer = r.customer \
-                AND res.customer.profile.user.username = :username \
-        WHERE p.productId = :productId \
-            AND ( \
-                (o.status = :orderStatus AND o.customer.profile.user.username = :username) \
-                OR (res.status = :reservationStatus AND res.customer.profile.user.username = :username) \
-            ) \
+        SELECT r FROM Rating r
+        LEFT JOIN r.product p
+        LEFT JOIN OrderDetail oi ON oi.product = p
+        LEFT JOIN oi.order o ON o.customer = r.customer
+        LEFT JOIN o.payment payOrder
+        LEFT JOIN MenuItem mi ON mi.product = p
+        LEFT JOIN mi.reservation res ON res.customer = r.customer
+            AND res.customer.profile.user.username = :username
+        LEFT JOIN res.payment payRes
+        WHERE p.productId = :productId
+          AND (
+              (o.status = :orderStatus
+               AND o.customer.profile.user.username = :username
+               AND payOrder.status = 'SUCCESSFUL')
+              OR
+              (res.status = :reservationStatus
+               AND res.customer.profile.user.username = :username
+               AND payRes.status = 'SUCCESSFUL')
+          )
         """)
     Optional<Rating> findOptionalProductRatingUsername(
             @Param("username") String username,

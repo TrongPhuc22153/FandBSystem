@@ -3,8 +3,6 @@ package com.phucx.phucxfandb.service.report.impl;
 import com.phucx.phucxfandb.dto.response.AnalyticDTO;
 import com.phucx.phucxfandb.dto.response.MetricDTO;
 import com.phucx.phucxfandb.dto.response.ReportDTO;
-import com.phucx.phucxfandb.entity.TableEntity;
-import com.phucx.phucxfandb.entity.TableOccupancy;
 import com.phucx.phucxfandb.enums.PaymentStatus;
 import com.phucx.phucxfandb.repository.*;
 import com.phucx.phucxfandb.service.report.ReportService;
@@ -19,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.sql.Date;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,34 +26,28 @@ public class ReportServiceImpl implements ReportService {
     private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
     private final ReservationRepository reservationRepository;
-    private final TableOccupancyRepository tableOccupancyRepository;
-    private final TableRepository tableRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public ReportDTO getReport(LocalDate startDate, LocalDate endDateTime) {
-        long totalOrders = countOrdersOnDate(startDate.atStartOfDay(), endDateTime.atStartOfDay().plusDays(1));
-        long totalReservations = countReservationsOnDate(startDate, endDateTime);
-        long totalRevenue = sumPaymentsOnDate(startDate.atStartOfDay(), endDateTime.atStartOfDay().plusDays(1));
-        long totalOccupiedTables = countOccupiedTables(LocalDate.now());
+    public ReportDTO getReport(LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atStartOfDay().plusDays(1);
+
+        long totalOrders = countOrdersOnDate(startDateTime, endDateTime);
+        long totalReservations = countReservationsOnDate(startDate, endDate);
+        long totalRevenue = sumPaymentsOnDate(startDateTime, endDateTime);
+        BigDecimal averageOrderValue = calculateAverageOrderValue(startDateTime, endDateTime);
 
         return ReportDTO.builder()
                 .totalOrders(totalOrders)
                 .totalRevenue(totalRevenue)
                 .totalReservations(totalReservations)
-                .totalOccupiedTables(totalOccupiedTables)
+                .averageOrderValue(averageOrderValue)
                 .build();
     }
 
-    private Long countOccupiedTables(LocalDate date) {
-        List<TableEntity> allTables = tableRepository.findAll();
-        List<String> tableIds = allTables.stream()
-                .map(TableEntity::getTableId)
-                .collect(Collectors.toList());
-
-        List<TableOccupancy> activeOccupancies = tableOccupancyRepository
-                .findActiveOccupancies(date, tableIds);
-        return (long) activeOccupancies.size();
+    private BigDecimal calculateAverageOrderValue(LocalDateTime startDateTime, LocalDateTime endDateTime){
+        return orderRepository.calculateAverageOrderValueWithPaymentStatus(startDateTime, endDateTime, PaymentStatus.SUCCESSFUL);
     }
 
     private Long countOrdersOnDate(LocalDateTime startDateTime, LocalDateTime endDateTime) {

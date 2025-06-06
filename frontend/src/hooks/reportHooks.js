@@ -3,7 +3,7 @@ import { fetchMetrics, fetchReport } from "../api/reportApi";
 import { REPORTS_ENDPOINT, REPORTS_METRICS_ENDPOINT } from "../constants/api";
 import { useAuth } from "../context/AuthContext";
 
-export const useReport = (startDate, endDate) => {
+export const useReport = ({ startDate, endDate }) => {
     const { token } = useAuth();
 
     const swrKey = token ? [REPORTS_ENDPOINT, startDate, endDate] : null;

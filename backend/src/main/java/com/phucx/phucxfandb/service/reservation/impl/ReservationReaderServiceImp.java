@@ -49,7 +49,7 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
         );
         Specification<Reservation> spec = Specification
                 .where(ReservationSpecification.hasCustomerUsername(username))
-                .and(ReservationSpecification.hasStatus(params.getStatus()))
+                .and(ReservationSpecification.hasStatuses(params.getStatus()))
                 .and(ReservationSpecification.hasDate(params.getStartDate(), params.getEndDate()));
 
         return reservationRepository.findAll(spec, pageable)
@@ -63,7 +63,7 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
                 Sort.by(params.getDirection(), params.getField())
         );
         Specification<Reservation> spec = Specification
-                .where(ReservationSpecification.hasStatus(params.getStatus()))
+                .where(ReservationSpecification.hasStatuses(params.getStatus()))
                 .and(ReservationSpecification.hasDate(params.getStartDate(), params.getEndDate()));
 
         return reservationRepository.findAll(spec, pageable)

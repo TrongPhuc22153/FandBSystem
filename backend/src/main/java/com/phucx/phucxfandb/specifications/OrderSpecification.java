@@ -5,19 +5,27 @@ import com.phucx.phucxfandb.enums.OrderType;
 import com.phucx.phucxfandb.entity.Order;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class OrderSpecification {
 
     public static Specification<Order> hasCustomerUsername(String username){
         if(username==null) return null;
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("customer").get("profile").get("user").get("username"), username);
     }
-    public static Specification<Order> hasStatus(OrderStatus status){
-        if(status==null) return null;
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("status"), status);
+    public static Specification<Order> hasStatuses(List<OrderStatus> statuses){
+        if(statuses==null) return null;
+        return (root, query, criteriaBuilder) -> (root.get("status").in(statuses));
     }
     public static Specification<Order> hasType(OrderType type){
         if(type==null) return null;
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type"), type);
+    }
+
+    public static Specification<Order> hasOrderDateBetween(LocalDate startDate, LocalDate endDate){
+        if(startDate==null || endDate==null) return null;
+        return ((root, query, criteriaBuilder) -> root.get("orderDate").in(startDate, endDate));
     }
 
 

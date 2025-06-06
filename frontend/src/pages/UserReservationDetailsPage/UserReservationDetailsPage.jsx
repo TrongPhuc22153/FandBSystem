@@ -114,15 +114,7 @@ export default function UserReservationDetailsPage() {
   }
 
   return (
-    <div
-      className="shadow rounded"
-      style={{
-        position: "absolute",
-        top: "12%",
-        left: "50%",
-        transform: "translate(-50%, 0)",
-      }}
-    >
+    <div className="d-flex justify-content-center p-4">
       <ReservationDetails
         reservation={reservationData}
         processLoading={processLoading}
