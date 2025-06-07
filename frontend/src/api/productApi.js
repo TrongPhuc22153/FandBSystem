@@ -20,7 +20,7 @@ export const fetchProducts = async ({
     params.append("search", search.toString());
   }
   if (isFeatured !== undefined && isFeatured !== null) {
-    params.append("isFeature", isFeatured.toString())
+    params.append("isFeatured", isFeatured.toString())
   }
   if (isDeleted !== undefined && isDeleted !== null) {
     params.append("isDeleted", isDeleted.toString())

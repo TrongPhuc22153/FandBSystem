@@ -6,7 +6,6 @@ import com.phucx.phucxfandb.service.image.ImageReaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Slf4j
-@Primary
 @Service
 @RequiredArgsConstructor
 public class ImageReaderServiceImpl implements ImageReaderService {
