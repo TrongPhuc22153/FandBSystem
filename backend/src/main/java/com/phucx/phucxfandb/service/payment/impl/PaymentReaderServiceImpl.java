@@ -3,6 +3,7 @@ package com.phucx.phucxfandb.service.payment.impl;
 import com.phucx.phucxfandb.dto.request.PaymentRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.PaymentDTO;
 import com.phucx.phucxfandb.entity.Payment;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.mapper.PaymentMapper;
 import com.phucx.phucxfandb.repository.PaymentRepository;
@@ -65,5 +66,11 @@ public class PaymentReaderServiceImpl implements PaymentReaderService {
         return paymentRepository.findById(id)
                 .map(paymentMapper::toPaymentDetail)
                 .orElseThrow(() -> new NotFoundException(Payment.class.getSimpleName(), "id", id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByPayPalOrderIdAndStatus(String paypalOrderId, PaymentStatus status) {
+        return paymentRepository.existsByPaypalOrderIdAndStatus(paypalOrderId, status);
     }
 }

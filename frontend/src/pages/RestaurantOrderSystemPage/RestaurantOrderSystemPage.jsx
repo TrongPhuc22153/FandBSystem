@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import MenuCategories from "../../components/MenuCategories/MenuCategories";
-import FoodItems from "../../components/FoodItems/FoodItems";
+import FoodItem from "../../components/FoodItem/FoodItem";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import styles from "./RestaurantOrderSystemPage.module.css";
 import { useProducts } from "../../hooks/productHooks";
@@ -354,7 +354,11 @@ export default function RestaurantOrderSystem() {
               />
               <hr className={styles.divider} />
               <div>
-                <FoodItems items={menuItems} onAddToOrder={addToOrder} />
+                <div className={styles.foodGrid}>
+                  {menuItems.map(food => (
+                    <FoodItem food={food} onAddToOrder={addToOrder}/>
+                  ))}
+                </div>
                 <Pagination currentPage={currentPage} totalPages={totalPages} />
               </div>
             </div>

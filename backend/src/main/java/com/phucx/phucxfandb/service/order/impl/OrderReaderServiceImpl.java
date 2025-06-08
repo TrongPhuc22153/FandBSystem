@@ -1,5 +1,6 @@
 package com.phucx.phucxfandb.service.order.impl;
 
+import com.phucx.phucxfandb.entity.OrderDetail;
 import com.phucx.phucxfandb.enums.OrderType;
 import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.dto.request.OrderRequestParamsDTO;
@@ -8,6 +9,7 @@ import com.phucx.phucxfandb.entity.Order;
 import com.phucx.phucxfandb.exception.NotFoundException;
 import com.phucx.phucxfandb.mapper.OrderMapper;
 import com.phucx.phucxfandb.repository.OrderRepository;
+import com.phucx.phucxfandb.service.image.ImageReaderService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
 import com.phucx.phucxfandb.specifications.OrderSpecification;
 import com.phucx.phucxfandb.utils.RoleUtils;
@@ -28,23 +30,26 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OrderReaderServiceImpl implements OrderReaderService {
+    private final ImageReaderService imageReaderService;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
 
     @Override
     @Transactional(readOnly = true)
     public OrderDTO getOrder(String orderId) {
-        return orderRepository.findById(orderId)
-                .map(orderMapper::toOrderDTO)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
+        order.getOrderDetails().forEach(this::setImageUrl);
+        return orderMapper.toOrderDTO(order);
     }
 
     @Override
     @Transactional(readOnly = true)
     public OrderDTO getOrder(String orderId, OrderType type) {
-        return orderRepository.findByOrderIdAndType(orderId, type)
-                .map(orderMapper::toOrderDTO)
+        Order order = orderRepository.findByOrderIdAndType(orderId, type)
                 .orElseThrow(()-> new NotFoundException(Order.class.getSimpleName(), "id", orderId));
+        order.getOrderDetails().forEach(this::setImageUrl);
+        return orderMapper.toOrderDTO(order);
     }
 
     @Override
@@ -99,5 +104,12 @@ public class OrderReaderServiceImpl implements OrderReaderService {
                 .and(OrderSpecification.hasType(params.getType()));
         return orderRepository.findAll(spec, pageable)
                 .map(orderMapper::toOrderListEntryDTO);
+    }
+
+    private void setImageUrl(OrderDetail item){
+        if(!(item.getProduct().getPicture()==null || item.getProduct().getPicture().isEmpty())){
+            String imageUrl = imageReaderService.getImageUrl(item.getProduct().getPicture());
+            item.getProduct().setPicture(imageUrl);
+        }
     }
 }

@@ -63,7 +63,7 @@ public class PaymentUpdateServiceImpl implements PaymentUpdateService {
 
     @Override
     @Transactional
-    public void updatePayment(String paymentId, String methodName, PaymentStatus status) {
+    public Payment updatePayment(String paymentId, String methodName, PaymentStatus status) {
         PaymentMethod method = paymentMethodReaderService.getPaymentMethodEntityByName(methodName);
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new NotFoundException(
@@ -72,6 +72,6 @@ public class PaymentUpdateServiceImpl implements PaymentUpdateService {
                         paymentId));
         payment.setMethod(method);
         payment.setStatus(status);
-        paymentRepository.save(payment);
+        return paymentRepository.save(payment);
     }
 }

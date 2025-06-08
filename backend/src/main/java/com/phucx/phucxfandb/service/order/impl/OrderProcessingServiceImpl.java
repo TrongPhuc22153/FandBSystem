@@ -3,6 +3,7 @@ package com.phucx.phucxfandb.service.order.impl;
 import com.phucx.phucxfandb.constant.*;
 import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
+import com.phucx.phucxfandb.dto.response.PaymentDTO;
 import com.phucx.phucxfandb.entity.Order;
 import com.phucx.phucxfandb.entity.OrderDetail;
 import com.phucx.phucxfandb.entity.Payment;
@@ -217,10 +218,33 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
                 .toList();
         OrderDTO newOrder = orderUpdateService.createOrderCustomer(username, requestOrderDTO);
 
-        if(newOrder.getPayment().getStatus().equals(PaymentStatus.SUCCESSFUL)){
+        PaymentDTO payment = newOrder.getPayment();
+        OrderType orderType = newOrder.getType();
+        boolean shouldRemoveCart = isShouldRemoveCart(payment, orderType);
+
+        if(shouldRemoveCart){
             cartUpdateService.removeCartItems(username, productIds);
         }
         return newOrder;
+    }
+
+    private static boolean isShouldRemoveCart(PaymentDTO payment, OrderType orderType) {
+        String method = payment.getMethod();
+        PaymentStatus status = payment.getStatus();
+        boolean shouldRemoveCart = false;
+
+        if (PaymentMethodConstants.PAYPAL.equalsIgnoreCase(method) && status == PaymentStatus.SUCCESSFUL) {
+            shouldRemoveCart = true;
+        } else if (PaymentMethodConstants.COD.equalsIgnoreCase(method)
+                && (status == PaymentStatus.PENDING || status == PaymentStatus.SUCCESSFUL)
+                && orderType == OrderType.TAKE_AWAY) {
+            shouldRemoveCart = true;
+        } else if (PaymentMethodConstants.CASH.equalsIgnoreCase(method)
+                && status == PaymentStatus.SUCCESSFUL
+                && orderType == OrderType.DINE_IN) {
+            shouldRemoveCart = true;
+        }
+        return shouldRemoveCart;
     }
 
     @Override

@@ -36,6 +36,7 @@ public class NotificationUpdateServiceImpl implements NotificationUpdateService 
     private final RoleReaderService roleReaderService;
 
     @Override
+    @Transactional
     public NotificationUserDTO createOrderNotification(String username, String orderId, RequestNotificationDTO requestNotificationDTO) {
         Topic topic = topicReaderService.getTopicEntity(requestNotificationDTO.getTopic());
         Order order = orderReaderService.getOrderEntity(orderId);
@@ -52,6 +53,7 @@ public class NotificationUpdateServiceImpl implements NotificationUpdateService 
     }
 
     @Override
+    @Transactional
     public NotificationUserDTO createReservationNotification(String username, String reservationId, RequestNotificationDTO requestNotificationDTO) {
         Topic topic = topicReaderService.getTopicEntity(requestNotificationDTO.getTopic());
         Reservation reservation = reservationReaderService.getReservationEntity(reservationId);

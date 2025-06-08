@@ -11,7 +11,7 @@ export default function Step2ProductSelection({ data, updateData, onNext, onBack
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const { data: productsData, isLoading, error } = useProducts({
     page: currentPage,
-    search: debouncedSearchQuery,
+    search: debouncedSearchQuery
   });
   const products = useMemo(() => productsData?.content || [], [productsData]);
   const totalPages = useMemo(() => productsData?.totalPages || 0, [productsData]);

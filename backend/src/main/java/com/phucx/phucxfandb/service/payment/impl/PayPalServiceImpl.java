@@ -3,20 +3,23 @@ package com.phucx.phucxfandb.service.payment.impl;
 import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
 import com.paypal.orders.*;
+import com.paypal.orders.Order;
 import com.phucx.phucxfandb.constant.PayPalConstants;
-import com.phucx.phucxfandb.entity.TableOccupancy;
+import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.enums.OrderType;
 import com.phucx.phucxfandb.enums.PaymentStatus;
-import com.phucx.phucxfandb.entity.Payment;
-import com.phucx.phucxfandb.entity.Reservation;
+import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.enums.TableOccupancyStatus;
 import com.phucx.phucxfandb.exception.PaymentException;
+import com.phucx.phucxfandb.service.cart.CartUpdateService;
 import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
 import com.phucx.phucxfandb.service.payment.PaymentReaderService;
 import com.phucx.phucxfandb.service.payment.PaymentUpdateService;
 import com.phucx.phucxfandb.service.payment.PayPalService;
 import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
+import com.phucx.phucxfandb.utils.CartUtils;
+import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,7 @@ public class PayPalServiceImpl implements PayPalService {
     private final TableOccupancyUpdateService tableOccupancyUpdateService;
     private final PaymentUpdateService paymentUpdateService;
     private final PaymentReaderService paymentReaderService;
+    private final CartUpdateService cartUpdateService;
     private final PayPalHttpClient client;
 
     @Override
@@ -112,10 +116,25 @@ public class PayPalServiceImpl implements PayPalService {
     @Override
     @Transactional
     public void completeOrder(Authentication authentication, String paypalOrderId) {
+        if(paymentReaderService.existsByPayPalOrderIdAndStatus(paypalOrderId, PaymentStatus.SUCCESSFUL)){
+            return;
+        }
+
         this.handlePaymentCompletion(paypalOrderId);
         Payment payment = paymentReaderService.getPaymentEntityByPaypalOrderId(paypalOrderId);
         if(payment.getOrder()!=null){
             com.phucx.phucxfandb.entity.Order order = payment.getOrder();
+
+            List<RoleName> roles = RoleUtils.getRoles(authentication.getAuthorities());
+            if(roles.contains(RoleName.CUSTOMER)){
+                if(CartUtils.isShouldRemoveCart(payment, order.getType())){
+                    List<Long> productIds = order.getOrderDetails().stream()
+                            .map(OrderDetail::getProduct)
+                            .map(Product::getProductId)
+                            .toList();
+                    cartUpdateService.removeCartItems(authentication.getName(), productIds);
+                }
+            }
 
             if(OrderType.DINE_IN.equals(order.getType())){
                 TableOccupancy tableOccupancy = order.getTableOccupancy();

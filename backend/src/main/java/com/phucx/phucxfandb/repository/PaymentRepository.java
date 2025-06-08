@@ -47,4 +47,6 @@ public interface PaymentRepository extends JpaRepository<Payment, String>, JpaSp
             @Param("startOfWeek") LocalDateTime startOfWeek,
             @Param("endOfWeek") LocalDateTime endOfWeek,
             @Param("status") PaymentStatus status);
+
+    boolean existsByPaypalOrderIdAndStatus(String paypalOrderId, PaymentStatus status);
 }

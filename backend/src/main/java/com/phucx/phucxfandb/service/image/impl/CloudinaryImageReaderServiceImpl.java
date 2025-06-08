@@ -29,7 +29,6 @@ public class CloudinaryImageReaderServiceImpl implements ImageReaderService {
         try {
             Map resource = cloudinary.api().resource(imageName, ObjectUtils.asMap("resource_type", "image"));
             String format = (String) resource.get("format");
-            log.info("Retrieved MIME type for image {}: image/{}", imageName, format);
             return "image/" + format; // e.g., image/jpeg, image/png
         } catch (Exception e) {
             log.error("Failed to retrieve MIME type for image {}: {}", imageName, e.getMessage());
@@ -44,13 +43,11 @@ public class CloudinaryImageReaderServiceImpl implements ImageReaderService {
         }
 
         try {
-            String url = cloudinary.url()
+            return cloudinary.url()
                     .resourceType("image")
                     .publicId(imageName)
-                    .secure(true) // Use HTTPS
+                    .secure(true)
                     .generate();
-            log.info("Generated URL for image {}: {}", imageName, url);
-            return url;
         } catch (Exception e) {
             log.error("Failed to generate URL for image {}: {}", imageName, e.getMessage());
             throw new RuntimeException("Failed to generate URL for image: " + imageName, e);
@@ -65,9 +62,7 @@ public class CloudinaryImageReaderServiceImpl implements ImageReaderService {
 
         try {
             String url = getImageUrl(imageName);
-            InputStream inputStream = new URL(url).openStream();
-            log.info("Retrieved InputStream for image {}", imageName);
-            return inputStream;
+            return new URL(url).openStream();
         } catch (IOException e) {
             log.error("Failed to retrieve image {}: {}", imageName, e.getMessage());
             throw new IOException("Failed to retrieve image: " + imageName, e);

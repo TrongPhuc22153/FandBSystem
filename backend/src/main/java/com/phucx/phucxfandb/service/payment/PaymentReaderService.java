@@ -3,6 +3,7 @@ package com.phucx.phucxfandb.service.payment;
 import com.phucx.phucxfandb.dto.request.PaymentRequestParamsDTO;
 import com.phucx.phucxfandb.dto.response.PaymentDTO;
 import com.phucx.phucxfandb.entity.Payment;
+import com.phucx.phucxfandb.enums.PaymentStatus;
 import org.springframework.data.domain.Page;
 
 public interface PaymentReaderService {
@@ -11,4 +12,6 @@ public interface PaymentReaderService {
 
     Page<PaymentDTO> getPayments(PaymentRequestParamsDTO params);
     PaymentDTO getPayment(String id);
+
+    boolean existsByPayPalOrderIdAndStatus(String paypalOrderId, PaymentStatus status);
 }

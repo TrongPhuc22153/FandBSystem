@@ -7,4 +7,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, String>{
 
+    boolean existsByOrderOrderIdAndTitle(String orderId, String title);
+
+    boolean existsByReservationReservationIdAndTitle(String reservationId, String title);
+
 }

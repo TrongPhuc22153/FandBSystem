@@ -120,6 +120,7 @@ export default function OrdersTable() {
       if (!newNotification?.id) {
         return;
       }
+      mutate();
     } catch (error) {
       console.error("Error processing notification:", error);
     }

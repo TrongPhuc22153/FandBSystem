@@ -2,7 +2,7 @@ import { useCallback, useState, useEffect } from "react";
 import { useCart, useCartActions } from "../../hooks/cartHooks";
 import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { getImageSrc, getPrimaryProductImage } from "../../utils/imageUtils";
+import { getImageSrc } from "../../utils/imageUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useModal } from "../../context/ModalContext";
@@ -357,14 +357,14 @@ const ShoppingCart = () => {
             <div className="col" style={{ paddingLeft: "0" }}>
               ITEMS {selectedItems.length}
             </div>
-            <div className="col text-right">&euro; {totalPrice.toFixed(2)}</div>
+            <div className="col text-right">$ {totalPrice.toFixed(2)}</div>
           </div>
           <div
             className="row"
             style={{ borderTop: "1px solid rgba(0,0,0,.1)", padding: "2vh 0" }}
           >
             <div className="col">TOTAL PRICE</div>
-            <div className="col text-right">&euro; {total.toFixed(2)}</div>
+            <div className="col text-right">$ {total.toFixed(2)}</div>
           </div>
           <button className="btn btn-dark" onClick={handleClickCheckout} disabled={clearLoading || selectedItems.length === 0}>
             CHECKOUT
