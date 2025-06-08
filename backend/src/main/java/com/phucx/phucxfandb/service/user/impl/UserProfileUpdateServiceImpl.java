@@ -40,7 +40,7 @@ public class UserProfileUpdateServiceImpl implements UserProfileUpdateService {
     private void updateImage(RequestUserProfileDTO requestUserProfileDTO, String existingImage){
         if(requestUserProfileDTO.getPicture()!=null && !requestUserProfileDTO.getPicture().isEmpty()){
             String newImageName = ImageUtils.extractImageNameFromUrl(requestUserProfileDTO.getPicture());
-            if(existingImage != null){
+            if(existingImage != null && !existingImage.isBlank()){
                 if(!newImageName.equalsIgnoreCase(existingImage)){
                     imageUpdateService.removeImages(List.of(existingImage));
                     requestUserProfileDTO.setPicture(newImageName);

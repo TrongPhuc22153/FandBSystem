@@ -58,7 +58,7 @@ public class JwtEmailServiceImpl implements JwtEmailService {
         Claims claims = JwtUtils.extractAllClaims(token, JwtUtils.getSecretKey(jwtSecretKey));
 
         Date expiration = claims.getExpiration();
-        if(expiration.after(new Date())){
+        if(!expiration.after(new Date())){
             throw new InvalidTokenException("Token is expired");
         }
 

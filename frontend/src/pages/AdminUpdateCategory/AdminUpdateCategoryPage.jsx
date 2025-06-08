@@ -93,6 +93,7 @@ function AdminUpdateCategoryPage() {
         message: "Add images to upload!",
         variant: "danger",
       });
+      setFieldErrors({ image: ["Image is required"] });
       return;
     }
 
@@ -101,8 +102,8 @@ function AdminUpdateCategoryPage() {
       return;
     }
     // upload image
-    const uploadedImageData = await handleUploadImage([uploadImage]);
-    if (!uploadedImageData) {
+    const uploadedImageData = uploadImage ? await handleUploadImage([uploadImage]) : null;
+    if (uploadImage && !uploadedImageData) {
       showNewAlert({
         message: "Fail to upload images!",
         variant: "danger",
@@ -114,7 +115,7 @@ function AdminUpdateCategoryPage() {
       categoryId: +id,
       categoryName: categoryDetails.categoryName,
       description: categoryDetails.description,
-      picture: uploadedImageData[0].imageUrl || imagePreview,
+      picture: uploadedImageData ? uploadedImageData[0].imageUrl : imagePreview,
     };
 
     const response = await handleUpdateCategory(id, data);

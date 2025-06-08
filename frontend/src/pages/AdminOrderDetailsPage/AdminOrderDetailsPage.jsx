@@ -31,7 +31,7 @@ function AdminOrderDetailsPage() {
   const orderType = orderData.type;
   const customer = orderData?.customer;
   const total = orderData.totalPrice;
-  const waitList = orderData?.waitList;
+  const tableOccupancy = orderData?.tableOccupancy;
   const paymentMethod = orderData.payment.method;
   const paymentStatus = orderData.payment.status;
 
@@ -45,7 +45,7 @@ function AdminOrderDetailsPage() {
       shippingCost={shippingCost}
       table={table}
       total={total}
-      waitList={waitList}
+      tableOccupancy={tableOccupancy}
       customer={customer}
       shippingAddress={shippingAddress}
       paymentMethod={paymentMethod}

@@ -41,7 +41,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendResetPassword(String toEmail) {
-        String token = jwtEmailService.generateToken(toEmail, JwtType.RESET_PASSWORD);
+        String token = jwtEmailService.generateToken(toEmail, JwtType.RESET_PASSWORD_EMAIL);
         String resetPasswordUrl = String.format("%s%s?token=%s", frontendUrl, resetPasswordUri, token);
         String message = String.format(EmailConstants.RESET_PASSWORD_TEXT_TEMPLATE, toEmail, resetPasswordUrl);
         this.sendMessage(toEmail, EmailConstants.RESET_PASSWORD_SUBJECT, message);

@@ -193,7 +193,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     @Transactional
     public ReservationDTO markReservationAsServed(Authentication authentication, String reservationId) {
         Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
-        var menuItemStatuses = EnumSet.of(MenuItemStatus.SERVED, MenuItemStatus.PREPARED);
+        var menuItemStatuses = EnumSet.of(MenuItemStatus.SERVED, MenuItemStatus.PREPARED, MenuItemStatus.CANCELED);
         for (MenuItem item : reservation.getMenuItems()) {
             if (!menuItemStatuses.contains(item.getStatus())) {
                 throw new IllegalStateException("There are still in process food");

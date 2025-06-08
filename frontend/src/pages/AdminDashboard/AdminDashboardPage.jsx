@@ -140,7 +140,7 @@ function AdminDashboardPage() {
           DATE_FILTER.find((f) => f.value === filter)?.label ||
           DATE_FILTER[0].label
         }`,
-        value: reportData.averageOrderValue,
+        value: (reportData.averageOrderValue || 0).toFixed(2),
         icon: faMoneyBillWave,
         bgColor: "#e0f7fa",
       },

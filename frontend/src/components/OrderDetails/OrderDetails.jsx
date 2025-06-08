@@ -20,7 +20,7 @@ const OrderDetail = ({
   total,
   orderType,
   shippingAddress,
-  waitList,
+  tableOccupancy,
   customer,
   paymentMethod,
   paymentStatus,
@@ -137,17 +137,17 @@ const OrderDetail = ({
         </div>
         <div className="row border rounded p-1 my-3">
           <div className="col-md-6 py-3">
-            {orderType === ORDER_TYPES.DINE_IN && waitList ? (
+            {orderType === ORDER_TYPES.DINE_IN && tableOccupancy ? (
               <div className="d-flex flex-column align-items-start">
                 <b>Dine-in Details</b>
                 <p className="text-justify pt-2">
-                  Table Number: {waitList.table.tableNumber}
+                  Table Number: {tableOccupancy.table.tableNumber}
                 </p>
                 <p className="text-justify">
-                  Location: {waitList.table.location}
+                  Location: {tableOccupancy.table.location}
                 </p>
                 <p className="text-justify">
-                  Capacity: {waitList.table.capacity}
+                  Capacity: {tableOccupancy.table.capacity}
                 </p>
               </div>
             ) : orderType === ORDER_TYPES.TAKE_AWAY && shippingAddress ? (
@@ -186,14 +186,14 @@ const OrderDetail = ({
                   </p>
                 </>
               )}
-              {orderType === ORDER_TYPES.DINE_IN && waitList && (
+              {orderType === ORDER_TYPES.DINE_IN && tableOccupancy && (
                 <>
                   <p className="text-justify pt-2">
-                    Name: {waitList.contactName}
+                    Name: {tableOccupancy.contactName}
                   </p>
-                  <p className="text-justify">Phone: {waitList.phone}</p>
+                  <p className="text-justify">Phone: {tableOccupancy.phone}</p>
                   <p className="text-justify">
-                    Party size: {waitList.partySize}
+                    Party size: {tableOccupancy.partySize}
                   </p>
                 </>
               )}

@@ -54,7 +54,7 @@ public class ProductUpdateServiceImpl implements ProductUpdateService {
 
         if(requestProductDTO.getPicture()!=null && !requestProductDTO.getPicture().isEmpty()){
             String newImageName = ImageUtils.extractImageNameFromUrl(requestProductDTO.getPicture());
-            if(product.getPicture() != null ){
+            if(product.getPicture() != null && !product.getPicture().isBlank() ){
                 if(!newImageName.equalsIgnoreCase(product.getPicture())){
                     imageUpdateService.removeImages(List.of(product.getPicture()));
                     requestProductDTO.setPicture(newImageName);

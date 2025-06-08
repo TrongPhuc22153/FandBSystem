@@ -39,7 +39,7 @@ public class CategoryUpdateServiceImpl implements CategoryUpdateService {
         // upload new image
         if(requestCategoryDTO.getPicture()!=null && !requestCategoryDTO.getPicture().isEmpty()){
             String newImageName = ImageUtils.extractImageNameFromUrl(requestCategoryDTO.getPicture());
-            if(existingCategory.getPicture() != null ){
+            if(existingCategory.getPicture() != null && !existingCategory.getPicture().isBlank() ){
                 if(!newImageName.equalsIgnoreCase(existingCategory.getPicture())){
                     imageUpdateService.removeImages(List.of(existingCategory.getPicture()));
                     requestCategoryDTO.setPicture(newImageName);

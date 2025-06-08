@@ -172,7 +172,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     @Transactional
     public OrderDTO markOrderAsServed(Authentication authentication, String orderId, OrderType type) {
         Order order = orderReaderService.getOrderEntity(orderId, type);
-        var orderItemStatuses = EnumSet.of(OrderItemStatus.SERVED, OrderItemStatus.PREPARED);
+        var orderItemStatuses = EnumSet.of(OrderItemStatus.SERVED, OrderItemStatus.PREPARED, OrderItemStatus.CANCELED);
         for (OrderDetail detail : order.getOrderDetails()) {
             if (!orderItemStatuses.contains(detail.getStatus())) {
                 throw new IllegalStateException("There are still in process food");
