@@ -1,0 +1,42 @@
+services:
+    frontend:
+        image: phucxfandbfrontend
+        container_name: phucxfandb_frontend
+        ports:
+            - "3000:80"
+        depends_on:
+            - backend
+    backend:
+        image: phucxfandbbackend
+        container_name: phucxfandb-backend
+        ports:
+            - "8080:8080"
+        environment:
+            JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+            MAIL_USERNAME: ${MAIL_USERNAME}
+            MAIL_PASSWORD: ${MAIL_PASSWORD}
+            CLOUDINARY_NAME: ${CLOUDINARY_NAME}
+            CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+            CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+            PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID}
+            PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET}
+            POSTGRESQL_USERNAME: user
+            POSTGRESQL_PASSWORD: mypassword
+            POSTGRESQL_URL: jdbc:postgresql://db:5432/phucfandb
+        depends_on:
+            - db
+    
+    db:
+        image: postgres:17.4-alpine
+        container_name: postgres-db
+        restart: always
+        environment:
+            POSTGRES_DB: phucfandb
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: mypassword
+        ports:
+            - "5434:5432"
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+volumes:
+    pgdata:

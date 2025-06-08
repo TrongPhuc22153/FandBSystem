@@ -1,5 +1,5 @@
-const API_BASE_URL = "http://localhost:8080";
-const WEBSOCKET_URL = "ws://localhost:8080/chat";
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL;
 export const WEBSOCKET_ENDPOINT = `${WEBSOCKET_URL}`;
 
 export const PRODUCTS_ENDPOINT = `${API_BASE_URL}/api/v1/products`;
