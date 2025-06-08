@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { getPrimaryProductImage } from "../../utils/imageUtils";
+import { getImageSrc, getPrimaryProductImage } from "../../utils/imageUtils";
 import { SHOP_URI } from "../../constants/routes";
 
 const CheckoutSummary = ({
@@ -35,7 +35,7 @@ const CheckoutSummary = ({
               {item.quantity}
             </span>
             <img
-              src={getPrimaryProductImage(item.product.images)}
+              src={getImageSrc(item.product.picture)}
               style={{ height: "96px", width: "96px" }}
               className="img-sm rounded border"
               alt={item.product.productName}

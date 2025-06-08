@@ -475,18 +475,6 @@ export default function TableManagement() {
               </div>
             </div>
           </div>
-
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <h2 className={styles.cardTitle}>Staff Assignments</h2>
-              <p className={styles.cardDescription}>
-                Manage waitstaff table assignments
-              </p>
-            </div>
-            <div className={styles.cardContent}>
-              <StaffAssignment staff={[]} tables={tables} />
-            </div>
-          </div>
         </div>
       </div>
     </div>

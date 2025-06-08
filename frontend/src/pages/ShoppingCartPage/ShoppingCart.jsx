@@ -2,7 +2,7 @@ import { useCallback, useState, useEffect } from "react";
 import { useCart, useCartActions } from "../../hooks/cartHooks";
 import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { getPrimaryProductImage } from "../../utils/imageUtils";
+import { getImageSrc, getPrimaryProductImage } from "../../utils/imageUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useModal } from "../../context/ModalContext";
@@ -296,7 +296,7 @@ const ShoppingCart = () => {
                   <div className="col-2">
                     <img
                       className="img-icon rounded-2"
-                      src={getPrimaryProductImage(item.product.images)}
+                      src={getImageSrc(item.product.picture)}
                       alt={item.product.productName}
                     />
                   </div>
@@ -326,7 +326,7 @@ const ShoppingCart = () => {
                         </button>
                       </div>
                       <div className="col-4 text-right">
-                        &euro; {item.unitPrice.toFixed(2)}
+                        $ {item.unitPrice.toFixed(2)}
                       </div>
                       <div className="col-2">
                         <button
