@@ -59,7 +59,7 @@ const AdminOrdersPage = () => {
     },
     {
       key: "type",
-      title: "type",
+      title: "Type",
       render: (order) => (
         <Badge bg={ORDER_STATUS_CLASSES[order.type]}>{order.type}</Badge>
       ),

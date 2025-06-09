@@ -11,6 +11,8 @@ import {
   faKey,
   faCaretDown,
   faReceipt,
+  faTruck,
+  faKitchenSet,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -22,6 +24,7 @@ import {
   EMPLOYEE_NOTIFICATIONS_URI,
   EMPLOYEE_CHANGE_PASSWORD_URI,
   PAYMENT_CHECKOUT_URI,
+  EMPLOYEE_ORDERS_URI,
 } from "../../constants/routes";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
@@ -95,7 +98,7 @@ export const EmpoyeeSidebar = () => {
                 }`}
               >
                 <FontAwesomeIcon
-                  icon={faUtensils}
+                  icon={faKitchenSet}
                   className={styles["nav_icon"]}
                 />
                 <span className={styles["nav_name"]}>Kitchen</span>
@@ -128,6 +131,20 @@ export const EmpoyeeSidebar = () => {
                   className={styles["nav_icon"]}
                 />
                 <span className={styles["nav_name"]}>Payments</span>
+              </Link>
+              <Link
+                to={EMPLOYEE_ORDERS_URI}
+                className={`${styles["nav_link"]} ${
+                  location.pathname === EMPLOYEE_ORDERS_URI
+                    ? styles["active"]
+                    : ""
+                }`}
+              >
+                <FontAwesomeIcon
+                  icon={faUtensils}
+                  className={styles["nav_icon"]}
+                />
+                <span className={styles["nav_name"]}>Orders</span>
               </Link>
               <Link
                 to={EMPLOYEE_NOTIFICATIONS_URI}

@@ -13,6 +13,7 @@ const EMPLOYEE_PATH = "/employee"
 export const EMPLOYEE_PROFILE_URI = `${EMPLOYEE_PATH}/profile`;
 export const EMPLOYEE_PLACE_ORDERS_URI = `${EMPLOYEE_PATH}/orders/place`;
 export const EMPLOYEE_KITCHEN_URI = `${EMPLOYEE_PATH}/kitchen`;
+export const EMPLOYEE_ORDERS_URI = `${EMPLOYEE_PATH}/orders`
 export const EMPLOYEE_TABLES_URI = `${EMPLOYEE_PATH}/tables`;
 export const EMPLOYEE_NOTIFICATIONS_URI = `${EMPLOYEE_PATH}/notifications`;
 export const EMPLOYEE_CHANGE_PASSWORD_URI = `${EMPLOYEE_PATH}/password`;

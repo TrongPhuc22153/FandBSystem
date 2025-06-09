@@ -15,20 +15,43 @@ import { useAuth } from "../context/AuthContext";
 import { ORDERS_ENDPOINT } from "../constants/api";
 import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
-export const useOrders = ({ page = 0, size = 10, sortField = "orderDate", sortDirection = SORTING_DIRECTIONS.DESC, type, status, startDate, endDate } = {}) => {
+export const useOrders = ({
+  page = 0,
+  size = 10,
+  sortField = "orderDate",
+  sortDirection = SORTING_DIRECTIONS.DESC,
+  type,
+  status,
+  startDate,
+  endDate,
+} = {}) => {
   const { token } = useAuth();
-  return useSWR([ORDERS_ENDPOINT, token, page, size, sortField, sortDirection, type, status, startDate, endDate, token],
-    () => fetchOrders({
-      token: token,
-      page: page,
-      size: size,
-      field: sortField,
-      direction: sortDirection,
-      type: type,
-      status: status,
-      startDate: startDate,
-      endDate: endDate
-    })
+  return useSWR(
+    [
+      ORDERS_ENDPOINT,
+      token,
+      page,
+      size,
+      sortField,
+      sortDirection,
+      type,
+      status,
+      startDate,
+      endDate,
+      token,
+    ],
+    () =>
+      fetchOrders({
+        token: token,
+        page: page,
+        size: size,
+        field: sortField,
+        direction: sortDirection,
+        type: type,
+        status: status,
+        startDate: startDate,
+        endDate: endDate,
+      })
   );
 };
 
@@ -44,7 +67,6 @@ export const useOrder = ({ orderId, isRated } = {}) => {
 
   return useSWR(orderId ? `order-${orderId}` : null, fetcher);
 };
-
 
 export const useOrderActions = () => {
   const { token, error: authError } = useAuth();
@@ -75,7 +97,6 @@ export const useOrderActions = () => {
     setUpdateError(null);
     setUpdateSuccess(null);
   }, []);
-
 
   // --- Action Handlers ---
   const handlePlaceOrder = useCallback(
@@ -143,7 +164,7 @@ export const useOrderActions = () => {
           type,
           tableOccupancyId,
           orderDetails,
-          token
+          token,
         });
         setUpdateSuccess(response?.message || "Order updated successfully");
         return response;
@@ -228,7 +249,13 @@ export const useOrderItemActions = () => {
       setAddSuccess(null);
 
       try {
-        const response = await addOrderItem({ token, orderId, productId, quantity, specialInstruction });
+        const response = await addOrderItem({
+          token,
+          orderId,
+          productId,
+          quantity,
+          specialInstruction,
+        });
         setAddSuccess(response?.message || "Order item added successfully");
         return response;
       } catch (err) {
@@ -242,7 +269,13 @@ export const useOrderItemActions = () => {
   );
 
   const handleUpdateOrderItemQuantity = useCallback(
-    async ({ orderId, orderItemId, productId, quantity, specialInstruction }) => {
+    async ({
+      orderId,
+      orderItemId,
+      productId,
+      quantity,
+      specialInstruction,
+    }) => {
       if (!token) {
         setUpdateQuantityError(authError?.message || "Authentication required");
         return null;
@@ -260,7 +293,9 @@ export const useOrderItemActions = () => {
           quantity,
           specialInstruction,
         });
-        setUpdateQuantitySuccess(response?.message || "Order item quantity updated successfully");
+        setUpdateQuantitySuccess(
+          response?.message || "Order item quantity updated successfully"
+        );
         return response;
       } catch (err) {
         setUpdateQuantityError(err);
@@ -284,7 +319,9 @@ export const useOrderItemActions = () => {
 
       try {
         const response = await cancelOrderItem({ token, orderId, orderItemId });
-        setCancelSuccess(response?.message || "Order item cancelled successfully");
+        setCancelSuccess(
+          response?.message || "Order item cancelled successfully"
+        );
         return response;
       } catch (err) {
         setCancelError(err);
@@ -307,8 +344,15 @@ export const useOrderItemActions = () => {
       setUpdateStatusSuccess(null);
 
       try {
-        const response = await updateOrderItemStatus({ token, orderId, orderItemId, status });
-        setUpdateStatusSuccess(response?.message || "Order item status updated successfully");
+        const response = await updateOrderItemStatus({
+          token,
+          orderId,
+          orderItemId,
+          status,
+        });
+        setUpdateStatusSuccess(
+          response?.message || "Order item status updated successfully"
+        );
         return response;
       } catch (err) {
         setUpdateStatusError(err);

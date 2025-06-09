@@ -60,6 +60,7 @@ import PaymentCheckoutPage from "./pages/PaymentCheckoutPage/PaymentCheckoutPage
 import PaymentManagementPage from "./pages/PaymentManagementPage/PaymentManagementPage";
 import ReservationForm from "./components/Reservation/ReservationForm/ReservationForm";
 import ShiftSchedule from "./pages/ShiftSchedule/ShiftSchedule";
+import EmployeeOrdersPage from "./pages/EmployeeOrdersPage/EmployeeOrdersPage";
 
 function App() {
   return (
@@ -114,6 +115,7 @@ function App() {
                     <Route element={<EmployeeLayout />}>
                       <Route path="profile" element={<EmployeeProfilePage />} />
                       <Route path="orders/place" element={<RestaurantOrderSystem />}/>
+                      <Route path="orders" element={<EmployeeOrdersPage/>}/>
                       <Route path="tables" element={<TableManagement/>}/>
                       <Route path="kitchen" element={<EmployeeKitchenPage/>}/>
                       <Route path="notifications" element={<EmployeeNotificationPage/>}/>

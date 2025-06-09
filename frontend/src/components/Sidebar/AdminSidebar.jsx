@@ -3,12 +3,12 @@ import {
   faTachometerAlt,
   faUsers,
   faTags,
-  faListAlt,
   faCircle,
   faSignOutAlt,
   faCalendarCheck,
   faTable,
   faBowlFood,
+  faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import {
@@ -115,7 +115,7 @@ export const AdminSidebar = () => {
                 }`}
               >
                 <FontAwesomeIcon
-                  icon={faListAlt}
+                  icon={faUtensils}
                   className={styles["nav_icon"]}
                 />
                 <span className={styles["nav_name"]}>Orders</span>
