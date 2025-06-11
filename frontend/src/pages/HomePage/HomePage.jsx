@@ -1,7 +1,4 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { getPrimaryProductImage } from "../../utils/imageUtils";
 import { SHOP_URI } from "../../constants/routes";
@@ -10,8 +7,13 @@ import { useCategories } from "../../hooks/categoryHooks";
 import { useProducts } from "../../hooks/productHooks";
 import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import mainBg from "../../assets/images/main-bg.jpg";
+import Slider from "react-slick";
+import { useTranslation } from "react-i18next";
 
 const HomePage = () => {
+  const { t } = useTranslation();
+
   const {
     data: categoriesData,
     error: categoriesError,
@@ -37,6 +39,40 @@ const HomePage = () => {
 
   if (isLoadingCategories || isLoadingProducts) return <Loading />;
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
   return (
     <>
       <section
@@ -44,7 +80,7 @@ const HomePage = () => {
         className="container-fluid position-relative rounded-4"
         style={{
           height: "80vh",
-          backgroundImage: `url("/images/main-bg.jpg")`,
+          backgroundImage: `url(${mainBg})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -54,16 +90,16 @@ const HomePage = () => {
           <div className="row w-100">
             <div className="ms-5 col-md-4 text-lg-start position-absolute bottom-0 mb-5 pb-5">
               <h2 className="text-white text-5xl font-bold capitalize">
-                Fresh flavors
+                {t("home.freshFlavors")}
               </h2>
               <h2 className="text-white text-5xl font-bold capitalize">
-                made for you
+                {t("home.madeForYou")}
               </h2>
               <Link
                 to={SHOP_URI}
                 className="inline-block text-white uppercase py-2 px-4 rounded-md mt-4 fa-2x"
               >
-                Shop Now
+                {t("home.shopNow")}
               </Link>
             </div>
           </div>
@@ -95,40 +131,25 @@ const HomePage = () => {
           <div className="section-header d-flex justify-content-between mb-lg-5">
             <div className="heading">
               <h2 className="display-3 fw-bold text-capitalize text-black">
-                Featured Dishes
+                {t("home.featuredDishes")}
               </h2>
-            </div>
-            <div className="d-none d-lg-flex">
-              <div>
-                <FontAwesomeIcon
-                  icon={faArrowLeft}
-                  className="arrow-left p-0 p-lg-3 border border-2 me-3 rounded-circle"
-                  size="lg"
-                />
-              </div>
-              <div>
-                <FontAwesomeIcon
-                  icon={faArrowRight}
-                  className="arrow-right p-0 p-lg-3 border border-2 rounded-circle"
-                  size="lg"
-                />
-              </div>
             </div>
           </div>
           {productsError?.message ? (
             <ErrorDisplay message={productsError.message} />
           ) : (
-            <div className="row">
+            <Slider {...settings}>
               {featuredProducts.map((product) => (
-                <div className="col-lg-3 col-md-6 mb-5" key={product.productId}>
+                <div key={product.productId} className="px-2">
                   <ProductCard product={product} />
                 </div>
               ))}
-            </div>
+            </Slider>
           )}
         </div>
       </section>
     </>
   );
 };
+
 export default HomePage;
