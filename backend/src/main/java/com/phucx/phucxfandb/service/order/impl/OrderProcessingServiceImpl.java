@@ -183,7 +183,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
             throw new IllegalStateException("Order is not in a state that can be marked as served.");
         }
 
-        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.SERVED);
+        orderDetailService.updateOrderItemStatus(orderId, OrderItemStatus.PREPARED, OrderItemStatus.SERVED);
         return orderUpdateService.updateOrderStatus(orderId, type, OrderStatus.SERVED);
     }
 

@@ -54,7 +54,8 @@ public class PaymentReaderServiceImpl implements PaymentReaderService {
                 .and(PaymentSpecification.searchByOrderId(params.getOrderId()))
                 .and(PaymentSpecification.hasTableNumber(params.getTableNumber()))
                 .and(PaymentSpecification.searchByOrderPhone(params.getPhone()))
-                .and(PaymentSpecification.searchByOrderContactName(params.getContactName()));
+                .and(PaymentSpecification.searchByOrderContactName(params.getContactName()))
+                .and(PaymentSpecification.hasMethod(params.getMethod()));
 
         return paymentRepository.findAll(spec, pageable)
                 .map(paymentMapper::toPaymentEntryList);

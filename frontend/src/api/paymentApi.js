@@ -13,6 +13,7 @@ export const fetchPayments = async ({
   contactName,
   orderId,
   reservationId,
+  paymentMethod,
   status = PAYMENT_STATUSES.PENDING,
   token,
 }) => {
@@ -42,6 +43,9 @@ export const fetchPayments = async ({
   }
   if (tableNumber != null && tableNumber != undefined) {
     params.append("tableNumber", tableNumber.toString());
+  }
+  if (paymentMethod != null && paymentMethod != undefined) {
+    params.append("method", paymentMethod.toString())
   }
 
   const response = await fetch(`${PAYMENTS_ENDPOINT}?${params.toString()}`, {

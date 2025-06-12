@@ -47,7 +47,8 @@ export const useProducts = ({
         direction: direction,
         sortBy: sortBy,
         discontinued: discontinued,
-      })
+      }),
+    { keepPreviousData: true }
   );
 };
 

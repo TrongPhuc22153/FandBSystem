@@ -29,7 +29,6 @@ import {
 } from "../../hooks/reservationHooks";
 import { UpcommingReservations } from "../../components/WaitingList/UpcommingReservations";
 import { useOrderActions } from "../../hooks/orderHooks";
-import { StaffAssignment } from "../../components/StaffAssignment/StaffAssignment";
 
 export default function TableManagement() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -206,9 +205,13 @@ export default function TableManagement() {
 
   const onServedReservation = useCallback(
     async (reservationId) => {
-      await handleProcessReservation(reservationId, RESERVATION_ACTIONS.SERVED);
+      const res = await handleProcessReservation(reservationId, RESERVATION_ACTIONS.SERVED);
+      if (res) {
+        mutateTables();
+        mutateTableOccupancies();
+      }
     },
-    [handleProcessReservation]
+    [handleProcessReservation, mutateTables, mutateTableOccupancies]
   );
 
   const onCompleteReservation = useCallback(
@@ -233,9 +236,13 @@ export default function TableManagement() {
 
   const onServedOrder = useCallback(
     async (orderId, type) => {
-      await handleProcessOrder(orderId, ORDER_ACTIONS.SERVED, type);
+      const res = await handleProcessOrder(orderId, ORDER_ACTIONS.SERVED, type);
+      if (res) {
+        mutateTables();
+        mutateTableOccupancies();
+      }
     },
-    [handleProcessOrder]
+    [handleProcessOrder, mutateTableOccupancies, mutateTables]
   );
 
   const updateTableStatus = useCallback(

@@ -87,6 +87,7 @@ public class OrderReaderServiceImpl implements OrderReaderService {
                 .where(OrderSpecification.hasCustomerUsername(username))
                 .and(OrderSpecification.hasType(params.getType()))
                 .and(OrderSpecification.hasStatuses(params.getStatus()))
+                .and(OrderSpecification.searchOrders(params.getSearch()))
                 .and(OrderSpecification.hasOrderDateBetween(params.getStartDate(), params.getEndDate()));
 
         return orderRepository.findAll(spec, pageable)
@@ -101,7 +102,10 @@ public class OrderReaderServiceImpl implements OrderReaderService {
         );
         Specification<Order> spec = Specification
                 .where(OrderSpecification.hasStatuses(params.getStatus()))
-                .and(OrderSpecification.hasType(params.getType()));
+                .and(OrderSpecification.hasType(params.getType()))
+                .and(OrderSpecification.searchOrders(params.getSearch()))
+                .and(OrderSpecification.hasOrderDateBetween(params.getStartDate(), params.getEndDate()));
+
         return orderRepository.findAll(spec, pageable)
                 .map(orderMapper::toOrderListEntryDTO);
     }

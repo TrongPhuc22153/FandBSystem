@@ -21,6 +21,8 @@ import { useAuth } from "../../context/AuthContext";
 import { hasRole } from "../../utils/authUtils";
 import { ROLES } from "../../constants/roles";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Search } from "lucide-react";
+import { debounce } from "lodash";
 
 export default function EmployeeOrdersPage() {
   const navigate = useNavigate();
@@ -29,8 +31,31 @@ export default function EmployeeOrdersPage() {
   const [searchValue, setSearchValue] = useState(
     searchParams.get("searchValue") || ""
   );
-
+  const [filterType, setFilterType] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(currentPageFromURL);
+
+  const debouncedSearch = useCallback(
+    debounce((newSearchValue) => {
+      searchParams.set("searchValue", newSearchValue);
+      searchParams.set("page", "1");
+      setSearchParams(searchParams);
+      setCurrentPage(1);
+    }, 300),
+    [setSearchParams, searchParams]
+  );
+
+  const handleSearchInputChange = (e) => {
+    const newSearchValue = e.target.value;
+    setSearchValue(newSearchValue);
+    debouncedSearch(newSearchValue);
+  };
+
+  const handleFilterTypeChange = (e) => {
+    const newType = e.target.value;
+    setFilterType(newType);
+    setCurrentPage(0);
+    navigate(`?page=1`);
+  };
 
   useEffect(() => {
     const pageFromURL = parseInt(searchParams.get("page")) || 1;
@@ -49,6 +74,8 @@ export default function EmployeeOrdersPage() {
   } = useOrders({
     page: currentPage,
     sortField: "orderDate",
+    search: searchValue,
+    type: filterType !== "ALL" ? filterType : undefined,
   });
 
   const {
@@ -104,11 +131,7 @@ export default function EmployeeOrdersPage() {
 
   const totalPages = useMemo(() => ordersData?.totalPages || 0, [ordersData]);
   const orders = useMemo(() => ordersData?.content || [], [ordersData]);
-  const totalOrders = useMemo(
-    () => ordersData?.totalElements || 0,
-    [ordersData]
-  );
-
+  
   const handleOrderClick = (orderId) => {
     setSelectedOrderId(orderId);
     setShowModal(true);
@@ -164,9 +187,34 @@ export default function EmployeeOrdersPage() {
           <div className={`card ${styles.ordersCard}`}>
             <div className="card-header d-flex justify-content-between align-items-center">
               <h5 className="mb-0">Orders List</h5>
-              <span className="badge bg-primary">
-                {totalOrders} Total Orders
-              </span>
+              <div className="row">
+                <div className="col-md-5">
+                  <div className="form-group">
+                    <select
+                      className="form-select"
+                      value={filterType}
+                      onChange={handleFilterTypeChange}
+                      aria-label="Filter by order type"
+                    >
+                      <option value="ALL">All Types</option>
+                      <option value="TAKE_AWAY">Take Away</option>
+                      <option value="DINE_IN">Dine In</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-7">
+                  <div className={styles.searchContainer}>
+                    <Search className={styles.searchIcon} />
+                    <input
+                      type="text"
+                      placeholder="Search orders..."
+                      className={styles.searchInput}
+                      value={searchValue}
+                      onChange={handleSearchInputChange}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="card-body p-0">
@@ -187,7 +235,7 @@ export default function EmployeeOrdersPage() {
                     {orders.map((order) => (
                       <tr key={order.orderId} className={styles.orderRow}>
                         <td>
-                          <strong>{order.orderId}</strong>
+                          {order.orderId}
                         </td>
                         <td>
                           <div>
@@ -235,7 +283,7 @@ export default function EmployeeOrdersPage() {
                           </Badge>
                         </td>
                         <td>
-                          <strong>${order.totalPrice.toFixed(2)}</strong>
+                          ${order.totalPrice.toFixed(2)}
                         </td>
                         <td>
                           <button

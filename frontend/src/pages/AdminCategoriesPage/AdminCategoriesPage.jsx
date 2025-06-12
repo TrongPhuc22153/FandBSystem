@@ -5,6 +5,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useCategories, useCategoryActions } from "../../hooks/categoryHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
+import { debounce } from "lodash";
 import {
   ADMIN_ADD_CATEGORY_URI,
   ADMIN_CATEGORIES_URI,
@@ -155,10 +156,12 @@ const AdminCategoriesPage = () => {
   }, []);
 
   const debouncedSearch = useCallback(
-    (newSearchValue) => {
+    debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
+      searchParams.set("page", "1");
       setSearchParams(searchParams);
-    },
+      setCurrentPage(0);
+    }, 300),
     [setSearchParams, searchParams]
   );
 

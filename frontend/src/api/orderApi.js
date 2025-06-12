@@ -1,4 +1,5 @@
 import { ORDER_ITEM_ENDPOINT, ORDER_ITEMS_ENDPOINT, ORDERS_ENDPOINT } from "../constants/api";
+import { SORTING_DIRECTIONS } from "../constants/webConstant";
 
 // Get all orders
 export const fetchOrders = async ({
@@ -6,9 +7,10 @@ export const fetchOrders = async ({
   page = 0,
   size = 10,
   field = "orderData",
-  direction = "DESC",
+  direction = SORTING_DIRECTIONS.DESC,
   type,
   status,
+  search,
   startDate,
   endDate
 }) => {
@@ -28,6 +30,9 @@ export const fetchOrders = async ({
   }
   if (endDate !== null && endDate !== undefined) {
     params.append("endDate", endDate);
+  }
+  if (search !== null && search !== undefined) {
+    params.append("search", search);
   }
 
   const response = await fetch(`${ORDERS_ENDPOINT}?${params.toString()}`, {

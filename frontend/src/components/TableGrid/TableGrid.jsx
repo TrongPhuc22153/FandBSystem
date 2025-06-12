@@ -311,80 +311,72 @@ export function TableGrid({
                   />
                 )}
 
-                <div className={styles.statusActions}>
-                  <h4 className={styles.sectionTitle}>Change Status</h4>
-                  <div className={styles.actionButtons}>
-                    {selectedTable.status === TABLE_STATUSES.OCCUPIED &&
-                      (occupancy?.order?.status ===
-                        ORDER_STATUSES.PARTIALLY_SERVED ||
-                        occupancy?.order?.status ===
-                          ORDER_STATUSES.READY_TO_SERVE) && (
-                        <button
-                          className={`${styles.actionButton} ${styles.servedButton}`}
-                          onClick={() => handleServedOrder(occupancy.order)}
-                        >
-                          Served
-                        </button>
-                      )}
-                    {selectedTable.status === TABLE_STATUSES.OCCUPIED &&
-                      (occupancy?.reservation?.status ===
-                        RESERVATION_STATUSES.PARTIALLY_SERVED ||
+                {selectedTable.status !== TABLE_STATUSES.UNOCCUPIED &&
+                  <div className={styles.statusActions}>
+                    <h4 className={styles.sectionTitle}>Change Status</h4>
+                    <div className={styles.actionButtons}>
+                      {selectedTable.status === TABLE_STATUSES.OCCUPIED &&
+                        (occupancy?.order?.status ===
+                          ORDER_STATUSES.PARTIALLY_SERVED ||
+                          occupancy?.order?.status ===
+                            ORDER_STATUSES.READY_TO_SERVE) && (
+                          <button
+                            className={`${styles.actionButton} ${styles.servedButton}`}
+                            onClick={() => handleServedOrder(occupancy.order)}
+                          >
+                            Served
+                          </button>
+                        )}
+                      {selectedTable.status === TABLE_STATUSES.OCCUPIED &&
+                        (occupancy?.reservation?.status ===
+                          RESERVATION_STATUSES.PARTIALLY_SERVED ||
+                          occupancy?.reservation?.status ===
+                            RESERVATION_STATUSES.READY_TO_SERVE) && (
+                          <button
+                            className={`${styles.actionButton} ${styles.servedButton}`}
+                            onClick={() =>
+                              handleServedReservation(occupancy.reservation)
+                            }
+                          >
+                            Served
+                          </button>
+                        )}
+                      {selectedTable.status === TABLE_STATUSES.OCCUPIED &&
                         occupancy?.reservation?.status ===
-                          RESERVATION_STATUSES.READY_TO_SERVE) && (
+                          RESERVATION_STATUSES.SERVED && (
+                          <button
+                            className={`${styles.actionButton} ${styles.servedButton}`}
+                            onClick={() =>
+                              handleCompleteReservation(occupancy.reservation)
+                            }
+                          >
+                            Complete
+                          </button>
+                        )}
+                      {selectedTable.status === TABLE_STATUSES.CLEANING && (
                         <button
-                          className={`${styles.actionButton} ${styles.servedButton}`}
+                          className={`${styles.actionButton} ${styles.completeButton}`}
                           onClick={() =>
-                            handleServedReservation(occupancy.reservation)
-                          }
-                        >
-                          Served
-                        </button>
-                      )}
-                    {selectedTable.status === TABLE_STATUSES.OCCUPIED &&
-                      occupancy?.reservation?.status ===
-                        RESERVATION_STATUSES.SERVED && (
-                        <button
-                          className={`${styles.actionButton} ${styles.servedButton}`}
-                          onClick={() =>
-                            handleCompleteReservation(occupancy.reservation)
+                            handleStatusChange(TABLE_OCCUPANCY_STATUSES.COMPLETED)
                           }
                         >
                           Complete
                         </button>
                       )}
-                    {selectedTable.status === TABLE_STATUSES.CLEANING && (
-                      <button
-                        className={`${styles.actionButton} ${styles.completeButton}`}
-                        onClick={() =>
-                          handleStatusChange(TABLE_OCCUPANCY_STATUSES.COMPLETED)
-                        }
-                      >
-                        Complete
-                      </button>
-                    )}
-                    {selectedTable.status === TABLE_STATUSES.RESERVED && (
-                      <button
-                        className={`${styles.actionButton} ${styles.reservedButton}`}
-                        onClick={() => {
-                          onSeatCustomerReservation(selectedTable);
-                          setIsDialogOpen(false);
-                        }}
-                      >
-                        Seat customer
-                      </button>
-                    )}
-                    {selectedTable.status === TABLE_STATUSES.UNOCCUPIED && (
-                      <button
-                        className={`${styles.actionButton} ${styles.cleaningButton}`}
-                        onClick={() =>
-                          handleStatusChange(TABLE_OCCUPANCY_STATUSES.CLEANING)
-                        }
-                      >
-                        Cleaning
-                      </button>
-                    )}
+                      {selectedTable.status === TABLE_STATUSES.RESERVED && (
+                        <button
+                          className={`${styles.actionButton} ${styles.reservedButton}`}
+                          onClick={() => {
+                            onSeatCustomerReservation(selectedTable);
+                            setIsDialogOpen(false);
+                          }}
+                        >
+                          Seat customer
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
+                }
 
                 {selectedTable?.status === TABLE_STATUSES.UNOCCUPIED && (
                   <div className={styles.assignSection}>

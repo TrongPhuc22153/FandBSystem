@@ -17,7 +17,7 @@ import { useAlert } from "../../../context/AlertContext";
 import { useAuth } from "../../../context/AuthContext";
 import { useStompSubscription } from "../../../hooks/websocketHooks";
 import { Badge } from "react-bootstrap";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../../Pagination/Pagination";
 import { TOPIC_KITCHEN } from "../../../constants/webSocketEnpoint";
 import { formatDate } from "../../../utils/datetimeUtils";
@@ -26,6 +26,7 @@ import { ROLES } from "../../../constants/roles";
 import { RESERVATION_FILTER_MAPPING } from "../../../constants/filter";
 
 export default function ReservationsTable() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
   const [currentPage, setCurrentPage] = useState(currentPageFromURL);
@@ -35,7 +36,9 @@ export default function ReservationsTable() {
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
-  const [filterStatus, setFilterStatus] = useState(RESERVATION_FILTER_MAPPING[0].statuses);
+  const [filterStatus, setFilterStatus] = useState(
+    RESERVATION_FILTER_MAPPING[0].statuses
+  );
   const [selectedReservation, setSelectedReservation] = useState(null);
 
   const { data: reservationsData, mutate } = useReservations({
@@ -48,7 +51,10 @@ export default function ReservationsTable() {
     () => reservationsData?.content || [],
     [reservationsData]
   );
-  const totalPages = useMemo(() => reservationsData?.totalPages || 0, [reservationsData]);
+  const totalPages = useMemo(
+    () => reservationsData?.totalPages || 0,
+    [reservationsData]
+  );
 
   const {
     handleProcessReservation,
@@ -57,11 +63,8 @@ export default function ReservationsTable() {
     resetProcess,
   } = useReservationActions();
 
-  const {
-    handleCancelReservationItem,
-    cancelError,
-    resetCancel,
-  } = useReservationItemActions();
+  const { handleCancelReservationItem, cancelError, resetCancel } =
+    useReservationItemActions();
 
   const { onOpen } = useModal();
   const { showNewAlert } = useAlert();
@@ -145,16 +148,22 @@ export default function ReservationsTable() {
     [cancelReservationItem, onOpen]
   );
 
-  const handleMessage = useCallback((newNotification) => {
-    try {
-      if (!newNotification?.id) {
-        return;
+  const handleMessage = useCallback(
+    (newNotification) => {
+      try {
+        if (!newNotification?.id) {
+          return;
+        }
+        mutate();
+      } catch (error) {
+        showNewAlert({
+          message: "Failed to process notification",
+          variant: "danger",
+        });
       }
-      mutate(); // Refresh data on new notification
-    } catch (error) {
-      console.error("Error processing notification:", error);
-    }
-  }, [mutate]);
+    },
+    [mutate, showNewAlert]
+  );
 
   useStompSubscription({
     topic: TOPIC_KITCHEN,
@@ -172,7 +181,9 @@ export default function ReservationsTable() {
   // Calculate time until reservation
   const getTimeUntil = (reservation) => {
     const now = new Date();
-    const reservationDateTime = new Date(`${reservation.date}T${reservation.startTime}`);
+    const reservationDateTime = new Date(
+      `${reservation.date}T${reservation.startTime}`
+    );
     if (isNaN(reservationDateTime)) return "Invalid time";
 
     const diffMs = reservationDateTime - now;
@@ -189,6 +200,12 @@ export default function ReservationsTable() {
     setSelectedReservation(reservation);
   };
 
+  const onChangeFilterStatus = (statuses) => {
+    setFilterStatus(statuses);
+    setCurrentPage(0);
+    navigate(`?page=1`);
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between mb-3">
@@ -202,7 +219,7 @@ export default function ReservationsTable() {
                   ? filter.activeClass
                   : filter.inactiveClass
               }`}
-              onClick={() => setFilterStatus(filter.statuses)}
+              onClick={() => onChangeFilterStatus(filter.statuses)}
             >
               {filter.label}
             </button>
@@ -299,7 +316,8 @@ export default function ReservationsTable() {
                           Start Preparing
                         </button>
                       )}
-                      {reservation.status === RESERVATION_STATUSES.PREPARING && (
+                      {reservation.status ===
+                        RESERVATION_STATUSES.PREPARING && (
                         <button
                           className="btn btn-sm btn-outline-success"
                           onClick={() =>

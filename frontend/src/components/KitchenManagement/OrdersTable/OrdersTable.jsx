@@ -16,7 +16,7 @@ import {
 } from "../../../hooks/orderHooks";
 import { useModal } from "../../../context/ModalContext";
 import { useAlert } from "../../../context/AlertContext";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../../Pagination/Pagination";
 import { TOPIC_KITCHEN } from "../../../constants/webSocketEnpoint";
 import { useAuth } from "../../../context/AuthContext";
@@ -26,20 +26,22 @@ import { ROLES } from "../../../constants/roles";
 import { ORDER_FILTER_MAPPING } from "../../../constants/filter";
 
 export default function OrdersTable() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
-  const [currentPage, setCurrentPage] = useState(currentPageFromURL);
+  const currentPageFromURL = parseInt(searchParams.get("page")) || 1;
+  const [currentPage, setCurrentPage] = useState(currentPageFromURL - 1);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [filterStatus, setFilterStatus] = useState(ORDER_FILTER_MAPPING[0].statuses);
+  const [filterType, setFilterType] = useState("ALL");
 
   useEffect(() => {
     const pageFromURL = parseInt(searchParams.get("page")) || 1;
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [filterStatus, setFilterStatus] = useState(ORDER_FILTER_MAPPING[0].statuses);
-
   const { data: ordersData, mutate } = useOrders({
     status: filterStatus,
+    type: filterType !== "ALL" ? filterType : undefined,
     sortDirection: SORTING_DIRECTIONS.ASC,
     sortField: "orderDate",
     page: currentPage,
@@ -48,10 +50,8 @@ export default function OrdersTable() {
   const orders = useMemo(() => ordersData?.content || [], [ordersData]);
   const totalPages = useMemo(() => ordersData?.totalPages || 0, [ordersData]);
 
-  const { handleProcessOrder, processError, processSuccess, resetProcess } =
-    useOrderActions();
-  const { handleCancelOrderItem, cancelError, resetCancel } =
-    useOrderItemActions();
+  const { handleProcessOrder, processError, processSuccess, resetProcess } = useOrderActions();
+  const { handleCancelOrderItem, cancelError, resetCancel } = useOrderItemActions();
   const { onOpen } = useModal();
   const { showNewAlert } = useAlert();
 
@@ -115,16 +115,22 @@ export default function OrdersTable() {
 
   const { user } = useAuth();
 
-  const handleMessage = useCallback((newNotification) => {
-    try {
-      if (!newNotification?.id) {
-        return;
+  const handleMessage = useCallback(
+    (newNotification) => {
+      try {
+        if (!newNotification?.id) {
+          return;
+        }
+        mutate();
+      } catch (error) {
+        showNewAlert({
+          message: "Failed to process notification",
+          variant: "danger",
+        });
       }
-      mutate();
-    } catch (error) {
-      console.error("Error processing notification:", error);
-    }
-  }, []);
+    },
+    [mutate, showNewAlert]
+  );
 
   const cancelOrderItem = useCallback(
     async (orderId, orderItemId) => {
@@ -156,24 +162,49 @@ export default function OrdersTable() {
     shouldSubscribe: hasRole(user, ROLES.EMPLOYEE),
   });
 
+  const onChangeFilterStatus = (statuses) => {
+    setFilterStatus(statuses);
+    setCurrentPage(0);
+    navigate(`?page=1`);
+  };
+
+  const onChangeFilterType = (e) => {
+    const newType = e.target.value;
+    setFilterType(newType);
+    setCurrentPage(0);
+    navigate(`?page=1`);
+  };
+
   return (
     <>
-      <div className="d-flex justify-content-between mb-3">
+      <div className="d-flex justify-content-between mb-3 align-items-center">
         <h3>Incoming Orders</h3>
-        <div className="btn-group">
-          {ORDER_FILTER_MAPPING.map((filter) => (
-            <button
-              key={filter.label}
-              className={`btn ${
-                filterStatus === filter.statuses
-                  ? filter.activeClass
-                  : filter.inactiveClass
-              }`}
-              onClick={() => setFilterStatus(filter.statuses)}
-            >
-              {filter.label}
-            </button>
-          ))}
+        <div className="d-flex align-items-center">
+          <select
+            className="form-select me-2"
+            value={filterType}
+            onChange={onChangeFilterType}
+            style={{ width: "150px" }}
+          >
+            <option value="ALL">All Types</option>
+            <option value="TAKE_AWAY">Take Away</option>
+            <option value="DINE_IN">Dine In</option>
+          </select>
+          <div className="btn-group">
+            {ORDER_FILTER_MAPPING.map((filter) => (
+              <button
+                key={filter.label}
+                className={`btn ${
+                  filterStatus === filter.statuses
+                    ? filter.activeClass
+                    : filter.inactiveClass
+                }`}
+                onClick={() => onChangeFilterStatus(filter.statuses)}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -194,7 +225,7 @@ export default function OrdersTable() {
           <tbody>
             {orders.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center">
+                <td colSpan={8} className="text-center">
                   No orders found
                 </td>
               </tr>
@@ -207,11 +238,11 @@ export default function OrdersTable() {
                   style={{ cursor: "pointer" }}
                 >
                   <td>{order.orderId}</td>
-                  <td>{order?.tableOccupancy?.table.tableNumber}</td>
+                  <td>{order?.tableOccupancy?.table?.tableNumber ?? "N/A"}</td>
                   <td>
-                    {order?.customer?.profile.user.username ||
+                    {order?.customer?.profile?.user?.username ||
                       order?.tableOccupancy?.contactName ||
-                      "UNKNOW"}
+                      "Unknown"}
                   </td>
                   <td>
                     <ul className={styles.itemsList}>
@@ -227,15 +258,7 @@ export default function OrdersTable() {
                       ))}
                     </ul>
                   </td>
-                  <td>
-                    {new Date(order.orderDate).toLocaleTimeString()}
-                    <small className="d-block text-muted">
-                      Est. completion:{" "}
-                      {new Date(
-                        order.estimatedCompletionTime
-                      ).toLocaleTimeString()}
-                    </small>
-                  </td>
+                  <td>{new Date(order.orderDate).toLocaleTimeString()}</td>
                   <td>
                     <Badge
                       bg={

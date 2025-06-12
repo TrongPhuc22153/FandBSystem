@@ -23,7 +23,8 @@ export const useReservationTable = ({ id }) => {
 
 export const useAvailableTables = ({ date, time, search, tableNumber }) => {
   return useSWR([RESERVATION_TABLES_AVAILABILITY_ENDPOINT, date, time, search, tableNumber], () =>
-    fetchAvailableTables({ date, time, search, tableNumber })
+    fetchAvailableTables({ date, time, search, tableNumber }),
+    { keepPreviousData: true }
   );
 }
 
@@ -70,7 +71,8 @@ export const useReservationTables = ({
         search,
         status,
         tableNumber,
-      })
+      }),
+    { keepPreviousData: true }
   );
 };
 

@@ -10,6 +10,7 @@ import { Badge } from "react-bootstrap";
 import { useModal } from "../../context/ModalContext";
 import { useAlert } from "../../context/AlertContext";
 import { ROLE_CLASSES } from "../../constants/webConstant";
+import { debounce } from "lodash";
 
 const AdminUsersPage = () => {
   const navigate = useNavigate();
@@ -166,10 +167,12 @@ const AdminUsersPage = () => {
   }, []);
 
   const debouncedSearch = useCallback(
-    (newSearchValue) => {
+    debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
+      searchParams.set("page", "1");
       setSearchParams(searchParams);
-    },
+      setCurrentPage(0);
+    }, 300),
     [setSearchParams, searchParams]
   );
 

@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useOrders } from "../../hooks/orderHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
-import Loading from "../../components/Loading/Loading";
+import { debounce } from "lodash";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { formatDate } from "../../utils/datetimeUtils";
 import { USER_ORDERS_URI } from "../../constants/routes";
@@ -11,6 +11,7 @@ import { Badge } from "react-bootstrap";
 import {
   ORDER_STATUS_CLASSES,
   ORDER_TYPE_CLASSES,
+  SORTING_DIRECTIONS,
 } from "../../constants/webConstant";
 
 const UserOrdersPage = () => {
@@ -21,7 +22,7 @@ const UserOrdersPage = () => {
   const [searchValue, setSearchValue] = useState(
     searchParams.get("searchValue") || ""
   );
-
+  const [filterType, setFilterType] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(currentPageFromURL);
 
   useEffect(() => {
@@ -29,11 +30,13 @@ const UserOrdersPage = () => {
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
-  const {
-    data: ordersData,
-    isLoading: loadingOrders,
-    error: ordersError,
-  } = useOrders({ page: currentPage });
+  const { data: ordersData, error: ordersError } = useOrders({
+    page: currentPage,
+    sortField: "orderDate",
+    sortDirection: SORTING_DIRECTIONS.DESC,
+    type: filterType !== "ALL" ? filterType : undefined,
+    search: searchValue,
+  });
 
   const orders = useMemo(() => ordersData?.content || [], [ordersData]);
   const totalPages = ordersData?.totalPages || 0;
@@ -97,10 +100,12 @@ const UserOrdersPage = () => {
   }, []);
 
   const debouncedSearch = useCallback(
-    (newSearchValue) => {
+    debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
+      searchParams.set("page", "1");
       setSearchParams(searchParams);
-    },
+      setCurrentPage(0);
+    }, 300),
     [setSearchParams, searchParams]
   );
 
@@ -110,7 +115,12 @@ const UserOrdersPage = () => {
     debouncedSearch(newSearchValue);
   };
 
-  if (loadingOrders) return <Loading />;
+  const handleFilterTypeChange = (e) => {
+    const newType = e.target.value;
+    setFilterType(newType);
+    setCurrentPage(0);
+    navigate(`?page=1`);
+  };
 
   if (ordersError?.message)
     return <ErrorDisplay message={ordersError.message} />;
@@ -127,12 +137,25 @@ const UserOrdersPage = () => {
               <div className="row mb-3">
                 <div className="col-sm-5"></div>
                 <div className="col-sm-7">
-                  <div className="row">
-                    <div className="col-sm-12 col-md-6 mb-2"></div>
-                    <div className="col-sm-12 col-md-6 mb-2">
+                  <div className="row justify-content-end">
+                    <div className="col-sm-12 col-lg-3 mb-2">
+                      <div className="form-group">
+                        <select
+                          className="form-select"
+                          value={filterType}
+                          onChange={handleFilterTypeChange}
+                          aria-label="Filter by order type"
+                        >
+                          <option value="ALL">All Types</option>
+                          <option value="TAKE_AWAY">Take Away</option>
+                          <option value="DINE_IN">Dine In</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-sm-12 col-lg-6 mb-2">
                       <div className="form-group">
                         <input
-                          className="form-control me-2"
+                          className="form-control"
                           type="search"
                           placeholder="Search Orders"
                           aria-label="Search"

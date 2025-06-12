@@ -21,6 +21,7 @@ public class OrderRequestParamsDTO extends PaginationParamsDTO {
     private Sort.Direction direction = Sort.Direction.DESC;
     private OrderType type;
     private List<OrderStatus> status;
+    private String search;
     private LocalDate startDate;
     private LocalDate endDate;
 }

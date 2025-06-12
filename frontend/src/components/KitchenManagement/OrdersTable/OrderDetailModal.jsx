@@ -76,10 +76,6 @@ export default function OrderDetailModal({
                   <strong>Order Time:</strong>{" "}
                   {new Date(order.orderDate).toLocaleString()}
                 </p>
-                <p className="mb-1">
-                  <strong>Est. Completion:</strong>{" "}
-                  {new Date(order.estimatedCompletionTime).toLocaleString()}
-                </p>
               </div>
               <div className="col-md-6">
                 <h6>Order Status</h6>

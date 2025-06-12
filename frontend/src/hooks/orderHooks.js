@@ -22,6 +22,7 @@ export const useOrders = ({
   sortDirection = SORTING_DIRECTIONS.DESC,
   type,
   status,
+  search,
   startDate,
   endDate,
 } = {}) => {
@@ -36,6 +37,7 @@ export const useOrders = ({
       sortDirection,
       type,
       status,
+      search,
       startDate,
       endDate,
       token,
@@ -49,9 +51,11 @@ export const useOrders = ({
         direction: sortDirection,
         type: type,
         status: status,
+        search: search,
         startDate: startDate,
         endDate: endDate,
-      })
+      }),
+    { keepPreviousData: true }
   );
 };
 

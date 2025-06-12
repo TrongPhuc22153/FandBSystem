@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { debounce } from "lodash";
 import {
   useReservationTables,
   useReservationTableActions,
@@ -151,10 +152,12 @@ const AdminTablesPage = () => {
   }, []);
 
   const debouncedSearch = useCallback(
-    (newSearchValue) => {
+    debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
+      searchParams.set("page", "1");
       setSearchParams(searchParams);
-    },
+      setCurrentPage(0);
+    }, 300),
     [setSearchParams, searchParams]
   );
 

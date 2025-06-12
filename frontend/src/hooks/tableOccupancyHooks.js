@@ -24,7 +24,8 @@ export const useTableOccupancies = ({
         field,
         status,
         token,
-      })
+      }),
+    { keepPreviousData: true }
   );
 };
 

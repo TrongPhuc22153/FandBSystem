@@ -21,4 +21,5 @@ public class ReservationRequestParamsDTO extends PaginationParamsDTO {
     private List<ReservationStatus> status;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String search;
 }

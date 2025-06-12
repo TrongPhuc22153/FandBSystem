@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
-import Loading from "../../components/Loading/Loading";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { formatTime } from "../../utils/datetimeUtils";
 import { USER_RESERVATIONS_URI } from "../../constants/routes";
@@ -12,6 +11,7 @@ import {
   SORTING_DIRECTIONS,
 } from "../../constants/webConstant";
 import { useReservations } from "../../hooks/reservationHooks";
+import { debounce } from "lodash";
 
 const UserReservationsPage = () => {
   const navigate = useNavigate();
@@ -31,11 +31,11 @@ const UserReservationsPage = () => {
 
   const {
     data: reservationsData,
-    isLoading: loadingReservations,
     error: reservationsError,
   } = useReservations({
     page: currentPage,
     direction: SORTING_DIRECTIONS.DESC,
+    search: searchValue
   });
 
   const reservations = useMemo(
@@ -116,10 +116,12 @@ const UserReservationsPage = () => {
   }, []);
 
   const debouncedSearch = useCallback(
-    (newSearchValue) => {
+    debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
+      searchParams.set("page", "1");
       setSearchParams(searchParams);
-    },
+      setCurrentPage(0);
+    }, 300),
     [setSearchParams, searchParams]
   );
 
@@ -128,8 +130,6 @@ const UserReservationsPage = () => {
     setSearchValue(newSearchValue);
     debouncedSearch(newSearchValue);
   };
-
-  if (!reservationsData && loadingReservations) return <Loading />;
 
   if (reservationsError?.message)
     return <ErrorDisplay message={reservationsError.message} />;

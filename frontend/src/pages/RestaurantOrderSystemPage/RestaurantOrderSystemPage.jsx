@@ -12,6 +12,7 @@ import { EMPLOYEE_PLACE_ORDERS_URI } from "../../constants/routes";
 import { useOrderActions } from "../../hooks/orderHooks";
 import { useAlert } from "../../context/AlertContext";
 import { useModal } from "../../context/ModalContext";
+import { debounce } from "lodash";
 import {
   ORDER_TYPES,
   TABLE_OCCUPANCY_STATUSES,
@@ -19,18 +20,37 @@ import {
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { useTableOccupancies, useTableOccupancy } from "../../hooks/tableOccupancyHooks";
 import SelectableWaitingList from "../../components/WaitingList/SelectableWaitingList";
+import { Search } from "lucide-react";
 
 export default function RestaurantOrderSystem() {
   const navigate = useNavigate();
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [orderItems, setOrderItems] = useState([]);
-  const [searchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page")) || 1;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page")) || 1);
   const categoryId = searchParams.get("categoryId") || "";
-  const searchTerm = searchParams.get("search") || "";
+  const [searchValue, setSearchValue] = useState(
+    searchParams.get("searchValue") || ""
+  );
 
   const { showNewAlert } = useAlert();
   const { onOpen } = useModal();
+
+  const debouncedSearch = useCallback(
+    debounce((newSearchValue) => {
+      searchParams.set("searchValue", newSearchValue);
+      searchParams.set("page", "1");
+      setSearchParams(searchParams);
+      setCurrentPage(1);
+    }, 300),
+    [setSearchParams, searchParams]
+  );
+
+  const handleSearchInputChange = (e) => {
+    const newSearchValue = e.target.value;
+    setSearchValue(newSearchValue);
+    debouncedSearch(newSearchValue);
+  };
 
   // Fetch waiting lists
   const {
@@ -63,10 +83,10 @@ export default function RestaurantOrderSystem() {
   } = useProducts({
     page: currentPage - 1,
     categoryId,
-    search: searchTerm,
+    search: searchValue,
   });
   const menuItems = useMemo(() => productsData?.content || [], [productsData]);
-  const totalPages = productsData?.totalPages || 0;
+  const totalPages = useMemo(() => productsData?.totalPages || 0, [productsData]);
 
   // Fetch categories
   const {
@@ -315,7 +335,7 @@ export default function RestaurantOrderSystem() {
     [navigate]
   );
 
-  if (loadingCategories || loadingProducts || loadingOccupancies) {
+  if (loadingCategories || loadingOccupancies) {
     return <Loading />;
   }
 
@@ -344,7 +364,19 @@ export default function RestaurantOrderSystem() {
         <div className={styles.menuSection}>
           <div className={styles.card}>
             <div className={styles.cardHeader}>
-              <h4>Menu</h4>
+              <div className="d-flex justify-content-between">
+                <h4>Menu</h4>
+                <div className={styles.searchContainer}>
+                  <Search className={styles.searchIcon} />
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    className={styles.searchInput}
+                    value={searchValue}
+                    onChange={handleSearchInputChange}
+                  />
+                </div>
+              </div>
             </div>
             <div className={styles.cardBody}>
               <MenuCategories

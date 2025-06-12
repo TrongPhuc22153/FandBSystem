@@ -1,9 +1,9 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useOrders } from "../../hooks/orderHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
-import Loading from "../../components/Loading/Loading";
+import { debounce } from "lodash";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { formatDate } from "../../utils/datetimeUtils";
 import { Badge } from "react-bootstrap";
@@ -16,41 +16,39 @@ import { ADMIN_ORDERS_URI } from "../../constants/routes";
 const AdminOrdersPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
+  const currentPageFromURL = parseInt(searchParams.get("page")) || 1;
+  const [currentPage, setCurrentPage] = useState(currentPageFromURL - 1);
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchValue, setSearchValue] = useState(
     searchParams.get("searchValue") || ""
   );
-
-  const [currentPage, setCurrentPage] = useState(currentPageFromURL);
+  const [filterType, setFilterType] = useState("ALL"); // New state for type filter
 
   useEffect(() => {
     const pageFromURL = parseInt(searchParams.get("page")) || 1;
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
-  const {
-    data: ordersData,
-    isLoading: loadingOrders,
-    error: ordersError,
-  } = useOrders({
+  const { data: ordersData, error: ordersError } = useOrders({
     page: currentPage,
     sortDirection: SORTING_DIRECTIONS.DESC,
+    search: searchValue,
     sortField: "orderDate",
+    type: filterType !== "ALL" ? filterType : undefined, // Pass type filter to API
   });
 
-  const orderData = useMemo(() => 
-    ordersData?.content || [], 
-  [ordersData]);
-  
-  const totalPages = ordersData?.totalPages || 0;
+  const orderData = useMemo(() => ordersData?.content || [], [ordersData]);
+  const totalPages = useMemo(() => ordersData?.totalPages || 0, [ordersData]);
 
   const orderColumns = [
     { key: "orderId", title: "Order ID" },
     {
       key: "customerName",
       title: "Customer Name",
-      render: (order) => order?.customer?.contactName || order?.tableOccupancy?.contactName ||"Anonymous",
+      render: (order) =>
+        order?.customer?.contactName ||
+        order?.tableOccupancy?.contactName ||
+        "Anonymous",
     },
     {
       key: "orderDate",
@@ -61,14 +59,18 @@ const AdminOrdersPage = () => {
       key: "type",
       title: "Type",
       render: (order) => (
-        <Badge bg={ORDER_STATUS_CLASSES[order.type]}>{order.type}</Badge>
+        <Badge bg={ORDER_STATUS_CLASSES[order.type] || "secondary"}>
+          {order.type}
+        </Badge>
       ),
     },
     {
       key: "status",
       title: "Status",
       render: (order) => (
-        <Badge bg={ORDER_STATUS_CLASSES[order.status]}>{order.status}</Badge>
+        <Badge bg={ORDER_STATUS_CLASSES[order.status] || "secondary"}>
+          {order.status}
+        </Badge>
       ),
     },
   ];
@@ -80,7 +82,6 @@ const AdminOrdersPage = () => {
     [navigate]
   );
 
-  // select item
   const handleSelectAll = useCallback(
     (event) => {
       const isChecked = event.target.checked;
@@ -108,10 +109,12 @@ const AdminOrdersPage = () => {
   }, []);
 
   const debouncedSearch = useCallback(
-    (newSearchValue) => {
+    debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
+      searchParams.set("page", "1");
       setSearchParams(searchParams);
-    },
+      setCurrentPage(0);
+    }, 300),
     [setSearchParams, searchParams]
   );
 
@@ -121,7 +124,12 @@ const AdminOrdersPage = () => {
     debouncedSearch(newSearchValue);
   };
 
-  if (loadingOrders) return <Loading />;
+  const handleFilterTypeChange = (e) => {
+    const newType = e.target.value;
+    setFilterType(newType);
+    setCurrentPage(0);
+    navigate(`?page=1`);
+  };
 
   if (ordersError?.message)
     return <ErrorDisplay message={ordersError.message} />;
@@ -138,12 +146,25 @@ const AdminOrdersPage = () => {
               <div className="row mb-3">
                 <div className="col-sm-5"></div>
                 <div className="col-sm-7">
-                  <div className="row">
-                    <div className="col-sm-12 col-md-6 mb-2"></div>
-                    <div className="col-sm-12 col-md-6 mb-2">
+                  <div className="row justify-content-end">
+                    <div className="col-sm-12 col-lg-3 mb-2">
+                      <div className="form-group">
+                        <select
+                          className="form-select"
+                          value={filterType}
+                          onChange={handleFilterTypeChange}
+                          aria-label="Filter by order type"
+                        >
+                          <option value="ALL">All Types</option>
+                          <option value="TAKE_AWAY">Take Away</option>
+                          <option value="DINE_IN">Dine In</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-sm-12 col-lg-6 mb-2">
                       <div className="form-group">
                         <input
-                          className="form-control me-2"
+                          className="form-control"
                           type="search"
                           placeholder="Search Orders"
                           aria-label="Search"

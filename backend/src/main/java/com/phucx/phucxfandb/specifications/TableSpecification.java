@@ -15,16 +15,36 @@ public class TableSpecification {
     }
 
     public static Specification<TableEntity> searchByLocation(String search){
-        if(search == null || search.trim().isEmpty()) return null;
+        if(search == null || search.isBlank()) return null;
         String searchTerm = "%" + search.toLowerCase() + "%";
         return ((root, query, criteriaBuilder) -> criteriaBuilder.like(
                 criteriaBuilder.lower(root.get("location")), searchTerm
         ));
     }
 
+    public static Specification<TableEntity> searchByTableId(String search){
+        if(search == null || search.isBlank()) return null;
+        String searchTerm = "%" + search.toLowerCase() + "%";
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(
+                criteriaBuilder.lower(root.get("tableId")), searchTerm
+        ));
+    }
+
+    public static Specification<TableEntity> searchByTableNumber(String search) {
+        if (search == null || search.isBlank()) return null;
+        try {
+            Integer parsed = Integer.parseInt(search.trim());
+            return (root, query, cb) -> cb.equal(root.get("tableNumber"), parsed);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     public static Specification<TableEntity> hasSearch(String search){
-        if (search == null || search.trim().isEmpty()) return null;
-        return Specification.where(searchByLocation(search));
+        if (search == null || search.isBlank()) return null;
+        return Specification.where(searchByLocation(search))
+                .or(searchByTableId(search))
+                .or(searchByTableNumber(search));
     }
 
 }

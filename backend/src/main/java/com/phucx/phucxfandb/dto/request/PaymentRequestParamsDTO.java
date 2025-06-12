@@ -19,4 +19,5 @@ public class PaymentRequestParamsDTO extends PaginationParamsDTO {
     private String contactName;
     private Integer tableNumber;
     private String search;
+    private String method;
 }

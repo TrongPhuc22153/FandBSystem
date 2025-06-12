@@ -29,7 +29,8 @@ export const useCategories = ({
         field: field,
         search: search,
         isDeleted: isDeleted,
-      })
+      }),
+    { keepPreviousData: true }
   );
 };
 

@@ -28,5 +28,11 @@ public class OrderSpecification {
         return ((root, query, criteriaBuilder) -> root.get("orderDate").in(startDate, endDate));
     }
 
+    public static Specification<Order> searchOrders(String search){
+        if(search == null || search.isBlank()) return null;
+        String searchTerm = "%" + search + "%";
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("orderId"), searchTerm));
+    }
+
 
 }

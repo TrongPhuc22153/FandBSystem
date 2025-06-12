@@ -8,6 +8,7 @@ import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { Badge } from "react-bootstrap";
 import { RESERVATION_STATUS_CLASSES, SORTING_DIRECTIONS } from "../../constants/webConstant";
 import { ADMIN_RESERVATIONS_URI } from "../../constants/routes";
+import { debounce } from "lodash";
 
 const AdminReservationsPage = () => {
   const navigate = useNavigate();
@@ -119,10 +120,12 @@ const AdminReservationsPage = () => {
   }, []);
 
   const debouncedSearch = useCallback(
-    (newSearchValue) => {
+    debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
+      searchParams.set("page", "1");
       setSearchParams(searchParams);
-    },
+      setCurrentPage(0);
+    }, 300),
     [setSearchParams, searchParams]
   );
 

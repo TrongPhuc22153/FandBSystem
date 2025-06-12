@@ -29,6 +29,7 @@ function PaymentManagementPage() {
     orderId: searchCriteria.orderId,
     tableNumber: searchCriteria.tableNumber,
     status: PAYMENT_STATUSES.PENDING,
+    paymentMethod: "none",
     page: currentPage,
   });
   const payments = useMemo(() => paymentsData?.content || [], [paymentsData]);

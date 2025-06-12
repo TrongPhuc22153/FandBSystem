@@ -19,6 +19,7 @@ export const usePayments = ({
   phone,
   tableNumber,
   contactName,
+  paymentMethod,
   search,
   status = PAYMENT_STATUSES.PENDING,
 }) => {
@@ -40,6 +41,7 @@ export const usePayments = ({
       orderId,
       reservationId,
       status,
+      paymentMethod,
       token,
     });
   }, [
@@ -54,6 +56,7 @@ export const usePayments = ({
     orderId,
     reservationId,
     status,
+    paymentMethod,
     token,
   ]);
   const swrKey = token
@@ -70,11 +73,12 @@ export const usePayments = ({
         orderId,
         reservationId,
         status,
+        paymentMethod,
         token,
       ]
     : null;
 
-  return useSWR(swrKey, fetcher);
+  return useSWR(swrKey, fetcher, { keepPreviousData: true });
 };
 
 export const usePayment = (id) => {

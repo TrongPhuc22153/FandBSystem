@@ -67,4 +67,16 @@ public class PaymentSpecification {
         };
     }
 
+    public static Specification<Payment> hasMethod(String method) {
+        return (root, query, cb) -> {
+            if (method == null || method.equalsIgnoreCase("all")) {
+                return cb.conjunction();
+            } else if (method.equalsIgnoreCase("none")) {
+                return cb.isNull(root.get("method"));
+            } else {
+                return cb.equal(cb.lower(root.get("method").get("methodName")), method.toLowerCase());
+            }
+        };
+    }
+
 }

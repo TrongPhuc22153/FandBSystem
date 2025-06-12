@@ -37,7 +37,7 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
         if(roles.contains(RoleName.CUSTOMER)){
             return getCustomerReservations(authentication.getName(), params);
         }else {
-            return getReservations(params);
+            return getUserReservations(params);
         }
     }
 
@@ -50,13 +50,14 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
         Specification<Reservation> spec = Specification
                 .where(ReservationSpecification.hasCustomerUsername(username))
                 .and(ReservationSpecification.hasStatuses(params.getStatus()))
+                .and(ReservationSpecification.searchReservations(params.getSearch()))
                 .and(ReservationSpecification.hasDate(params.getStartDate(), params.getEndDate()));
 
         return reservationRepository.findAll(spec, pageable)
                 .map(reservationMapper::toReservationListEntryDTO);
     }
 
-    public Page<ReservationDTO> getReservations(ReservationRequestParamsDTO params){
+    public Page<ReservationDTO> getUserReservations(ReservationRequestParamsDTO params){
         Pageable pageable = PageRequest.of(
                 params.getPage(),
                 params.getSize(),
@@ -64,6 +65,7 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
         );
         Specification<Reservation> spec = Specification
                 .where(ReservationSpecification.hasStatuses(params.getStatus()))
+                .and(ReservationSpecification.searchReservations(params.getSearch()))
                 .and(ReservationSpecification.hasDate(params.getStartDate(), params.getEndDate()));
 
         return reservationRepository.findAll(spec, pageable)

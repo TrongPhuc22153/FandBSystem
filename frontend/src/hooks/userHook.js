@@ -19,7 +19,8 @@ export const useUsers = ({
 } = {}) => {
   const { token } = useAuth();
   return useSWR([USERS_ENDPOINT, username, email, role, page, size, search], () =>
-    fetchUsers({ username, email, role, page, size, search, token })
+    fetchUsers({ username, email, role, page, size, search, token }),
+    { keepPreviousData: true }
   );
 };
 
