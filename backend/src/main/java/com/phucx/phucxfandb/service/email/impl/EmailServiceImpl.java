@@ -1,12 +1,13 @@
 package com.phucx.phucxfandb.service.email.impl;
 
 import com.phucx.phucxfandb.constant.EmailConstants;
+import com.phucx.phucxfandb.dto.event.EmailEvent;
 import com.phucx.phucxfandb.enums.JwtType;
 import com.phucx.phucxfandb.service.email.EmailService;
 import com.phucx.phucxfandb.service.jwt.JwtEmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,8 @@ public class EmailServiceImpl implements EmailService {
 
     private final JwtEmailService jwtEmailService;
 
+    private final ApplicationEventPublisher publisher;
+
     @Value("${spring.mail.username}")
     private String email;
 
@@ -31,12 +34,13 @@ public class EmailServiceImpl implements EmailService {
     
     @Override
     public void sendMessage(String toEmail, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(email);
-        message.setTo(toEmail);
-        message.setSubject(subject);
-        message.setText(text);
-        emailSender.send(message);
+        EmailEvent emailEvent = EmailEvent.builder()
+                .fromEmail(email)
+                .toEmail(toEmail)
+                .subject(subject)
+                .text(text)
+                .build();
+        publisher.publishEvent(emailEvent);
     }
 
     @Override
