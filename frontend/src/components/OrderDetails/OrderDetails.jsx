@@ -24,14 +24,8 @@ const OrderDetail = ({
   customer,
   paymentMethod,
   paymentStatus,
+  renderActions = false
 }) => {
-  const canCancelStatuses = [
-    ORDER_STATUSES.PENDING,
-    ORDER_STATUSES.CONFIRMED,
-    ORDER_STATUSES.PREPARING,
-    ORDER_STATUSES.PREPARED,
-  ];
-
   return (
     <div className="container py-3" style={{ maxWidth: "800px" }}>
       <div
@@ -200,7 +194,7 @@ const OrderDetail = ({
             </div>
           </div>
         </div>
-        {canCancelStatuses.includes(orderStatus.toUpperCase()) && (
+        {(renderActions) && (
           <div className="d-flex justify-content-end mt-3">
             <Button
               variant="danger"

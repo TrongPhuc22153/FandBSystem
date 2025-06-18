@@ -7,7 +7,7 @@ import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import ReservationDetails from "../../components/ReservationDetails/ReservationDetails";
 import { useAlert } from "../../context/AlertContext";
 import { useModal } from "../../context/ModalContext";
-import { RESERVATION_ACTIONS } from "../../constants/webConstant";
+import { RESERVATION_ACTIONS, RESERVATION_STATUSES } from "../../constants/webConstant";
 import { Button, Modal } from "react-bootstrap";
 import RefundPreviewModal from "../../components/RefundPreviewModal/RefundPreviewModal";
 import { PAYMENT_METHODS } from "../../constants/paymentConstants";
@@ -119,6 +119,12 @@ export default function UserReservationDetailsPage() {
         reservation={reservationData}
         processLoading={processLoading}
         onHandleCancel={handleCancelClick}
+        renderActions={
+          reservationData.status === RESERVATION_STATUSES.PENDING ||
+          reservationData.status === RESERVATION_STATUSES.PREPARING ||
+          reservationData.status === RESERVATION_STATUSES.PREPARED ||
+          reservationData.status === RESERVATION_STATUSES.CONFIRMED
+        }
       />
 
       <RefundPreviewModal

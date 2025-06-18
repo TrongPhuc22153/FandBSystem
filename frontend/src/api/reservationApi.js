@@ -17,7 +17,7 @@ export const fetchReservationById = async ({ token, reservationId }) => {
 };
 
 // Get reservations with pagination and optional status filter
-export const fetchReservations = async ({ token, page = 0, size = 10, field = "startTime", direction = SORTING_DIRECTIONS.ASC, status, startDate, endDate }) => {
+export const fetchReservations = async ({ token, page = 0, size = 10, field = "startTime", direction = SORTING_DIRECTIONS.ASC, status, startDate, endDate, search }) => {
   const params = new URLSearchParams();
   params.append('page', page.toString());
   params.append('size', size.toString());
@@ -31,6 +31,9 @@ export const fetchReservations = async ({ token, page = 0, size = 10, field = "s
   }
   if (endDate !== null && endDate !== undefined) {
     params.append('endDate', endDate.toString());
+  }
+  if (search !== null && search !== undefined) {
+    params.append('search', search.toString());
   }
 
   const response = await fetch(`${RESERVATIONS_ENDPOINT}?${params.toString()}`, {

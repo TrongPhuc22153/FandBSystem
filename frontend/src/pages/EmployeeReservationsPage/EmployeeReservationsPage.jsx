@@ -1,39 +1,65 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useReservations } from "../../hooks/reservationHooks";
+import { useSearchParams } from "react-router-dom";
+import { useReservation, useReservations } from "../../hooks/reservationHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
 import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { Badge } from "react-bootstrap";
-import { RESERVATION_STATUS_CLASSES, SORTING_DIRECTIONS } from "../../constants/webConstant";
-import { ADMIN_RESERVATIONS_URI } from "../../constants/routes";
+import {
+  RESERVATION_STATUS_CLASSES,
+  RESERVATION_STATUSES,
+  SORTING_DIRECTIONS,
+} from "../../constants/webConstant";
 import { debounce } from "lodash";
+import ReservationModal from "../../components/ReservationModal/ReservationModal";
+import Loading from "../../components/Loading/Loading";
+import { useAuth } from "../../context/AuthContext";
+import { hasRole } from "../../utils/authUtils";
+import { ROLES } from "../../constants/roles";
+import { useAlert } from "../../context/AlertContext";
+import { useModal } from "../../context/ModalContext";
 
-const AdminReservationsPage = () => {
-  const navigate = useNavigate();
+const EmployeeReservationsPage = () => {
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchValue, setSearchValue] = useState(
     searchParams.get("searchValue") || ""
   );
-
   const [currentPage, setCurrentPage] = useState(currentPageFromURL);
+  const [selectedReservationId, setSelectedReservationId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const { showNewAlert } = useAlert();
+  const { onOpen } = useModal();
 
   useEffect(() => {
     const pageFromURL = parseInt(searchParams.get("page")) || 1;
     setCurrentPage(pageFromURL - 1);
   }, [searchParams]);
 
-  const {
-    data: reservationsData,
-    error: reservationsError,
-  } = useReservations({
+  const { data: reservationsData, error: reservationsError } = useReservations({
     currentPage: currentPage,
     direction: SORTING_DIRECTIONS.DESC,
     sortBy: "createdAt",
-    search: searchValue
+    search: searchValue,
   });
+
+  const {
+    data: reservationDetails,
+    error: reservationError,
+    isLoading: reservationLoading,
+  } = useReservation({ reservationId: selectedReservationId });
+
+    useEffect(() => {
+    if (reservationError?.message) {
+      showNewAlert({
+        message: reservationError.message,
+        variant: "danger",
+      });
+    }
+  }, [reservationError]);
 
   const reservations = useMemo(
     () => reservationsData?.content || [],
@@ -54,22 +80,22 @@ const AdminReservationsPage = () => {
       render: (reservation) => reservation.table?.tableNumber || "N/A",
     },
     {
-      key:"date",
+      key: "date",
       title: "Reservation date",
       render: (reservation) => {
         const date = new Date(reservation.date);
-        return date.toLocaleDateString()
-      }
+        return date.toLocaleDateString();
+      },
     },
     {
       key: "startTime",
       title: "Start Time",
-      render: (reservation) => reservation.startTime
+      render: (reservation) => reservation.startTime,
     },
     {
       key: "endTime",
       title: "End Time",
-      render: (reservation) => reservation.endTime
+      render: (reservation) => reservation.endTime,
     },
     {
       key: "status",
@@ -82,14 +108,16 @@ const AdminReservationsPage = () => {
     },
   ];
 
-  const handleViewReservation = useCallback(
-    (id) => {
-      navigate(`${ADMIN_RESERVATIONS_URI}/${id}`);
-    },
-    [navigate]
-  );
+  const handleViewReservation = useCallback((id) => {
+    setSelectedReservationId(id);
+    setShowModal(true);
+  }, []);
 
-  // select item
+  const handleCloseModal = useCallback(() => {
+    setShowModal(false);
+    setSelectedReservationId(null);
+  }, []);
+
   const handleSelectAll = useCallback(
     (event) => {
       const isChecked = event.target.checked;
@@ -117,6 +145,18 @@ const AdminReservationsPage = () => {
       );
     }
   }, []);
+
+  const handleCancelReservation = useCallback((reservation) => {
+
+  }, [])
+
+  const showConfirmCancel = useCallback((reservation) => {
+    onOpen({
+        title: "Cancel reservation",
+        message: "Do you want to cancel this reservation?",
+        onYes: () => handleCancelReservation(reservation)
+    })
+  }, [onOpen, handleCancelReservation])
 
   const debouncedSearch = useCallback(
     debounce((newSearchValue) => {
@@ -187,8 +227,22 @@ const AdminReservationsPage = () => {
           </div>
         </div>
       </div>
+
+      {!reservationDetails && reservationLoading ? (
+        <Loading />
+      ) : (
+        showModal &&
+        selectedReservationId && (
+          <ReservationModal
+            reservation={reservationDetails}
+            show={showModal}
+            onClose={handleCloseModal}
+            onHandleCancel={showConfirmCancel}
+          />
+        )
+      )}
     </main>
   );
 };
 
-export default AdminReservationsPage;
+export default EmployeeReservationsPage;

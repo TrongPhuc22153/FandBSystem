@@ -1,6 +1,5 @@
 import { Button, Badge, Card } from "react-bootstrap";
 import {
-  RESERVATION_STATUSES,
   PAYMENT_STATUS_CLASSES,
 } from "../../constants/webConstant";
 import { CreditCard, FileText, MapPin } from "lucide-react";
@@ -10,6 +9,7 @@ export default function ReservationDetail({
   reservation,
   processLoading,
   onHandleCancel,
+  renderActions = false,
 }) {
   return (
     <div
@@ -141,10 +141,7 @@ export default function ReservationDetail({
         </table>
       </div>
               
-      {(reservation.status === RESERVATION_STATUSES.PENDING ||
-        reservation.status === RESERVATION_STATUSES.PREPARING ||
-        reservation.status === RESERVATION_STATUSES.PREPARED ||
-        reservation.status === RESERVATION_STATUSES.CONFIRMED) && (
+      {(renderActions) && (
         <div className="d-flex justify-content-end mt-3">
           <Button
             variant="danger"

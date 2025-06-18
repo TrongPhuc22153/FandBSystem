@@ -8,7 +8,7 @@ import { Button, Modal } from "react-bootstrap";
 import { useRefundActions } from "../../hooks/refundHooks";
 import { useAlert } from "../../context/AlertContext";
 import { useModal } from "../../context/ModalContext";
-import { ORDER_ACTIONS } from "../../constants/webConstant";
+import { ORDER_ACTIONS, ORDER_STATUSES } from "../../constants/webConstant";
 import { useCallback, useEffect, useState } from "react";
 import RefundPreviewModal from "../../components/RefundPreviewModal/RefundPreviewModal";
 import { PAYMENT_METHODS } from "../../constants/paymentConstants";
@@ -40,6 +40,12 @@ function UserOrderDetailsPage() {
   const waitList = orderData?.waitList;
   const paymentMethod = orderData?.payment.method;
   const paymentStatus = orderData?.payment.status;
+  const canCancelStatuses = [
+    ORDER_STATUSES.PENDING,
+    ORDER_STATUSES.CONFIRMED,
+    ORDER_STATUSES.PREPARING,
+    ORDER_STATUSES.PREPARED,
+  ];
 
   const { showNewAlert } = useAlert();
 
@@ -155,6 +161,7 @@ function UserOrderDetailsPage() {
         shippingAddress={shippingAddress}
         paymentMethod={paymentMethod}
         paymentStatus={paymentStatus}
+        renderActions={canCancelStatuses.includes(orderStatus.toUpperCase())}
       />
 
       <RefundPreviewModal
