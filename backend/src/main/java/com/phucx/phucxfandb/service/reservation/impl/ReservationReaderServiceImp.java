@@ -21,6 +21,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -85,5 +90,17 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
     public Reservation getReservationEntity(String reservationId) {
         return reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NotFoundException(Reservation.class.getSimpleName(), "id", reservationId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Reservation> getReservations(LocalDateTime dateTime) {
+        LocalDate today = dateTime.toLocalDate();
+        LocalTime cutoffTime = dateTime.toLocalTime().plus(30, ChronoUnit.MINUTES);
+        return reservationRepository.findAll(
+                        ReservationSpecification.forNoShowCheck(today, cutoffTime)
+                ).stream()
+                .sorted(Comparator.comparing(Reservation::getStartTime))
+                .toList();
     }
 }

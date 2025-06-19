@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.service.reservation.impl;
 
 import com.phucx.phucxfandb.constant.*;
+import com.phucx.phucxfandb.dto.event.ReservationEvent;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
@@ -19,6 +20,7 @@ import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,7 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     private final PayPalRefundService payPalRefundService;
     private final TableReaderService tableReaderService;
     private final MenuItemService menuItemService;
+    private final ApplicationEventPublisher eventPublisher;
     private final TableOccupancyUpdateService tableOccupancyUpdateService;
     private final SendReservationNotificationService sendReservationNotificationService;
 
@@ -86,6 +89,11 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
         );
 
         menuItemService.updateItemStatus(reservationId, MenuItemStatus.CANCELED);
+
+        eventPublisher.publishEvent(ReservationEvent.builder()
+                .id(reservationId)
+                .action(EventAction.DELETE)
+                .build());
 
         RequestNotificationDTO requestNotificationDTO = NotificationUtils.createRequestNotificationDTOForGroup(
                 username,
@@ -218,6 +226,9 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     @Override
     public ReservationDTO placeCustomerReservation(String username, RequestReservationDTO request) {
         long durationMinutes = ChronoUnit.MINUTES.between(request.getStartTime(), request.getEndTime());
+        if (durationMinutes < ReservationConstant.DEFAULT_DURATION_MINUTES) {
+            throw new IllegalArgumentException("Reservation duration must be at least " + ReservationConstant.DEFAULT_DURATION_MINUTES + " minutes.");
+        }
 
         TableEntity table;
         List<TableEntity> availableTables = tableReaderService.getAvailableTables(
@@ -241,6 +252,9 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     @Override
     public ReservationDTO placeEmployeeReservation(String username, RequestReservationDTO request) {
         long durationMinutes = ChronoUnit.MINUTES.between(request.getStartTime(), request.getEndTime());
+        if (durationMinutes < ReservationConstant.DEFAULT_DURATION_MINUTES) {
+            throw new IllegalArgumentException("Reservation duration must be at least " + ReservationConstant.DEFAULT_DURATION_MINUTES + " minutes.");
+        }
 
         TableEntity table;
         List<TableEntity> availableTables = tableReaderService.getAvailableTables(
