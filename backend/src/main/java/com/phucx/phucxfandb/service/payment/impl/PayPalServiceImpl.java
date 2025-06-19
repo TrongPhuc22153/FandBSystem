@@ -5,6 +5,8 @@ import com.paypal.http.HttpResponse;
 import com.paypal.orders.*;
 import com.paypal.orders.Order;
 import com.phucx.phucxfandb.constant.PayPalConstants;
+import com.phucx.phucxfandb.dto.event.PlaceOrderNotificationEvent;
+import com.phucx.phucxfandb.dto.event.PlaceReservationNotificationEvent;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.enums.OrderType;
 import com.phucx.phucxfandb.enums.PaymentStatus;
@@ -12,8 +14,6 @@ import com.phucx.phucxfandb.enums.RoleName;
 import com.phucx.phucxfandb.enums.TableOccupancyStatus;
 import com.phucx.phucxfandb.exception.PaymentException;
 import com.phucx.phucxfandb.service.cart.CartUpdateService;
-import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
-import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
 import com.phucx.phucxfandb.service.payment.PaymentReaderService;
 import com.phucx.phucxfandb.service.payment.PaymentUpdateService;
 import com.phucx.phucxfandb.service.payment.PayPalService;
@@ -21,6 +21,7 @@ import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
 import com.phucx.phucxfandb.utils.CartUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +34,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PayPalServiceImpl implements PayPalService {
-    private final SendReservationNotificationService sendReservationNotificationService;
-    private final SendOrderNotificationService sendOrderNotificationService;
     private final TableOccupancyUpdateService tableOccupancyUpdateService;
     private final PaymentUpdateService paymentUpdateService;
     private final PaymentReaderService paymentReaderService;
     private final CartUpdateService cartUpdateService;
     private final PayPalHttpClient client;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public String createOrder(String paymentId, BigDecimal amount, String currency, String returnUrl, String cancelUrl) throws IOException {
@@ -145,23 +145,28 @@ public class PayPalServiceImpl implements PayPalService {
                 );
             }
 
-            sendOrderNotificationService.sendPlaceOrderNotification(
-                    authentication,
-                    order.getOrderId(),
-                    order.getType(),
-                    payment.getMethod().getMethodName(),
-                    payment.getStatus()
+            eventPublisher.publishEvent(
+                    PlaceOrderNotificationEvent.builder()
+                            .authentication(authentication)
+                            .orderId(order.getOrderId())
+                            .orderType(order.getType())
+                            .paymentMethod( payment.getMethod().getMethodName())
+                            .paymentStatus(payment.getStatus())
+                            .build()
             );
+
         }else if (payment.getReservation()!=null){
             Reservation reservation = payment.getReservation();
 
-            sendReservationNotificationService.sendPlaceReservationNotification(
-                    authentication,
-                    reservation.getReservationId(),
-                    reservation.getDate(),
-                    payment.getMethod().getMethodName(),
-                    payment.getStatus()
-            );
+            eventPublisher.publishEvent(
+                    PlaceReservationNotificationEvent.builder()
+                            .authentication(authentication)
+                            .reservationId(reservation.getReservationId())
+                            .reservationDate(reservation.getDate())
+                            .paymentMethod(payment.getMethod().getMethodName())
+                            .paymentStatus(payment.getStatus())
+                            .build());
+
         }else{
             throw new PaymentException("Invalid payment");
         }

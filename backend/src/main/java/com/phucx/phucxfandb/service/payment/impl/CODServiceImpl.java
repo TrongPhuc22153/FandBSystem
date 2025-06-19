@@ -1,6 +1,8 @@
 package com.phucx.phucxfandb.service.payment.impl;
 
 import com.phucx.phucxfandb.constant.PaymentMethodConstants;
+import com.phucx.phucxfandb.dto.event.PlaceOrderNotificationEvent;
+import com.phucx.phucxfandb.dto.event.PlaceReservationNotificationEvent;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.enums.PaymentStatus;
 import com.phucx.phucxfandb.enums.RoleName;
@@ -16,6 +18,7 @@ import com.phucx.phucxfandb.utils.CartUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +30,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CODServiceImpl implements CODService {
     private final SendReservationNotificationService sendReservationNotificationService;
-    private final SendOrderNotificationService sendOrderNotificationService;
     private final ReservationReaderService reservationReaderService;
     private final PaymentUpdateService paymentUpdateService;
     private final OrderReaderService orderReaderService;
     private final CartUpdateService cartUpdateService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -56,13 +59,14 @@ public class CODServiceImpl implements CODService {
                 }
             }
 
-            sendOrderNotificationService.sendPlaceOrderNotification(
-                    authentication,
-                    order.getOrderId(),
-                    order.getType(),
-                    PaymentMethodConstants.COD,
-                    PaymentStatus.PENDING
-            );
+            eventPublisher.publishEvent(
+                    PlaceOrderNotificationEvent.builder()
+                            .authentication(authentication)
+                            .orderId(order.getOrderId())
+                            .orderType(order.getType())
+                            .paymentMethod(PaymentMethodConstants.COD)
+                            .paymentStatus(PaymentStatus.PENDING)
+                            .build());
         }else if (reservationId!=null){
             Reservation reservation = reservationReaderService.getReservationEntity(reservationId);
             String paymentId = reservation.getPayment().getPaymentId();
@@ -72,13 +76,15 @@ public class CODServiceImpl implements CODService {
                     PaymentMethodConstants.COD,
                     PaymentStatus.PENDING);
 
-            sendReservationNotificationService.sendPlaceReservationNotification(
-                    authentication,
-                    reservation.getReservationId(),
-                    reservation.getDate(),
-                    PaymentMethodConstants.COD,
-                    PaymentStatus.PENDING
-            );
+            eventPublisher.publishEvent(
+                    PlaceReservationNotificationEvent.builder()
+                            .authentication(authentication)
+                            .reservationId(reservation.getReservationId())
+                            .reservationDate(reservation.getDate())
+                            .paymentMethod(PaymentMethodConstants.COD)
+                            .paymentStatus(PaymentStatus.PENDING)
+                            .build());
+
         }else{
             throw new PaymentException("Invalid payment");
         }

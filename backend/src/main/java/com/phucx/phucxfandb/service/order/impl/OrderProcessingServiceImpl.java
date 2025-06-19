@@ -1,6 +1,7 @@
 package com.phucx.phucxfandb.service.order.impl;
 
 import com.phucx.phucxfandb.constant.*;
+import com.phucx.phucxfandb.dto.event.OrderActionNotificationEvent;
 import com.phucx.phucxfandb.dto.request.*;
 import com.phucx.phucxfandb.dto.response.OrderDTO;
 import com.phucx.phucxfandb.dto.response.PaymentDTO;
@@ -9,7 +10,6 @@ import com.phucx.phucxfandb.entity.OrderDetail;
 import com.phucx.phucxfandb.entity.Payment;
 import com.phucx.phucxfandb.enums.*;
 import com.phucx.phucxfandb.service.cart.CartUpdateService;
-import com.phucx.phucxfandb.service.notification.SendOrderNotificationService;
 import com.phucx.phucxfandb.service.order.OrderDetailService;
 import com.phucx.phucxfandb.service.order.OrderProcessingService;
 import com.phucx.phucxfandb.service.order.OrderReaderService;
@@ -19,6 +19,7 @@ import com.phucx.phucxfandb.service.table.TableOccupancyUpdateService;
 import com.phucx.phucxfandb.utils.NotificationUtils;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
     private final OrderDetailService orderDetailService;
     private final PayPalRefundService payPalRefundService;
     private final TableOccupancyUpdateService tableOccupancyUpdateService;
-    private final SendOrderNotificationService sendOrderNotificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -84,10 +85,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
                 NotificationMessage.ORDER_CANCELLED_MESSAGE
         );
 
-        sendOrderNotificationService.sendNotificationToUser(
-                orderDTO.getOrderId(),
-                requestNotificationDTO
-        );
+        eventPublisher.publishEvent(requestNotificationDTO);
 
         return orderDTO;
     }
@@ -128,10 +126,7 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
                 NotificationMessage.ORDER_CANCELLED_MESSAGE
         );
 
-        sendOrderNotificationService.sendNotificationToUser(
-                orderDTO.getOrderId(),
-                requestNotificationDTO
-        );
+        eventPublisher.publishEvent(requestNotificationDTO);
 
         return orderDTO;
     }
@@ -328,7 +323,15 @@ public class OrderProcessingServiceImpl implements OrderProcessingService {
             case CANCEL -> this.cancelOrder(orderId, type, authentication);
         };
 
-        sendOrderNotificationService.sendNotificationForOrderAction(authentication, orderId, action, type, result);
+        eventPublisher.publishEvent(
+                OrderActionNotificationEvent.builder()
+                        .authentication(authentication)
+                        .orderId(orderId)
+                        .action(action)
+                        .type(type)
+                        .order(result)
+                        .build());
+
 
         return result;
     }

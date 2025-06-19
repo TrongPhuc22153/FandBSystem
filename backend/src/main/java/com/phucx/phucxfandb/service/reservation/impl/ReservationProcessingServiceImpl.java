@@ -1,14 +1,15 @@
 package com.phucx.phucxfandb.service.reservation.impl;
 
 import com.phucx.phucxfandb.constant.*;
+import com.phucx.phucxfandb.dto.event.ReservationActionNotificationEvent;
 import com.phucx.phucxfandb.dto.event.ReservationEvent;
+import com.phucx.phucxfandb.dto.event.ReservationNotificationEvent;
 import com.phucx.phucxfandb.dto.request.RequestNotificationDTO;
 import com.phucx.phucxfandb.dto.request.RequestReservationDTO;
 import com.phucx.phucxfandb.dto.response.ReservationDTO;
 import com.phucx.phucxfandb.entity.*;
 import com.phucx.phucxfandb.enums.*;
 import com.phucx.phucxfandb.exception.TableNotAvailableException;
-import com.phucx.phucxfandb.service.notification.SendReservationNotificationService;
 import com.phucx.phucxfandb.service.refund.PayPalRefundService;
 import com.phucx.phucxfandb.service.reservation.MenuItemService;
 import com.phucx.phucxfandb.service.reservation.ReservationProcessingService;
@@ -44,7 +45,6 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
     private final MenuItemService menuItemService;
     private final ApplicationEventPublisher eventPublisher;
     private final TableOccupancyUpdateService tableOccupancyUpdateService;
-    private final SendReservationNotificationService sendReservationNotificationService;
 
     @Override
     @Transactional
@@ -103,10 +103,12 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
                 NotificationMessage.RESERVATION_CANCELLED_MESSAGE
         );
 
-        sendReservationNotificationService.sendNotificationToGroup(
-                reservationDTO.getReservationId(),
-                WebSocketEndpoint.TOPIC_EMPLOYEE,
-                requestNotificationDTO
+        eventPublisher.publishEvent(
+                ReservationNotificationEvent.builder()
+                        .reservationId(reservationId)
+                        .endpoint(WebSocketEndpoint.TOPIC_EMPLOYEE)
+                        .request(requestNotificationDTO)
+                        .build()
         );
 
         return reservationDTO;
@@ -152,9 +154,11 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
                 NotificationMessage.RESERVATION_CANCELLED_MESSAGE
         );
 
-        sendReservationNotificationService.sendNotificationToUser(
-                reservationDTO.getReservationId(),
-                requestNotificationDTO
+        eventPublisher.publishEvent(
+                ReservationNotificationEvent.builder()
+                        .reservationId(reservationId)
+                        .request(requestNotificationDTO)
+                        .build()
         );
 
         return reservationDTO;
@@ -325,7 +329,13 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
             case CANCEL -> this.cancelReservation(authentication, reservationId);
         };
 
-        sendReservationNotificationService.sendNotificationForReservationAction(authentication, reservationId, action, result);
+        eventPublisher.publishEvent(
+                ReservationActionNotificationEvent.builder()
+                        .authentication(authentication)
+                        .reservationId(reservationId)
+                        .action(action)
+                        .reservation(result)
+                        .build());
 
         return result;
     }
