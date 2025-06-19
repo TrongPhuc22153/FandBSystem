@@ -35,7 +35,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
             WHERE r.table.tableId = :tableId
                 AND r.date = :date
                 AND r.startTime <= :endTime AND r.endTime > :startTime
-                AND r.status NOT IN ('CANCELLED', 'COMPLETED')
+                AND r.status NOT IN ('CANCELED', 'COMPLETED')
             """)
     List<Reservation> findOverlappingReservations(
             @Param("tableId") String tableId,
@@ -50,7 +50,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
                 AND r.startTime <= :time
                 AND r.endTime > :time
                 AND r.table.tableId IN :tableIds
-                AND r.status <> 'COMPLETED'
+                AND r.status NOT IN ('CANCELED', 'COMPLETED')
             """)
     List<Reservation> findActiveReservations(
             @Param("date") LocalDate date,
@@ -65,7 +65,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
                 AND r.startTime > :time
                 AND r.startTime <= :futureTime
                 AND r.table.tableId IN :tableIds
-                AND r.status NOT IN ('CANCELLED', 'COMPLETED')
+                AND r.status NOT IN ('CANCELED', 'COMPLETED')
             """)
     List<Reservation> findUpcomingReservations(
             @Param("date") LocalDate date,

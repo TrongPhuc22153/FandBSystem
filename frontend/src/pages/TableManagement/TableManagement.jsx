@@ -12,6 +12,7 @@ import {
   TABLE_OCCUPANCY_TYPES,
   ORDER_ACTIONS,
   RESERVATION_ACTIONS,
+  RESERVATION_STATUSES,
 } from "../../constants/webConstant";
 import { useAlert } from "../../context/AlertContext";
 import Pagination from "../../components/Pagination/Pagination";
@@ -57,6 +58,13 @@ export default function TableManagement() {
     page: 0,
     size: 20,
     sortBy: "startTime",
+    status: [
+      RESERVATION_STATUSES.PENDING,
+      RESERVATION_STATUSES.CONFIRMED,
+      RESERVATION_STATUSES.PREPARING,
+      RESERVATION_STATUSES.PREPARED,
+      RESERVATION_STATUSES.READY_TO_SERVE,
+    ],
     startDate: currentDate,
     endDate: currentDate,
   });
@@ -205,7 +213,10 @@ export default function TableManagement() {
 
   const onServedReservation = useCallback(
     async (reservationId) => {
-      const res = await handleProcessReservation(reservationId, RESERVATION_ACTIONS.SERVED);
+      const res = await handleProcessReservation(
+        reservationId,
+        RESERVATION_ACTIONS.SERVED
+      );
       if (res) {
         mutateTables();
         mutateTableOccupancies();
