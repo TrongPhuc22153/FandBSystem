@@ -34,7 +34,7 @@ export default function EmployeeOrdersPage() {
   const [filterType, setFilterType] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(currentPageFromURL);
 
-  const debouncedSearch = useCallback(
+  const debouncedSearch = useCallback(() =>
     debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
       searchParams.set("page", "1");
@@ -105,7 +105,7 @@ export default function EmployeeOrdersPage() {
         variant: "danger",
       });
     }
-  }, [orderError]);
+  }, [orderError, showNewAlert]);
 
   useEffect(() => {
     if (processError?.message) {

@@ -264,9 +264,10 @@ export default function TableManagement() {
       });
       if (res) {
         mutateTables();
+        mutateTableStatusSummary();
       }
     },
-    [handleUpdateTableOccupancyStatus, mutateTables]
+    [handleUpdateTableOccupancyStatus, mutateTables, mutateTableStatusSummary]
   );
 
   const handleSeatCustomerReservation = useCallback(
@@ -310,7 +311,7 @@ export default function TableManagement() {
     ]
   );
 
-  const debouncedSearch = useCallback(
+  const debouncedSearch = useCallback(() =>
     debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
       setSearchParams(searchParams);

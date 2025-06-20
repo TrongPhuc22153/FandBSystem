@@ -36,7 +36,7 @@ export default function RestaurantOrderSystem() {
   const { showNewAlert } = useAlert();
   const { onOpen } = useModal();
 
-  const debouncedSearch = useCallback(
+  const debouncedSearch = useCallback(() =>
     debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
       searchParams.set("page", "1");
@@ -78,7 +78,6 @@ export default function RestaurantOrderSystem() {
   // Fetch products
   const {
     data: productsData,
-    isLoading: loadingProducts,
     error: productsError,
   } = useProducts({
     page: currentPage - 1,

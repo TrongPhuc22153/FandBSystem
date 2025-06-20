@@ -7,20 +7,15 @@ import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
 import { Badge } from "react-bootstrap";
 import {
   RESERVATION_STATUS_CLASSES,
-  RESERVATION_STATUSES,
   SORTING_DIRECTIONS,
 } from "../../constants/webConstant";
 import { debounce } from "lodash";
 import ReservationModal from "../../components/ReservationModal/ReservationModal";
 import Loading from "../../components/Loading/Loading";
-import { useAuth } from "../../context/AuthContext";
-import { hasRole } from "../../utils/authUtils";
-import { ROLES } from "../../constants/roles";
 import { useAlert } from "../../context/AlertContext";
 import { useModal } from "../../context/ModalContext";
 
 const EmployeeReservationsPage = () => {
-  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageFromURL = parseInt(searchParams.get("page")) || 0;
   const [selectedItems, setSelectedItems] = useState([]);
@@ -52,14 +47,14 @@ const EmployeeReservationsPage = () => {
     isLoading: reservationLoading,
   } = useReservation({ reservationId: selectedReservationId });
 
-    useEffect(() => {
+  useEffect(() => {
     if (reservationError?.message) {
       showNewAlert({
         message: reservationError.message,
         variant: "danger",
       });
     }
-  }, [reservationError]);
+  }, [reservationError, showNewAlert]);
 
   const reservations = useMemo(
     () => reservationsData?.content || [],
@@ -146,19 +141,20 @@ const EmployeeReservationsPage = () => {
     }
   }, []);
 
-  const handleCancelReservation = useCallback((reservation) => {
+  const handleCancelReservation = useCallback((reservation) => {}, []);
 
-  }, [])
-
-  const showConfirmCancel = useCallback((reservation) => {
-    onOpen({
+  const showConfirmCancel = useCallback(
+    (reservation) => {
+      onOpen({
         title: "Cancel reservation",
         message: "Do you want to cancel this reservation?",
-        onYes: () => handleCancelReservation(reservation)
-    })
-  }, [onOpen, handleCancelReservation])
+        onYes: () => handleCancelReservation(reservation),
+      });
+    },
+    [onOpen, handleCancelReservation]
+  );
 
-  const debouncedSearch = useCallback(
+  const debouncedSearch = useCallback(() =>
     debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
       searchParams.set("page", "1");

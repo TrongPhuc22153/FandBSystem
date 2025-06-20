@@ -99,7 +99,7 @@ const UserOrdersPage = () => {
     }
   }, []);
 
-  const debouncedSearch = useCallback(
+  const debouncedSearch = useCallback(() =>
     debounce((newSearchValue) => {
       searchParams.set("searchValue", newSearchValue);
       searchParams.set("page", "1");
