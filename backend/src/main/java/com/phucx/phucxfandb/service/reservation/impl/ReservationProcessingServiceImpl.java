@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.EnumSet;
@@ -229,9 +230,16 @@ public class ReservationProcessingServiceImpl implements ReservationProcessingSe
 
     @Override
     public ReservationDTO placeCustomerReservation(String username, RequestReservationDTO request) {
+        LocalDateTime now = LocalDateTime.now();
         long durationMinutes = ChronoUnit.MINUTES.between(request.getStartTime(), request.getEndTime());
         if (durationMinutes < ReservationConstant.DEFAULT_DURATION_MINUTES) {
             throw new IllegalArgumentException("Reservation duration must be at least " + ReservationConstant.DEFAULT_DURATION_MINUTES + " minutes.");
+        }
+
+        LocalDateTime startDateTime = LocalDateTime.of(request.getDate(), request.getStartTime());
+        long minutesUntilStart = ChronoUnit.MINUTES.between(now, startDateTime);
+        if (minutesUntilStart < ReservationConstant.MINIMUM_LEAD_TIME_MINUTES) {
+            throw new IllegalArgumentException("Please reserve at least " + ReservationConstant.MINIMUM_LEAD_TIME_MINUTES + " minutes in advance.");
         }
 
         TableEntity table;

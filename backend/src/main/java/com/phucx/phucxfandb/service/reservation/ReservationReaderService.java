@@ -14,6 +14,6 @@ public interface ReservationReaderService {
     ReservationDTO getReservation(String reservationId);
     Reservation getReservationEntity(String reservationId);
 
-    List<Reservation> getReservations(LocalDateTime dateTime);
+    List<Reservation> getOverDueReservations(LocalDateTime dateTime);
 
 }

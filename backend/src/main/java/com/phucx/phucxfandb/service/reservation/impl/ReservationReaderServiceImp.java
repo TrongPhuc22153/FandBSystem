@@ -12,6 +12,7 @@ import com.phucx.phucxfandb.specifications.ReservationSpecification;
 import com.phucx.phucxfandb.utils.RoleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,9 @@ import java.util.List;
 public class ReservationReaderServiceImp implements ReservationReaderService {
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
+
+    @Value("${reservation.cutoff.minutes}")
+    private long cutoffMinutes;
 
     @Override
     @Transactional(readOnly = true)
@@ -94,9 +98,9 @@ public class ReservationReaderServiceImp implements ReservationReaderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Reservation> getReservations(LocalDateTime dateTime) {
+    public List<Reservation> getOverDueReservations(LocalDateTime dateTime) {
         LocalDate today = dateTime.toLocalDate();
-        LocalTime cutoffTime = dateTime.toLocalTime().plus(30, ChronoUnit.MINUTES);
+        LocalTime cutoffTime = dateTime.toLocalTime().plus(cutoffMinutes, ChronoUnit.MINUTES);
         return reservationRepository.findAll(
                         ReservationSpecification.forNoShowCheck(today, cutoffTime)
                 ).stream()
