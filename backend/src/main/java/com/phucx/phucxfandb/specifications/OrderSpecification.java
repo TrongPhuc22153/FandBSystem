@@ -25,7 +25,12 @@ public class OrderSpecification {
 
     public static Specification<Order> hasOrderDateBetween(LocalDate startDate, LocalDate endDate){
         if(startDate==null || endDate==null) return null;
-        return ((root, query, criteriaBuilder) -> root.get("orderDate").in(startDate, endDate));
+        return ((root, query, criteriaBuilder) ->
+                criteriaBuilder.between(
+                        root.get("orderDate"),
+                        startDate,
+                        endDate
+                ));
     }
 
     public static Specification<Order> searchOrders(String search){

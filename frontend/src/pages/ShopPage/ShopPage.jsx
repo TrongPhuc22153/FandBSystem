@@ -28,6 +28,7 @@ function ShopPage() {
     isLoading,
   } = useProducts({
     page: currentPage,
+    size: 12,
     categoryId: categoryId,
     search: searchTermFromURL,
   });
