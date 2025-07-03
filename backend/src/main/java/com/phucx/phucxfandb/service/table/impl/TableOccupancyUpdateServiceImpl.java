@@ -92,7 +92,7 @@ public class TableOccupancyUpdateServiceImpl implements TableOccupancyUpdateServ
                 .orElseThrow(() -> new TableNotAvailableException("Table not found"));
 
         LocalDateTime now = LocalDateTime.now();
-        List<TableOccupancy> activeOccupancies = tableOccupancyRepository.findActiveOccupancy(
+        List<TableOccupancy> activeOccupancies = tableOccupancyRepository.findActiveOccupancies(
                 tableId,
                 now.toLocalDate(),
                 now.toLocalTime());

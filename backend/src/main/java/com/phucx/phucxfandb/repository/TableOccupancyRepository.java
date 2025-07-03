@@ -36,8 +36,22 @@ public interface TableOccupancyRepository extends JpaRepository<TableOccupancy, 
                 AND (o.endTime IS NULL OR o.endTime > :currentTime)
                 AND o.status IN ('SEATED', 'CLEANING')
             """)
-    List<TableOccupancy> findActiveOccupancy(
+    List<TableOccupancy> findActiveOccupancies(
             @Param("tableId") String tableId,
+            @Param("date") LocalDate date,
+            @Param("currentTime") LocalTime currentTime);
+
+    @Query("""
+            SELECT o
+            FROM TableOccupancy o
+            WHERE o.table.tableId IN :tableIds
+                AND o.date = :date
+                AND o.startTime <= :currentTime
+                AND (o.endTime IS NULL OR o.endTime > :currentTime)
+                AND o.status IN ('SEATED', 'CLEANING')
+            """)
+    List<TableOccupancy> findActiveOccupancies(
+            @Param("tableIds") Collection<String> tableIds,
             @Param("date") LocalDate date,
             @Param("currentTime") LocalTime currentTime);
 

@@ -15,6 +15,7 @@ import com.phucx.phucxfandb.repository.ReservationRepository;
 import com.phucx.phucxfandb.repository.TableOccupancyRepository;
 import com.phucx.phucxfandb.repository.TableRepository;
 import com.phucx.phucxfandb.service.table.TableReaderService;
+import com.phucx.phucxfandb.service.table.TableTaskService;
 import com.phucx.phucxfandb.specifications.TableSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static com.phucx.phucxfandb.constant.TableConstant.UPCOMING_RESERVATION_WINDOW_MINUTES;
@@ -37,6 +39,7 @@ import static com.phucx.phucxfandb.constant.TableConstant.UPCOMING_RESERVATION_W
 public class TableReaderServiceImpl implements TableReaderService {
     private final TableOccupancyRepository tableOccupancyRepository;
     private final ReservationRepository reservationRepository;
+    private final TableTaskService tableTaskService;
     private final TableRepository tableRepository;
     private final TableMapper mapper;
 
@@ -87,20 +90,24 @@ public class TableReaderServiceImpl implements TableReaderService {
                 .map(TableEntity::getTableId)
                 .collect(Collectors.toList());
 
-        List<TableOccupancy> activeOccupancies = tableOccupancyRepository
-                .findActiveOccupancies(date, tableIds);
-        Map<String, TableOccupancy> occupancyByTableId = activeOccupancies.stream()
+        CompletableFuture<List<TableOccupancy>> activeOccupanciesFuture = tableTaskService.getActiveOccupancies(date, tableIds);
+        CompletableFuture<List<Reservation>> activeReservationsFuture = tableTaskService.getActiveReservations(date, time, tableIds);
+        CompletableFuture<List<Reservation>> upcomingReservationsFuture = tableTaskService.getUpcomingReservations(
+                date, time, time.plusMinutes(UPCOMING_RESERVATION_WINDOW_MINUTES), tableIds);
+
+        CompletableFuture.allOf(
+                activeOccupanciesFuture,
+                activeReservationsFuture,
+                upcomingReservationsFuture
+        ).join();
+
+        Map<String, TableOccupancy> occupancyByTableId = activeOccupanciesFuture.join().stream()
                 .collect(Collectors.toMap(o -> o.getTable().getTableId(), o -> o));
 
-        List<Reservation> activeReservations = reservationRepository
-                .findActiveReservations(date, time, tableIds);
-        Map<String, Reservation> reservationByTableId = activeReservations.stream()
+        Map<String, Reservation> reservationByTableId = activeReservationsFuture.join().stream()
                 .collect(Collectors.toMap(r -> r.getTable().getTableId(), r -> r));
 
-        LocalTime futureTime = time.plusMinutes(UPCOMING_RESERVATION_WINDOW_MINUTES);
-        List<Reservation> upcomingReservations = reservationRepository
-                .findUpcomingReservations(date, time, futureTime, tableIds);
-        Map<String, Reservation> upcomingReservationTimeByTableId = upcomingReservations.stream()
+        Map<String, Reservation> upcomingReservationTimeByTableId = upcomingReservationsFuture.join().stream()
                 .collect(Collectors.toMap(r -> r.getTable().getTableId(), r -> r));
 
         return allTables
@@ -183,20 +190,23 @@ public class TableReaderServiceImpl implements TableReaderService {
                 .map(TableEntity::getTableId)
                 .collect(Collectors.toList());
 
-        List<TableOccupancy> activeOccupancies = tableOccupancyRepository
-                .findActiveOccupancies(date, tableIds);
-        Map<String, TableOccupancy> occupancyByTableId = activeOccupancies.stream()
+        CompletableFuture<List<TableOccupancy>> activeOccupanciesFuture =  tableTaskService.getActiveOccupancies(date, tableIds);
+        CompletableFuture<List<Reservation>> activeReservationsFuture =  tableTaskService.getActiveReservations(date, time, tableIds);
+        CompletableFuture<List<Reservation>> upcomingReservationsFuture =  tableTaskService.getUpcomingReservations(date, time, time.plusMinutes(UPCOMING_RESERVATION_WINDOW_MINUTES), tableIds);
+
+        CompletableFuture.allOf(
+                activeOccupanciesFuture,
+                activeReservationsFuture,
+                upcomingReservationsFuture
+        ).join();
+
+        Map<String, TableOccupancy> occupancyByTableId = activeOccupanciesFuture.join().stream()
                 .collect(Collectors.toMap(o -> o.getTable().getTableId(), o -> o));
 
-        List<Reservation> activeReservations = reservationRepository
-                .findActiveReservations(date, time, tableIds);
-        Map<String, Reservation> reservationByTableId = activeReservations.stream()
+        Map<String, Reservation> reservationByTableId = activeReservationsFuture.join().stream()
                 .collect(Collectors.toMap(r -> r.getTable().getTableId(), r -> r));
 
-        LocalTime futureTime = time.plusMinutes(UPCOMING_RESERVATION_WINDOW_MINUTES);
-        List<Reservation> upcomingReservations = reservationRepository
-                .findUpcomingReservations(date, time, futureTime, tableIds);
-        Map<String, Reservation> upcomingReservationByTableId = upcomingReservations.stream()
+        Map<String, Reservation> upcomingReservationByTableId = upcomingReservationsFuture.join().stream()
                 .collect(Collectors.toMap(r -> r.getTable().getTableId(), r -> r));
 
         long occupied = 0;
@@ -239,24 +249,34 @@ public class TableReaderServiceImpl implements TableReaderService {
     @Transactional(readOnly = true)
     public List<TableEntity> getAvailableTables(LocalDate date, LocalTime time, int partySize, int durationMinutes) {
         List<TableEntity> allTables = tableRepository.findAll();
-        Set<String> unavailableTableIds = new HashSet<>();
 
         LocalDateTime requestedStart = LocalDateTime.of(date, time);
         LocalDateTime requestedEnd = requestedStart.plusMinutes(durationMinutes);
 
-        for (TableEntity table : allTables) {
-            List<TableOccupancy> activeOccupancies = tableOccupancyRepository.findActiveOccupancy(table.getTableId(), date, time);
-            if (!activeOccupancies.isEmpty()) {
-                unavailableTableIds.add(table.getTableId());
-                continue;
-            }
+        List<String> tableIds = allTables.stream()
+                .map(TableEntity::getTableId)
+                .collect(Collectors.toList());
 
-            List<Reservation> overlappingReservations = reservationRepository.findOverlappingReservations(
-                    table.getTableId(), date, time, requestedEnd.toLocalTime());
-            if (!overlappingReservations.isEmpty()) {
-                unavailableTableIds.add(table.getTableId());
-            }
-        }
+        CompletableFuture<List<TableOccupancy>> activeOccupanciesFuture = tableTaskService
+                .getActiveOccupancies(date, time, tableIds);
+        CompletableFuture<List<Reservation>> overlappingReservationsFuture = tableTaskService
+                .getOverlappingReservations(date, time, requestedEnd.toLocalTime(), tableIds);
+
+        CompletableFuture.allOf(
+                activeOccupanciesFuture,
+                overlappingReservationsFuture
+        ).join();
+
+        Set<String> occupiedTableIds = activeOccupanciesFuture.join().stream()
+                .map(o -> o.getTable().getTableId())
+                .collect(Collectors.toSet());
+
+        Set<String> reservedTableIds = overlappingReservationsFuture.join().stream()
+                .map(r -> r.getTable().getTableId())
+                .collect(Collectors.toSet());
+
+        Set<String> unavailableTableIds = new HashSet<>(occupiedTableIds);
+        unavailableTableIds.addAll(reservedTableIds);
 
         return allTables.stream()
                 .filter(table -> !unavailableTableIds.contains(table.getTableId()))
