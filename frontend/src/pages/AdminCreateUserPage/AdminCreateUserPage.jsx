@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useUserActions } from "../../hooks/userHook";
-import Loading from "../../components/Loading/Loading";
+import Loading from "../../shared/components/Loading/Loading";
 import Select from "react-select";
 import { useRoles } from "../../hooks/roleHook";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../shared/context/ModalContext";
 import styles from "./AdminCreateUserPage.module.css";
 
 function AdminCreateUserPage() {

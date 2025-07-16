@@ -3,7 +3,7 @@ import ProductCard from "../ProductCard/ProductCard";
 import ReservationSummary from "../ReservationSummary/ReservationSummary";
 import styles from "./Step2ProductSelection.module.css";
 import { useProducts } from "../../../hooks/productHooks";
-import ErrorDisplay from "../../ErrorDisplay/ErrorDisplay";
+import ErrorDisplay from "../../../shared/components/ErrorDisplay/ErrorDisplay";
 import { debounce } from "lodash";
 import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";

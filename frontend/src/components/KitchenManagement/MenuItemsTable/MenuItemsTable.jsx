@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import styles from "./kitchen-table.module.css";
 import { useProductActions, useProducts } from "../../../hooks/productHooks";
-import ErrorDisplay from "../../ErrorDisplay/ErrorDisplay";
-import { SORTING_DIRECTIONS } from "../../../constants/webConstant";
+import ErrorDisplay from "../../../shared/components/ErrorDisplay/ErrorDisplay";
+import { SORTING_DIRECTIONS } from "../../../shared/constants/webConstant";
 import Pagination from "../../Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
-import { useAlert } from "../../../context/AlertContext";
-import { useModal } from "../../../context/ModalContext";
+import { useAlert } from "../../../shared/context/AlertContext";
+import { useModal } from "../../../shared/context/ModalContext";
 import { useCategories } from "../../../hooks/categoryHooks";
 import { debounce } from "lodash";
 import { Search } from "lucide-react";

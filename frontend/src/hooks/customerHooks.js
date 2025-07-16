@@ -1,11 +1,11 @@
 import useSWR from "swr";
 import { useCallback, useState } from "react";
-import { CUSTOMER_PROFILE_ENDPOINT } from "../constants/api";
+import { CUSTOMER_PROFILE_ENDPOINT } from "../shared/constants/api";
 import {
   updateCustomerProfile,
   fetchCustomerProfile,
 } from "../api/customerApi";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../shared/context/AuthContext";
 
 export const useCustomerProfile = () => {
   const { token } = useAuth();

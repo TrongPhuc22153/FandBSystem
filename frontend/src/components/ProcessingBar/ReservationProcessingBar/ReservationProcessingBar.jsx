@@ -1,5 +1,5 @@
 import { Badge } from "react-bootstrap";
-import { RESERVATION_STATUS_CLASSES, RESERVATION_STATUSES } from "../../../constants/webConstant";
+import { RESERVATION_STATUS_CLASSES, RESERVATION_STATUSES } from "../../../shared/constants/webConstant";
 
 export default function ReservationProcessingBar({ status }) {
   return (

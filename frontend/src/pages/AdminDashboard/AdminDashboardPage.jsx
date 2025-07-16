@@ -4,8 +4,8 @@ import OrderStatus from "../../components/Dashboard/OrderStatus/OrderStatus";
 import TableMap from "../../components/Dashboard/TableMap/TableMap";
 import Analytics from "../../components/Dashboard/Analytics/Analytics";
 import Reservations from "../../components/Dashboard/Reservations/Reservations";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import { useMetrics, useReport } from "../../hooks/reportHooks";
 import { format } from "date-fns";
 import {
@@ -17,8 +17,8 @@ import {
 import { useReservations } from "../../hooks/reservationHooks";
 import { useAvailableTables } from "../../hooks/tableHooks";
 import { useOrders } from "../../hooks/orderHooks";
-import { SORTING_DIRECTIONS } from "../../constants/webConstant";
-import { DATE_FILTER } from "../../constants/filter";
+import { SORTING_DIRECTIONS } from "../../shared/constants/webConstant";
+import { DATE_FILTER } from "../../shared/constants/filter";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 function AdminDashboardPage() {

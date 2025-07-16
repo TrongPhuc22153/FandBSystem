@@ -1,7 +1,7 @@
 import { Badge, Card, Table } from "react-bootstrap";
 import styles from "./Reservations.module.css";
-import { formatTime } from "../../../utils/datetimeUtils";
-import { RESERVATION_STATUS_CLASSES } from "../../../constants/webConstant";
+import { formatTime } from "../../../shared/utils/datetimeUtils";
+import { RESERVATION_STATUS_CLASSES } from "../../../shared/constants/webConstant";
 
 const Reservations = ({ reservations }) => {
   return (

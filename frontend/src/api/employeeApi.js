@@ -1,4 +1,4 @@
-import { EMPLOYEE_PROFILE_ENDPOINT } from "../constants/api";
+import { EMPLOYEE_PROFILE_ENDPOINT } from "../shared/constants/api";
 
 // --- Fetching Employee Information ---
 export const fetchEmployeeProfile = async (token) => {

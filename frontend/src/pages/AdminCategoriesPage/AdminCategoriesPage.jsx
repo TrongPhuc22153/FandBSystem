@@ -9,11 +9,11 @@ import { debounce } from "lodash";
 import {
   ADMIN_ADD_CATEGORY_URI,
   ADMIN_CATEGORIES_URI,
-} from "../../constants/routes";
-import { getImageSrc } from "../../utils/imageUtils";
-import { useModal } from "../../context/ModalContext";
+} from "../../shared/constants/routes";
+import { getImageSrc } from "../../shared/utils/imageUtils";
+import { useModal } from "../../shared/context/ModalContext";
 import { Badge } from "react-bootstrap";
-import { SORTING_DIRECTIONS } from "../../constants/webConstant";
+import { SORTING_DIRECTIONS } from "../../shared/constants/webConstant";
 
 const AdminCategoriesPage = () => {
   const navigate = useNavigate();

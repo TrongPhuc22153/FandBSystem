@@ -1,6 +1,6 @@
 import styles from './PaymentError.module.css'; 
 import { Link } from 'react-router-dom';
-import { CHECKOUT_URI } from '../../../constants/routes';
+import { CHECKOUT_URI } from '../../../shared/constants/routes';
 
 function PaymentError() {
   return (

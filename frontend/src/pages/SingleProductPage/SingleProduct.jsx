@@ -1,23 +1,23 @@
 import { useState, useCallback, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { HOME_URI, LOGIN_URI, SHOP_URI } from "../../constants/routes";
+import { HOME_URI, LOGIN_URI, SHOP_URI } from "../../shared/constants/routes";
 import QuantityInput from "../../components/QuantityInput/QuanityInput";
 import { useProduct } from "../../hooks/productHooks";
 import { useRatings, useUserProductRating } from "../../hooks/ratingHooks";
 import { useCartActions } from "../../hooks/cartHooks";
-import { useAlert } from "../../context/AlertContext";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import { useAlert } from "../../shared/context/AlertContext";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import background from "../../assets/images/background.jpg";
 import ReviewForm from "../../components/ReviewForm/ReviewForm";
 import ReviewList from "../../components/ReviewList/ReviewList";
 import RatingStar from "../../components/RatingStar/RatingStar";
-import { hasRole } from "../../utils/authUtils";
-import { useAuth } from "../../context/AuthContext";
-import { ROLES } from "../../constants/roles";
-import { useModal } from "../../context/ModalContext";
+import { hasRole } from "../../shared/utils/authUtils";
+import { useAuth } from "../../shared/context/AuthContext";
+import { ROLES } from "../../shared/constants/roles";
+import { useModal } from "../../shared/context/ModalContext";
 import ImagesShowcase from "../../components/ImageShowcase/ImageShowcase";
-import { INSUFFICIENT_AUTHENTICATION_ERROR } from "../../constants/error";
+import { INSUFFICIENT_AUTHENTICATION_ERROR } from "../../shared/constants/error";
 
 const SingleProduct = () => {
   const [searchParams] = useSearchParams();

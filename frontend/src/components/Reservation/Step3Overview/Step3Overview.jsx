@@ -1,11 +1,11 @@
 
 import { useMemo } from "react";
-import { PAYMENT_TYPES } from "../../../constants/paymentConstants";
+import { PAYMENT_TYPES } from "../../../shared/constants/paymentConstants";
 import { usePaymentMethods } from "../../../hooks/paymentMethodHooks";
-import ErrorDisplay from "../../ErrorDisplay/ErrorDisplay";
+import ErrorDisplay from "../../../shared/components/ErrorDisplay/ErrorDisplay";
 import styles from "./Step3Overview.module.css"
-import { getImageSrc } from "../../../utils/imageUtils";
-import { useModal } from "../../../context/ModalContext";
+import { getImageSrc } from "../../../shared/utils/imageUtils";
+import { useModal } from "../../../shared/context/ModalContext";
 
 export default function Step3Overview({ data, updateData, onBack, onSubmit, onEdit }) {
   const {

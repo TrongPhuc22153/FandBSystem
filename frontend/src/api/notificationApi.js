@@ -1,5 +1,5 @@
-import { USER_NOTIFICATION_ENDPOINT, USER_NOTIFICATIONS_ENDPOINT } from "../constants/api";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { USER_NOTIFICATION_ENDPOINT, USER_NOTIFICATIONS_ENDPOINT } from "../shared/constants/api";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 export const fetchNotifications = async ({ page = 0, size = 10, field = "createdAt", direction = SORTING_DIRECTIONS.DESC, isRead, token }) => {
     const params = new URLSearchParams();

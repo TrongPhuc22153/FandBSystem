@@ -7,11 +7,11 @@ import {
 import {
   TOPIC_EMPLOYEE,
   USER_NOTIFICATION_MESSAGE,
-} from "../../constants/webSocketEnpoint";
-import { useAuth } from "../../context/AuthContext";
+} from "../../shared/constants/webSocketEnpoint";
+import { useAuth } from "../../shared/context/AuthContext";
 import { useStompSubscription } from "../../hooks/websocketHooks";
-import { hasRole } from "../../utils/authUtils";
-import { ROLES } from "../../constants/roles";
+import { hasRole } from "../../shared/utils/authUtils";
+import { ROLES } from "../../shared/constants/roles";
 import Pagination from "../../components/Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
 

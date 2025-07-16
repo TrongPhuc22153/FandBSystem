@@ -1,4 +1,4 @@
-import { REFUND_ORDER_PREVIEW_ENDPOINT, REFUND_RESERVATION_PREVIEW_ENDPOINT } from "../constants/api";
+import { REFUND_ORDER_PREVIEW_ENDPOINT, REFUND_RESERVATION_PREVIEW_ENDPOINT } from "../shared/constants/api";
 
 // Fetcher function for order refund preview
 export const fetchOrderRefundPreview = async (orderId, token) => {

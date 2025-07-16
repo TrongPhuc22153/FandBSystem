@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useCategory, useCategoryActions } from "../../hooks/categoryHooks";
-import Loading from "../../components/Loading/Loading";
+import Loading from "../../shared/components/Loading/Loading";
 import { useParams } from "react-router-dom";
-import { formatDate } from "../../utils/datetimeUtils";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { useModal } from "../../context/ModalContext";
+import { formatDate } from "../../shared/utils/datetimeUtils";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { useModal } from "../../shared/context/ModalContext";
 import SingleImageDisplay from "../../components/SingleImageDisplay/SingleImageDisplay";
 import CategoryForm from "../../components/CategoryForm/CategoryForm";
 import { useImageUpload } from "../../hooks/imageHooks";
-import { useAlert } from "../../context/AlertContext";
+import { useAlert } from "../../shared/context/AlertContext";
 
 function AdminUpdateCategoryPage() {
   const { id } = useParams();

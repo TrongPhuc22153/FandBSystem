@@ -1,5 +1,5 @@
-import { RESERVATION_ITEM_ENDPOINT, RESERVATION_ITEMS_ENDPOINT, RESERVATIONS_ENDPOINT } from '../constants/api'; // Make sure this path is correct
-import { SORTING_DIRECTIONS } from '../constants/webConstant';
+import { RESERVATION_ITEM_ENDPOINT, RESERVATION_ITEMS_ENDPOINT, RESERVATIONS_ENDPOINT } from '../shared/constants/api'; // Make sure this path is correct
+import { SORTING_DIRECTIONS } from '../shared/constants/webConstant';
 
 // Get reservation by ID
 export const fetchReservationById = async ({ token, reservationId }) => {

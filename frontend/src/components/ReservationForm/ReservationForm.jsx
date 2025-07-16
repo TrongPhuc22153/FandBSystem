@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import styles from "./ReservationForm.module.css";
 import { useReservationTables } from "../../hooks/tableHooks";
-import { useAlert } from "../../context/AlertContext";
-import { RESERVATION_TIME } from "../../constants/webConstant";
+import { useAlert } from "../../shared/context/AlertContext";
+import { RESERVATION_TIME } from "../../shared/constants/webConstant";
 
 export default function ReservationDetails({
   reservationData,

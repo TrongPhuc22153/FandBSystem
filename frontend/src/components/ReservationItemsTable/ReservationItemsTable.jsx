@@ -4,7 +4,7 @@ import styles from "./ReservationItemsTable.module.css";
 import {
   ORDER_ITEM_STATUSES,
   ORDER_ITEM_STATUS_CLASSES,
-} from "../../constants/webConstant";
+} from "../../shared/constants/webConstant";
 
 const calculateTotal = (reservationItems) =>
   reservationItems.reduce(

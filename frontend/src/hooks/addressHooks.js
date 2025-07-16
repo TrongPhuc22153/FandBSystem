@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 import { fetchShippingAddresses, updateShippingAddress, createShippingAddress } from '../api/shippingAddressApi';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../shared/context/AuthContext';
 import useSWR from 'swr';
-import { USER_SHIPPING_ADDRESS_ENDPOINT } from '../constants/api';
+import { USER_SHIPPING_ADDRESS_ENDPOINT } from '../shared/constants/api';
 
 
 export const useShippingAddresses = () => {

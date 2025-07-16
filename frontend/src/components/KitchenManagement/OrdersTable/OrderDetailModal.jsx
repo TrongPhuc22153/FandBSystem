@@ -5,7 +5,7 @@ import {
   ORDER_ITEM_STATUSES,
   ORDER_STATUS_CLASSES,
   ORDER_STATUSES,
-} from "../../../constants/webConstant";
+} from "../../../shared/constants/webConstant";
 
 export default function OrderDetailModal({
   order,

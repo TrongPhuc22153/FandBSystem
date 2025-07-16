@@ -7,10 +7,10 @@ import {
   updateProduct,
   updateProductQuantity,
 } from "../api/productApi";
-import { PRODUCTS_ENDPOINT } from "../constants/api";
+import { PRODUCTS_ENDPOINT } from "../shared/constants/api";
 import { useCallback, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { useAuth } from "../shared/context/AuthContext";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 export const useProducts = ({
   page = 0,

@@ -1,10 +1,10 @@
 import { Badge, Card, Table } from "react-bootstrap";
 import styles from "./OrderStatus.module.css";
-import { formatDate } from "../../../utils/datetimeUtils";
+import { formatDate } from "../../../shared/utils/datetimeUtils";
 import {
   ORDER_STATUS_CLASSES,
   ORDER_TYPE_CLASSES,
-} from "../../../constants/webConstant";
+} from "../../../shared/constants/webConstant";
 
 const OrderStatus = ({ orders }) => {
   return (

@@ -12,7 +12,7 @@ import {
   Legend,
 } from 'chart.js';
 import styles from './Analytics.module.css';
-import { computePercentages } from '../../../utils/metricUtils';
+import { computePercentages } from '../../../shared/utils/metricUtils';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Tooltip, Legend);
 

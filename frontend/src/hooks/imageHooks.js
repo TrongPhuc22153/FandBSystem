@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../shared/context/AuthContext";
 import { uploadImage } from "../api/imageApi";
 
 export const useImageUpload = () => {

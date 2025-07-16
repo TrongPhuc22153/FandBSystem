@@ -4,10 +4,10 @@ import {
   createUser,
   deleteUser,
   changePassword,
-} from "../api/usersApi";
+} from "../features/users/services/usersApi";
 import { useCallback, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { USERS_ENDPOINT } from "../constants/api";
+import { useAuth } from "../shared/context/AuthContext";
+import { USERS_ENDPOINT } from "../shared/constants/api";
 
 export const useUsers = ({
   username,

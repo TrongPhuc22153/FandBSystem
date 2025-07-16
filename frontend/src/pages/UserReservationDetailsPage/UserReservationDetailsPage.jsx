@@ -2,15 +2,15 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useReservation, useReservationActions } from "../../hooks/reservationHooks";
 import { useRefundActions } from "../../hooks/refundHooks";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import ReservationDetails from "../../components/ReservationDetails/ReservationDetails";
-import { useAlert } from "../../context/AlertContext";
-import { useModal } from "../../context/ModalContext";
-import { RESERVATION_ACTIONS, RESERVATION_STATUSES } from "../../constants/webConstant";
+import { useAlert } from "../../shared/context/AlertContext";
+import { useModal } from "../../shared/context/ModalContext";
+import { RESERVATION_ACTIONS, RESERVATION_STATUSES } from "../../shared/constants/webConstant";
 import { Button, Modal } from "react-bootstrap";
 import RefundPreviewModal from "../../components/RefundPreviewModal/RefundPreviewModal";
-import { PAYMENT_METHODS } from "../../constants/paymentConstants";
+import { PAYMENT_METHODS } from "../../shared/constants/paymentConstants";
 
 export default function UserReservationDetailsPage() {
   const { id } = useParams();

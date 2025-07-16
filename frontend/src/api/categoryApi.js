@@ -1,5 +1,5 @@
-import { CATEGORIES_ENDPOINT } from "../constants/api";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { CATEGORIES_ENDPOINT } from "../shared/constants/api";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 // GET all categories (paginated)
 export const fetchCategories = async ({

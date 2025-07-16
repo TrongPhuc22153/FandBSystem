@@ -1,5 +1,5 @@
 import { fetchOrderRefundPreview, fetchReservationRefundPreview } from "../api/refundApi";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../shared/context/AuthContext";
 
 
 export const useRefundActions = () => {

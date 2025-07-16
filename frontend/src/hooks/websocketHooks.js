@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useWebSocket } from "../context/WebSocketContext";
+import { useWebSocket } from "../shared/context/WebSocketContext";
 
 export const useStompSubscription = ({ topic, onMessage, shouldSubscribe }) => {
     const { client, connected } = useWebSocket();

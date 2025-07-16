@@ -1,17 +1,17 @@
 import { useOrder, useOrderActions } from "../../hooks/orderHooks";
 import { useParams } from "react-router-dom";
-import { formatDate } from "../../utils/datetimeUtils";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import { formatDate } from "../../shared/utils/datetimeUtils";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import OrderDetail from "../../components/OrderDetails/OrderDetails";
 import { Button, Modal } from "react-bootstrap";
 import { useRefundActions } from "../../hooks/refundHooks";
-import { useAlert } from "../../context/AlertContext";
-import { useModal } from "../../context/ModalContext";
-import { ORDER_ACTIONS, ORDER_STATUSES } from "../../constants/webConstant";
+import { useAlert } from "../../shared/context/AlertContext";
+import { useModal } from "../../shared/context/ModalContext";
+import { ORDER_ACTIONS, ORDER_STATUSES } from "../../shared/constants/webConstant";
 import { useCallback, useEffect, useState } from "react";
 import RefundPreviewModal from "../../components/RefundPreviewModal/RefundPreviewModal";
-import { PAYMENT_METHODS } from "../../constants/paymentConstants";
+import { PAYMENT_METHODS } from "../../shared/constants/paymentConstants";
 
 function UserOrderDetailsPage() {
   const { id } = useParams();

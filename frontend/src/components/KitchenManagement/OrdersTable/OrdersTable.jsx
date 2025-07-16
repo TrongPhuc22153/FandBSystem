@@ -8,22 +8,22 @@ import {
   ORDER_STATUSES,
   ORDER_TYPE_CLASSES,
   SORTING_DIRECTIONS,
-} from "../../../constants/webConstant";
+} from "../../../shared/constants/webConstant";
 import {
   useOrderActions,
   useOrderItemActions,
   useOrders,
 } from "../../../hooks/orderHooks";
-import { useModal } from "../../../context/ModalContext";
-import { useAlert } from "../../../context/AlertContext";
+import { useModal } from "../../../shared/context/ModalContext";
+import { useAlert } from "../../../shared/context/AlertContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../../Pagination/Pagination";
-import { TOPIC_KITCHEN } from "../../../constants/webSocketEnpoint";
-import { useAuth } from "../../../context/AuthContext";
+import { TOPIC_KITCHEN } from "../../../shared/constants/webSocketEnpoint";
+import { useAuth } from "../../../shared/context/AuthContext";
 import { useStompSubscription } from "../../../hooks/websocketHooks";
-import { hasRole } from "../../../utils/authUtils";
-import { ROLES } from "../../../constants/roles";
-import { ORDER_FILTER_MAPPING } from "../../../constants/filter";
+import { hasRole } from "../../../shared/utils/authUtils";
+import { ROLES } from "../../../shared/constants/roles";
+import { ORDER_FILTER_MAPPING } from "../../../shared/constants/filter";
 
 export default function OrdersTable() {
   const navigate = useNavigate();

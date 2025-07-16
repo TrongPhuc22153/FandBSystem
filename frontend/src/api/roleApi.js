@@ -1,4 +1,4 @@
-import { ROLES_ENDPOINT } from "../constants/api";
+import { ROLES_ENDPOINT } from "../shared/constants/api";
 
 export const fetchRoles = async (token) => {
     const response = await fetch(ROLES_ENDPOINT, {

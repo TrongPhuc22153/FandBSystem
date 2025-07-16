@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Clock, Plus, Trash, User, Users } from "lucide-react";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../shared/context/ModalContext";
 import styles from "./WaitingList.module.css";
-import { formatDate } from "../../utils/datetimeUtils";
+import { formatDate } from "../../shared/utils/datetimeUtils";
 import { useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
-import { useAlert } from "../../context/AlertContext";
-import { TABLE_OCCUPANCY_STATUSES, TABLE_OCCUPANCY_TYPES } from "../../constants/webConstant";
+import { useAlert } from "../../shared/context/AlertContext";
+import { TABLE_OCCUPANCY_STATUSES, TABLE_OCCUPANCY_TYPES } from "../../shared/constants/webConstant";
 
 export function WaitingList({ waitingList, mutate }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

@@ -1,5 +1,5 @@
-import { PAYMENTS_ENDPOINT } from "../constants/api";
-import { PAYMENT_STATUSES, SORTING_DIRECTIONS } from "../constants/webConstant";
+import { PAYMENTS_ENDPOINT } from "../shared/constants/api";
+import { PAYMENT_STATUSES, SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 // GET all payments (paginated)
 export const fetchPayments = async ({

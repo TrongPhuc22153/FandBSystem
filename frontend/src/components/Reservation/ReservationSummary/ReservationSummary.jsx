@@ -1,5 +1,5 @@
 
-import { getImageSrc } from "../../../utils/imageUtils"
+import { getImageSrc } from "../../../shared/utils/imageUtils"
 import styles from "./ReservationSummary.module.css"
 
 export default function ReservationSummary({ data }) {

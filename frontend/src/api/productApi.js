@@ -1,4 +1,4 @@
-import { PRODUCT_QUANTITY_ENDPOINT, PRODUCTS_ENDPOINT } from "../constants/api";
+import { PRODUCT_QUANTITY_ENDPOINT, PRODUCTS_ENDPOINT } from "../shared/constants/api";
 
 export const fetchProducts = async ({
   page = 0,

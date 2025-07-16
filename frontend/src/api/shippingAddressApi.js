@@ -1,4 +1,4 @@
-import { SHIPPING_ADDRESS_ENDPOINT, USER_SHIPPING_ADDRESS_ENDPOINT } from '../constants/api';
+import { SHIPPING_ADDRESS_ENDPOINT, USER_SHIPPING_ADDRESS_ENDPOINT } from '../shared/constants/api';
 
 // Get authenticated user's shipping addresses
 export const fetchShippingAddresses = async (token) => {

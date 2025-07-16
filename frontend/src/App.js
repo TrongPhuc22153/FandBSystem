@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage/HomePage";
+import HomePage from "./features/home/pages/HomePage/HomePage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "slick-carousel/slick/slick.css";
@@ -7,23 +7,23 @@ import "slick-carousel/slick/slick-theme.css";
 import ShopPage from "./pages/ShopPage/ShopPage";
 import "./App.css";
 import SingleProduct from "./pages/SingleProductPage/SingleProduct";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import RegisterPage from "./pages/RegisterPage/RegisterPage";
-import AuthProvider from "./context/AuthContext";
-import LayoutPage from "./pages/LayoutPage/LayoutPage";
+import LoginPage from "./features/auth/pages/LoginPage/LoginPage";
+import RegisterPage from "./features/auth/pages/RegisterPage/RegisterPage";
+import AuthProvider from "./shared/context/AuthContext";
+import Layout from "./shared/components/Layout/Layout";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Authorization from "./components/Authorization/Authorization";
-import { ROLES } from "./constants/roles";
-import AuthLayoutPage from "./pages/AuthLayoutPage/AuthLayoutPage";
+import { ROLES } from "./shared/constants/roles";
+import AuthLayout from "./shared/components/AuthLayout/AuthLayout";
 import AdminUsersPage from "./pages/AdminUsersPage/AdminUsersPage";
 import AdminCategoriesPage from "./pages/AdminCategoriesPage/AdminCategoriesPage";
 import AdminCreateCategoryPage from "./pages/AdminCreateCategory/AdminCreateCategoryPage";
 import AdminUpdateCategoryPage from "./pages/AdminUpdateCategory/AdminUpdateCategoryPage";
 import AdminUserProfilePage from "./pages/AdminViewUserProfile/AdminUserProfilePage";
 import AdminCreateUserPage from "./pages/AdminCreateUserPage/AdminCreateUserPage";
-import ModalProvider from "./context/ModalContext";
+import ModalProvider from "./shared/context/ModalContext";
 import ShoppingCart from "./pages/ShoppingCartPage/ShoppingCart";
-import AlertProvider from "./context/AlertContext";
+import AlertProvider from "./shared/context/AlertContext";
 import ShippingAddressesPage from "./pages/ShippingAddressesPage/ShippingAddressesPage";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import UserOrdersPage from "./pages/UserOrdersPage/UserOrdersPage";
@@ -48,13 +48,13 @@ import RestaurantOrderSystem from "./pages/RestaurantOrderSystemPage/RestaurantO
 import UserReservationsPage from "./pages/UserReservationsPage/UserReservationsPage";
 import UserReservationDetailsPage from "./pages/UserReservationDetailsPage/UserReservationDetailsPage";
 import UserNotificationPage from "./pages/UserNotificationPage/UserNotificationPage";
-import WebSocketProvider from "./context/WebSocketContext";
+import WebSocketProvider from "./shared/context/WebSocketContext";
 import EmployeeNotificationPage from "./pages/EmployeeNotificationPage/EmployeeNotificationPage";
 import CustomerProfilePage from "./pages/CustomerProfilePage/CustomerProfilePage";
 import EmployeeProfilePage from "./pages/EmployeeProfilePage/EmployeeProfilePage";
 import UserChangePassword from "./pages/UserChangePassword/UserChangePassword";
 import EmployeeChangePassword from "./pages/EmployeeChangePassword/EmployeeChangePassword";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
+import ForgotPasswordPage from "./features/auth/pages/ForgotPasswordPage/ForgotPasswordPage";
 import PaymentSuccess from "./components/PaymentProcessing/PaymentSuccess/PaymentSuccess";
 import PaymentCancelled from "./components/PaymentProcessing/PaymentCancelled/PaymentCancelled";
 import PaymentLayout from "./pages/PaymentLayout/PaymentLayout";
@@ -73,7 +73,7 @@ function App() {
           <AlertProvider>
             <ModalProvider>
               <Routes>
-                <Route element={<LayoutPage />}>
+                <Route element={<Layout />}>
                   <Route path="" element={<HomePage />} />
                   <Route path="shop" element={<ShopPage />} />
                   <Route path="shop/:foodname" element={<SingleProduct />} />
@@ -143,7 +143,7 @@ function App() {
                   </Route>
                 </Route>
 
-                <Route element={<AuthLayoutPage />}>
+                <Route element={<AuthLayout />}>
                   <Route path="login" element={<LoginPage />} />
                   <Route path="register" element={<RegisterPage />} />
                   <Route path="forgot" element={<ForgotPasswordPage/>}/>

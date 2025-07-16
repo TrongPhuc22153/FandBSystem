@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faX } from "@fortawesome/free-solid-svg-icons";
-import { getImageSrc } from "../../utils/imageUtils";
+import { getImageSrc } from "../../shared/utils/imageUtils";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../shared/context/AuthContext";
 import styles from "./ProfileLayout.module.css";
 import { AdminSidebar } from "../../components/Sidebar/AdminSidebar";
 

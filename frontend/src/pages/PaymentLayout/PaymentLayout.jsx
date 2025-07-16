@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { HOME_URI } from "../../constants/routes";
+import { HOME_URI } from "../../shared/constants/routes";
 import { usePayPalActions } from "../../hooks/paypalHooks";
 import ProcessingPage from "../../components/PaymentProcessing/ProcessingPage/ProcessingPage";
 import PaymentError from "../../components/PaymentProcessing/PaymentErrror/PaymentError";

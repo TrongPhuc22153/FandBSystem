@@ -1,11 +1,11 @@
 import useSWR from "swr";
 import { useCallback, useState } from "react";
-import { EMPLOYEE_PROFILE_ENDPOINT } from "../constants/api";
+import { EMPLOYEE_PROFILE_ENDPOINT } from "../shared/constants/api";
 import {
   fetchEmployeeProfile,
   updateEmployeeProfile,
 } from "../api/employeeApi";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../shared/context/AuthContext";
 
 export const useEmployeeProfile = () => {
   const { token } = useAuth();

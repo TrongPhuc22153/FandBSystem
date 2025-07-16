@@ -3,14 +3,14 @@ import {
   useAuthenticatedProfile,
   useAuthProfileActions,
 } from "../../hooks/profileHooks";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { useModal } from "../../context/ModalContext";
-import { useAlert } from "../../context/AlertContext";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { useModal } from "../../shared/context/ModalContext";
+import { useAlert } from "../../shared/context/AlertContext";
 import { useImageUpload } from "../../hooks/imageHooks";
 import SingleImageDisplay from "../../components/SingleImageDisplay/SingleImageDisplay";
 import { mutate } from "swr";
-import { USER_ENDPOINT } from "../../constants/api";
+import { USER_ENDPOINT } from "../../shared/constants/api";
 
 const ProfilePage = () => {
   const [userProfile, setUserProfile] = useState({

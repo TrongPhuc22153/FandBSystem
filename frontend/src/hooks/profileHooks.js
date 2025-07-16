@@ -1,7 +1,7 @@
 import useSWR from "swr";
-import { fetchAuthenticatedUserProfile, fetchUserProfile, updateUserProfile } from "../api/userProfileApi";
-import { useAuth } from "../context/AuthContext";
-import { USER_PROFILES_ENDPOINT, USER_PROFILE_ENDPOINT } from "../constants/api";
+import { fetchAuthenticatedUserProfile, fetchUserProfile, updateUserProfile } from "../features/users/services/userProfileApi";
+import { useAuth } from "../shared/context/AuthContext";
+import { USER_PROFILES_ENDPOINT, USER_PROFILE_ENDPOINT } from "../shared/constants/api";
 import { useCallback, useState } from "react";
 
 export const useProfile = (userId) => {

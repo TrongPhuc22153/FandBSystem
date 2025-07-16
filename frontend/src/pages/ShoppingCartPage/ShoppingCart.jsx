@@ -1,16 +1,16 @@
 import { useCallback, useState, useEffect } from "react";
 import { useCart, useCartActions } from "../../hooks/cartHooks";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { getImageSrc } from "../../utils/imageUtils";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { getImageSrc } from "../../shared/utils/imageUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../shared/context/ModalContext";
 import { useNavigate } from "react-router-dom";
-import { CHECKOUT_URI } from "../../constants/routes";
+import { CHECKOUT_URI } from "../../shared/constants/routes";
 import styles from "./ShoppingCart.module.css";
-import { useAlert } from "../../context/AlertContext";
-import { CHECKOUT_ITEMS } from "../../constants/webConstant";
+import { useAlert } from "../../shared/context/AlertContext";
+import { CHECKOUT_ITEMS } from "../../shared/constants/webConstant";
 
 const shippingCost = 0;
 

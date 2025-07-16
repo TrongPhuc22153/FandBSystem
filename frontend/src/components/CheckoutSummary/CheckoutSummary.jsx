@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { getImageSrc, getPrimaryProductImage } from "../../utils/imageUtils";
-import { SHOP_URI } from "../../constants/routes";
+import { getImageSrc, getPrimaryProductImage } from "../../shared/utils/imageUtils";
+import { SHOP_URI } from "../../shared/constants/routes";
 
 const CheckoutSummary = ({
   cartItems,

@@ -1,4 +1,4 @@
-import { ORDER_ITEM_STATUSES, ORDER_ITEM_STATUS_CLASSES } from "../../constants/webConstant";
+import { ORDER_ITEM_STATUSES, ORDER_ITEM_STATUS_CLASSES } from "../../shared/constants/webConstant";
 import { Badge, Button } from "react-bootstrap";
 import styles from "./OrderItemDataTable.module.css";
 import { CheckCircle } from "lucide-react";

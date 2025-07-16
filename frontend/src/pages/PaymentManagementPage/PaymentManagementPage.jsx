@@ -3,10 +3,10 @@ import styles from "./PaymentManagementPage.module.css";
 import StaffSearchForm from "../../components/PaymentManagement/StaffSearchForm/StaffSearchForm";
 import StaffOrderList from "../../components/PaymentManagement/StaffOrderList/StaffOrderList";
 import { usePayments } from "../../hooks/paymentHooks";
-import { PAYMENT_STATUSES } from "../../constants/webConstant";
+import { PAYMENT_STATUSES } from "../../shared/constants/webConstant";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../../components/Pagination/Pagination";
-import { PAYMENT_CHECKOUT_URI } from "../../constants/routes";
+import { PAYMENT_CHECKOUT_URI } from "../../shared/constants/routes";
 
 function PaymentManagementPage() {
   const [searchError, setSearchError] = useState("");

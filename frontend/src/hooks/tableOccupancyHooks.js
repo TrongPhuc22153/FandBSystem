@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { TABLE_OCCUPANCIES_ENDPOINT } from "../constants/api";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { useAuth } from "../shared/context/AuthContext";
+import { TABLE_OCCUPANCIES_ENDPOINT } from "../shared/constants/api";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 import useSWR from "swr";
 import { createTableOccupanncy, fetchTableOccupancies, fetchTableOccupancy, updateTableOccupancy, updateTableOccupancyStatus } from "../api/tableOccupanciesApi";
 

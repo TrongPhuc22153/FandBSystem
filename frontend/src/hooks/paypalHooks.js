@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { completePayPalOrder, refundPayPalOrder } from "../api/paypalApi";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../shared/context/AuthContext";
 
 export const usePayPalActions = () => {
     const { token } = useAuth();

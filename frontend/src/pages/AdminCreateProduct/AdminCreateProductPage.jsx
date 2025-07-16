@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useCategories } from "../../hooks/categoryHooks";
 import { useProductActions } from "../../hooks/productHooks";
-import Loading from "../../components/Loading/Loading";
-import { useModal } from "../../context/ModalContext";
+import Loading from "../../shared/components/Loading/Loading";
+import { useModal } from "../../shared/context/ModalContext";
 import SingleImageDisplay from "../../components/SingleImageDisplay/SingleImageDisplay";
 import ProductForm from "../../components/ProductForm/ProductForm";
 import { useImageUpload } from "../../hooks/imageHooks";
-import { useAlert } from "../../context/AlertContext";
+import { useAlert } from "../../shared/context/AlertContext";
 import { useNavigate } from "react-router-dom";
-import { ADMIN_PRODUCTS_URI } from "../../constants/routes";
+import { ADMIN_PRODUCTS_URI } from "../../shared/constants/routes";
 
 function AdminCreateProductPage() {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import { Button, Badge, Card } from "react-bootstrap";
 import {
   PAYMENT_STATUS_CLASSES,
-} from "../../constants/webConstant";
+} from "../../shared/constants/webConstant";
 import { CreditCard, FileText, MapPin } from "lucide-react";
 import ReservationProcessingBar from "../ProcessingBar/ReservationProcessingBar/ReservationProcessingBar";
 import styles from "./ReservationModal.module.css";

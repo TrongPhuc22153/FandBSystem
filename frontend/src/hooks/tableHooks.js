@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { useCallback, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../shared/context/AuthContext";
 import {
   fetchReservationTables,
   fetchReservationTableById,
@@ -11,8 +11,8 @@ import {
   fetchAvailableTables,
   fetchTableStatusSummary,
 } from "../api/tableApi";
-import { RESERVATION_TABLES_AVAILABILITY_ENDPOINT, RESERVATION_TABLES_ENDPOINT, RESERVATION_TABLES_SUMMARY_ENDPOINT } from "../constants/api";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { RESERVATION_TABLES_AVAILABILITY_ENDPOINT, RESERVATION_TABLES_ENDPOINT, RESERVATION_TABLES_SUMMARY_ENDPOINT } from "../shared/constants/api";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 // Hook to fetch a single reservation table by ID
 export const useReservationTable = ({ id }) => {

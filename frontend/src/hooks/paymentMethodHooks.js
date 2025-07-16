@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 import useSWR from 'swr';
 import { createPaymentMethod, fetchPaymentMethods, updatePaymentMethod } from '../api/paymentMethodApi';
-import { PAYMENT_METHODS_ENDPOINT } from '../constants/api';
-import { useAuth } from '../context/AuthContext';
+import { PAYMENT_METHODS_ENDPOINT } from '../shared/constants/api';
+import { useAuth } from '../shared/context/AuthContext';
 
 export const usePaymentMethods = (type) => {
     return useSWR(

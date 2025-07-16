@@ -3,14 +3,14 @@ import { Icon } from "@iconify/react";
 import { Button } from "react-bootstrap";
 import { FormLabel, FormControl } from "react-bootstrap";
 import { Alert } from "react-bootstrap";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { getPrimaryProductImage } from "../../utils/imageUtils";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { getPrimaryProductImage } from "../../shared/utils/imageUtils";
 import { useOrder, useOrders } from "../../hooks/orderHooks";
-import { formatDate } from "../../utils/datetimeUtils";
+import { formatDate } from "../../shared/utils/datetimeUtils";
 import { useRatingActions } from "../../hooks/ratingHooks";
-import { useModal } from "../../context/ModalContext";
-import { useAlert } from "../../context/AlertContext";
+import { useModal } from "../../shared/context/ModalContext";
+import { useAlert } from "../../shared/context/AlertContext";
 
 const UserRatingPage = () => {
   const [selectedOrderItemId, setSelectedOrderItemId] = useState(null);

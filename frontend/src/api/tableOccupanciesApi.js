@@ -1,5 +1,5 @@
-import { TABLE_OCCUPANCIES_ENDPOINT } from "../constants/api";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { TABLE_OCCUPANCIES_ENDPOINT } from "../shared/constants/api";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 export const fetchTableOccupancies = async ({ page = 0, size = 10, direction = SORTING_DIRECTIONS.ASC, field = "createdAt", status, token }) => {
     const queryParams = new URLSearchParams({

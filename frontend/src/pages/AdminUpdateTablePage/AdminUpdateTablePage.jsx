@@ -3,10 +3,10 @@ import {
   useReservationTable,
   useReservationTableActions,
 } from "../../hooks/tableHooks"; // Adjust the path if needed
-import Loading from "../../components/Loading/Loading"; // You might have a generic Loading component
+import Loading from "../../shared/components/Loading/Loading"; // You might have a generic Loading component
 import { useParams } from "react-router-dom";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay"; // You might have a generic ErrorDisplay
-import { useModal } from "../../context/ModalContext"; // Adjust the path if needed
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay"; // You might have a generic ErrorDisplay
+import { useModal } from "../../shared/context/ModalContext"; // Adjust the path if needed
 import TableForm from "../../components/TableForm/TableForm"; // Use the TableForm component
 
 function AdminUpdateTablePage() {

@@ -2,14 +2,14 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { formatTime } from "../../utils/datetimeUtils";
-import { USER_RESERVATIONS_URI } from "../../constants/routes";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { formatTime } from "../../shared/utils/datetimeUtils";
+import { USER_RESERVATIONS_URI } from "../../shared/constants/routes";
 import { Badge } from "react-bootstrap";
 import {
   RESERVATION_STATUS_CLASSES,
   SORTING_DIRECTIONS,
-} from "../../constants/webConstant";
+} from "../../shared/constants/webConstant";
 import { useReservations } from "../../hooks/reservationHooks";
 import { debounce } from "lodash";
 

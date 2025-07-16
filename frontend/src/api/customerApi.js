@@ -1,4 +1,4 @@
-import { CUSTOMER_PROFILE_ENDPOINT } from "../constants/api";
+import { CUSTOMER_PROFILE_ENDPOINT } from "../shared/constants/api";
 
 export const fetchCustomerProfile = async (token) => {
     const response = await fetch(CUSTOMER_PROFILE_ENDPOINT, {

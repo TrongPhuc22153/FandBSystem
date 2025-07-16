@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useProfile } from "../../hooks/profileHooks";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { formatDate } from "../../utils/datetimeUtils";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { formatDate } from "../../shared/utils/datetimeUtils";
 import SingleImageDisplay from "../../components/SingleImageDisplay/SingleImageDisplay";
 
 const AdminUserProfilePage = () => {

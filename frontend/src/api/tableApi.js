@@ -2,8 +2,8 @@ import {
   RESERVATION_TABLES_AVAILABILITY_ENDPOINT,
   RESERVATION_TABLES_ENDPOINT,
   RESERVATION_TABLES_SUMMARY_ENDPOINT,
-} from "../constants/api";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+} from "../shared/constants/api";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 // Get all reservation tables with pagination
 export const fetchReservationTables = async ({

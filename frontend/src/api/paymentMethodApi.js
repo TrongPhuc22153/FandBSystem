@@ -1,4 +1,4 @@
-import { PAYMENT_METHODS_ENDPOINT } from "../constants/api";
+import { PAYMENT_METHODS_ENDPOINT } from "../shared/constants/api";
 
 export const fetchPaymentMethods = async (type) => {
     const response = await fetch(`${PAYMENT_METHODS_ENDPOINT}?type=${type}`);

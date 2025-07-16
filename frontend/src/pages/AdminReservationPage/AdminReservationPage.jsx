@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom";
 import {
   useReservation,
 } from "../../hooks/reservationHooks";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import ReservationDetails from "../../components/ReservationDetails/ReservationDetails";
 
 function AdminReservationDetailsPage() {

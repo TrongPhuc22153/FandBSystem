@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useCategories } from "../../hooks/categoryHooks";
 import { useProduct, useProductActions } from "../../hooks/productHooks";
-import Loading from "../../components/Loading/Loading";
+import Loading from "../../shared/components/Loading/Loading";
 import { useParams } from "react-router-dom";
-import { formatDate } from "../../utils/datetimeUtils";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { useModal } from "../../context/ModalContext";
+import { formatDate } from "../../shared/utils/datetimeUtils";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { useModal } from "../../shared/context/ModalContext";
 import SingleImageDisplay from "../../components/SingleImageDisplay/SingleImageDisplay";
 import ProductForm from "../../components/ProductForm/ProductForm";
 import { useImageUpload } from "../../hooks/imageHooks";
-import { useAlert } from "../../context/AlertContext";
+import { useAlert } from "../../shared/context/AlertContext";
 
 function AdminUpdateProductPage() {
   const { id } = useParams();

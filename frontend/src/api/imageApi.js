@@ -1,4 +1,4 @@
-import { IMAGE_ENDPOINT } from "../constants/api";
+import { IMAGE_ENDPOINT } from "../shared/constants/api";
 
 export const uploadImage = async ({ token, files }) => {
     const formData = new FormData();

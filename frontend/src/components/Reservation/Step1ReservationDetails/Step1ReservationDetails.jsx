@@ -1,6 +1,6 @@
 
 import { useMemo, useState } from "react"
-import ErrorDisplay from "../../ErrorDisplay/ErrorDisplay"
+import ErrorDisplay from "../../../shared/components/ErrorDisplay/ErrorDisplay"
 import styles from "./Step1ReservationDetails.module.css"
 import { useReservationTables } from "../../../hooks/tableHooks";
 

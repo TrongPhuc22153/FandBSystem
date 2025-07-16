@@ -1,4 +1,4 @@
-import { PRODUCT_RATING_ENDPOINT, RATINGS_ENDPOINT } from "../constants/api";
+import { PRODUCT_RATING_ENDPOINT, RATINGS_ENDPOINT } from "../shared/constants/api";
 
 export const fetchRating = async ({ productId }) => {
   const response = await fetch(`${PRODUCT_RATING_ENDPOINT}/${productId}`);

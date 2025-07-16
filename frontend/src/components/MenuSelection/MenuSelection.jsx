@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import styles from "./menu-selection.module.css";
 import { useProducts } from "../../hooks/productHooks";
 import debounce from "lodash/debounce";
-import ErrorDisplay from "../ErrorDisplay/ErrorDisplay";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 
 export default function MenuSelection({
   reservationData,

@@ -1,8 +1,8 @@
 import { useOrder } from "../../hooks/orderHooks";
 import { useParams } from "react-router-dom";
-import { formatDate } from "../../utils/datetimeUtils";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import { formatDate } from "../../shared/utils/datetimeUtils";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import OrderDetail from "../../components/OrderDetails/OrderDetails";
 
 function AdminOrderDetailsPage() {

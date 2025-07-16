@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import { Button, Badge } from "react-bootstrap";
-import { getImageSrc } from "../../utils/imageUtils";
+import { getImageSrc } from "../../shared/utils/imageUtils";
 import styles from "./OrderDetails.module.css";
-import { SHOP_URI } from "../../constants/routes";
+import { SHOP_URI } from "../../shared/constants/routes";
 import {
   ORDER_STATUSES,
   ORDER_TYPES,
   PAYMENT_STATUS_CLASSES,
-} from "../../constants/webConstant";
+} from "../../shared/constants/webConstant";
 
 const OrderDetail = ({
   processLoading,

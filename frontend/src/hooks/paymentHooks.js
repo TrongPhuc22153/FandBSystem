@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
 import useSWR from "swr";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../shared/context/AuthContext";
 import {
   fetchPaymentById,
   fetchPayments,
   processPayment,
 } from "../api/paymentApi";
-import { PAYMENTS_ENDPOINT } from "../constants/api";
-import { PAYMENT_STATUSES, SORTING_DIRECTIONS } from "../constants/webConstant";
+import { PAYMENTS_ENDPOINT } from "../shared/constants/api";
+import { PAYMENT_STATUSES, SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 export const usePayments = ({
   page = 0,

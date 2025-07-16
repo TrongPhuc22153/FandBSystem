@@ -11,9 +11,9 @@ import {
   updateOrderItemQuantity,
   updateOrderItemStatus,
 } from "../api/orderApi";
-import { useAuth } from "../context/AuthContext";
-import { ORDERS_ENDPOINT } from "../constants/api";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { useAuth } from "../shared/context/AuthContext";
+import { ORDERS_ENDPOINT } from "../shared/constants/api";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 export const useOrders = ({
   page = 0,

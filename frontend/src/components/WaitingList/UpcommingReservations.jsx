@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { Calendar, Trash, User, Users } from "lucide-react";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../shared/context/ModalContext";
 import styles from "./WaitingList.module.css";
-import { formatTime } from "../../utils/datetimeUtils";
+import { formatTime } from "../../shared/utils/datetimeUtils";
 import { useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
-import { useAlert } from "../../context/AlertContext";
+import { useAlert } from "../../shared/context/AlertContext";
 import {
   TABLE_OCCUPANCY_STATUSES,
-} from "../../constants/webConstant";
+} from "../../shared/constants/webConstant";
 
 export function UpcommingReservations({ reservations, mutate }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

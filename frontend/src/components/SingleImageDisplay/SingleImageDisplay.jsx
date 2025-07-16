@@ -1,4 +1,4 @@
-import { getImageSrc } from "../../utils/imageUtils";
+import { getImageSrc } from "../../shared/utils/imageUtils";
 import styles from "./SingleImageDisplay.module.css";
 
 export default function SingleImageDisplay({ imageUrl, altText }) {

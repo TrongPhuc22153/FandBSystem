@@ -5,8 +5,8 @@ import {
   RESERVATION_STATUSES,
   RESERVATION_ITEM_STATUS_CLASSES,
   RESERVATION_ITEM_STATUSES,
-} from "../../../constants/webConstant";
-import { formatDate } from "../../../utils/datetimeUtils";
+} from "../../../shared/constants/webConstant";
+import { formatDate } from "../../../shared/utils/datetimeUtils";
 
 export default function ReservationDetailModal({
   reservation,

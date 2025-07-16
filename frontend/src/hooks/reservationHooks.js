@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../shared/context/AuthContext";
 import { addReservationItem, cancelReservationItem, createReservation, fetchReservationById, fetchReservations, processReservation, updateReservation, updateReservationItemQuantity, updateReservationItemStatus } from "../api/reservationApi";
 import useSWR from "swr";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
-import { RESERVATIONS_ENDPOINT } from "../constants/api";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
+import { RESERVATIONS_ENDPOINT } from "../shared/constants/api";
 
 // Hook for fetching a single reservation
 export const useReservation = ({ reservationId } = {}) => {

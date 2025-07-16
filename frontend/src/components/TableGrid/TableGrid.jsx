@@ -8,14 +8,14 @@ import {
   ORDER_STATUSES,
   RESERVATION_ITEM_STATUSES,
   RESERVATION_STATUSES,
-} from "../../constants/webConstant";
+} from "../../shared/constants/webConstant";
 import { formatDistanceToNow } from "date-fns";
 import {
   useTableOccupancy,
   useTableOccupancyActions,
 } from "../../hooks/tableOccupancyHooks";
-import { useAlert } from "../../context/AlertContext";
-import { formatTime } from "../../utils/datetimeUtils";
+import { useAlert } from "../../shared/context/AlertContext";
+import { formatTime } from "../../shared/utils/datetimeUtils";
 import { OrderItemsDataTable } from "../OrderItemsTable/OrderItemDataTable";
 import { useOrderItemActions } from "../../hooks/orderHooks";
 import { ReservationItemsTable } from "../ReservationItemsTable/ReservationItemsTable";

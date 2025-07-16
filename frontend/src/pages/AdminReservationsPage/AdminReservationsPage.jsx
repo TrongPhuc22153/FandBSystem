@@ -3,10 +3,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useReservations } from "../../hooks/reservationHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import { Badge } from "react-bootstrap";
-import { RESERVATION_STATUS_CLASSES, SORTING_DIRECTIONS } from "../../constants/webConstant";
-import { ADMIN_RESERVATIONS_URI } from "../../constants/routes";
+import { RESERVATION_STATUS_CLASSES, SORTING_DIRECTIONS } from "../../shared/constants/webConstant";
+import { ADMIN_RESERVATIONS_URI } from "../../shared/constants/routes";
 import { debounce } from "lodash";
 
 const AdminReservationsPage = () => {

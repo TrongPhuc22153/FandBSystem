@@ -1,6 +1,6 @@
 import styles from "./PaymentSuccess.module.css";
 import { Link } from "react-router-dom";
-import { HOME_URI } from "../../../constants/routes";
+import { HOME_URI } from "../../../shared/constants/routes";
 
 function PaymentSuccess() {
   return (

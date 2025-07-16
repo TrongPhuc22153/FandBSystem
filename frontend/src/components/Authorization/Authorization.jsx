@@ -1,6 +1,6 @@
 import { Navigate, useLocation, Outlet } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { LOGIN_URI } from "../../constants/routes";
+import { useAuth } from "../../shared/context/AuthContext";
+import { LOGIN_URI } from "../../shared/constants/routes";
 import { Forbidden } from "../Forbidden/Forbidden";
 const Authorization = ({ roles }) => {
   const { user } = useAuth();

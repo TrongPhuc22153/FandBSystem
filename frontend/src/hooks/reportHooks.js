@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { fetchMetrics, fetchReport } from "../api/reportApi";
-import { REPORTS_ENDPOINT, REPORTS_METRICS_ENDPOINT } from "../constants/api";
-import { useAuth } from "../context/AuthContext";
+import { REPORTS_ENDPOINT, REPORTS_METRICS_ENDPOINT } from "../shared/constants/api";
+import { useAuth } from "../shared/context/AuthContext";
 
 export const useReport = ({ startDate, endDate }) => {
     const { token } = useAuth();

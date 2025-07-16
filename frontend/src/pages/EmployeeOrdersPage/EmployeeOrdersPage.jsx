@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import OrderModal from "../../components/OrderModal/OrderModal";
 import styles from "./EmployeeOrdersPage.module.css";
 import { useOrder, useOrderActions, useOrders } from "../../hooks/orderHooks";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import { Badge } from "react-bootstrap";
 import {
   ORDER_ACTIONS,
@@ -10,16 +10,16 @@ import {
   ORDER_STATUSES,
   ORDER_TYPE_CLASSES,
   ORDER_TYPES,
-} from "../../constants/webConstant";
-import Loading from "../../components/Loading/Loading";
-import { useAlert } from "../../context/AlertContext";
+} from "../../shared/constants/webConstant";
+import Loading from "../../shared/components/Loading/Loading";
+import { useAlert } from "../../shared/context/AlertContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "../../components/Pagination/Pagination";
-import { useModal } from "../../context/ModalContext";
-import { useAuth } from "../../context/AuthContext";
-import { hasRole } from "../../utils/authUtils";
-import { ROLES } from "../../constants/roles";
+import { useModal } from "../../shared/context/ModalContext";
+import { useAuth } from "../../shared/context/AuthContext";
+import { hasRole } from "../../shared/utils/authUtils";
+import { ROLES } from "../../shared/constants/roles";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { debounce } from "lodash";

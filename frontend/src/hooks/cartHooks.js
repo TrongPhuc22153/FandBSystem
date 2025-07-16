@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import { useCallback, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../shared/context/AuthContext';
 import {
     fetchUserCart,
     addCartItem,

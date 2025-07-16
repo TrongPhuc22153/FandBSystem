@@ -1,10 +1,10 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { LOGIN_URI } from "../../constants/routes";
-import Loading from "../Loading/Loading";
+import { LOGIN_URI } from "../../shared/constants/routes";
+import Loading from "../../shared/components/Loading/Loading";
+import useSignedUser from "../../features/users/hooks/useSignedUser";
 
 const PrivateRoute = () => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = useSignedUser();
   const location = useLocation();
 
   if (isLoading) {

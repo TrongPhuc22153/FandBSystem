@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./confirmation.module.css";
 import { useReservationActions } from "../../hooks/reservationHooks";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../shared/context/ModalContext";
 import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
 import PaymentMethodOptions from "../PaymentMethodOptions/PaymentMethodOptions";
 import {
   CANCEL_PAYMENT_URL,
   PAYMENT_TYPES,
   SUCCESS_PAYMENT_URL,
-} from "../../constants/paymentConstants";
+} from "../../shared/constants/paymentConstants";
 import { Link } from "react-router-dom";
-import { HOME_URI } from "../../constants/routes";
+import { HOME_URI } from "../../shared/constants/routes";
 import { usePaymentActions } from "../../hooks/paymentHooks";
-import ErrorDisplay from "../ErrorDisplay/ErrorDisplay";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 
 export default function Confirmation({ reservationData, onPrevious, onReset }) {
   const [isSubmitting, setIsSubmitting] = useState(false);

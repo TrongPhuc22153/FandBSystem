@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import styles from "./ReviewForm.module.css";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../shared/context/ModalContext";
 import { useRatingActions } from "../../hooks/ratingHooks";
-import { useAlert } from "../../context/AlertContext";
+import { useAlert } from "../../shared/context/AlertContext";
 import { mutate } from "swr";
-import { PRODUCT_RATING_ENDPOINT } from "../../constants/api";
+import { PRODUCT_RATING_ENDPOINT } from "../../shared/constants/api";
 
 const ReviewForm = ({ review, productId, handleCreateOrUpdateUserRating }) => {
   const [initialReview, setInitialReview] = useState({

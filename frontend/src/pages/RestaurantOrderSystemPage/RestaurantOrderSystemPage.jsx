@@ -5,19 +5,19 @@ import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import styles from "./RestaurantOrderSystemPage.module.css";
 import { useProducts } from "../../hooks/productHooks";
 import { useCategories } from "../../hooks/categoryHooks";
-import Loading from "../../components/Loading/Loading";
+import Loading from "../../shared/components/Loading/Loading";
 import Pagination from "../../components/Pagination/Pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { EMPLOYEE_PLACE_ORDERS_URI } from "../../constants/routes";
+import { EMPLOYEE_PLACE_ORDERS_URI } from "../../shared/constants/routes";
 import { useOrderActions } from "../../hooks/orderHooks";
-import { useAlert } from "../../context/AlertContext";
-import { useModal } from "../../context/ModalContext";
+import { useAlert } from "../../shared/context/AlertContext";
+import { useModal } from "../../shared/context/ModalContext";
 import { debounce } from "lodash";
 import {
   ORDER_TYPES,
   TABLE_OCCUPANCY_STATUSES,
-} from "../../constants/webConstant";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+} from "../../shared/constants/webConstant";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import { useTableOccupancies, useTableOccupancy } from "../../hooks/tableOccupancyHooks";
 import SelectableWaitingList from "../../components/WaitingList/SelectableWaitingList";
 import { Search } from "lucide-react";

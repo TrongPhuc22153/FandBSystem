@@ -1,4 +1,4 @@
-import { REPORTS_ENDPOINT, REPORTS_METRICS_ENDPOINT } from "../constants/api";
+import { REPORTS_ENDPOINT, REPORTS_METRICS_ENDPOINT } from "../shared/constants/api";
 
 export const fetchReport = async (token, startDate, endDate) => {
     const params = new URLSearchParams();

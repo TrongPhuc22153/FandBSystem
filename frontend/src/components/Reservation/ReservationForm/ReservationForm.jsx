@@ -6,11 +6,11 @@ import Step3Overview from "../Step3Overview/Step3Overview";
 import styles from "./ReservationForm.module.css";
 import { useReservationActions } from "../../../hooks/reservationHooks";
 import { usePaymentActions } from "../../../hooks/paymentHooks";
-import { useAlert } from "../../../context/AlertContext";
+import { useAlert } from "../../../shared/context/AlertContext";
 import {
   CANCEL_PAYMENT_URL,
   SUCCESS_PAYMENT_URL,
-} from "../../../constants/paymentConstants";
+} from "../../../shared/constants/paymentConstants";
 
 export default function ReservationForm() {
   const [currentStep, setCurrentStep] = useState(1);

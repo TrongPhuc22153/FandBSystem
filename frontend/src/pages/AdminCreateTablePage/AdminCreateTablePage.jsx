@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useReservationTableActions } from "../../hooks/tableHooks"; // Adjust the path if needed
-import Loading from "../../components/Loading/Loading"; // You might have a generic Loading component
-import { useModal } from "../../context/ModalContext"; // Adjust the path if needed
+import Loading from "../../shared/components/Loading/Loading"; // You might have a generic Loading component
+import { useModal } from "../../shared/context/ModalContext"; // Adjust the path if needed
 import TableForm from "../../components/TableForm/TableForm"; // Create this component
 
 function AdminCreateTablePage() {

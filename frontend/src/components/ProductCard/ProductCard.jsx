@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { SHOP_URI } from "../../constants/routes";
-import { getImageSrc } from "../../utils/imageUtils";
+import { SHOP_URI } from "../../shared/constants/routes";
+import { getImageSrc } from "../../shared/utils/imageUtils";
 import styles from "./ProductCard.module.css";
 
 function ProductCard({ product }) {

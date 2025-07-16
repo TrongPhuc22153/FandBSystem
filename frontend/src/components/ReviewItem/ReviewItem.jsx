@@ -1,4 +1,4 @@
-import { formatDate } from "../../utils/datetimeUtils";
+import { formatDate } from "../../shared/utils/datetimeUtils";
 import styles from "./ReviewItem.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";

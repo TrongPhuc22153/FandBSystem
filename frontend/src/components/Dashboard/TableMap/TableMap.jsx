@@ -1,6 +1,6 @@
 import { Card, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import styles from './TableMap.module.css';
-import { TABLE_STATUSES } from '../../../constants/webConstant';
+import { TABLE_STATUSES } from '../../../shared/constants/webConstant';
 
 const TableMap = ({ tables }) => {
   const getStatusClass = (status) => {

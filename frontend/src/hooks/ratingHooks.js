@@ -6,9 +6,9 @@ import {
   fetchUserProductRating,
   updateRating,
 } from "../api/ratingApi";
-import { PRODUCT_RATING_ENDPOINT } from "../constants/api";
+import { PRODUCT_RATING_ENDPOINT } from "../shared/constants/api";
 import { useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../shared/context/AuthContext";
 import { useState } from "react";
 
 export const useRatings = ({ productId }) => {

@@ -5,14 +5,14 @@ import {
 } from "../../hooks/addressHooks";
 import { useCart } from "../../hooks/cartHooks";
 import { useOrderActions } from "../../hooks/orderHooks";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { useModal } from "../../context/ModalContext";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { useModal } from "../../shared/context/ModalContext";
 import CheckoutSummary from "../../components/CheckoutSummary/CheckoutSummary";
-import { useAlert } from "../../context/AlertContext";
+import { useAlert } from "../../shared/context/AlertContext";
 import { Link } from "react-router-dom";
-import { HOME_URI } from "../../constants/routes";
-import { CHECKOUT_ITEMS, ORDER_TYPES } from "../../constants/webConstant";
+import { HOME_URI } from "../../shared/constants/routes";
+import { CHECKOUT_ITEMS, ORDER_TYPES } from "../../shared/constants/webConstant";
 import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
 import PaymentMethodOptions from "../../components/PaymentMethodOptions/PaymentMethodOptions";
 import {
@@ -20,7 +20,7 @@ import {
   PAYMENT_METHODS,
   PAYMENT_TYPES,
   SUCCESS_PAYMENT_URL,
-} from "../../constants/paymentConstants";
+} from "../../shared/constants/paymentConstants";
 import { usePaymentActions } from "../../hooks/paymentHooks";
 
 const CheckoutPage = () => {

@@ -4,11 +4,11 @@ import {
   useNotificationActions,
   useNotifications,
 } from "../../hooks/notificationHooks";
-import { useAuth } from "../../context/AuthContext";
-import { hasRole } from "../../utils/authUtils";
-import { ROLES } from "../../constants/roles";
+import { useAuth } from "../../shared/context/AuthContext";
+import { hasRole } from "../../shared/utils/authUtils";
+import { ROLES } from "../../shared/constants/roles";
 import { useStompSubscription } from "../../hooks/websocketHooks";
-import { USER_NOTIFICATION_MESSAGE } from "../../constants/webSocketEnpoint";
+import { USER_NOTIFICATION_MESSAGE } from "../../shared/constants/webSocketEnpoint";
 
 export default function UserNotificationPage() {
   const { data: notificationsData } = useNotifications();

@@ -6,15 +6,15 @@ import styles from "./PaymentCheckoutPage.module.css";
 import { usePayment, usePaymentActions } from "../../hooks/paymentHooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { usePaymentMethods } from "../../hooks/paymentMethodHooks";
-import { useModal } from "../../context/ModalContext";
-import { useAlert } from "../../context/AlertContext";
+import { useModal } from "../../shared/context/ModalContext";
+import { useAlert } from "../../shared/context/AlertContext";
 import {
   CANCEL_PAYMENT_URL,
   PAYMENT_TYPES,
   SUCCESS_PAYMENT_URL,
-} from "../../constants/paymentConstants";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { PAYMENT_CHECKOUT_URI } from "../../constants/routes";
+} from "../../shared/constants/paymentConstants";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { PAYMENT_CHECKOUT_URI } from "../../shared/constants/routes";
 
 export default function PaymentCheckoutPage() {
   const { id } = useParams();

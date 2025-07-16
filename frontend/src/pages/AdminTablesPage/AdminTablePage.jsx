@@ -9,12 +9,12 @@ import {
 } from "../../hooks/tableHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
-import { ADMIN_ADD_TABLE_URI, ADMIN_TABLES_URI } from "../../constants/routes";
-import { useModal } from "../../context/ModalContext";
+import { ADMIN_ADD_TABLE_URI, ADMIN_TABLES_URI } from "../../shared/constants/routes";
+import { useModal } from "../../shared/context/ModalContext";
 import { Badge } from "react-bootstrap";
 import {
   SORTING_DIRECTIONS,
-} from "../../constants/webConstant";
+} from "../../shared/constants/webConstant";
 
 const AdminTablesPage = () => {
   const navigate = useNavigate();

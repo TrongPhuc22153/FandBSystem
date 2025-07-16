@@ -2,14 +2,14 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ADMIN_ADD_USER_URI, ADMIN_USERS_URI } from "../../constants/routes";
+import { ADMIN_ADD_USER_URI, ADMIN_USERS_URI } from "../../shared/constants/routes";
 import Pagination from "../../components/Pagination/Pagination";
 import { useUsers, useUserActions } from "../../hooks/userHook";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import { Badge } from "react-bootstrap";
-import { useModal } from "../../context/ModalContext";
-import { useAlert } from "../../context/AlertContext";
-import { ROLE_CLASSES } from "../../constants/webConstant";
+import { useModal } from "../../shared/context/ModalContext";
+import { useAlert } from "../../shared/context/AlertContext";
+import { ROLE_CLASSES } from "../../shared/constants/webConstant";
 import { debounce } from "lodash";
 
 const AdminUsersPage = () => {

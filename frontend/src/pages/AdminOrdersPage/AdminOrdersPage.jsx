@@ -4,14 +4,14 @@ import { useOrders } from "../../hooks/orderHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
 import { debounce } from "lodash";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
-import { formatDate } from "../../utils/datetimeUtils";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
+import { formatDate } from "../../shared/utils/datetimeUtils";
 import { Badge } from "react-bootstrap";
 import {
   ORDER_STATUS_CLASSES,
   SORTING_DIRECTIONS,
-} from "../../constants/webConstant";
-import { ADMIN_ORDERS_URI } from "../../constants/routes";
+} from "../../shared/constants/webConstant";
+import { ADMIN_ORDERS_URI } from "../../shared/constants/routes";
 
 const AdminOrdersPage = () => {
   const navigate = useNavigate();

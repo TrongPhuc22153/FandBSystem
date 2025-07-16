@@ -1,5 +1,5 @@
-import { getImageSrc } from "../../utils/imageUtils";
-import { SHOP_URI } from "../../constants/routes";
+import { getImageSrc } from "../../shared/utils/imageUtils";
+import { SHOP_URI } from "../../shared/constants/routes";
 import { Link } from "react-router-dom";
 
 function CategoryCard({ category }) {

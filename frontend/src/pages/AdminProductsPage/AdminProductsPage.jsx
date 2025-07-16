@@ -6,12 +6,12 @@ import { debounce } from "lodash";
 import {
   ADMIN_ADD_PRODUCT_URI,
   ADMIN_PRODUCTS_URI,
-} from "../../constants/routes";
-import { getImageSrc } from "../../utils/imageUtils";
+} from "../../shared/constants/routes";
+import { getImageSrc } from "../../shared/utils/imageUtils";
 import Pagination from "../../components/Pagination/Pagination";
 import { useProducts, useProductActions } from "../../hooks/productHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../shared/context/ModalContext";
 import { Badge } from "react-bootstrap";
 
 const AdminProductsPage = () => {

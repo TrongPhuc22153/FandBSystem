@@ -1,4 +1,4 @@
-import { COMPLETE_PAYPAL_ORDER, REFUND_PAYPAL_ORDER } from "../constants/api";
+import { COMPLETE_PAYPAL_ORDER, REFUND_PAYPAL_ORDER } from "../shared/constants/api";
 
 export const completePayPalOrder = async ({ paypalOrderId, token }) => {
     const response = await fetch(

@@ -1,4 +1,4 @@
-import { forgotPassword, register, resetPassword, validateResetToken } from "../api/authenticatoinApi"
+import { forgotPassword, register, resetPassword, validateResetToken } from "../features/auth/services/authenticatoinApi"
 import { useCallback, useState } from "react"
 
 export const useAuthActions = () => {

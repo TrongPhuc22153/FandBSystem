@@ -4,7 +4,7 @@ import { Form, FormControl, Dropdown } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import styles from "./SearchBar.module.css";
-import { SHOP_URI } from "../../constants/routes";
+import { SHOP_URI } from "../../shared/constants/routes";
 import { useProducts } from "../../hooks/productHooks";
 
 const SearchBar = () => {

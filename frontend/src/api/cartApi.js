@@ -1,4 +1,4 @@
-import { USER_CART_ENDPOINT, USER_CART_ITEMS_ENDPOINT } from "../constants/api";
+import { USER_CART_ENDPOINT, USER_CART_ITEMS_ENDPOINT } from "../shared/constants/api";
 
 // Helper function to handle non-ok responses
 const handleResponse = async (response) => {

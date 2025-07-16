@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from "react";
 import { Clock, Trash, User, Users } from "lucide-react";
-import { useModal } from "../../context/ModalContext";
-import { useAlert } from "../../context/AlertContext";
-import { TABLE_OCCUPANCY_STATUSES } from "../../constants/webConstant";
+import { useModal } from "../../shared/context/ModalContext";
+import { useAlert } from "../../shared/context/AlertContext";
+import { TABLE_OCCUPANCY_STATUSES } from "../../shared/constants/webConstant";
 import styles from "./WaitingList.module.css";
-import { formatDate } from "../../utils/datetimeUtils";
+import { formatDate } from "../../shared/utils/datetimeUtils";
 import { useTableOccupancyActions } from "../../hooks/tableOccupancyHooks";
 
 export default function SelectableWaitingList({

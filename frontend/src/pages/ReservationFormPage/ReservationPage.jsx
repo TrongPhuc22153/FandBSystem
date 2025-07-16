@@ -3,7 +3,7 @@ import MenuSelection from "../../components/MenuSelection/MenuSelection";
 import Confirmation from "../../components/Confirmation/Confirmation";
 import ReservationForm from "../../components/ReservationForm/ReservationForm"
 import styles from "./ReservationPage.module.css";
-import { RESERVATION_TIME } from "../../constants/webConstant";
+import { RESERVATION_TIME } from "../../shared/constants/webConstant";
 
 export default function ReservationFormPage() {
   // Current step in the reservation process

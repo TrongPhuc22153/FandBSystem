@@ -1,5 +1,5 @@
-import { ORDER_ITEM_ENDPOINT, ORDER_ITEMS_ENDPOINT, ORDERS_ENDPOINT } from "../constants/api";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { ORDER_ITEM_ENDPOINT, ORDER_ITEMS_ENDPOINT, ORDERS_ENDPOINT } from "../shared/constants/api";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 // Get all orders
 export const fetchOrders = async ({

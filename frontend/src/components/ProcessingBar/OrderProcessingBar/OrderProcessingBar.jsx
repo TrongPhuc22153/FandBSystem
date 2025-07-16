@@ -1,4 +1,4 @@
-import { ORDER_STATUS_CLASSES, ORDER_STATUSES } from "../../../constants/webConstant";
+import { ORDER_STATUS_CLASSES, ORDER_STATUSES } from "../../../shared/constants/webConstant";
 
 export default function OrderProcessingBar({ status, orderId, type, nextAction, onUpdateStatus }) {
   return (

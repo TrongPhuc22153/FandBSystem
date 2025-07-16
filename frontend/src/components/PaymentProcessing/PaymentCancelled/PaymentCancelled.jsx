@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './PaymentCancelled.module.css';
 import { Link } from 'react-router-dom';
-import { HOME_URI } from '../../../constants/routes';
+import { HOME_URI } from '../../../shared/constants/routes';
 
 function PaymentCancelled() {
   return (

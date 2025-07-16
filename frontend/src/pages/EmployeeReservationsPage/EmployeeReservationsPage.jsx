@@ -3,17 +3,17 @@ import { useSearchParams } from "react-router-dom";
 import { useReservation, useReservations } from "../../hooks/reservationHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import { Badge } from "react-bootstrap";
 import {
   RESERVATION_STATUS_CLASSES,
   SORTING_DIRECTIONS,
-} from "../../constants/webConstant";
+} from "../../shared/constants/webConstant";
 import { debounce } from "lodash";
 import ReservationModal from "../../components/ReservationModal/ReservationModal";
-import Loading from "../../components/Loading/Loading";
-import { useAlert } from "../../context/AlertContext";
-import { useModal } from "../../context/ModalContext";
+import Loading from "../../shared/components/Loading/Loading";
+import { useAlert } from "../../shared/context/AlertContext";
+import { useModal } from "../../shared/context/ModalContext";
 
 const EmployeeReservationsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();

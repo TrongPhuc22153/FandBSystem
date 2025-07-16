@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useCategoryActions } from "../../hooks/categoryHooks";
-import Loading from "../../components/Loading/Loading";
-import { useModal } from "../../context/ModalContext";
+import Loading from "../../shared/components/Loading/Loading";
+import { useModal } from "../../shared/context/ModalContext";
 import SingleImageDisplay from "../../components/SingleImageDisplay/SingleImageDisplay";
 import CategoryForm from "../../components/CategoryForm/CategoryForm";
 import { useImageUpload } from "../../hooks/imageHooks";
-import { useAlert } from "../../context/AlertContext";
+import { useAlert } from "../../shared/context/AlertContext";
 import { useNavigate } from "react-router-dom";
-import { ADMIN_CATEGORIES_URI } from "../../constants/routes";
+import { ADMIN_CATEGORIES_URI } from "../../shared/constants/routes";
 
 function AdminCategoryPage() {
   const navigate = useNavigate();

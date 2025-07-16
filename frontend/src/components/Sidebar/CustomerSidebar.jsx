@@ -20,12 +20,12 @@ import {
   USER_PROFILE_URI,
   USER_NOTIFICATIONS_URI,
   USER_CHANGE_PASSWORD_URI
-} from "../../constants/routes";
-import { useAuth } from "../../context/AuthContext";
-import { useModal } from "../../context/ModalContext";
+} from "../../shared/constants/routes";
+import { useAuth } from "../../shared/context/AuthContext";
+import { useModal } from "../../shared/context/ModalContext";
 import { useCallback, useState } from "react";
-import { hasRole } from "../../utils/authUtils";
-import { ROLES } from "../../constants/roles";
+import { hasRole } from "../../shared/utils/authUtils";
+import { ROLES } from "../../shared/constants/roles";
 import styles from "./Sidebar.module.css";
 
 export const CustomerSidebar = () => {

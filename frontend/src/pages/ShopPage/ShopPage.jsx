@@ -1,11 +1,11 @@
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { HOME_URI } from "../../constants/routes";
+import { HOME_URI } from "../../shared/constants/routes";
 import { useProducts } from "../../hooks/productHooks";
 import Pagination from "../../components/Pagination/Pagination";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import background from "../../assets/images/background.jpg";
 
 function ShopPage() {

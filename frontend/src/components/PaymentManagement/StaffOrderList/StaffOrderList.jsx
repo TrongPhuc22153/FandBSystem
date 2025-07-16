@@ -1,6 +1,6 @@
 import { Badge } from 'react-bootstrap';
 import styles from './StaffOrderList.module.css';
-import { ORDER_TYPE_CLASSES } from '../../../constants/webConstant';
+import { ORDER_TYPE_CLASSES } from '../../../shared/constants/webConstant';
 
 const StaffOrderList = ({ payments = [], onProceedToCheckout }) => {
   if (!payments || payments.length === 0) {

@@ -6,10 +6,10 @@ import {
   deleteCategory,
   fetchCategoryById,
 } from "../api/categoryApi";
-import { CATEGORIES_ENDPOINT } from "../constants/api";
-import { useAuth } from "../context/AuthContext";
+import { CATEGORIES_ENDPOINT } from "../shared/constants/api";
+import { useAuth } from "../shared/context/AuthContext";
 import { useCallback, useState } from "react";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
 
 export const useCategories = ({
   page = 0,

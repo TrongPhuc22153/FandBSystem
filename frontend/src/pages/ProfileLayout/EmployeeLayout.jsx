@@ -1,15 +1,15 @@
 import React, { useCallback, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faX } from "@fortawesome/free-solid-svg-icons";
-import { getImageSrc } from "../../utils/imageUtils";
+import { getImageSrc } from "../../shared/utils/imageUtils";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../shared/context/AuthContext";
 import styles from "./ProfileLayout.module.css";
 import { EmpoyeeSidebar } from "../../components/Sidebar/EmployeeSidebar";
 import { useStompSubscription } from "../../hooks/websocketHooks";
-import { TOPIC_EMPLOYEE } from "../../constants/webSocketEnpoint";
-import { hasRole } from "../../utils/authUtils";
-import { ROLES } from "../../constants/roles";
+import { TOPIC_EMPLOYEE } from "../../shared/constants/webSocketEnpoint";
+import { hasRole } from "../../shared/utils/authUtils";
+import { ROLES } from "../../shared/constants/roles";
 
 function EmployeeLayout() {
   const { user } = useAuth();

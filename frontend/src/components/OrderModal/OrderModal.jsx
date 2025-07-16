@@ -6,7 +6,7 @@ import {
   ORDER_TYPE_CLASSES,
   ORDER_TYPES,
   TABLE_STATUS_CLASSES,
-} from "../../constants/webConstant";
+} from "../../shared/constants/webConstant";
 
 export default function OrderModal({ order, renderOrderActions = false, show, onClose, onCompleteOrder }) {
   useEffect(() => {

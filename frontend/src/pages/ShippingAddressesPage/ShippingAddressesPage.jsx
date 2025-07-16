@@ -3,9 +3,9 @@ import {
   useShippingAddresses,
   useShippingAddressActions,
 } from "../../hooks/addressHooks";
-import { useModal } from "../../context/ModalContext";
-import Loading from "../../components/Loading/Loading";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import { useModal } from "../../shared/context/ModalContext";
+import Loading from "../../shared/components/Loading/Loading";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import AddressListSection from "../../components/AddressListSection/AddressListSection";
 import AddressProfileSection from "../../components/AddressProfileSection/AddressProfileSection";
 

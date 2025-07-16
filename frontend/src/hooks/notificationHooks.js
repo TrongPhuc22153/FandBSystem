@@ -1,12 +1,14 @@
 import useSWR from "swr";
-import { USER_NOTIFICATIONS_ENDPOINT } from "../constants/api";
-import { useAuth } from "../context/AuthContext";
+import { USER_NOTIFICATIONS_ENDPOINT } from "../shared/constants/api";
+import { useAuth } from "../shared/context/AuthContext";
 import { useCallback, useState } from "react";
 import {
   fetchNotifications,
   updateNotificationIsReadStatus,
 } from "../api/notificationApi";
-import { SORTING_DIRECTIONS } from "../constants/webConstant";
+import { SORTING_DIRECTIONS } from "../shared/constants/webConstant";
+import {useSelector} from "react-redux";
+import useSignedUser from "../features/users/hooks/useSignedUser";
 
 export const useNotifications = ({
   page = 0,
@@ -15,7 +17,8 @@ export const useNotifications = ({
   isRead,
   direction = SORTING_DIRECTIONS.DESC,
 } = {}) => {
-  const { user, token } = useAuth();
+    const { user } = useSignedUser();
+  const {token} = useSelector((state) => state.auth);
   return useSWR(
     token
       ? [

@@ -6,24 +6,24 @@ import {
   RESERVATION_STATUS_CLASSES,
   RESERVATION_STATUSES,
   SORTING_DIRECTIONS,
-} from "../../../constants/webConstant";
+} from "../../../shared/constants/webConstant";
 import {
   useReservationActions,
   useReservationItemActions,
   useReservations,
 } from "../../../hooks/reservationHooks";
-import { useModal } from "../../../context/ModalContext";
-import { useAlert } from "../../../context/AlertContext";
-import { useAuth } from "../../../context/AuthContext";
+import { useModal } from "../../../shared/context/ModalContext";
+import { useAlert } from "../../../shared/context/AlertContext";
+import { useAuth } from "../../../shared/context/AuthContext";
 import { useStompSubscription } from "../../../hooks/websocketHooks";
 import { Badge } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../../Pagination/Pagination";
-import { TOPIC_KITCHEN } from "../../../constants/webSocketEnpoint";
-import { formatDate } from "../../../utils/datetimeUtils";
-import { hasRole } from "../../../utils/authUtils";
-import { ROLES } from "../../../constants/roles";
-import { RESERVATION_FILTER_MAPPING } from "../../../constants/filter";
+import { TOPIC_KITCHEN } from "../../../shared/constants/webSocketEnpoint";
+import { formatDate } from "../../../shared/utils/datetimeUtils";
+import { hasRole } from "../../../shared/utils/authUtils";
+import { ROLES } from "../../../shared/constants/roles";
+import { RESERVATION_FILTER_MAPPING } from "../../../shared/constants/filter";
 
 export default function ReservationsTable() {
   const navigate = useNavigate();

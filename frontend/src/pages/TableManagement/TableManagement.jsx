@@ -13,8 +13,8 @@ import {
   ORDER_ACTIONS,
   RESERVATION_ACTIONS,
   RESERVATION_STATUSES,
-} from "../../constants/webConstant";
-import { useAlert } from "../../context/AlertContext";
+} from "../../shared/constants/webConstant";
+import { useAlert } from "../../shared/context/AlertContext";
 import Pagination from "../../components/Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -22,7 +22,7 @@ import {
   useTableOccupancyActions,
 } from "../../hooks/tableOccupancyHooks";
 import { WaitingList } from "../../components/WaitingList/WaitingList";
-import ErrorDisplay from "../../components/ErrorDisplay/ErrorDisplay";
+import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import moment from "moment";
 import {
   useReservationActions,
