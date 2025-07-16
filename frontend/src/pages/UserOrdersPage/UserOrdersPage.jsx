@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useOrders } from "../../hooks/orderHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { debounce } from "lodash";
 import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import { formatDate } from "../../shared/utils/datetimeUtils";

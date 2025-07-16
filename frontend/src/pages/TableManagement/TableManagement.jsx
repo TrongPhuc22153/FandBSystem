@@ -15,7 +15,7 @@ import {
   RESERVATION_STATUSES,
 } from "../../shared/constants/webConstant";
 import { useAlert } from "../../shared/context/AlertContext";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
 import {
   useTableOccupancies,

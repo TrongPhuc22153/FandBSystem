@@ -6,7 +6,7 @@ import {
   fetchProducts,
   updateProduct,
   updateProductQuantity,
-} from "../api/productApi";
+} from "../features/products/services/productApi";
 import { PRODUCTS_ENDPOINT } from "../shared/constants/api";
 import { useCallback, useState } from "react";
 import { useAuth } from "../shared/context/AuthContext";

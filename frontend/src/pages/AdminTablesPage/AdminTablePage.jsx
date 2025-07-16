@@ -8,7 +8,7 @@ import {
   useReservationTableActions,
 } from "../../hooks/tableHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { ADMIN_ADD_TABLE_URI, ADMIN_TABLES_URI } from "../../shared/constants/routes";
 import { useModal } from "../../shared/context/ModalContext";
 import { Badge } from "react-bootstrap";

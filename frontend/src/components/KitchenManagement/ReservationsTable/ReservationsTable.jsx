@@ -18,7 +18,7 @@ import { useAuth } from "../../../shared/context/AuthContext";
 import { useStompSubscription } from "../../../hooks/websocketHooks";
 import { Badge } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Pagination from "../../Pagination/Pagination";
+import Pagination from "../../../shared/components/Pagination/Pagination";
 import { TOPIC_KITCHEN } from "../../../shared/constants/webSocketEnpoint";
 import { formatDate } from "../../../shared/utils/datetimeUtils";
 import { hasRole } from "../../../shared/utils/authUtils";

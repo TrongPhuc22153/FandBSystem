@@ -21,7 +21,7 @@ import { useModal } from "../../context/ModalContext";
 import { useCallback } from "react";
 import styles from "./Header.module.css";
 import NotificationDropdown from "../NotificationDropdown/NotificationDropdown";
-import SearchBar from "../../../components/Searchbar/SearchBar";
+import SearchBar from "../Searchbar/SearchBar";
 import {useDispatch} from "react-redux";
 import {logoutUser} from "../../../features/auth/thunks/authThunk";
 import useSignedUser from "../../../features/users/hooks/useSignedUser";

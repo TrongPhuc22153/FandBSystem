@@ -19,6 +19,9 @@ const AlertProvider = ({ children }) => {
   );
 
   const removeAlert = useCallback((id) => {
+    if (alert.action) {
+      alert.action();
+    }
     setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== id));
     if (timers.current[id]) {
       clearTimeout(timers.current[id]);
@@ -33,9 +36,6 @@ const AlertProvider = ({ children }) => {
     alerts.forEach((alert) => {
       if (!timers.current[alert.id]) {
         timers.current[alert.id] = setTimeout(() => {
-          if (alert.action) {
-            alert.action();
-          }
           removeAlert(alert.id);
         }, alert.duration);
       }
@@ -50,9 +50,9 @@ const AlertProvider = ({ children }) => {
     <AlertContext.Provider value={{ alerts, showNewAlert, removeAlert }}>
       {children}
       <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 1000 }}>
-        {alerts.map((alert) => (
+        {alerts.map((alert, index) => (
           <Alert
-            key={alert.id}
+            key={index}
             variant={alert.variant}
             onClose={() => removeAlert(alert.id)}
             dismissible

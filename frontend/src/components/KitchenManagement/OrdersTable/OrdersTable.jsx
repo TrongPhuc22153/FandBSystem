@@ -17,7 +17,7 @@ import {
 import { useModal } from "../../../shared/context/ModalContext";
 import { useAlert } from "../../../shared/context/AlertContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Pagination from "../../Pagination/Pagination";
+import Pagination from "../../../shared/components/Pagination/Pagination";
 import { TOPIC_KITCHEN } from "../../../shared/constants/webSocketEnpoint";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useStompSubscription } from "../../../hooks/websocketHooks";

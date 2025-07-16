@@ -4,15 +4,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import ShopPage from "./pages/ShopPage/ShopPage";
+import ShopPage from "./features/products/pages/ShopPage/ShopPage";
 import "./App.css";
-import SingleProduct from "./pages/SingleProductPage/SingleProduct";
+import SingleProductPage from "./features/products/pages/SingleProductPage/SingleProductPage";
 import LoginPage from "./features/auth/pages/LoginPage/LoginPage";
 import RegisterPage from "./features/auth/pages/RegisterPage/RegisterPage";
 import AuthProvider from "./shared/context/AuthContext";
 import Layout from "./shared/components/Layout/Layout";
-import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-import Authorization from "./components/Authorization/Authorization";
+import PrivateRoute from "./shared/routes/PrivateRoute/PrivateRoute";
+import Authorization from "./shared/routes/Authorization/Authorization";
 import { ROLES } from "./shared/constants/roles";
 import AuthLayout from "./shared/components/AuthLayout/AuthLayout";
 import AdminUsersPage from "./pages/AdminUsersPage/AdminUsersPage";
@@ -76,7 +76,7 @@ function App() {
                 <Route element={<Layout />}>
                   <Route path="" element={<HomePage />} />
                   <Route path="shop" element={<ShopPage />} />
-                  <Route path="shop/:foodname" element={<SingleProduct />} />
+                  <Route path="shop/:foodname" element={<SingleProductPage />} />
                   <Route element={<PaymentLayout/>}>
                     <Route path="success" element={<PaymentSuccess/>}/>
                     <Route path="cancel" element={<PaymentCancelled/>}/>

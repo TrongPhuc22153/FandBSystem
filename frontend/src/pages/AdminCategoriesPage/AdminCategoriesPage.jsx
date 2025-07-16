@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useCategories, useCategoryActions } from "../../hooks/categoryHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { debounce } from "lodash";
 import {
   ADMIN_ADD_CATEGORY_URI,

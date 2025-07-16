@@ -3,7 +3,7 @@ import styles from "./kitchen-table.module.css";
 import { useProductActions, useProducts } from "../../../hooks/productHooks";
 import ErrorDisplay from "../../../shared/components/ErrorDisplay/ErrorDisplay";
 import { SORTING_DIRECTIONS } from "../../../shared/constants/webConstant";
-import Pagination from "../../Pagination/Pagination";
+import Pagination from "../../../shared/components/Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
 import { useAlert } from "../../../shared/context/AlertContext";
 import { useModal } from "../../../shared/context/ModalContext";

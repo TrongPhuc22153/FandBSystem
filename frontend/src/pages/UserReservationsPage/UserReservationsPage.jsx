@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataTable from "../../components/DataTableManagement/DataTable";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import ErrorDisplay from "../../shared/components/ErrorDisplay/ErrorDisplay";
 import { formatTime } from "../../shared/utils/datetimeUtils";
 import { USER_RESERVATIONS_URI } from "../../shared/constants/routes";

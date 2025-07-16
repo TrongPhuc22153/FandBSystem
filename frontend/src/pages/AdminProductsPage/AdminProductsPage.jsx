@@ -8,7 +8,7 @@ import {
   ADMIN_PRODUCTS_URI,
 } from "../../shared/constants/routes";
 import { getImageSrc } from "../../shared/utils/imageUtils";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { useProducts, useProductActions } from "../../hooks/productHooks";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import { useModal } from "../../shared/context/ModalContext";

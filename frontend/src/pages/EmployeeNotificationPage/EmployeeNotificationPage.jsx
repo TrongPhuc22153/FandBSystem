@@ -12,7 +12,7 @@ import { useAuth } from "../../shared/context/AuthContext";
 import { useStompSubscription } from "../../hooks/websocketHooks";
 import { hasRole } from "../../shared/utils/authUtils";
 import { ROLES } from "../../shared/constants/roles";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
 
 export default function EmployeeNotificationPage() {

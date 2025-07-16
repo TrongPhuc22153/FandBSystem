@@ -5,7 +5,7 @@ import {
   updateCategory,
   deleteCategory,
   fetchCategoryById,
-} from "../api/categoryApi";
+} from "../features/categories/services/categoryApi";
 import { CATEGORIES_ENDPOINT } from "../shared/constants/api";
 import { useAuth } from "../shared/context/AuthContext";
 import { useCallback, useState } from "react";

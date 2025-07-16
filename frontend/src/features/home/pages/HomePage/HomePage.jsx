@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import ProductCard from "../../../../components/ProductCard/ProductCard";
+import ProductCard from "../../../products/components/ProductCard/ProductCard";
 import { getPrimaryProductImage } from "../../../../shared/utils/imageUtils";
 import { SHOP_URI } from "../../../../shared/constants/routes";
-import CategoryCard from "../../../../components/CategoryCard/CategoryCard";
-import { useCategories } from "../../../../hooks/categoryHooks";
-import { useProducts } from "../../../../hooks/productHooks";
+import CategoryCard from "../../../categories/components/CategoryCard/CategoryCard";
+import useCategories from "../../../categories/hooks/useCategories";
+import useProducts from "../../../products/hooks/useProducts";
 import Loading from "../../../../shared/components/Loading/Loading";
 import ErrorDisplay from "../../../../shared/components/ErrorDisplay/ErrorDisplay";
 import mainBg from "../../../../assets/images/main-bg.jpg";
@@ -16,24 +16,18 @@ const HomePage = () => {
   const { t } = useTranslation();
 
   const {
-    data: categoriesData,
+    categories,
     error: categoriesError,
-    isLoading: isLoadingCategories,
-  } = useCategories({});
+    isLoading: isLoadingCategories
+  } = useCategories();
 
   const {
-    data: productsData,
+    products,
     error: productsError,
     isLoading: isLoadingProducts,
   } = useProducts({ isFeatured: true });
 
-  const categories = categoriesData?.content || [];
-
-  const featuredProducts = (
-    productsData?.content ||
-    productsData?.items ||
-    []
-  ).map((product) => ({
+  const featuredProducts = products.map((product) => ({
     ...product,
     imageUrl: getPrimaryProductImage(product.images),
   }));

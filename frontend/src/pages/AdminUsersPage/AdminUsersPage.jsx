@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ADMIN_ADD_USER_URI, ADMIN_USERS_URI } from "../../shared/constants/routes";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { useUsers, useUserActions } from "../../hooks/userHook";
 import DataTable from "../../components/DataTableManagement/DataTable";
 import { Badge } from "react-bootstrap";

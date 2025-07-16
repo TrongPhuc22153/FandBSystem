@@ -5,7 +5,7 @@ import StaffOrderList from "../../components/PaymentManagement/StaffOrderList/St
 import { usePayments } from "../../hooks/paymentHooks";
 import { PAYMENT_STATUSES } from "../../shared/constants/webConstant";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { PAYMENT_CHECKOUT_URI } from "../../shared/constants/routes";
 
 function PaymentManagementPage() {

@@ -15,7 +15,7 @@ import Loading from "../../shared/components/Loading/Loading";
 import { useAlert } from "../../shared/context/AlertContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { useModal } from "../../shared/context/ModalContext";
 import { useAuth } from "../../shared/context/AuthContext";
 import { hasRole } from "../../shared/utils/authUtils";

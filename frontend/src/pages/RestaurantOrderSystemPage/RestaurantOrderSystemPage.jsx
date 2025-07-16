@@ -6,7 +6,7 @@ import styles from "./RestaurantOrderSystemPage.module.css";
 import { useProducts } from "../../hooks/productHooks";
 import { useCategories } from "../../hooks/categoryHooks";
 import Loading from "../../shared/components/Loading/Loading";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "../../shared/components/Pagination/Pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { EMPLOYEE_PLACE_ORDERS_URI } from "../../shared/constants/routes";
 import { useOrderActions } from "../../hooks/orderHooks";
